@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>Cones_4</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel=stylesheet href="css/base.css"/>
+</head>
+<body>
+
+<script src="three.js"></script>
+<script src="Papaparse.min.js"></script> 	
+<script src="Detector.js"></script>
+<script src="Stats.js"></script>
+<script src="OrbitControls.js"></script>
+<script src="THREEx.KeyboardState.js"></script>
+<script src="THREEx.FullScreen.js"></script>
+<script src="THREEx.WindowResize.js"></script>
+
+<!-- ------------------------------------------------------------ -->
+
+<div id="ThreeJS" style="z-index: 1; position: absolute; left:0px; top:0px"></div>
+<script>
+/*
+	Three.js "tutorials by example"
+	Author: Lee Stemkoski
+	Date: July 2013 (three.js v59dev)
+ */
+
+	
+//////////	
+// MAIN //
+//////////
+
+// standard global variables
+var container, scene, camera, renderer, controls, stats;
+var keyboard = new THREEx.KeyboardState();
+var clock = new THREE.Clock();
+
+// custom global variables
+var cube;
+
+function cones(wup) {
+    	//Data is usable here
+    	console.log(wup);
+    	var row=wup[3];
+    	for(var name in row){
+    		console.log("nom de l'attribut= ['"+name+"'] valeur de l'attribut= "+row[name]);
+    	}
+
+	//alert(wup[3].Latitude);
+
+	///////////
+	// SCENE //
+	///////////
+	scene = new THREE.Scene();
+
+	////////////
+	// CAMERA //
+	////////////
+	
+	// set the view size in pixels (custom or according to window size)
+	// var SCREEN_WIDTH = 400, SCREEN_HEIGHT = 300;
+	var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;	
+	// camera attributes
+	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+	// set up camera
+	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+	// add the camera to the scene
+	scene.add(camera);
+	// the camera defaults to position (0,0,0)
+	// 	so pull it back (z = 400) and up (y = 100) and set the angle towards the scene origin
+	camera.position.set(0,150,400);
+	camera.lookAt(scene.position);	
+	
+	//////////////
+	// RENDERER //
+	//////////////
+	
+	// create and start the renderer; choose antialias setting.
+	if ( Detector.webgl )
+		renderer = new THREE.WebGLRenderer( {antialias:true} );
+	else
+		renderer = new THREE.CanvasRenderer(); 
+	
+	renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	
+	// attach div element to variable to contain the renderer
+	container = document.getElementById( 'ThreeJS' );
+	// alternatively: to create the div at runtime, use:
+	//   container = document.createElement( 'div' );
+	//    document.body.appendChild( container );
+	
+	// attach renderer to the container div
+	container.appendChild( renderer.domElement );
+	
+	////////////
+	// EVENTS //
+	////////////
+
+	// automatically resize renderer
+	THREEx.WindowResize(renderer, camera);
+	// toggle full-screen on given key press
+	THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
+	
+	//////////////
+	// CONTROLS //
+	//////////////
+
+	// move mouse and: left   click to rotate, 
+	//                 middle click to zoom, 
+	//                 right  click to pan
+	controls = new THREE.OrbitControls( camera, renderer.domElement );
+	
+	///////////
+	// STATS //
+	///////////
+	
+	// displays current and past frames per second attained by scene
+	stats = new Stats();
+	stats.domElement.style.position = 'absolute';
+	stats.domElement.style.bottom = '0px';
+	stats.domElement.style.zIndex = 100;
+	container.appendChild( stats.domElement );
+	
+	///////////
+	// LIGHT //
+	///////////
+	
+	// create a light
+	var light = new THREE.PointLight(0xffffff);
+	light.position.set(0,250,0);
+	scene.add(light);
+	var ambientLight = new THREE.AmbientLight(0x111111);
+	// scene.add(ambientLight);
+	
+	//////////////
+	// GEOMETRY //
+	//////////////
+		
+	// most objects displayed are a "mesh":
+	//  a collection of points ("geometry") and
+	//  a set of surface parameters ("material")	
+
+	// Sphere parameters: radius, segments along width, segments along height
+	var sphereGeometry = new THREE.SphereGeometry( 50, 32, 16 ); 
+	// use a "lambert" material rather than "basic" for realistic lighting.
+	//   (don't forget to add (at least one) light!)
+	var sphereMaterial = new THREE.MeshLambertMaterial( {color: 0x8888ff} ); 
+	var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+	sphere.position.set(100, 50, -50);
+	//scene.add(sphere);
+	
+	// Create an array of materials to be used in a cube, one for each side
+	var cubeMaterialArray = [];
+	// order to add materials: x+,x-,y+,y-,z+,z-
+	cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0xff3333 } ) );
+	cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0xff8800 } ) );
+	cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0xffff33 } ) );
+	cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0x33ff33 } ) );
+	cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0x3333ff } ) );
+	cubeMaterialArray.push( new THREE.MeshBasicMaterial( { color: 0x8833ff } ) );
+	var cubeMaterials = new THREE.MeshFaceMaterial( cubeMaterialArray );
+	// Cube parameters: width (x), height (y), depth (z), 
+	//        (optional) segments along x, segments along y, segments along z
+	var cubeGeometry = new THREE.CubeGeometry( 100, 100, 100, 1, 1, 1 );
+	// using THREE.MeshFaceMaterial() in the constructor below
+	//   causes the mesh to use the materials stored in the geometry
+	cube = new THREE.Mesh( cubeGeometry, cubeMaterials );
+	cube.position.set(0, 0, -60);
+	scene.add( cube );	
+
+	var conematerial = new THREE.MeshPhongMaterial( { color: 0xff3333 });
+
+	for (var iter=1;iter<20;iter++){
+		var conegeometry = new THREE.CylinderGeometry(0, 10, 5*iter, 500, false);
+	    	var cone = new THREE.Mesh(conegeometry, conematerial);
+		cone.position.set(10*iter/2,-5*iter/2, -10);
+		cone.rotation.set (0,1,0)
+	    	scene.add(cone);
+
+	}
+	
+	var conegeometry = new THREE.CylinderGeometry(0, 10, 10, 500, false);
+	var réduc = 0.0001;
+	for (var iter=1;iter<100;iter++){
+	    	var cone = new THREE.Mesh(conegeometry, conematerial);
+		//cone.position.set(wup[iter].Longitude,wup[iter].Latitude, -10);
+		cone.position.set (parseFloat(wup[iter].x)*réduc,parseFloat(wup[iter].y)*réduc, parseFloat(wup[iter].y)*réduc);
+		cone.rotation.set (wup[iter].x*réduc,wup[iter].y*réduc, wup[iter].y*réduc)
+	    	scene.add(cone);
+
+	}
+
+
+			var californiaPts = [];
+
+				californiaPts.push( new THREE.Vector2 ( 610, 320 ) );
+				californiaPts.push( new THREE.Vector2 ( 450, 300 ) );
+				californiaPts.push( new THREE.Vector2 ( 392, 392 ) );
+				californiaPts.push( new THREE.Vector2 ( 266, 438 ) );
+				californiaPts.push( new THREE.Vector2 ( 190, 570 ) );
+				californiaPts.push( new THREE.Vector2 ( 190, 600 ) );
+				californiaPts.push( new THREE.Vector2 ( 160, 620 ) );
+				californiaPts.push( new THREE.Vector2 ( 160, 650 ) );
+				californiaPts.push( new THREE.Vector2 ( 180, 640 ) );
+				californiaPts.push( new THREE.Vector2 ( 165, 680 ) );
+				californiaPts.push( new THREE.Vector2 ( 150, 670 ) );
+				californiaPts.push( new THREE.Vector2 (  90, 737 ) );
+				californiaPts.push( new THREE.Vector2 (  80, 795 ) );
+				californiaPts.push( new THREE.Vector2 (  50, 835 ) );
+				californiaPts.push( new THREE.Vector2 (  64, 870 ) );
+				californiaPts.push( new THREE.Vector2 (  60, 945 ) );
+				californiaPts.push( new THREE.Vector2 ( 300, 945 ) );
+				californiaPts.push( new THREE.Vector2 ( 300, 743 ) );
+				californiaPts.push( new THREE.Vector2 ( 600, 473 ) );
+				californiaPts.push( new THREE.Vector2 ( 626, 425 ) );
+				californiaPts.push( new THREE.Vector2 ( 600, 370 ) );
+				californiaPts.push( new THREE.Vector2 ( 610, 320 ) );
+
+				for( var i = 0; i < californiaPts.length; i ++ ) californiaPts[ i ].multiplyScalar( 0.25 );
+
+				//var californiaShape = new THREE.Shape( californiaPts );
+				//californiaShape.position.set(-100,-100,-100);
+				//scene.add(californiaShape);
+
+	// create a set of coordinate axes to help orient user
+	//    specify length in pixels in each direction
+	var axes = new THREE.AxisHelper(100);
+	scene.add( axes );
+	
+
+	/////////
+	// SKY //
+	/////////
+	
+	// recommend either a skybox or fog effect (can't use both at the same time) 
+	// without one of these, the scene's background color is determined by webpage background
+
+	// make sure the camera's "far" value is large enough so that it will render the skyBox!
+	var skyBoxGeometry = new THREE.CubeGeometry( 10000, 10000, 10000 );
+	// BackSide: render faces from inside of the cube, instead of from outside (default).
+	var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
+	var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
+	// scene.add(skyBox);
+	
+	// fog must be added to scene before first render
+	scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
+
+}
+
+parseData("wup3.csv", cones);
+
+// animation loop / game loop
+animate();
+
+
+function parseData(url, callBack) {
+    Papa.parse(url, {
+	header: true,
+	delimiter: ';', 
+	encoding: "utf-8",       
+	download: true,
+	skipEmptyLines: false,
+        dynamicTyping: true,
+	
+        complete: function(results) {
+        	console.log(results.meta)
+        	console.log(results.errors)
+            callBack(results.data);
+
+	    //$.each(results.data, function(i, el) {
+		//var row = $("<tr/>");
+		//row.append($("<td/>").text(i));
+		//$.each(el, function(j, cell) {
+		//        row.append($("<td/>").text(cell));
+		//});
+		//$("#results tbody").append(row);
+	    //});
+        }
+    });
+}
+
+
+
+function animate() 
+{
+    requestAnimationFrame( animate );
+	render();		
+	update();
+}
+
+function update()
+{
+	// delta = change in time since last call (in seconds)
+	var delta = clock.getDelta(); 
+
+	// functionality provided by THREEx.KeyboardState.js
+	if ( keyboard.pressed("1") )
+		document.getElementById('message').innerHTML = ' Have a nice day! - 1';	
+	if ( keyboard.pressed("2") )
+		document.getElementById('message').innerHTML = ' Have a nice day! - 2 ';	
+		
+	controls.update();
+	stats.update();
+}
+
+function render() 
+{	
+	renderer.render( scene, camera );
+}
+
+</script>
+
+</body>
+</html>
+
