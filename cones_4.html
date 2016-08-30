@@ -191,7 +191,7 @@ function cones(wup) {
         var lat = wup[iter].Latitude*Math.PI/180;
         var lon = wup[iter].Longitude*Math.PI/180;
 		cone.position.set (
-            earthRadius * réduc * Math.cos(lon) * Math.cos(lon),
+            earthRadius * réduc * Math.cos(lat) * Math.cos(lon),
             earthRadius * réduc * Math.cos(lat) * Math.sin(lon),
             earthRadius * réduc * Math.sin(lat));
 		cone.rotation.set (
