@@ -168,7 +168,7 @@ function cones(wup) {
 	//   causes the mesh to use the materials stored in the geometry
 	cube = new THREE.Mesh( cubeGeometry, cubeMaterials );
 	cube.position.set(0, 0, -60);
-	scene.add( cube );	
+	//scene.add( cube );
 
 	var conematerial = new THREE.MeshPhongMaterial( { color: 0xff3333 });
 
@@ -177,18 +177,36 @@ function cones(wup) {
 	    	var cone = new THREE.Mesh(conegeometry, conematerial);
 		cone.position.set(10*iter/2,-5*iter/2, -10);
 		cone.rotation.set (0,1,0)
-	    	scene.add(cone);
+	    	//scene.add(cone);
 
 	}
 	
 	var conegeometry = new THREE.CylinderGeometry(0, 10, 10, 500, false);
-	var réduc = 0.02;
-	for (var iter=1;iter<200;iter++){
+	var earthRadius = 6371;  // kilometres
+    var réduc = 0.02;
+	for (var iter=1;iter<1693;iter++){
 	    	var cone = new THREE.Mesh(conegeometry, conematerial);
 		//cone.position.set(wup[iter].Longitude,wup[iter].Latitude, -10);
-		cone.position.set (parseFloat(wup[iter].X)*réduc,parseFloat(wup[iter].Y)*réduc, parseFloat(wup[iter].Z)*réduc);
-		cone.rotation.set (wup[iter].X*réduc,wup[iter].Y*réduc, wup[iter].Z*réduc)
-	    	scene.add(cone);
+		//cone.position.set (wup[iter].X*réduc,wup[iter].Y*réduc,wup[iter].Z*réduc);
+        var lat = wup[iter].Latitude*Math.PI/180;
+        var lon = wup[iter].Longitude*Math.PI/180;
+		cone.position.set (
+            earthRadius * réduc * Math.cos(lon) * Math.cos(lon),
+            earthRadius * réduc * Math.cos(lat) * Math.sin(lon),
+            earthRadius * réduc * Math.sin(lat));
+		cone.rotation.set (
+            Math.sin(lat),
+            Math.cos(lat) * Math.sin(lon),
+            -Math.cos(lat) * Math.cos(lon));
+
+		//cone.rotation.set (
+            //Math.PI/2 - wup[iter].Latitude*Math.PI/180,
+            //0, //wup[iter].Latitude*Math.PI/180  + Math.PI/4,
+            //wup[iter].Longitude*Math.PI/180   - Math.PI
+            //);
+        //cone.rotation.set (0,0,0);
+	    //console.log(Math.acos(wup[iter].X/earthRadius));
+        scene.add(cone);
 
 	}
 
