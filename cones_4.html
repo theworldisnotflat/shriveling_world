@@ -182,7 +182,7 @@ function cones(wup) {
 	}
 	
 	var conegeometry = new THREE.CylinderGeometry(0, 10, 10, 500, false);
-	var réduc = 0.0001;
+	var réduc = 0.02;
 	for (var iter=1;iter<100;iter++){
 	    	var cone = new THREE.Mesh(conegeometry, conematerial);
 		//cone.position.set(wup[iter].Longitude,wup[iter].Latitude, -10);
