@@ -40,6 +40,9 @@ var clock = new THREE.Clock();
 // custom global variables
 var cube;
 
+var earthRadius = 6371;  // kilometres
+var réduc = 0.02;
+
 function cones(wup) {
     	//Data is usable here
     	console.log(wup);
@@ -70,7 +73,9 @@ function cones(wup) {
 	scene.add(camera);
 	// the camera defaults to position (0,0,0)
 	// 	so pull it back (z = 400) and up (y = 100) and set the angle towards the scene origin
-	camera.position.set(0,150,400);
+    //camera.position.set(0,150,400);
+
+	camera.position.set(0,1.1*earthRadius*réduc,1.1*earthRadius*réduc);
 	camera.lookAt(scene.position);	
 	
 	//////////////
@@ -180,32 +185,33 @@ function cones(wup) {
 	    	//scene.add(cone);
 
 	}
-	
+	réduc = 0.01;
 	var conegeometry = new THREE.CylinderGeometry(0, 10, 10, 500, false);
-	var earthRadius = 6371;  // kilometres
-    var réduc = 0.02;
-	for (var iter=1;iter<1693;iter++){
-	    	var cone = new THREE.Mesh(conegeometry, conematerial);
-		//cone.position.set(wup[iter].Longitude,wup[iter].Latitude, -10);
-		//cone.position.set (wup[iter].X*réduc,wup[iter].Y*réduc,wup[iter].Z*réduc);
+    for (var iter=1;iter<1693;iter++){
+	    var cone = new THREE.Mesh(conegeometry, conematerial);
+
+        //cone.position.set(wup[iter].Longitude,wup[iter].Latitude, -10);
+        //cone.position.set (wup[iter].X*réduc,wup[iter].Y*réduc,wup[iter].Z*réduc);
         var lat = wup[iter].Latitude*Math.PI/180;
         var lon = wup[iter].Longitude*Math.PI/180;
-		cone.position.set (
+        cone.position.set (
             earthRadius * réduc * Math.cos(lat) * Math.cos(lon),
             earthRadius * réduc * Math.cos(lat) * Math.sin(lon),
             earthRadius * réduc * Math.sin(lat));
-		cone.rotation.set (
+        /*cone.rotation.set (
             Math.sin(lat),
             Math.cos(lat) * Math.sin(lon),
-            -Math.cos(lat) * Math.cos(lon));
+            -Math.cos(lat) * Math.cos(lon));*/
 
-		//cone.rotation.set (
+        cone.lookAt( new THREE.Vector3(0,0,0) );
+        cone.rotateX(- Math.PI / 2 );
+        //cone.rotation.set (
             //Math.PI/2 - wup[iter].Latitude*Math.PI/180,
             //0, //wup[iter].Latitude*Math.PI/180  + Math.PI/4,
             //wup[iter].Longitude*Math.PI/180   - Math.PI
             //);
         //cone.rotation.set (0,0,0);
-	    //console.log(Math.acos(wup[iter].X/earthRadius));
+        //console.log(Math.acos(wup[iter].X/earthRadius));
         scene.add(cone);
 
 	}
