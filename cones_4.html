@@ -5,7 +5,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 </head>
-<body>
+<body bgcolor="#E6E6FA">
 
 <script src="three.js"></script>
 <script src="Papaparse.min.js"></script> 	
@@ -48,19 +48,20 @@ var cube;
 
 var earthRadius     = 6371;    // kilometres
 
-var maxSpeedInitial = 300; //km/h
+var maxSpeedInitial = 100; //km/h
 var maxSpeed        = 700; //km/h
 
 var réduc = maxSpeedInitial/maxSpeed;
 
 var roadSpeed     = 70;  //km/h
 var motorwaySpeed = 100; //km/h
-var HSTSpeed      = 220; //km/h
+var HSTSpeed      = 250; //km/h
 
 var slopeRoad     = 45; //in decimal degree
 var slopeMotorway = 40; //in decimal degree
 var slopeHST      = 30; //in decimal degree
-
+console.log("Global reduction factor = "+réduc);
+console.log("earthRadius*réduc = "+earthRadius*réduc);
 
 function cones(wup) {
     //Data is usable here
@@ -151,7 +152,8 @@ function cones(wup) {
 	
 	// create a light
 	var light = new THREE.PointLight(0xffffff);
-	light.position.set(0,250,0);
+	//light.position.set(0,250,0);
+    light.position.set(0,3*earthRadius*réduc,3*earthRadius*réduc);
 	scene.add(light);
 	var ambientLight = new THREE.AmbientLight(0x111111);
 	 scene.add(ambientLight);
@@ -170,8 +172,9 @@ function cones(wup) {
 	réduc = 0.01;
     var thresholdCities = 1000; //in thousands of habitants
 
-    var coneRadius = 20;
-    var coneHeight = 30;
+    var coneRadius = 10;
+    var coneHeight = coneRadius * Math.sqrt((maxSpeed/roadSpeed)^2 -1);
+    console.log(coneHeight);
     //                                      top radius, bottom radius, height
 	var conegeometry = new THREE.CylinderGeometry(0, coneRadius, coneHeight, 100, false);
 
@@ -221,11 +224,12 @@ function cones(wup) {
 	// without one of these, the scene's background color is determined by webpage background
 
 	// make sure the camera's "far" value is large enough so that it will render the skyBox!
-	var skyBoxGeometry = new THREE.CubeGeometry( 10000, 10000, 10000 );
+	var skyBoxGeometry = new THREE.CubeGeometry( 3*earthRadius, 3*earthRadius, 3*earthRadius );
 	// BackSide: render faces from inside of the cube, instead of from outside (default).
-	var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
+	//var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
+	var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: ffffff, side: THREE.BackSide } );
 	var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
-	// scene.add(skyBox);
+	//scene.add(skyBox);
 	
 	// fog must be added to scene before first render
 	//scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
