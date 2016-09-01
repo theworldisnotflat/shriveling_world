@@ -46,18 +46,29 @@ var clock = new THREE.Clock();
 // custom global variables
 var cube;
 
-var earthRadius = 6371;  // kilometres
-var réduc = 0.02;
+var earthRadius     = 6371;    // kilometres
+
+var maxSpeedInitial = 300; //km/h
+var maxSpeed        = 700; //km/h
+
+var réduc = maxSpeedInitial/maxSpeed;
+
+var roadSpeed     = 70;  //km/h
+var motorwaySpeed = 100; //km/h
+var HSTSpeed      = 220; //km/h
+
+var slopeRoad     = 45; //in decimal degree
+var slopeMotorway = 40; //in decimal degree
+var slopeHST      = 30; //in decimal degree
+
 
 function cones(wup) {
-    	//Data is usable here
-    	console.log(wup);
-    	var row=wup[3];
-    	for(var name in row){
-    		console.log("nom de la colonne= ['"+name+"'] valeur = "+row[name]);
-    	}
-
-	//alert(wup[3].Latitude);
+    //Data is usable here
+    console.log(wup);
+    var row=wup[3];
+    for(var name in row){
+        console.log("nom de la colonne= ['"+name+"'] valeur = "+row[name]);
+    }
 
 	///////////
 	// SCENE //
@@ -143,7 +154,7 @@ function cones(wup) {
 	light.position.set(0,250,0);
 	scene.add(light);
 	var ambientLight = new THREE.AmbientLight(0x111111);
-	// scene.add(ambientLight);
+	 scene.add(ambientLight);
 	
 	//////////////
 	// GEOMETRY //
@@ -158,8 +169,11 @@ function cones(wup) {
 
 	réduc = 0.01;
     var thresholdCities = 1000; //in thousands of habitants
-    //top radius, bottom radius, height
-	var conegeometry = new THREE.CylinderGeometry(0, 20, 10, 100, false);
+
+    var coneRadius = 20;
+    var coneHeight = 30;
+    //                                      top radius, bottom radius, height
+	var conegeometry = new THREE.CylinderGeometry(0, coneRadius, coneHeight, 100, false);
 
     for (var iter=1;iter<1693;iter++){
         //if (wup[iter].2015 > thresholdCities) {
@@ -214,7 +228,7 @@ function cones(wup) {
 	// scene.add(skyBox);
 	
 	// fog must be added to scene before first render
-	scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
+	//scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
 
 }
 
