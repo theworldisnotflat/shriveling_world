@@ -8,7 +8,7 @@
 <body bgcolor="#E6E6FA">
 
 <script src="three.js"></script>
-<script src="Papaparse.min.js"></script> 	
+<script src="Papaparse.min.js"></script>
 <script src="Detector.js"></script>
 <script src="Stats.js"></script>
 <script src="OrbitControls.js"></script>
@@ -33,8 +33,8 @@
 	Date: July 2013 (three.js v59dev)
  */
 
-	
-//////////	
+
+//////////
 // MAIN //
 //////////
 
@@ -48,8 +48,8 @@ var cube;
 
 var earthRadius     = 6371;    // kilometres
 
-var maxSpeedInitial = 100; //km/h
-var maxSpeed        = 1500; //km/h
+var maxSpeedInitial = 300; //km/h
+var maxSpeed        = 700; //km/h
 
 var réduc = maxSpeedInitial/maxSpeed;
 
@@ -88,10 +88,10 @@ function cones(wup) {
 	////////////
 	// CAMERA //
 	////////////
-	
+
 	// set the view size in pixels (custom or according to window size)
 	// var SCREEN_WIDTH = 400, SCREEN_HEIGHT = 300;
-	var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;	
+	var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
 	// camera attributes
 	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
 	// set up camera
@@ -103,29 +103,29 @@ function cones(wup) {
     //camera.position.set(0,150,400);
 
 	camera.position.set(3*earthRadius*réduc,-3*earthRadius*réduc,3*earthRadius*réduc);
-	camera.lookAt(scene.position);	
-	
+	camera.lookAt(scene.position);
+
 	//////////////
 	// RENDERER //
 	//////////////
-	
+
 	// create and start the renderer; choose antialias setting.
 	if ( Detector.webgl )
 		renderer = new THREE.WebGLRenderer( {antialias:true} );
 	else
-		renderer = new THREE.CanvasRenderer(); 
-	
+		renderer = new THREE.CanvasRenderer();
+
 	renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-	
+
 	// attach div element to variable to contain the renderer
 	container = document.getElementById( 'ThreeJS' );
 	// alternatively: to create the div at runtime, use:
 	//   container = document.createElement( 'div' );
 	//    document.body.appendChild( container );
-	
+
 	// attach renderer to the container div
 	container.appendChild( renderer.domElement );
-	
+
 	////////////
 	// EVENTS //
 	////////////
@@ -134,31 +134,31 @@ function cones(wup) {
 	THREEx.WindowResize(renderer, camera);
 	// toggle full-screen on given key press
 	THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
-	
+
 	//////////////
 	// CONTROLS //
 	//////////////
 
-	// move mouse and: left   click to rotate, 
-	//                 middle click to zoom, 
+	// move mouse and: left   click to rotate,
+	//                 middle click to zoom,
 	//                 right  click to pan
 	controls = new THREE.OrbitControls( camera, renderer.domElement );
-	
+
 	///////////
 	// STATS //
 	///////////
-	
+
 	// displays current and past frames per second attained by scene
 	stats = new Stats();
 	stats.domElement.style.position = 'absolute';
 	stats.domElement.style.bottom = '0px';
 	stats.domElement.style.zIndex = 100;
 	container.appendChild( stats.domElement );
-	
+
 	///////////
 	// LIGHT //
 	///////////
-	
+
 	// create a light
 	var light = new THREE.PointLight(0xffffff);
 	//light.position.set(0,250,0);
@@ -166,14 +166,14 @@ function cones(wup) {
 	scene.add(light);
 	var ambientLight = new THREE.AmbientLight(0x111111);
     scene.add(ambientLight);
-	
+
 	//////////////
 	// GEOMETRY //
 	//////////////
-		
+
 	// most objects displayed are a "mesh":
 	//  a collection of points ("geometry") and
-	//  a set of surface parameters ("material")	
+	//  a set of surface parameters ("material")
 
 
 	var coneMaterial = new THREE.MeshPhongMaterial( { color: colorBeige });
@@ -217,13 +217,13 @@ function cones(wup) {
 	//    specify length in pixels in each direction
 	var axes = new THREE.AxisHelper(100);
 	scene.add( axes );
-	
+
 
 	/////////
 	// SKY //
 	/////////
-	
-	// recommend either a skybox or fog effect (can't use both at the same time) 
+
+	// recommend either a skybox or fog effect (can't use both at the same time)
 	// without one of these, the scene's background color is determined by webpage background
 
 	// make sure the camera's "far" value is large enough so that it will render the skyBox!
@@ -233,7 +233,7 @@ function cones(wup) {
 	var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: colorWhite, side: THREE.BackSide } );
 	var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
 	scene.add(skyBox);
-	
+
 	// fog must be added to scene before first render
 	//scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
 
@@ -274,12 +274,12 @@ animate();
 function parseData(url, callBack) {
     Papa.parse(url, {
 	header: true,
-	delimiter: ';', 
-	encoding: "utf-8",       
+	delimiter: ';',
+	encoding: "utf-8",
 	download: true,
 	skipEmptyLines: false,
         dynamicTyping: true,
-	
+
         complete: function(results) {
         	console.log(results.meta)
         	console.log(results.errors)
@@ -299,30 +299,30 @@ function parseData(url, callBack) {
 
 
 
-function animate() 
+function animate()
 {
     requestAnimationFrame( animate );
-	render();		
+	render();
 	update();
 }
 
 function update()
 {
 	// delta = change in time since last call (in seconds)
-	var delta = clock.getDelta(); 
+	var delta = clock.getDelta();
 
 	// functionality provided by THREEx.KeyboardState.js
 	if ( keyboard.pressed("1") )
-		document.getElementById('message').innerHTML = ' Have a nice day! - 1';	
+		document.getElementById('message').innerHTML = ' Have a nice day! - 1';
 	if ( keyboard.pressed("2") )
-		document.getElementById('message').innerHTML = ' Have a nice day! - 2 ';	
-		
+		document.getElementById('message').innerHTML = ' Have a nice day! - 2 ';
+
 	controls.update();
 	stats.update();
 }
 
-function render() 
-{	
+function render()
+{
 	renderer.render( scene, camera );
 }
 
