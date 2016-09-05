@@ -179,7 +179,8 @@ function cones(wup) {
 	var coneMaterial = new THREE.MeshPhongMaterial( { color: colorBeige });
     var sphereMaterial = new THREE.MeshPhongMaterial( { color: colorRed });
 
-	    var coneHeight = coneRadius * Math.sqrt((maxSpeed/roadSpeed)^2 -1);
+    var coneHeight = coneRadius * Math.sqrt((maxSpeed/roadSpeed)^2 -1); //this is the main geometric formula linkg speed and slope of cones
+
     console.log(coneHeight);
     //                                      top radius, bottom radius, height
 	var coneGeometry = new THREE.CylinderGeometry(0, coneRadius, coneHeight, 100, false);
@@ -262,6 +263,7 @@ var spanScale=document.getElementById('scaleText');
 document.getElementById('rangeInput').addEventListener('input',function(evt){
 var scale=evt.target.value;
 	spanScale.innerHTML=scale;
+    scale=scale*10;
 	blueEarth.scale.set(scale, scale, scale);
 	modelShapeFile.scale.set(scale, scale, scale);
 	containShapefile.scale.set(scale, scale, scale);
