@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-	<title>Cones_4</title>
+	<title>A Shriveling world</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 </head>
@@ -22,7 +22,7 @@
 <!-- ------------------------------------------------------------ -->
 
 <div style="z-index: 2; position: absolute; left:5%; top:1%;width:90%;text-align: center;">
-		<input id="rangeInput" type="range" value="1" max="5" min="0.5" step="0.1" style="width:100%;display:block">
+		<input id="rangeInput" type="range" value="31" max="40" min="0.5" step="0.1" style="width:100%;display:block">
 		<span id="scaleText" style="color:white">1</span>
 	</div>
 	<div id="ThreeJS" style="z-index: 1; position: absolute; left:0px; top:0px"></div>
@@ -177,6 +177,7 @@ function cones(wup) {
 
 
 	var coneMaterial = new THREE.MeshPhongMaterial( { color: colorBeige });
+    //var coneMaterial = new THREE.MeshNormalMaterial( { transparent: true, opacity: 0.5 } );
     var sphereMaterial = new THREE.MeshPhongMaterial( { color: colorRed });
 
     var coneHeight = coneRadius * Math.sqrt((maxSpeed/roadSpeed)^2 -1); //this is the main geometric formula linkg speed and slope of cones
@@ -184,28 +185,47 @@ function cones(wup) {
     console.log(coneHeight);
     //                                      top radius, bottom radius, height
 	var coneGeometry = new THREE.CylinderGeometry(0, coneRadius, coneHeight, 100, false);
-	var sphereGeom = new THREE.SphereGeometry(10*réduc,32,32);
+	var sphereGeom = new THREE.SphereGeometry(5*réduc,32,32);
     var nbCities=0;
     for (var iter=1;iter<1693;iter++){
         if (wup[iter].pop2015 > thresholdCities) {
             nbCities++;
 
             var cone = new THREE.Mesh(coneGeometry, coneMaterial);
-            var lat = wup[iter].Latitude*Math.PI/180;
-            var lon = wup[iter].Longitude*Math.PI/180;
-            cone.position.set (
+            var lat =   wup[iter].Latitude*Math.PI/180;
+            var lon = - wup[iter].Longitude*Math.PI/180;
+            var t =   wup[iter].Latitude*Math.PI/180;
+            var a = - wup[iter].Longitude*Math.PI/180;
+            /*cone.position.set (
                 earthRadius * réduc * Math.cos(lat) * Math.cos(lon),
                 earthRadius * réduc * Math.cos(lat) * Math.sin(lon),
-                earthRadius * réduc * Math.sin(lat));
+                earthRadius * réduc * Math.sin(lat));*/
+            cone.position.set (
+                Math.cos(lon) * 90 * Math.cos(lat),
+                Math.sin(lat) * 90,
+                Math.sin(lon) * 90 * Math.cos(lat)
+                );
             cone.lookAt( new THREE.Vector3(0,0,0) );
+            cone.translateZ( - earthRadius * réduc);
+            cone.translateZ( coneHeight/2);
             cone.rotateX(- Math.PI / 2 );
+            //cone.translateY( - earthRadius * réduc);
+            //cone.translateY( - coneHeight/2);
             scene.add(cone);
 
             var sphere = new THREE.Mesh(sphereGeom, sphereMaterial);
-            sphere.position.set (
-                earthRadius * réduc * Math.cos(lat) * Math.cos(lon),
-                earthRadius * réduc * Math.cos(lat) * Math.sin(lon),
-                earthRadius * réduc * Math.sin(lat));
+            /*sphere.position.set (
+                earthRadius * réduc * Math.cos(lat) * Math.cos(lon)*90,
+                earthRadius * réduc * Math.sin(lat)*90,
+                earthRadius * réduc * Math.cos(lat) * Math.sin(lon)*90
+                );*/
+            sphere.position.set(
+                Math.cos(lon) * 90 * Math.cos(lat),
+                Math.sin(lat) * 90,
+                Math.sin(lon) * 90 * Math.cos(lat)
+            );
+            sphere.lookAt( new THREE.Vector3(0,0,0) );
+            sphere.translateZ( - earthRadius * réduc);
             scene.add(sphere);
         }
 
@@ -253,10 +273,21 @@ SHPParser.load('110m_land.shp',
 		blueEarth=new THREE.Mesh(
 			new THREE.SphereGeometry(88,64, 64),
 			new THREE.MeshBasicMaterial({color: 0x0000FF, opacity: 0.3, depthWrite:false})
-			);
+
+            );
 		//scene.add(blueEarth);
-		scene.add(modelShapeFile);
+		//scene.add(modelShapeFile);
 		scene.add(containShapefile);
+    /*
+        // The option: 'amount' is how far to extrude, 'bevelEnabled: false' prevents beveling
+        var extrudedContinents = new THREE.ExtrudeGeometry(containShapefile, {amount: 50, bevelEnabled: false});
+
+        // Geometry doesn't do much on its own, we need to create a Mesh from it
+        var extrudedContinentsMesh = new THREE.Mesh(extrudedContinents, new THREE.MeshPhongMaterial({color: 0xff0000}));
+        scene.add(extrudedContinentsMesh);*/
+
+        //var continents = containShapefile.extrude({amount: 100, bevelThickness: 0.001, bevelSize: //0.001, bevelEnabled: false, curveSegments: 1});
+        //scene.add(continents);
 	});
 
 var spanScale=document.getElementById('scaleText');
@@ -267,7 +298,10 @@ var scale=evt.target.value;
 	blueEarth.scale.set(scale, scale, scale);
 	modelShapeFile.scale.set(scale, scale, scale);
 	containShapefile.scale.set(scale, scale, scale);
+    continents.scale.set(scale, scale, scale);
 })
+
+
 
 // animation loop / game loop
 animate();
