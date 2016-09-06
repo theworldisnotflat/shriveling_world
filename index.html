@@ -22,7 +22,7 @@
 <!-- ------------------------------------------------------------ -->
 
 <div style="z-index: 2; position: absolute; left:5%; top:1%;width:90%;text-align: center;">
-		<input id="rangeInput" type="range" value="1" max="5" min="0.5" step="0.1" style="width:100%;display:block">
+		<input id="rangeInput" type="range" value="1" max="40" min="0.5" step="0.1" style="width:100%;display:block">
 		<span id="scaleText" style="color:white">1</span>
 	</div>
 	<div id="ThreeJS" style="z-index: 1; position: absolute; left:0px; top:0px"></div>
@@ -177,13 +177,14 @@ function cones(wup) {
 
 
 	var coneMaterial = new THREE.MeshPhongMaterial( { color: colorBeige });
+    //var coneMaterial = new THREE.MeshNormalMaterial( { transparent: true, opacity: 0.5 } );
     var sphereMaterial = new THREE.MeshPhongMaterial( { color: colorRed });
 
 	    var coneHeight = coneRadius * Math.sqrt((maxSpeed/roadSpeed)^2 -1);
     console.log(coneHeight);
     //                                      top radius, bottom radius, height
 	var coneGeometry = new THREE.CylinderGeometry(0, coneRadius, coneHeight, 100, false);
-	var sphereGeom = new THREE.SphereGeometry(10*réduc,32,32);
+	var sphereGeom = new THREE.SphereGeometry(5*réduc,32,32);
     var nbCities=0;
     for (var iter=1;iter<1693;iter++){
         if (wup[iter].pop2015 > thresholdCities) {
@@ -196,8 +197,10 @@ function cones(wup) {
                 earthRadius * réduc * Math.cos(lat) * Math.cos(lon),
                 earthRadius * réduc * Math.cos(lat) * Math.sin(lon),
                 earthRadius * réduc * Math.sin(lat));
+
             cone.lookAt( new THREE.Vector3(0,0,0) );
             cone.rotateX(- Math.PI / 2 );
+            cone.translateY(-coneHeight/2);
             scene.add(cone);
 
             var sphere = new THREE.Mesh(sphereGeom, sphereMaterial);
