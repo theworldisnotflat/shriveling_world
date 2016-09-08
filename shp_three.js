@@ -31,8 +31,8 @@ p.createModel = function (shp, spherize) {
         if (false && r.type == SHP.POLYGON) {
           //console.log('new polygon', poly.length, points.length/2);
           poly.pop();
-          polys.push(new THREE.ExtrudeGeometry(new THREE.Shape(poly), {amount: 0}));
-         // polys.push(new THREE.ExtrudeGeometry(new THREE.Shape(poly), {amount: 10}));
+          //polys.push(new THREE.ExtrudeGeometry(new THREE.Shape(poly), {amount: 0}));
+          polys.push(new THREE.ExtrudeGeometry(new THREE.Shape(poly), {amount: 10}));
         } else {
           //console.log('new polyline', poly.length, points.length/2);
           var geo = new THREE.Geometry();
@@ -77,7 +77,7 @@ p.loadCompressed = function(deltaEncoded, spherize) {
       }
       var shape = new THREE.Shape(p);
       //var geo = shape.extrude({amount: 0.001, bevelThickness: 0.001, bevelSize: 0.001, bevelEnabled: false, curveSegments: 1});
-      var geo = shape.extrude({amount: 10, bevelThickness: 0.001, bevelSize: 0.001, bevelEnabled: false, curveSegments: 1});
+      var geo = shape.extrude({amount: 100, bevelEnabled: false});
       if (spherize) {
         var k;
         /*

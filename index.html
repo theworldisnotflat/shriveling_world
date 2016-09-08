@@ -194,12 +194,7 @@ function cones(wup) {
             var cone = new THREE.Mesh(coneGeometry, coneMaterial);
             var lat =   wup[iter].Latitude*Math.PI/180;
             var lon = - wup[iter].Longitude*Math.PI/180;
-            var t =   wup[iter].Latitude*Math.PI/180;
-            var a = - wup[iter].Longitude*Math.PI/180;
-            /*cone.position.set (
-                earthRadius * réduc * Math.cos(lat) * Math.cos(lon),
-                earthRadius * réduc * Math.cos(lat) * Math.sin(lon),
-                earthRadius * réduc * Math.sin(lat));*/
+
             cone.position.set (
                 Math.cos(lon) * 90 * Math.cos(lat),
                 Math.sin(lat) * 90,
@@ -209,16 +204,9 @@ function cones(wup) {
             cone.translateZ( - earthRadius * réduc);
             cone.translateZ( coneHeight/2);
             cone.rotateX(- Math.PI / 2 );
-            //cone.translateY( - earthRadius * réduc);
-            //cone.translateY( - coneHeight/2);
             scene.add(cone);
 
             var sphere = new THREE.Mesh(sphereGeom, sphereMaterial);
-            /*sphere.position.set (
-                earthRadius * réduc * Math.cos(lat) * Math.cos(lon)*90,
-                earthRadius * réduc * Math.sin(lat)*90,
-                earthRadius * réduc * Math.cos(lat) * Math.sin(lon)*90
-                );*/
             sphere.position.set(
                 Math.cos(lon) * 90 * Math.cos(lat),
                 Math.sin(lat) * 90,
@@ -276,7 +264,7 @@ SHPParser.load('110m_land.shp',
 
             );
 		//scene.add(blueEarth);
-		scene.add(modelShapeFile);
+		//scene.add(modelShapeFile);
 		scene.add(containShapefile);
     /*
         // The option: 'amount' is how far to extrude, 'bevelEnabled: false' prevents beveling
@@ -303,7 +291,25 @@ var scale=evt.target.value;
 
 
 
-// animation loop / game loop
+var createCurvePath = function(start, end, elevation) {
+        var start3 = globe.translateCordsToPoint(start.latitude,start.longitude);
+        var end3 = globe.translateCordsToPoint(end.latitude, end.longitude);
+        var mid = (new LatLon(start.latitude,start.longitude)).midpointTo(new LatLon(end.latitude, end.longitude));
+       var middle3 = globe.translateCordsToPoint(mid.lat(), mid.lon(), elevation);
+
+        var curveQuad = new THREE.QuadraticBezierCurve3(start3, middle3, end3);
+   //   var curveCubic = new THREE.CubicBezierCurve3(start3, start3_control, end3_control, end3);
+
+        var cp = new THREE.CurvePath();
+        cp.add(curveQuad);
+   //   cp.add(curveCubic);
+        return cp;
+    }
+
+
+
+
+// animation loop
 animate();
 
 
