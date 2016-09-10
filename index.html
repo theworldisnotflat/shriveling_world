@@ -135,18 +135,11 @@ function cones(wup) {
 	// toggle full-screen on given key press
 	THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
 
-	//////////////
-	// CONTROLS //
-	//////////////
 
 	// move mouse and: left   click to rotate,
 	//                 middle click to zoom,
 	//                 right  click to pan
 	controls = new THREE.OrbitControls( camera, renderer.domElement );
-
-	///////////
-	// STATS //
-	///////////
 
 	// displays current and past frames per second attained by scene
 	stats = new Stats();
@@ -154,10 +147,6 @@ function cones(wup) {
 	stats.domElement.style.bottom = '0px';
 	stats.domElement.style.zIndex = 100;
 	container.appendChild( stats.domElement );
-
-	///////////
-	// LIGHT //
-	///////////
 
 	// create a light
 	var light = new THREE.PointLight(0xffffff);
@@ -248,7 +237,53 @@ function cones(wup) {
 
 }
 
+function transportNetwork(tn){
+
+    //console.log(tn.nomOri);
+    var ori = THREE.Vector3();
+    var des = THREE.Vector3();
+    var wupOri, wupDes, lat, lon;
+
+    for (var iter=1;iter<tn.length;iter++){
+        wupOri = wup.filter(function (id) { return wup.CityCode == tn[iter].idOri });
+        console.log(wupOri);
+        tn[iter].oriLatitude  = wupOri.Latitude;
+        tn[iter].oriLongitude = wupOri.Longitude;
+        lat =   wupOri.Latitude*Math.PI/180;
+        lon = - wupOri.Longitude*Math.PI/180;
+        ori.position.set (
+            Math.cos(lon) * 90 * Math.cos(lat),
+            Math.sin(lat) * 90,
+            Math.sin(lon) * 90 * Math.cos(lat)
+            );
+        ori.translateZ( - earthRadius * réduc);
+
+        wupDes = wup.filter(function (id) { return wup.CityCode == tn[iter].idDes });
+        tn[iter].desLatitude  = wupDes.Latitude;
+        tn[iter].desLongitude = wupDes.Longitude;
+        lat =   wupDes.Latitude*Math.PI/180;
+        lon = - wupDes.Longitude*Math.PI/180;
+        des.position.set (
+            Math.cos(lon) * 90 * Math.cos(lat),
+            Math.sin(lat) * 90,
+            Math.sin(lon) * 90 * Math.cos(lat)
+            );
+        des.translateZ( - earthRadius * réduc);
+
+        var cp = createCurvePath(ori, des, 200);
+        var curvedLineMaterial =  new THREE.LineBasicMaterial({color: 0xFFFFAA, linewidth: 3});
+        var curvedLine = new THREE.Line(cp.createPointsGeometry(20), curvedLineMaterial);
+        scene.add(curvedLine);
+
+n
+
+    }
+}
+
 parseData("wup3.csv", cones);
+
+parseData("transport_network.csv", transportNetwork);
+
 
 var modelShapeFile,containShapefile, blueEarth;
 SHPParser.load('110m_land.shp',
