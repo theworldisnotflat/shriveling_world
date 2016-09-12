@@ -39,7 +39,7 @@
 //////////
 
 // standard global variables
-var container, scene, camera, renderer, controls, stats, wup,np;
+var container, scene, camera, renderer, controls, stats, wup, tn;
 var keyboard = new THREEx.KeyboardState();
 var clock = new THREE.Clock();
 
@@ -75,7 +75,7 @@ console.log("earthRadius*réduc = "+earthRadius*réduc);
 function cones(wup0) {
     //Data is usable here
     wup=wup0;
-    console.log(wup);
+    //console.log(wup);
     var row=wup[3];
     for(var name in row){
         //console.log("nom de la colonne= ['"+name+"'] valeur = "+row[name]);
@@ -249,7 +249,7 @@ function transportNetwork(){
 
     for (var iter=1;iter<tn.length;iter++){
         wupOri = wup.filter(function (id) { return wup.CityCode == tn[iter].idOri });
-        console.log(wupOri);
+        console.log(wupOri.UrbanAgglomeration);
         tn[iter].oriLatitude  = wupOri.Latitude;
         tn[iter].oriLongitude = wupOri.Longitude;
         lat =   wupOri.Latitude*Math.PI/180;
@@ -278,7 +278,7 @@ function transportNetwork(){
         var curvedLine = new THREE.Line(cp.createPointsGeometry(20), curvedLineMaterial);
         scene.add(curvedLine);
 
-n
+
 
     }
 }
