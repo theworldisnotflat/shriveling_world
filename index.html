@@ -39,7 +39,7 @@
 //////////
 
 // standard global variables
-var container, scene, camera, renderer, controls, stats;
+var container, scene, camera, renderer, controls, stats, wup,np;
 var keyboard = new THREEx.KeyboardState();
 var clock = new THREE.Clock();
 
@@ -72,8 +72,9 @@ var colorBeige=0xF5F5DC;
 console.log("Global reduction factor = "+réduc);
 console.log("earthRadius*réduc = "+earthRadius*réduc);
 
-function cones(wup) {
+function cones(wup0) {
     //Data is usable here
+    wup=wup0;
     console.log(wup);
     var row=wup[3];
     for(var name in row){
@@ -204,6 +205,8 @@ function cones(wup) {
             sphere.lookAt( new THREE.Vector3(0,0,0) );
             sphere.translateZ( - earthRadius * réduc);
             scene.add(sphere);
+
+
         }
 
 	}
@@ -237,7 +240,7 @@ function cones(wup) {
 
 }
 
-function transportNetwork(tn){
+function transportNetwork(){
 
     //console.log(tn.nomOri);
     var ori = THREE.Vector3();
@@ -280,10 +283,13 @@ n
     }
 }
 
-parseData("wup3.csv", cones);
 
-parseData("transport_network.csv", transportNetwork);
 
+Promise.all([parseData("wup3.csv",
+cones),parseData("transport_network.csv", function(tn0){tn=tn0;})])
+.then(function(){
+                        transportNetwork();
+                });
 
 var modelShapeFile,containShapefile, blueEarth;
 SHPParser.load('110m_land.shp',
@@ -321,7 +327,7 @@ var scale=evt.target.value;
 	blueEarth.scale.set(scale, scale, scale);
 	modelShapeFile.scale.set(scale, scale, scale);
 	containShapefile.scale.set(scale, scale, scale);
-    continents.scale.set(scale, scale, scale);
+    //continents.scale.set(scale, scale, scale);
 })
 
 

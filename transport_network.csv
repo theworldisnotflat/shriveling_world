@@ -1,6 +1,7 @@
-idOri;nameOri;idDes;nameDes;transportMode;notes
-20985;Paris;23083;New York-Newark;11;Concorde
-20985;Paris;23083;New York-Newark;1;air
-22860;London;23083;New York-Newark;11;Concorde
-22860;London;23083;New York-Newark;1;air
-204296;Berlin;22860;London;1;air
+yearBegin;yearEnd;idOri;nameOri;idDes;nameDes;transportMode;notes
+1977;2004;20985;Paris;23083;New York-Newark;11;Concorde
+1947;2016;20985;Paris;23083;New York-Newark;1;air
+1977;2004;22860;London;23083;New York-Newark;11;Concorde
+1947;2016;22860;London;23083;New York-Newark;1;air
+1930;2016;204296;Berlin;22860;London;1;air
+1935;2015;
