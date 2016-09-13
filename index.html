@@ -354,7 +354,7 @@ Promise.all([promiseWup,promiseTn]).then(function(){
 
 
 var modelShapeFile,containShapefile, blueEarth;
-SHPParser.load('110m_land.shp',
+SHPParser.load('110m_land_shrivel.shp',
 	function(res) {
 		var parsedShp = res;
 		var loader = new THREE.SHPLoader();
