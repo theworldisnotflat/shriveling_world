@@ -242,7 +242,8 @@ function cones(wup0) {
 
 function transportNetwork(){
 
-    //console.log(tn.nomOri);
+    console.log("tn ",tn);
+    console.log("wup ",wup);
     var ori = THREE.Vector3();
     var des = THREE.Vector3();
     var wupOri, wupDes, lat, lon;
@@ -284,12 +285,17 @@ function transportNetwork(){
 }
 
 
+var promiseWup=parseData("wup3.csv",cones);// génération de la promesse de wup
 
-Promise.all([parseData("wup3.csv",
-cones),parseData("transport_network.csv", function(tn0){tn=tn0;})])
-.then(function(){
+var promiseTn=parseData("transport_network.csv",
+                        function(tn0){tn=tn0;}); //génération de la promesse de tn
+
+Promise.all([promiseWup,promiseTn]).then(function(){
                         transportNetwork();
                 });
+
+
+
 
 var modelShapeFile,containShapefile, blueEarth;
 SHPParser.load('110m_land.shp',
@@ -364,7 +370,7 @@ function parseData(url, callBack) {
         dynamicTyping: true,
 
         complete: function(results) {
-        	console.log(results.meta)
+        	//console.log(results.meta)
         	console.log(results.errors)
             callBack(results.data);
 
