@@ -69,8 +69,8 @@ var colorRed=0xff3333;
 var colorWhite=0xffffff;
 var colorBeige=0xF5F5DC;
 
-console.log("Global reduction factor = "+réduc);
-console.log("earthRadius*réduc = "+earthRadius*réduc);
+console.log("Global reduction factor = ", Math.round(réduc*100)/100);
+console.log("earthRadius*réduc = ", Math.round(earthRadius*réduc));
 
 function cones(wup0) {
     //Data is usable here
@@ -172,12 +172,13 @@ function cones(wup0) {
 
     var coneHeight = coneRadius * Math.sqrt((maxSpeed/roadSpeed)^2 -1); //this is the main geometric formula linkg speed and slope of cones
 
-    console.log(coneHeight);
+    console.log("coneRadius = ",coneRadius);
+    console.log("coneHeight = ",coneHeight);
     //                                      top radius, bottom radius, height
 	var coneGeometry = new THREE.CylinderGeometry(0, coneRadius, coneHeight, 100, false);
 	var sphereGeom = new THREE.SphereGeometry(5*réduc,32,32);
     var nbCities=0;
-    for (var iter=1;iter<1693;iter++){
+    for (var iter=1;iter<wup.length;iter++){
         if (wup[iter].pop2015 > thresholdCities) {
             nbCities++;
 
@@ -212,6 +213,61 @@ function cones(wup0) {
 	}
 
     console.log("nbCities = "+nbCities);
+
+
+    parent = new THREE.Object3D();
+    parent.position.y = 50;
+    scene.add( parent );
+
+    function addShape( shape, extrudeSettings, color, x, y, z, rx, ry, rz, s ) {
+        var points = shape.createPointsGeometry();
+        var spacedPoints = shape.createSpacedPointsGeometry( 100 );
+        // 3d shape
+        var geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
+        var mesh = THREE.SceneUtils.createMultiMaterialObject( geometry, [ new THREE.MeshLambertMaterial( { color: color } ), new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true, transparent: true } ) ] );
+        mesh.position.set( x, y, z - 75 );
+        mesh.rotation.set( rx, ry, rz );
+        mesh.scale.set( s, s, s );
+        parent.add( mesh );
+    }
+
+    var extrudeSettings = {	amount: 20,  bevelEnabled: true, bevelSegments: 2, steps: 2 }; // bevelSegments: 2, steps: 2 , bevelSegments: 5, bevelSize: 8, bevelThickness:5,
+
+    // California
+
+    var californiaPts = [];
+
+    californiaPts.push( new THREE.Vector2 ( 610, 320 ) );
+    californiaPts.push( new THREE.Vector2 ( 450, 300 ) );
+    californiaPts.push( new THREE.Vector2 ( 392, 392 ) );
+    californiaPts.push( new THREE.Vector2 ( 266, 438 ) );
+    californiaPts.push( new THREE.Vector2 ( 190, 570 ) );
+    californiaPts.push( new THREE.Vector2 ( 190, 600 ) );
+    californiaPts.push( new THREE.Vector2 ( 160, 620 ) );
+    californiaPts.push( new THREE.Vector2 ( 160, 650 ) );
+    californiaPts.push( new THREE.Vector2 ( 180, 640 ) );
+    californiaPts.push( new THREE.Vector2 ( 165, 680 ) );
+    californiaPts.push( new THREE.Vector2 ( 150, 670 ) );
+    californiaPts.push( new THREE.Vector2 (  90, 737 ) );
+    californiaPts.push( new THREE.Vector2 (  80, 795 ) );
+    californiaPts.push( new THREE.Vector2 (  50, 835 ) );
+    californiaPts.push( new THREE.Vector2 (  64, 870 ) );
+    californiaPts.push( new THREE.Vector2 (  60, 945 ) );
+    californiaPts.push( new THREE.Vector2 ( 300, 945 ) );
+    californiaPts.push( new THREE.Vector2 ( 300, 743 ) );
+    californiaPts.push( new THREE.Vector2 ( 600, 473 ) );
+    californiaPts.push( new THREE.Vector2 ( 626, 425 ) );
+    californiaPts.push( new THREE.Vector2 ( 600, 370 ) );
+    californiaPts.push( new THREE.Vector2 ( 610, 320 ) );
+
+    var californiaShape = new THREE.Shape( californiaPts );
+
+
+
+    //var extrudeSettings = { amount: 20 }; // bevelSegments: 2, steps: 2 , bevelSegments: 5, bevelSize: 8, bevelThickness:5
+    var extrudeSettings = { amount: 200, bevelSegments: 2, steps: 2 , bevelSegments: 5, bevelSize: 8, bevelThickness:5};
+    // addShape( shape, color, x, y, z, rx, ry,rz, s );
+    addShape( californiaShape, extrudeSettings, 0xffaa00, -300, -100, 0, 0, 0, 0, 3 );
 
 
 	// create a set of coordinate axes to help orient user
