@@ -27,11 +27,6 @@
 	</div>
 	<div id="ThreeJS" style="z-index: 1; position: absolute; left:0px; top:0px"></div>
 <script>
-/*
-	Three.js "tutorials by example"
-	Author: Lee Stemkoski
-	Date: July 2013 (three.js v59dev)
- */
 
 
 //////////
@@ -92,9 +87,13 @@ function cones(wup0) {
 
 	// set the view size in pixels (custom or according to window size)
 	// var SCREEN_WIDTH = 400, SCREEN_HEIGHT = 300;
-	var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+	var SCREEN_WIDTH = window.innerWidth,
+        SCREEN_HEIGHT = window.innerHeight;
 	// camera attributes
-	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+	var VIEW_ANGLE = 45,
+        ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT,
+        NEAR = 0.1,
+        FAR = 20000;
 	// set up camera
 	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
 	// add the camera to the scene
@@ -134,7 +133,9 @@ function cones(wup0) {
 	// automatically resize renderer
 	THREEx.WindowResize(renderer, camera);
 	// toggle full-screen on given key press
-	THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
+	THREEx.FullScreen.bindKey({
+        charCode : 'm'.charCodeAt(0)
+    });
 
 
 	// move mouse and: left   click to rotate,
@@ -298,15 +299,17 @@ function cones(wup0) {
 
 function transportNetwork(){
 
-    console.log("tn ",tn);
-    console.log("wup ",wup);
+    //console.log("tn ",tn);
+    //console.log("wup ",wup);
     var ori = THREE.Vector3();
     var des = THREE.Vector3();
     var wupOri, wupDes, lat, lon;
 
     for (var iter=1;iter<tn.length;iter++){
         wupOri = wup.filter(function (id) { return wup.CityCode == tn[iter].idOri });
-        console.log(wupOri.UrbanAgglomeration);
+        console.log("tn.length ",tn.length);
+        //console.log("wup ",wup);
+        console.log("wupOri ",wupOri);
         tn[iter].oriLatitude  = wupOri.Latitude;
         tn[iter].oriLongitude = wupOri.Longitude;
         lat =   wupOri.Latitude*Math.PI/180;
@@ -331,7 +334,10 @@ function transportNetwork(){
         des.translateZ( - earthRadius * réduc);
 
         var cp = createCurvePath(ori, des, 200);
-        var curvedLineMaterial =  new THREE.LineBasicMaterial({color: 0xFFFFAA, linewidth: 3});
+        var curvedLineMaterial =  new THREE.LineBasicMaterial({
+            color: 0xFFFFAA,
+            linewidth: 3
+        });
         var curvedLine = new THREE.Line(cp.createPointsGeometry(20), curvedLineMaterial);
         scene.add(curvedLine);
 
@@ -344,11 +350,13 @@ function transportNetwork(){
 var promiseWup=parseData("wup3.csv",cones);// génération de la promesse de wup
 
 var promiseTn=parseData("transport_network.csv",
-                        function(tn0){tn=tn0;}); //génération de la promesse de tn
+                        function(tn0){
+                            tn=tn0;
+                        }); //génération de la promesse de tn
 
-Promise.all([promiseWup,promiseTn]).then(function(){
-                        transportNetwork();
-                });
+Promise.all([promiseWup,promiseTn]).then(function() {
+    transportNetwork();
+});
 
 
 
@@ -417,28 +425,34 @@ animate();
 
 
 function parseData(url, callBack) {
-    Papa.parse(url, {
-	header: true,
-	delimiter: ';',
-	encoding: "utf-8",
-	download: true,
-	skipEmptyLines: false,
-        dynamicTyping: true,
+    return new Promise(function(resolve, reject) {
+        Papa.parse(url, {
+            header: true,
+            delimiter: ';',
+            encoding: "utf-8",
+            download: true,
+            skipEmptyLines: false,
+            dynamicTyping: true,
 
-        complete: function(results) {
-        	//console.log(results.meta)
-        	console.log(results.errors)
-            callBack(results.data);
+            complete: function(results) {
+                //console.log(results.meta)
+                console.log(results.errors)
+                callBack(results.data);
+                resolve(results.data);
 
-	    //$.each(results.data, function(i, el) {
-		//var row = $("<tr/>");
-		//row.append($("<td/>").text(i));
-		//$.each(el, function(j, cell) {
-		//        row.append($("<td/>").text(cell));
-		//});
-		//$("#results tbody").append(row);
-	    //});
-        }
+                //$.each(results.data, function(i, el) {
+                //var row = $("<tr/>");
+                //row.append($("<td/>").text(i));
+                //$.each(el, function(j, cell) {
+                //        row.append($("<td/>").text(cell));
+                //});
+                //$("#results tbody").append(row);
+                //});
+            },
+            error: function(err) {
+                reject(err);
+            }
+        });
     });
 }
 
