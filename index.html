@@ -301,39 +301,48 @@ function transportNetwork(){
 
     //console.log("tn ",tn);
     //console.log("wup ",wup);
-    var ori = THREE.Vector3();
-    var des = THREE.Vector3();
+    //var ori = THREE.Vector3();
+    //var des = THREE.Vector3();
     var wupOri, wupDes, lat, lon;
 
     for (var iter=1;iter<tn.length;iter++){
-        wupOri = wup.filter(function (id) { return wup.CityCode == tn[iter].idOri });
-        console.log("tn.length ",tn.length);
+
+        var iOri = wup.map(obj => obj.CityCode).indexOf(tn[iter].idOri);
+        //console.log( "  tn[iter].nameOri ", tn[iter].nameOri);
+        //console.log( "  wup[iOri].UrbanAgglomeration ",  wup[iOri].UrbanAgglomeration);
         //console.log("wup ",wup);
-        console.log("wupOri ",wupOri);
-        tn[iter].oriLatitude  = wupOri.Latitude;
-        tn[iter].oriLongitude = wupOri.Longitude;
-        lat =   wupOri.Latitude*Math.PI/180;
-        lon = - wupOri.Longitude*Math.PI/180;
-        ori.position.set (
+        //console.log("iOri ",iOri);
+        tn[iter].oriLatitude  = wup[iOri].Latitude;
+        tn[iter].oriLongitude = wup[iOri].Longitude;
+        lat =   wup[iOri].Latitude*Math.PI/180;
+        lon = - wup[iOri].Longitude*Math.PI/180;
+
+        var ori = THREE.Vector3(
             Math.cos(lon) * 90 * Math.cos(lat),
             Math.sin(lat) * 90,
-            Math.sin(lon) * 90 * Math.cos(lat)
-            );
-        ori.translateZ( - earthRadius * réduc);
+            Math.sin(lon) * 90 * Math.cos(lat) - earthRadius * réduc
+        );
+
+        //    );
+       // ori.translateZ( - earthRadius * réduc);
 
         wupDes = wup.filter(function (id) { return wup.CityCode == tn[iter].idDes });
-        tn[iter].desLatitude  = wupDes.Latitude;
-        tn[iter].desLongitude = wupDes.Longitude;
+        var iDes = wup.map(obj => obj.CityCode).indexOf(tn[iter].idDes);
+
+        tn[iter].desLatitude  = wup[iDes].Latitude;
+        tn[iter].desLongitude = wup[iDes].Longitude;
         lat =   wupDes.Latitude*Math.PI/180;
         lon = - wupDes.Longitude*Math.PI/180;
-        des.position.set (
+        var des = THREE.Vector3(
             Math.cos(lon) * 90 * Math.cos(lat),
             Math.sin(lat) * 90,
-            Math.sin(lon) * 90 * Math.cos(lat)
+            Math.sin(lon) * 90 * Math.cos(lat) - earthRadius * réduc
             );
-        des.translateZ( - earthRadius * réduc);
+        //des.translateZ( - earthRadius * réduc);*/
 
-        var cp = createCurvePath(ori, des, 200);
+        //var cp = createCurvePath(ori, des, 200);
+        var cp = new THREE.QuadraticBezierCurve3(ori, des, 200);
+
         var curvedLineMaterial =  new THREE.LineBasicMaterial({
             color: 0xFFFFAA,
             linewidth: 3
