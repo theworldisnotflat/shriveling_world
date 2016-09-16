@@ -321,9 +321,10 @@ function transportNetwork(){
             var vecOri = new THREE.Vector3(
                 Math.cos(λOri) * 90 * Math.cos(φOri),
                 Math.sin(φOri) * 90,
-                Math.sin(λOri) * 90 * Math.cos(φOri) - earthRadius * réduc
+                Math.sin(λOri) * 90 * Math.cos(φOri)
             );
            // ori.translateZ( - earthRadius * réduc);
+            vecOri.z += - earthRadius * réduc;
             //console.log("vecOri ",vecOri);
             var iDes = wup.map(obj => obj.CityCode).indexOf(tn[iter].idDes);
             if (iDes != -1) {
@@ -334,9 +335,10 @@ function transportNetwork(){
                 var vecDes = new THREE.Vector3(
                     Math.cos(λDes) * 90 * Math.cos(φDes),
                     Math.sin(φDes) * 90,
-                    Math.sin(λDes) * 90 * Math.cos(φDes) - earthRadius * réduc
+                    Math.sin(λDes) * 90 * Math.cos(φDes)
                     );
                 //des.translateZ( - earthRadius * réduc);*/
+                vecDes.z += - earthRadius * réduc;
 
                 //var cp = createCurvePath(ori, des, 200);
                 //var middle = (new LatLon(wup[iOri].latitude,wup[iOri].longitude)).midpointTo(new LatLon(wup[iDes].latitude, wup[iDes].longitude));
