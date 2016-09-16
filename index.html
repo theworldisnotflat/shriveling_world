@@ -353,6 +353,7 @@ function transportNetwork(){
                     Math.sin(λMid) * 90,
                     Math.sin(φMid) * 90 * Math.cos(φMid) - earthRadius * réduc
                     );
+                vecMid.setZ(- earthRadius * réduc);
                 console.log("vecOri ",vecOri);
                 console.log("vecMid ",vecMid);
                 console.log("vecDes ",vecDes);
@@ -363,8 +364,8 @@ function transportNetwork(){
                 cp.vertices.push(vecMid);
                 cp.vertices.push(vecDes);
                 var curvedLineMaterial =  new THREE.LineBasicMaterial({
-                    color: 0xFFFFAA,
-                    linewidth: 30
+                    color: colorRed, // 0xFFFFAA,
+                    linewidth: 300
                 });
                 var curvedLine = new THREE.Line(cp, curvedLineMaterial);
                 scene.add(curvedLine);
