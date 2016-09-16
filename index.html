@@ -353,7 +353,9 @@ function transportNetwork(){
                     Math.sin(λMid) * 90,
                     Math.sin(φMid) * 90 * Math.cos(φMid) - earthRadius * réduc
                     );
-                //console.log("vecMid ",vecMid);
+                console.log("vecOri ",vecOri);
+                console.log("vecMid ",vecMid);
+                console.log("vecDes ",vecDes);
 
                 var geomBezier = new THREE.QuadraticBezierCurve3(vecOri, vecMid, vecDes);
                 var cp = new THREE.Geometry();
