@@ -186,8 +186,7 @@ function cones(wup0) {
             var cone = new THREE.Mesh(coneGeometry, coneMaterial);
             var φ =   wup[iter].Latitude*Math.PI/180;
             var λ = - wup[iter].Longitude*Math.PI/180;
-                //φ phi lat     λ lambda lon
-
+            //φ phi lat     λ lambda lon
             cone.position.set (
                 Math.cos(λ) * 90 * Math.cos(φ),
                 Math.sin(φ) * 90,
@@ -195,18 +194,21 @@ function cones(wup0) {
                 );
             cone.lookAt( new THREE.Vector3(0,0,0) );
             cone.translateZ( - earthRadius * réduc);
-            cone.translateZ( coneHeight/2);
+
+            wup[iter].x  =  cone.position.x;
+            wup[iter].y  =  cone.position.y;
+            wup[iter].z  =  cone.position.z;
+
+            cone.translateZ( coneHeight/2);//so that the top spiky extremity is at city location
             cone.rotateX(- Math.PI / 2 );
             scene.add(cone);
 
             var sphere = new THREE.Mesh(sphereGeom, sphereMaterial);
-            sphere.position.set(
-                Math.cos(λ) * 90 * Math.cos(φ),
-                Math.sin(φ) * 90,
-                Math.sin(λ) * 90 * Math.cos(φ)
+            sphere.position.set(  //wup[iter].position);
+                wup[iter].x,
+                wup[iter].y,
+                wup[iter].z
             );
-            sphere.lookAt( new THREE.Vector3(0,0,0) );
-            sphere.translateZ( - earthRadius * réduc);
             scene.add(sphere);
 
 
@@ -300,65 +302,70 @@ function cones(wup0) {
 
 function transportNetwork(){
 
-    //console.log("tn ",tn);
-    //console.log("wup ",wup);
-    //var ori = THREE.Vector3();
-    //var des = THREE.Vector3();
     var wupOri, wupDes, φOri, λOri, φDes, λDes;
+	var coneGeometry = new THREE.CylinderGeometry(0, 10, 10, 100, false);
+    var coneMaterial = new THREE.MeshNormalMaterial( { transparent: true, opacity: 0.5 } );
 
     for (var iter=1;iter<tn.length;iter++){
         var iOri = wup.map(obj => obj.CityCode).indexOf(tn[iter].idOri);
         if (iOri != -1) {
-            //console.log( "  tn[iter].nameOri ", tn[iter].nameOri);
-            //console.log( "  wup[iOri].UrbanAgglomeration ",  wup[iOri].UrbanAgglomeration);
-            //console.log("wup ",wup);
-            //console.log("iOri ",iOri);
-            //console.log(" wup[iOri].Latitude ", wup[iOri].Latitude);
             tn[iter].oriLatitude  = wup[iOri].Latitude;
             tn[iter].oriLongitude = wup[iOri].Longitude;
+            tn[iter].oriX = wup[iOri].x;
+            tn[iter].oriY = wup[iOri].y;
+            tn[iter].oriZ = wup[iOri].z;
             φOri =   wup[iOri].Latitude*Math.PI/180;
             λOri = - wup[iOri].Longitude*Math.PI/180;
             var vecOri = new THREE.Vector3(
-                Math.cos(λOri) * 90 * Math.cos(φOri),
-                Math.sin(φOri) * 90,
-                Math.sin(λOri) * 90 * Math.cos(φOri)
+                tn[iter].oriX,
+                tn[iter].oriY,
+                tn[iter].oriZ
             );
-           // ori.translateZ( - earthRadius * réduc);
-            vecOri.z += - earthRadius * réduc;
+
             //console.log("vecOri ",vecOri);
             var iDes = wup.map(obj => obj.CityCode).indexOf(tn[iter].idDes);
             if (iDes != -1) {
                 tn[iter].desLatitude  = wup[iDes].Latitude;
                 tn[iter].desLongitude = wup[iDes].Longitude;
+                tn[iter].desX = wup[iDes].x;
+                tn[iter].desY = wup[iDes].y;
+                tn[iter].desZ = wup[iDes].z;
                 φDes =   wup[iDes].Latitude*Math.PI/180;
                 λDes = - wup[iDes].Longitude*Math.PI/180;
                 var vecDes = new THREE.Vector3(
-                    Math.cos(λDes) * 90 * Math.cos(φDes),
-                    Math.sin(φDes) * 90,
-                    Math.sin(λDes) * 90 * Math.cos(φDes)
+                    tn[iter].desX,
+                    tn[iter].desY,
+                    tn[iter].desZ
                     );
-                //des.translateZ( - earthRadius * réduc);*/
-                vecDes.z += - earthRadius * réduc;
-
-                //var cp = createCurvePath(ori, des, 200);
-                //var middle = (new LatLon(wup[iOri].latitude,wup[iOri].longitude)).midpointTo(new LatLon(wup[iDes].latitude, wup[iDes].longitude));
                 //φ phi lat     λ lambda lon
-                //var Bx = Math.cos(φ2) * Math.cos(λ2-λ1);
-                var Bx = Math.cos(φDes) * Math.cos(λDes-λOri);
-                var Bx = Math.cos(φDes) * Math.cos(λDes-λOri);
+
+                var Bx = Math.cos(φDes) * Math.cos(λDes-λOri);  //http://www.movable-type.co.uk/scripts/latlong.html
                 var By = Math.cos(φDes) * Math.sin(λDes-λOri);
                 var φMid = Math.atan2(Math.sin(φOri) + Math.sin(φDes),
-                                Math.sqrt( (Math.cos(φOri)+Bx)*(Math.cos(φOri)+Bx) + By*By ) );
-                var λMid = φOri + Math.atan2(By, Math.cos(φOri) + Bx);
-                var vecMid = new THREE.Vector3(
-                    Math.cos(λMid) * 90 * Math.cos(φMid),
-                    Math.sin(λMid) * 90,
-                    Math.sin(φMid) * 90 * Math.cos(φMid) - earthRadius * réduc
-                    );
-                vecMid.setZ(- earthRadius * réduc);
-                console.log("vecOri ",vecOri);
-                console.log("vecMid ",vecMid);
-                console.log("vecDes ",vecDes);
+                           Math.sqrt((Math.cos(φOri)+Bx)*(Math.cos(φOri)+Bx) + By*By ) );
+                var λMid = λOri + Math.atan2(By, Math.cos(φOri) + Bx);
+
+
+                var cone = new THREE.Mesh(coneGeometry, coneMaterial); //couldnt find a different way
+                cone.position.set (                                   // this replicates what is done before
+                    Math.cos(λMid) * 90 * Math.cos(φMid),             //and then coordiantes of this cone are retrieved
+                    Math.sin(φMid) * 90,
+                    Math.sin(λMid) * 90 * Math.cos(φMid)
+                );
+                cone.lookAt( new THREE.Vector3(0,0,0) );
+                cone.translateZ( - earthRadius * réduc);
+
+               var vecMid = new THREE.Vector3(
+                    cone.position.x,
+                    cone.position.y,
+                    cone.position.z
+                );
+
+
+                //vecMid.setZ(- earthRadius * réduc);
+                //console.log("vecOri ",vecOri);
+                //console.log("vecMid ",vecMid);
+                //console.log("vecDes ",vecDes);
 
                 var geomBezier = new THREE.QuadraticBezierCurve3(vecOri, vecMid, vecDes);
                 var cp = new THREE.Geometry();
