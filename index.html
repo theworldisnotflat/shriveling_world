@@ -372,11 +372,25 @@ function transportNetwork(){
                 cp.vertices.push(vecOri);
                 cp.vertices.push(vecMid);
                 cp.vertices.push(vecDes);
+
                 var curvedLineMaterial =  new THREE.LineBasicMaterial({
                     color: colorRed, // 0xFFFFAA,
                     linewidth: 300
                 });
-                var curvedLine = new THREE.Line(cp, curvedLineMaterial);
+
+                var numPoints = 5;
+                spline = new THREE.SplineCurve3([vecOri, vecMid, vecDes]);
+                var geomSpline = new THREE.Geometry();
+                var splinePoints = spline.getPoints(numPoints);
+
+                for(var i = 0; i < splinePoints.length; i++){
+                    geomSpline.vertices.push(splinePoints[i]);
+                }
+
+                var line = new THREE.Line(geomSpline, curvedLineMaterial);
+                //scene.add(line);
+
+                var curvedLine = new THREE.Line(geomBezier, curvedLineMaterial);
                 scene.add(curvedLine);
             }
         }
