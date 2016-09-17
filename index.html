@@ -302,6 +302,7 @@ function cones(wup0) {
 
 function transportNetwork(){
 
+
     var wupOri, wupDes, φOri, λOri, φDes, λDes;
 	var coneGeometry = new THREE.CylinderGeometry(0, 10, 10, 100, false);
     var coneMaterial = new THREE.MeshNormalMaterial( { transparent: true, opacity: 0.5 } );
@@ -348,7 +349,7 @@ function transportNetwork(){
 
                 var cone = new THREE.Mesh(coneGeometry, coneMaterial); //couldnt find a different way
                 cone.position.set (                                   // this replicates what is done before
-                    Math.cos(λMid) * 90 * Math.cos(φMid),             //and then coordiantes of this cone are retrieved
+                    Math.cos(λMid) * 90 * Math.cos(φMid),             //and then the coordinates of this cone are retrieved
                     Math.sin(φMid) * 90,
                     Math.sin(λMid) * 90 * Math.cos(φMid)
                 );
@@ -367,31 +368,24 @@ function transportNetwork(){
                 //console.log("vecMid ",vecMid);
                 //console.log("vecDes ",vecDes);
 
-                var geomBezier = new THREE.QuadraticBezierCurve3(vecOri, vecMid, vecDes);
-                var cp = new THREE.Geometry();
-                cp.vertices.push(vecOri);
-                cp.vertices.push(vecMid);
-                cp.vertices.push(vecDes);
-
                 var curvedLineMaterial =  new THREE.LineBasicMaterial({
                     color: colorRed, // 0xFFFFAA,
                     linewidth: 300
                 });
 
-                var numPoints = 5;
-                spline = new THREE.SplineCurve3([vecOri, vecMid, vecDes]);
-                var geomSpline = new THREE.Geometry();
-                var splinePoints = spline.getPoints(numPoints);
-
-                for(var i = 0; i < splinePoints.length; i++){
-                    geomSpline.vertices.push(splinePoints[i]);
+                SUBDIVISIONS = 20;
+                geomBezier = new THREE.Geometry();
+                curve = new THREE.QuadraticBezierCurve3();
+                curve.v0 = vecOri;
+                curve.v1 = vecMid;
+                curve.v2 = vecDes;
+                for (j = 0; j < SUBDIVISIONS; j++) {
+                   geomBezier.vertices.push( curve.getPoint(j / SUBDIVISIONS) )
                 }
-
-                var line = new THREE.Line(geomSpline, curvedLineMaterial);
-                //scene.add(line);
-
-                var curvedLine = new THREE.Line(geomBezier, curvedLineMaterial);
+                curvedLine = new THREE.Line(geomBezier, curvedLineMaterial);
                 scene.add(curvedLine);
+                var lengthEdge = curvedLine.getLength();
+                console.log("lengthEdge ",lengthEdge);
             }
         }
 
