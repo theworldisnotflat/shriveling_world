@@ -301,8 +301,8 @@ function transportNetwork(){
 
     //console.log("tn ",tn);
     //console.log("wup ",wup);
-    var ori = THREE.Vector3();
-    var des = THREE.Vector3();
+    var ori = new THREE.Vector3();
+    var des = new THREE.Vector3();
     var wupOri, wupDes, lat, lon;
 
     for (var iter=1;iter<tn.length;iter++){
@@ -314,24 +314,24 @@ function transportNetwork(){
         tn[iter].oriLongitude = wupOri.Longitude;
         lat =   wupOri.Latitude*Math.PI/180;
         lon = - wupOri.Longitude*Math.PI/180;
-        ori.position.set (
+        ori.set (
             Math.cos(lon) * 90 * Math.cos(lat),
             Math.sin(lat) * 90,
             Math.sin(lon) * 90 * Math.cos(lat)
             );
-        ori.translateZ( - earthRadius * réduc);
+        ori.z-=  earthRadius * réduc;
 
         wupDes = wup.filter(function (id) { return wup.CityCode == tn[iter].idDes });
         tn[iter].desLatitude  = wupDes.Latitude;
         tn[iter].desLongitude = wupDes.Longitude;
         lat =   wupDes.Latitude*Math.PI/180;
         lon = - wupDes.Longitude*Math.PI/180;
-        des.position.set (
+        des.set (
             Math.cos(lon) * 90 * Math.cos(lat),
             Math.sin(lat) * 90,
             Math.sin(lon) * 90 * Math.cos(lat)
             );
-        des.translateZ( - earthRadius * réduc);
+        des.z-=  earthRadius * réduc;
 
         var cp = createCurvePath(ori, des, 200);
         var curvedLineMaterial =  new THREE.LineBasicMaterial({
@@ -418,12 +418,6 @@ var createCurvePath = function(start, end, elevation) {
     }
 
 
-
-
-// animation loop
-animate();
-
-
 function parseData(url, callBack) {
     return new Promise(function(resolve, reject) {
         Papa.parse(url, {
@@ -460,9 +454,12 @@ function parseData(url, callBack) {
 
 function animate()
 {
+    if(renderer){
+	   renderer.render( scene, camera );
+       update();
+    }
     requestAnimationFrame( animate );
-	render();
-	update();
+	
 }
 
 function update()
@@ -479,12 +476,8 @@ function update()
 	controls.update();
 	stats.update();
 }
-
-function render()
-{
-	renderer.render( scene, camera );
-}
-
+// animation loop
+animate();
 </script>
 
 </body>
