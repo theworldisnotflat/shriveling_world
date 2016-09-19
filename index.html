@@ -162,13 +162,8 @@ function cones(wup0) {
 	// GEOMETRY //
 	//////////////
 
-	// most objects displayed are a "mesh":
-	//  a collection of points ("geometry") and
-	//  a set of surface parameters ("material")
-
-
-	var coneMaterial = new THREE.MeshPhongMaterial( { color: colorBeige });
-    //var coneMaterial = new THREE.MeshNormalMaterial( { transparent: true, opacity: 0.5 } );
+	//var coneMaterial = new THREE.MeshPhongMaterial( { color: colorBeige });
+    var coneMaterial = new THREE.MeshNormalMaterial( { transparent: true, opacity: 0.5 } );
     var sphereMaterial = new THREE.MeshPhongMaterial( { color: colorRed });
 
     var coneHeight = coneRadius * Math.sqrt((maxSpeed/roadSpeed)^2 -1); //this is the main geometric formula linkg speed and slope of cones
@@ -184,16 +179,35 @@ function cones(wup0) {
             nbCities++;
 
             var cone = new THREE.Mesh(coneGeometry, coneMaterial);
+            var ccone = new THREE.Mesh(coneGeometry, coneMaterial);
+
             var φ =   wup[iter].Latitude*Math.PI/180;
             var λ = - wup[iter].Longitude*Math.PI/180;
             //φ phi lat     λ lambda lon
-            cone.position.set (
+            ccone.position.set (
                 Math.cos(λ) * 90 * Math.cos(φ),
                 Math.sin(φ) * 90,
                 Math.sin(λ) * 90 * Math.cos(φ)
                 );
+            ccone.lookAt( new THREE.Vector3(0,0,0) );
+            ccone.translateZ( - earthRadius * réduc);
+
+            console.log("wup[iter].Latitude ", wup[iter].Latitude)
+            console.log("ccone.position.x init ", ccone.position)
+
+            cone.position.set (10,10,10);
+            console.log("cone.position nouv ", cone.position)
+
+            cone.position = convertLatLonToVec3(
+                wup[iter].Latitude,
+                wup[iter].Longitude
+            ); //.multiplyScalar(earthRadius * réduc);
+
             cone.lookAt( new THREE.Vector3(0,0,0) );
-            cone.translateZ( - earthRadius * réduc);
+
+            //cone.translateZ( - earthRadius * réduc);
+            console.log("convertLatLonToVec3.x ", convertLatLonToVec3.x)
+            console.log("cone.position.x nouv ", cone.position.x)
 
             wup[iter].x  =  cone.position.x;
             wup[iter].y  =  cone.position.y;
@@ -373,7 +387,7 @@ function transportNetwork(){
                     linewidth: 300
                 });
 
-                SUBDIVISIONS = 20;
+                SUBDIVISIONS = 200;
                 geomBezier = new THREE.Geometry();
                 curve = new THREE.QuadraticBezierCurve3();
                 curve.v0 = vecOri;
@@ -384,8 +398,8 @@ function transportNetwork(){
                 }
                 curvedLine = new THREE.Line(geomBezier, curvedLineMaterial);
                 scene.add(curvedLine);
-                var lengthEdge = curvedLine.getLength();
-                console.log("lengthEdge ",lengthEdge);
+                //var lengthEdge = curvedLine.getLength();
+                //console.log("lengthEdge ",lengthEdge);
             }
         }
 
@@ -450,20 +464,16 @@ var scale=evt.target.value;
 
 
 
-var createCurvePath = function(start, end, elevation) {
-        var start3 = globe.translateCordsToPoint(start.latitude,start.longitude);
-        var end3 = globe.translateCordsToPoint(end.latitude, end.longitude);
-        var mid = (new LatLon(start.latitude,start.longitude)).midpointTo(new LatLon(end.latitude, end.longitude));
-       var middle3 = globe.translateCordsToPoint(mid.lat(), mid.lon(), elevation);
-
-        var curveQuad = new THREE.QuadraticBezierCurve3(start3, middle3, end3);
-   //   var curveCubic = new THREE.CubicBezierCurve3(start3, start3_control, end3_control, end3);
-
-        var cp = new THREE.CurvePath();
-        cp.add(curveQuad);
-   //   cp.add(curveCubic);
-        return cp;
-    }
+function convertLatLonToVec3(lat,lon)
+{
+	lat =  lat * Math.PI / 180.0;
+	lon = -lon * Math.PI / 180.0;
+    //console.log("lat in conv ", lat);
+	return new THREE.Vector3(
+		Math.cos(lat) * Math.cos(lon),
+		Math.sin(lat),
+		Math.cos(lat) * Math.sin(lon) );
+}
 
 
 
