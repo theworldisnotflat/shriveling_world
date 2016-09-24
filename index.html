@@ -316,7 +316,7 @@ function cones(wup0) {
 
 function transportNetwork(){
 
-<<<<<<< HEAD
+
 
     var wupOri, wupDes, φOri, λOri, φDes, λDes;
 	var coneGeometry = new THREE.CylinderGeometry(0, 10, 10, 100, false);
@@ -337,41 +337,7 @@ function transportNetwork(){
                 tn[iter].oriY,
                 tn[iter].oriZ
             );
-=======
-    //console.log("tn ",tn);
-    //console.log("wup ",wup);
-    var ori = new THREE.Vector3();
-    var des = new THREE.Vector3();
-    var wupOri, wupDes, lat, lon;
 
-    for (var iter=1;iter<tn.length;iter++){
-        wupOri = wup.filter(function (id) { return wup.CityCode == tn[iter].idOri });
-        console.log("tn.length ",tn.length);
-        //console.log("wup ",wup);
-        console.log("wupOri ",wupOri);
-        tn[iter].oriLatitude  = wupOri.Latitude;
-        tn[iter].oriLongitude = wupOri.Longitude;
-        lat =   wupOri.Latitude*Math.PI/180;
-        lon = - wupOri.Longitude*Math.PI/180;
-        ori.set (
-            Math.cos(lon) * 90 * Math.cos(lat),
-            Math.sin(lat) * 90,
-            Math.sin(lon) * 90 * Math.cos(lat)
-            );
-        ori.z-=  earthRadius * réduc;
-
-        wupDes = wup.filter(function (id) { return wup.CityCode == tn[iter].idDes });
-        tn[iter].desLatitude  = wupDes.Latitude;
-        tn[iter].desLongitude = wupDes.Longitude;
-        lat =   wupDes.Latitude*Math.PI/180;
-        lon = - wupDes.Longitude*Math.PI/180;
-        des.set (
-            Math.cos(lon) * 90 * Math.cos(lat),
-            Math.sin(lat) * 90,
-            Math.sin(lon) * 90 * Math.cos(lat)
-            );
-        des.z-=  earthRadius * réduc;
->>>>>>> 558b059643cc6813988ee2f57c91b37e35ad733f
 
             //console.log("vecOri ",vecOri);
             var iDes = wup.map(obj => obj.CityCode).indexOf(tn[iter].idDes);
