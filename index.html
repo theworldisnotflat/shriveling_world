@@ -186,31 +186,27 @@
 					nbCities++;
 
 					var cone = new THREE.Mesh(coneGeometry, coneMaterial);
-					var ccone = new THREE.Mesh(coneGeometry, coneMaterial);
 
 					var φ = wup[iter].Latitude * Math.PI / 180;
 					var λ = -wup[iter].Longitude * Math.PI / 180;
 					//φ phi lat     λ lambda lon
-					ccone.position.set(
+					cone.position.set(
 						Math.cos(λ) * 90 * Math.cos(φ),
 						Math.sin(φ) * 90,
 						Math.sin(λ) * 90 * Math.cos(φ)
 					);
-					ccone.lookAt(new THREE.Vector3(0, 0, 0));
-					ccone.translateZ(-earthRadius * réduc);
+				    cone.lookAt(new THREE.Vector3(0, 0, 0));
+					cone.translateZ(-earthRadius * réduc);
 
 					/*	console.log("wup[iter].Latitude ", wup[iter].Latitude)
 						console.log("ccone.position.x init ", ccone.position)*/
 
-					cone.position.set(10, 10, 10);
-					//	console.log("cone.position nouv ", cone.position)
+					//cone.position = convertLatLonToVec3(
+						//wup[iter].Latitude,
+						//wup[iter].Longitude
+					//); //.multiplyScalar(earthRadius * réduc);
 
-					cone.position = convertLatLonToVec3(
-						wup[iter].Latitude,
-						wup[iter].Longitude
-					); //.multiplyScalar(earthRadius * réduc);
-
-					cone.lookAt(new THREE.Vector3(0, 0, 0));
+					//cone.lookAt(new THREE.Vector3(0, 0, 0));
 
 					//cone.translateZ( - earthRadius * réduc);
 					/*	console.log("convertLatLonToVec3.x ", convertLatLonToVec3.x)
