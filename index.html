@@ -294,7 +294,19 @@
 
 			var californiaShape = new THREE.Shape(californiaPts);
 
+            var continent = [
+             [30.5056472259,-1.82573914532],[30.5555641619,-1.94241563229],[30.4124881553,-1.95919366501],[30.2457075508,-1.93740157439],[30.2972284817,-1.8106126149],[30.5056472259,-1.82573914532]
+            ]
 
+            for (var i = 0; i < continent.length; i++) {
+                var φ =  continent[i][0] * Math.PI / 180;
+				var λ = -continent[i][1] * Math.PI / 180;
+                //φ phi lat     λ lambda lon
+				continent[i][2] = (-earthRadius * réduc) * Math.cos(λ) * 90 * Math.cos(φ);
+				continent[i][3] = (-earthRadius * réduc) * Math.sin(φ) * 90;
+				continent[i][4] = (-earthRadius * réduc) * Math.sin(λ) * 90 * Math.cos(φ);
+            }
+            console.log("continent ", continent);
 
 			//var extrudeSettings = { amount: 20 }; // bevelSegments: 2, steps: 2 , bevelSegments: 5, bevelSize: 8, bevelThickness:5
 			var extrudeSettings = {
