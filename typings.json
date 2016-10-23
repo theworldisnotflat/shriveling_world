@@ -1,0 +1,9 @@
+{
+  "name": "teststhreejs",
+  "dependencies": {},
+  "globalDependencies": {
+    "geojson": "registry:dt/geojson",
+    "poly2tri": "registry:dt/poly2tri",
+    "tween.js": "registry:dt/tween.js"
+  }
+}

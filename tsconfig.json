@@ -1,0 +1,22 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "declaration": false,
+        "target": "ES6",
+        "removeComments": true,
+        "allowJs": false,
+        "pretty": true
+
+    },
+    "exclude": [
+        "dist",
+        "examples",
+        "temp"
+    ],
+    "include": [
+        "node_modules/@types/**/**/*.d.ts",
+        "typings",
+        "src/**/**/*.ts"
+    ]
+
+}
