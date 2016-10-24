@@ -365,11 +365,7 @@ namespace shriveling {
 
         public fuzzyClone(): THREE.Geometry {
             let geometry = this.clone();
-            geometry.morphTargets = this.morphTargets; /*
-            geometry.verticesNeedUpdate = true;
-            geometry.computeBoundingBox();
-            geometry.computeBoundingSphere();
-            geometry.computeMorphNormals();*/
+            geometry.morphTargets = this.morphTargets;
             return geometry;
         }
 

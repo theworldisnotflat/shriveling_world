@@ -3,7 +3,7 @@
   "dependencies": {},
   "globalDependencies": {
     "geojson": "registry:dt/geojson",
-    "papaparse": "registry:dt/papaparse#4.1.0+20160317120654",
+    "papaparse": "registry:dt/papaparse",
     "poly2tri": "registry:dt/poly2tri",
     "tween.js": "registry:dt/tween.js"
   }
