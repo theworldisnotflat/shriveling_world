@@ -10,6 +10,7 @@ declare namespace shriveling {
         private _raycaster;
         private _highlitedMeshName;
         private _selectedMeshs;
+        private _scale;
         static extrude(meshes: CountryMesh[], value?: number | number[], timing?: number, init?: number, easingFunction?: {
             (k: number): number;
         }): void;
@@ -24,6 +25,8 @@ declare namespace shriveling {
         getMeshes(name: string): CountryMesh[];
         extrudeByName(name: string, value?: number): void;
         extrudeByArray(tab?: CountryMesh[], value?: number): void;
+        scale(value: number): void;
+        highLight(name: string, light?: boolean): void;
     }
 }
 declare namespace shriveling {

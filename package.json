@@ -1,58 +1,58 @@
 {
-    "name": "shriveling_world",
-    "version": "0.0.1",
-    "description": "The  \"shriveling_world\" project aims at producing images of the global time-space, using the third dimension, as in time-space relief maps.",
-    "main": "gulpfile.js",
-    "dependencies": {},
-    "devDependencies": {
-        "@types/three": "0.0.24",
-        "babel-polyfill": "^6.16.0",
-        "babel-preset-es2015": "^6.16.0",
-        "compression": "^1.6.2",
-        "del": "^2.2.2",
-        "earcut": "^2.1.1",
-        "express": "^4.14.0",
-        "gulp": "^3.9.1",
-        "gulp-add-src": "^0.2.0",
-        "gulp-babel": "^6.1.2",
-        "gulp-concat": "^2.6.0",
-        "gulp-connect": "^5.0.0",
-        "gulp-convert-encoding": "^1.0.0",
-        "gulp-cssnano": "^2.1.2",
-        "gulp-flatmap": "^1.0.0",
-        "gulp-rename": "^1.2.2",
-        "gulp-shell": "^0.5.2",
-        "gulp-typedoc": "^2.0.0",
-        "gulp-typescript": "^3.0.2",
-        "gulp-uglify": "^2.0.0",
-        "poly2tri": "^1.3.5",
-        "remap-istanbul": "^0.7.0",
-        "three": "^0.81.2",
-        "tslint": "^3.15.1",
-        "tween.js": "^16.3.5",
-        "typedoc": "^0.5.0",
-        "typings": "^1.4.0",
-        "vis": "^4.16.1",
-        "yargs": "^6.3.0"
-    },
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "postinstall": "node_modules/.bin/typings install"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/theworldisnotflat/shriveling_world.git"
-    },
-    "keywords": [
-        "Three.js",
-        "typescript",
-        "shriveling",
-        "world"
-    ],
-    "author": "theworldisnotflat",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/theworldisnotflat/shriveling_world/issues"
-    },
-    "homepage": "https://github.com/theworldisnotflat/shriveling_world#readme"
+  "name": "shriveling_world",
+  "version": "0.0.1",
+  "description": "The  \"shriveling_world\" project aims at producing images of the global time-space, using the third dimension, as in time-space relief maps.",
+  "main": "gulpfile.js",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/three": "0.0.24",
+    "babel-polyfill": "^6.16.0",
+    "babel-preset-es2015": "^6.16.0",
+    "compression": "^1.6.2",
+    "del": "^2.2.2",
+    "express": "^4.14.0",
+    "gulp": "^3.9.1",
+    "gulp-add-src": "^0.2.0",
+    "gulp-babel": "^6.1.2",
+    "gulp-concat": "^2.6.0",
+    "gulp-connect": "^5.0.0",
+    "gulp-convert-encoding": "^1.0.0",
+    "gulp-cssnano": "^2.1.2",
+    "gulp-flatmap": "^1.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-shell": "^0.5.2",
+    "gulp-typedoc": "^2.0.0",
+    "gulp-typescript": "^3.0.2",
+    "gulp-uglify": "^2.0.0",
+    "papaparse": "^4.1.2",
+    "poly2tri": "^1.3.5",
+    "remap-istanbul": "^0.7.0",
+    "three": "^0.81.2",
+    "tslint": "^3.15.1",
+    "tween.js": "^16.3.5",
+    "typedoc": "^0.5.0",
+    "typings": "^1.4.0",
+    "vis": "^4.16.1",
+    "yargs": "^6.3.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "node_modules/.bin/typings install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theworldisnotflat/shriveling_world.git"
+  },
+  "keywords": [
+    "Three.js",
+    "typescript",
+    "shriveling",
+    "world"
+  ],
+  "author": "theworldisnotflat",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/theworldisnotflat/shriveling_world/issues"
+  },
+  "homepage": "https://github.com/theworldisnotflat/shriveling_world#readme"
 }
