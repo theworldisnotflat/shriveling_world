@@ -1,8 +1,9 @@
 {
-  "name": "teststhreejs",
+  "name": "shriveling_world",
   "dependencies": {},
   "globalDependencies": {
     "geojson": "registry:dt/geojson",
+    "papaparse": "registry:dt/papaparse",
     "poly2tri": "registry:dt/poly2tri",
     "tween.js": "registry:dt/tween.js"
   }

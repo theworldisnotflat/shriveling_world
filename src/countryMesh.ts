@@ -26,7 +26,7 @@ namespace shriveling {
             let loader = new THREE.TextureLoader();
 
             let earthMaterial = new THREE.MeshPhongMaterial({
-                morphTargets: true, opacity: 0.5, depthTest: true, depthWrite: true, shininess: 1.0, transparent: false,
+                morphTargets: true, opacity: 0.5, depthTest: true, depthWrite: true, transparent: false,
             });
             earthMaterial.map = loader.load(CountryMesh.COUNTRY_TEXTURES.map);
             earthMaterial.specularMap = loader.load(CountryMesh.COUNTRY_TEXTURES.specularMap);

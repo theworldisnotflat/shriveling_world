@@ -99,7 +99,7 @@
 				let stop = new Date();
 				console.log((stop.getTime() - start.getTime()) / 1000);
 			});
-			container.addEventListener('click', (evt) => {
+			container.addEventListener('dblclick', (evt) => {
 				if (board) {
 					let name = board.getMeshByMouse(evt, true);
 					console.log(name);

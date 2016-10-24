@@ -12,6 +12,7 @@ namespace shriveling {
         private _raycaster: THREE.Raycaster;
         private _highlitedMeshName: string;
         private _selectedMeshs: THREE.Mesh[] = [];
+        private _scale: number = 1;
 
         public static extrude(
             meshes: CountryMesh[], value: number | number[] = 70, timing: number = 1000, init?: number,
@@ -117,25 +118,7 @@ namespace shriveling {
             let intersects = this._raycaster.intersectObjects(this.countryMeshCollection);
             if (intersects.length > 0 && this.countryMeshCollection.indexOf(<CountryMesh>intersects[0].object) > 0) {
                 resultat = intersects[0].object.name;
-                if (resultat !== this._highlitedMeshName) {
-                    let that = this;
-                    this._selectedMeshs.forEach((mesh) => {
-                        that._scene.remove(mesh);
-                    });
-                    this._selectedMeshs = this.getMeshes(resultat).map((mesh) => {
-                        let geometry = (<CountryGeometry>mesh.geometry).fuzzyClone();
-                        let out = new THREE.Mesh(geometry, CountryBoard.highLitedMaterial);
-                        out.updateMorphTargets();
-                        for (let i = 0; i < (<any>mesh).morphTargetInfluences.length; i++) {
-                            (<any>out).morphTargetInfluences[i] = (<any>mesh).morphTargetInfluences[i];
-                        }
-                        that._scene.add(out);
-                        return out;
-                    });
-                }
-                this._selectedMeshs.forEach((mesh) => {
-                    mesh.material.visible = highLight;
-                });
+                this.highLight(resultat, highLight);
             } else {
                 this._selectedMeshs.forEach((mesh) => {
                     mesh.material.visible = false;
@@ -160,6 +143,40 @@ namespace shriveling {
                 mesh.material.visible = false;
             });
             CountryBoard.extrude(tab, value);
+        }
+
+        public scale(value: number): void {
+            this._selectedMeshs.forEach((mesh) => {
+                mesh.scale.setScalar(value);
+            });
+            this.countryMeshCollection.forEach((mesh) => {
+                mesh.scale.setScalar(value);
+            });
+            this._scale = value;
+        }
+
+        public highLight(name: string, light: boolean = true): void {
+            if (name !== this._highlitedMeshName) {
+                this._highlitedMeshName = name;
+                let that = this;
+                this._selectedMeshs.forEach((mesh) => {
+                    that._scene.remove(mesh);
+                });
+                this._selectedMeshs = this.getMeshes(name).map((mesh) => {
+                    let geometry = (<CountryGeometry>mesh.geometry).fuzzyClone();
+                    let out = new THREE.Mesh(geometry, CountryBoard.highLitedMaterial);
+                    out.updateMorphTargets();
+                    for (let i = 0; i < (<any>mesh).morphTargetInfluences.length; i++) {
+                        (<any>out).morphTargetInfluences[i] = (<any>mesh).morphTargetInfluences[i];
+                    }
+                    that._scene.add(out);
+                    out.scale.setScalar(that._scale);
+                    return out;
+                });
+            }
+            this._selectedMeshs.forEach((mesh) => {
+                mesh.material.visible = light;
+            });
         }
     }
 }
