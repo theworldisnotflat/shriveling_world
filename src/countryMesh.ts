@@ -1,20 +1,7 @@
 namespace shriveling {
     'use strict';
 
-    export interface ICountryTextureURL {
-        map: string;
-        specularMap: string;
-        bumpMap: string;
-        normalMap: string;
-    }
-
     export class CountryMesh extends THREE.Mesh {
-        public static COUNTRY_TEXTURES: ICountryTextureURL = {
-            map: 'assets/earthmap4k.jpg',
-            specularMap: 'assets/earthspec4k.jpg',
-            bumpMap: 'assets/earthbump4k.jpg',
-            normalMap: 'assets/earth_normalmap_flat4k.jpg',
-        };
         private static NORMAL_MATERIAL: THREE.Material;
         private _extruded: number = 0;
         private _reprojectName: string;
@@ -28,12 +15,12 @@ namespace shriveling {
             let earthMaterial = new THREE.MeshPhongMaterial({
                 morphTargets: true, opacity: 0.5, depthTest: true, depthWrite: true, transparent: false,
             });
-            earthMaterial.map = loader.load(CountryMesh.COUNTRY_TEXTURES.map);
-            earthMaterial.specularMap = loader.load(CountryMesh.COUNTRY_TEXTURES.specularMap);
+            earthMaterial.map = loader.load(Configuration.COUNTRY_TEXTURES.map);
+            earthMaterial.specularMap = loader.load(Configuration.COUNTRY_TEXTURES.specularMap);
             earthMaterial.specular = new THREE.Color(0x262626);
-            earthMaterial.bumpMap = loader.load(CountryMesh.COUNTRY_TEXTURES.bumpMap);
+            earthMaterial.bumpMap = loader.load(Configuration.COUNTRY_TEXTURES.bumpMap);
             earthMaterial.bumpScale = 0.15;
-            earthMaterial.normalMap = loader.load(CountryMesh.COUNTRY_TEXTURES.normalMap);
+            earthMaterial.normalMap = loader.load(Configuration.COUNTRY_TEXTURES.normalMap);
             earthMaterial.normalScale = new THREE.Vector2(0.5, 0.7);
             earthMaterial.side = THREE.DoubleSide;
             CountryMesh.NORMAL_MATERIAL = earthMaterial;

@@ -1,10 +1,5 @@
 namespace shriveling {
     'use strict';
-    export var deg2rad = Math.PI / 180;
-    export var rad2deg = 180 / Math.PI;
-    export var earthRadiusMeters = 6371e3;
-    const OVER_PI = 1 / Math.PI;
-    const OVER_TWO_PI = 1 / (2 * Math.PI);
 
     export interface ITypeExtrusion {
         none: number;
@@ -199,7 +194,7 @@ namespace shriveling {
 
     function prepareGeometry(
         verticesAndTriangles: IVerticesTriangles, mainProjector: string, heightRatio: number = 0.01,
-        extrudedHeightRatio: number = 0.5): IPreGeometry {
+        extrudedHeightRatio: number = -0.8): IPreGeometry {
         let resultat: IPreGeometry = <IPreGeometry>{};
         let cartoVertices = verticesAndTriangles.vertices;
         let cartoVerticesExtruded: Cartographic[] = [...cartoVertices];
@@ -211,8 +206,8 @@ namespace shriveling {
         let faces: THREE.Face3[] = [];
         let faceVertexUvs: THREE.Vector2[][] = [];
         const n = cartoVertices.length;
-        const hatHeight = earthRadiusMeters * heightRatio;
-        const extrudedHeight = earthRadiusMeters * extrudedHeightRatio;
+        const hatHeight = Configuration.earthRadiusMeters * heightRatio;
+        const extrudedHeight = Configuration.earthRadiusMeters * extrudedHeightRatio;
 
         for (let name in mapProjectors) {
             if (mapProjectors.hasOwnProperty(name)) {
@@ -234,8 +229,8 @@ namespace shriveling {
             cartoVerticesExtruded.push(cartoHat);
 
             uvs.push(new THREE.Vector2(
-                carto.longitude * OVER_TWO_PI + 0.5,
-                carto.latitude * OVER_PI + 0.5
+                carto.longitude * Configuration.OVER_TWO_PI + 0.5,
+                carto.latitude * Configuration.OVER_PI + 0.5
             ));
         }
 

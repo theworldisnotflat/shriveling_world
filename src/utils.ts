@@ -1,13 +1,10 @@
 /// <reference path="../node_modules/@types/three/index.d.ts"/>
 namespace shriveling {
     'use strict';
-    export var deg2rad = Math.PI / 180;
-    export var rad2deg = 180 / Math.PI;
-    export var earthRadiusMeters = 6371e3;
 
     export var mapProjectors: IConverterLookup = {
         none: (pos: Cartographic, threeRadius: number = Cartographic.THREE_EARTH_RADIUS): THREE.Vector3 => {
-            let radius = (earthRadiusMeters + pos.height) / earthRadiusMeters * threeRadius;
+            let radius = (Configuration.earthRadiusMeters + pos.height) / Configuration.earthRadiusMeters * threeRadius;
             return new THREE.Vector3(
                 -Math.cos(pos.longitude) * radius * Math.cos(pos.latitude),
                 Math.sin(pos.latitude) * radius,
@@ -19,7 +16,7 @@ namespace shriveling {
             return new THREE.Vector3(
                 (pos.longitude - reference.longitude) * Math.cos(reference.latitude) * threeRadius,
                 (pos.latitude - reference.latitude) * threeRadius,
-                (pos.height - reference.height) / earthRadiusMeters * threeRadius
+                (pos.height - reference.height) / Configuration.earthRadiusMeters * threeRadius
             );
         },
         Mercator: (
@@ -27,7 +24,7 @@ namespace shriveling {
             return new THREE.Vector3(
                 (pos.longitude - lambda0) * threeRadius,
                 Math.log(Math.tan(Math.PI / 4 + pos.latitude / 2)) * threeRadius,
-                pos.height / earthRadiusMeters * threeRadius
+                pos.height / Configuration.earthRadiusMeters * threeRadius
             );
         },
     };
@@ -70,8 +67,8 @@ namespace shriveling {
 
         constructor(longitude: number = 0, latitude: number = 0, height: number = 0, isRadians: boolean = true) {
             if (!isRadians) {
-                latitude *= deg2rad;
-                longitude *= deg2rad;
+                latitude *= Configuration.deg2rad;
+                longitude *= Configuration.deg2rad;
             }
             this.latitude = latitude;
             this.longitude = longitude;

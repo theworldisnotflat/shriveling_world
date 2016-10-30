@@ -2,8 +2,6 @@ namespace shriveling {
     'use strict';
 
     export class CountryBoard {
-        public static highLitedMaterial: THREE.Material =
-        new THREE.MeshBasicMaterial({ color: 0xffff00, morphTargets: true, transparent: true, opacity: 0.5, side: THREE.DoubleSide });
         public countryMeshCollection: CountryMesh[] = [];
         private _projection: string;
         private _scene: THREE.Scene;
@@ -16,7 +14,7 @@ namespace shriveling {
 
         public static extrude(
             meshes: CountryMesh[], value: number | number[] = 70, timing: number = 1000, init?: number,
-            easingFunction: { (k: number): number } = TWEEN.Easing.Linear.None): void {
+            easingFunction: { (k: number): number } = TWEEN.Easing.Linear.None, callBack?: { func: () => void, scope: any }): void {
             let begin = {}, end = {};
             if (typeof value === 'number') {
                 value = [value];
@@ -32,6 +30,11 @@ namespace shriveling {
                 .onUpdate(() => {
                     for (let i = 0; i < meshes.length; i++) {
                         meshes[i].extruded = begin[i];
+                    }
+                })
+                .onComplete(() => {
+                    if (callBack) {
+                        callBack.func.call(callBack.scope);
                     }
                 })
                 .start();
@@ -96,7 +99,9 @@ namespace shriveling {
                         });
                         that._isReprojecting = false;
                         that._projection = projection;
-                        CountryBoard.extrude(that.countryMeshCollection, extruded, 1000, 0, TWEEN.Easing.Elastic.InOut);
+                        CountryBoard.extrude(
+                            that.countryMeshCollection, extruded, 1000, 0,
+                            TWEEN.Easing.Elastic.InOut, { func: that._reHighLight, scope: that });
                     })
                     .start();
             }
@@ -135,14 +140,16 @@ namespace shriveling {
             this._selectedMeshs.forEach((mesh) => {
                 mesh.material.visible = false;
             });
-            CountryBoard.extrude(this.getMeshes(name), value);
+            let that = this;
+            CountryBoard.extrude(this.getMeshes(name), value, undefined, undefined, undefined, { func: that._reHighLight, scope: that });
         }
 
         public extrudeByArray(tab: CountryMesh[] = this.countryMeshCollection, value?: number): void {
             this._selectedMeshs.forEach((mesh) => {
                 mesh.material.visible = false;
             });
-            CountryBoard.extrude(tab, value);
+            let that = this;
+            CountryBoard.extrude(tab, value, undefined, undefined, undefined, { func: that._reHighLight, scope: that });
         }
 
         public scale(value: number): void {
@@ -164,7 +171,7 @@ namespace shriveling {
                 });
                 this._selectedMeshs = this.getMeshes(name).map((mesh) => {
                     let geometry = (<CountryGeometry>mesh.geometry).fuzzyClone();
-                    let out = new THREE.Mesh(geometry, CountryBoard.highLitedMaterial);
+                    let out = new THREE.Mesh(geometry, Configuration.highLitedMaterial);
                     out.updateMorphTargets();
                     for (let i = 0; i < (<any>mesh).morphTargetInfluences.length; i++) {
                         (<any>out).morphTargetInfluences[i] = (<any>mesh).morphTargetInfluences[i];
@@ -177,6 +184,15 @@ namespace shriveling {
             this._selectedMeshs.forEach((mesh) => {
                 mesh.material.visible = light;
             });
+        }
+
+        private _reHighLight(): void {
+            if (this._selectedMeshs.length > 0) {
+                let visible = this._selectedMeshs[0].material.visible;
+                let name = this._highlitedMeshName;
+                this._highlitedMeshName = undefined;
+                this.highLight(name, visible);
+            }
         }
     }
 }
