@@ -6,6 +6,13 @@ namespace shriveling {
         extruded: number;
     }
 
+    export interface IBBox {
+        minLat: number;
+        maxLat: number;
+        minLong: number;
+        maxLong: number;
+    }
+
     interface IReverseLookupExtrusion {
         projection: string;
         extruded: boolean;
@@ -17,12 +24,14 @@ namespace shriveling {
         morphs: { [name: string]: THREE.Vector3[] };
         verticesExtruded: THREE.Vector3[];
         morphsExtruded: { [name: string]: THREE.Vector3[] };
+        surfaceBoundary: Cartographic[];
     }
 
     interface IVerticesTriangles {
         vertices: Cartographic[];
         polygons: number[][];
         triangles: number[];
+        surfaceBoundary: Cartographic[];
     }
 
     function cnPnPolyIsIn(P: number[], V: number[][]): boolean {
@@ -102,7 +111,7 @@ namespace shriveling {
             swctx.addPoints(steinerPoints);
             swctx.triangulate();
             let triangles = swctx.getTriangles();
-            let resultat: IVerticesTriangles = { vertices: [], polygons: [], triangles: [] };
+            let resultat: IVerticesTriangles = { vertices: [], polygons: [], triangles: [], surfaceBoundary: [] };
             let verticesPoly2Tri: poly2tri.IPointLike[] = [];
 
             function findAndAddVertexIndex(p: poly2tri.IPointLike): number {
@@ -130,7 +139,8 @@ namespace shriveling {
                 resultat.triangles.push(findAndAddVertexIndex(triangle.getPoint(1)));
                 resultat.triangles.push(findAndAddVertexIndex(triangle.getPoint(2)));
             });
-            resultat.vertices = verticesPoly2Tri.map((v) => new Cartographic(v.x, v.y, 1, false));
+            resultat.surfaceBoundary = contour.map((point) => new Cartographic(point.x, point.y, 0, false));
+            resultat.vertices = verticesPoly2Tri.map((v) => new Cartographic(v.x, v.y, 0, false));
             return resultat;
         });
     }
@@ -302,6 +312,8 @@ namespace shriveling {
     export class CountryGeometry extends THREE.Geometry {
         public static lookupGeometry: { [projection: string]: ITypeExtrusion } = {};
         public properties: any;
+        public boundary: Cartographic[];
+        public boundaryBox: IBBox;
         private _projection: string;
 
         public static generator(geoJson: any, mainProjector: string): CountryGeometry[] {
@@ -364,11 +376,29 @@ namespace shriveling {
             return geometry;
         }
 
+        public isInside(pos: Cartographic): boolean {
+            let resultat = false;
+            if (pos.latitude >= this.boundaryBox.minLat && pos.latitude <= this.boundaryBox.maxLat &&
+                pos.longitude >= this.boundaryBox.minLong && pos.longitude <= this.boundaryBox.maxLong) {
+                resultat = Cartographic.isInside(pos, this.boundary);
+            }
+            return resultat;
+        }
+
         private constructor(
             name: string, properties: any, boundary: IVerticesTriangles, mainProjector: string, reverseLookup: IReverseLookupExtrusion[]) {
             super();
             this.properties = properties;
             this.name = name;
+            this.boundary = boundary.surfaceBoundary;
+            this.boundaryBox = { minLat: 1000, minLong: 1000, maxLat: -1000, maxLong: -1000 };
+            for (let i = 0; i < this.boundary.length; i++) {
+                let pos = this.boundary[i];
+                this.boundaryBox.minLong = Math.min(this.boundaryBox.minLong, pos.longitude);
+                this.boundaryBox.minLat = Math.min(this.boundaryBox.minLat, pos.latitude);
+                this.boundaryBox.maxLong = Math.max(this.boundaryBox.maxLong, pos.longitude);
+                this.boundaryBox.maxLat = Math.max(this.boundaryBox.maxLat, pos.latitude);
+            }
             let preparedGeometry = prepareGeometry(boundary, mainProjector);
             this.morphTargets = [];
             let list: THREE.Vector3[], reverse: IReverseLookupExtrusion, morphName: string;

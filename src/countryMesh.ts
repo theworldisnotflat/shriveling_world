@@ -64,6 +64,10 @@ namespace shriveling {
             }
         }
 
+        get boundary(): Cartographic[] {
+            return (<CountryGeometry>this.geometry).boundary;
+        }
+
         public reProject(value: string | number): void {
             if (typeof value === 'string' && this._reprojectIndex === -1) {
                 this._reprojectName = value;
