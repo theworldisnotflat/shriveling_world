@@ -44,6 +44,7 @@ namespace shriveling {
             if (!mapProjectors.hasOwnProperty(mainProjector)) {
                 mainProjector = Object.keys(mapProjectors)[0];
             }
+            Configuration.prepareConfiguration();
             this._scene = scene;
             this._camera = camera;
             this._raycaster = new THREE.Raycaster();
@@ -134,6 +135,17 @@ namespace shriveling {
 
         public getMeshes(name: string): CountryMesh[] {
             return this.countryMeshCollection.filter((mesh) => mesh.name === name);
+        }
+
+        public getCountryName(pos: Cartographic): string {
+            let resultat: string;
+            for (let i = 0; i < this.countryMeshCollection.length && resultat === undefined; i++) {
+                let inside = (<CountryGeometry>this.countryMeshCollection[i].geometry).isInside(pos);
+                if (inside) {
+                    resultat = this.countryMeshCollection[i].name;
+                }
+            }
+            return resultat;
         }
 
         public extrudeByName(name: string, value?: number): void {

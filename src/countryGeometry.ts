@@ -202,9 +202,7 @@ namespace shriveling {
         return polygon;
     }
 
-    function prepareGeometry(
-        verticesAndTriangles: IVerticesTriangles, mainProjector: string, heightRatio: number = 0.01,
-        extrudedHeightRatio: number = -0.8): IPreGeometry {
+    function prepareGeometry(verticesAndTriangles: IVerticesTriangles, mainProjector: string): IPreGeometry {
         let resultat: IPreGeometry = <IPreGeometry>{};
         let cartoVertices = verticesAndTriangles.vertices;
         let cartoVerticesExtruded: Cartographic[] = [...cartoVertices];
@@ -216,8 +214,6 @@ namespace shriveling {
         let faces: THREE.Face3[] = [];
         let faceVertexUvs: THREE.Vector2[][] = [];
         const n = cartoVertices.length;
-        const hatHeight = Configuration.earthRadiusMeters * heightRatio;
-        const extrudedHeight = Configuration.earthRadiusMeters * extrudedHeightRatio;
 
         for (let name in mapProjectors) {
             if (mapProjectors.hasOwnProperty(name)) {
@@ -231,11 +227,11 @@ namespace shriveling {
             let carto = cartoVertices[i];
 
             cartoHat = carto.clone();
-            cartoHat.height = hatHeight;
+            cartoHat.height = Configuration.hatHeight;
             cartoVertices.push(cartoHat);
 
             cartoHat = carto.clone();
-            cartoHat.height = extrudedHeight;
+            cartoHat.height = Configuration.extrudedHeight;
             cartoVerticesExtruded.push(cartoHat);
 
             uvs.push(new THREE.Vector2(
@@ -312,8 +308,8 @@ namespace shriveling {
     export class CountryGeometry extends THREE.Geometry {
         public static lookupGeometry: { [projection: string]: ITypeExtrusion } = {};
         public properties: any;
-        public boundary: Cartographic[];
-        public boundaryBox: IBBox;
+        private _boundary: Cartographic[];
+        private _boundaryBox: IBBox;
         private _projection: string;
 
         public static generator(geoJson: any, mainProjector: string): CountryGeometry[] {
@@ -378,9 +374,9 @@ namespace shriveling {
 
         public isInside(pos: Cartographic): boolean {
             let resultat = false;
-            if (pos.latitude >= this.boundaryBox.minLat && pos.latitude <= this.boundaryBox.maxLat &&
-                pos.longitude >= this.boundaryBox.minLong && pos.longitude <= this.boundaryBox.maxLong) {
-                resultat = Cartographic.isInside(pos, this.boundary);
+            if (pos.latitude >= this._boundaryBox.minLat && pos.latitude <= this._boundaryBox.maxLat &&
+                pos.longitude >= this._boundaryBox.minLong && pos.longitude <= this._boundaryBox.maxLong) {
+                resultat = Cartographic.isInside(pos, this._boundary);
             }
             return resultat;
         }
@@ -390,14 +386,14 @@ namespace shriveling {
             super();
             this.properties = properties;
             this.name = name;
-            this.boundary = boundary.surfaceBoundary;
-            this.boundaryBox = { minLat: 1000, minLong: 1000, maxLat: -1000, maxLong: -1000 };
-            for (let i = 0; i < this.boundary.length; i++) {
-                let pos = this.boundary[i];
-                this.boundaryBox.minLong = Math.min(this.boundaryBox.minLong, pos.longitude);
-                this.boundaryBox.minLat = Math.min(this.boundaryBox.minLat, pos.latitude);
-                this.boundaryBox.maxLong = Math.max(this.boundaryBox.maxLong, pos.longitude);
-                this.boundaryBox.maxLat = Math.max(this.boundaryBox.maxLat, pos.latitude);
+            this._boundary = boundary.surfaceBoundary;
+            this._boundaryBox = { minLat: 1000, minLong: 1000, maxLat: -1000, maxLong: -1000 };
+            for (let i = 0; i < this._boundary.length; i++) {
+                let pos = this._boundary[i];
+                this._boundaryBox.minLong = Math.min(this._boundaryBox.minLong, pos.longitude);
+                this._boundaryBox.minLat = Math.min(this._boundaryBox.minLat, pos.latitude);
+                this._boundaryBox.maxLong = Math.max(this._boundaryBox.maxLong, pos.longitude);
+                this._boundaryBox.maxLat = Math.max(this._boundaryBox.maxLat, pos.latitude);
             }
             let preparedGeometry = prepareGeometry(boundary, mainProjector);
             this.morphTargets = [];

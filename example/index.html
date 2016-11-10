@@ -93,7 +93,31 @@
 				if (board) {
 					board.add(JSON.parse(text));
 				} else {
-					board = new shriveling.CountryBoard(JSON.parse(text), 'Equirectangular', scene, camera);
+					//			let projectionName='Equirectangular';
+					let projectionName = 'none';
+					//			let projectionName='Mercator';
+					board = new shriveling.CountryBoard(JSON.parse(text), projectionName, scene, camera);
+					let name = 'first';
+					let summit = new shriveling.Cartographic(60, 30, 0, false);
+					let countryName = board.getCountryName(summit);
+					let d2r = Math.PI / 180;
+					let base = {
+						2015: [{
+							clock: 0,
+							elevation: 10 * d2r
+						}, {
+							clock: 90 * d2r,
+							elevation: 30 * d2r
+						}]
+					}
+					let indexExtruded = shriveling.CountryGeometry.lookupGeometry['none'].extruded
+					let boundaryGeometries = board.getMeshes(countryName).map((mesh) => {
+						let geometry = mesh.geometry.fuzzyClone();
+						geometry.vertices = geometry.morphTargets[indexExtruded].vertices;
+						return geometry;
+					});
+					let cone = new shriveling.ConeMesh(name, countryName, summit, base, boundaryGeometries, projectionName,true);
+					scene.add(cone);
 				}
 				console.log(board);
 				let stop = new Date();

@@ -90,6 +90,12 @@ namespace shriveling {
             return Math.sqrt(x * x + y * y);
         }
 
+        public static distanceExacte(pos1: Cartographic, pos2: Cartographic): number {
+            let resultat = Math.sin(pos1.latitude) * Math.sin(pos2.latitude);
+            resultat += Math.cos(pos1.latitude) * Math.cos(pos2.latitude) * Math.cos(pos2.longitude - pos1.longitude);
+            return Math.acos(resultat);
+        }
+
         public static isInside(position: Cartographic, boundary: Cartographic[]): boolean {
             let cn = 0;    // the  crossing number counter
             let iplus: number, n = boundary.length;
@@ -107,12 +113,6 @@ namespace shriveling {
             return cn % 2 === 1;    // 0 if even (out), and 1 if  odd (in)
         }
 
-        public static distanceExacte(pos1: Cartographic, pos2: Cartographic): number {
-            let resultat = Math.sin(pos1.latitude) * Math.sin(pos2.latitude);
-            resultat += Math.cos(pos1.latitude) * Math.cos(pos2.latitude) * Math.cos(pos2.longitude - pos1.longitude);
-            return Math.acos(resultat);
-        }
-
         public static lerp(pos1: Cartographic, pos2: Cartographic, fractions: number[] = []): Cartographic[] {
             let distance = Cartographic.distanceExacte(pos1, pos2);
             let resultat: Cartographic[] = [];
@@ -128,6 +128,10 @@ namespace shriveling {
                 });
             }
             return resultat;
+        }
+
+        public static direction(pos1: Cartographic, pos2: Cartographic): number {
+            return Math.atan2(pos2.latitude - pos1.latitude, pos2.longitude - pos1.longitude);
         }
 
         public static fromVector3(pos1: THREE.Vector3, projector: string): Cartographic {
@@ -179,6 +183,10 @@ namespace shriveling {
             });
             return resultat;
         }
+
+        public direction(pos: Cartographic): number {
+            return Cartographic.direction(this, pos);
+        }
     }
 
     export interface IConverter {
@@ -193,6 +201,11 @@ namespace shriveling {
     export interface IMapProjector {
         name: string;
         converter: (pos: Cartographic) => THREE.Vector3;
+    }
+
+    export interface IDirection {
+        clock: number;
+        elevation: number;
     }
 
     export function DragnDrop(id: string | HTMLElement, callback: (text: string, name?: string) => void, scope: any): void {
