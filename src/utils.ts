@@ -11,7 +11,7 @@ namespace shriveling {
                 return new THREE.Vector3(
                     -Math.cos(pos.longitude) * radius * Math.cos(pos.latitude),
                     Math.sin(pos.latitude) * radius,
-                    Math.sin(pos.longitude) * radius * Math.cos(pos.latitude)
+                    Math.sin(pos.longitude) * radius * Math.cos(pos.latitude),
                 );
             },
             reverser: (pos: THREE.Vector3, threeRadius: number = Cartographic.THREE_EARTH_RADIUS): Cartographic => {
@@ -38,7 +38,7 @@ namespace shriveling {
                 return new THREE.Vector3(
                     (pos.longitude - reference.longitude) * Math.cos(reference.latitude) * threeRadius,
                     (pos.latitude - reference.latitude) * threeRadius,
-                    (pos.height - reference.height) / Configuration.earthRadiusMeters * threeRadius
+                    (pos.height - reference.height) / Configuration.earthRadiusMeters * threeRadius,
                 );
             },
             reverser:
@@ -61,7 +61,7 @@ namespace shriveling {
                 return new THREE.Vector3(
                     (pos.longitude - lambda0) * threeRadius,
                     Math.log(Math.tan(Math.PI / 4 + pos.latitude / 2)) * threeRadius,
-                    pos.height / Configuration.earthRadiusMeters * threeRadius
+                    pos.height / Configuration.earthRadiusMeters * threeRadius,
                 );
             },
             reverser:

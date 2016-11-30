@@ -168,8 +168,7 @@ namespace shriveling {
                 b = { x: q[0] - p[0], y: q[1] - p[1] };
                 if (Math.abs(
                     (a.x * b.x + a.y * b.y) /
-                    Math.sqrt((a.x * a.x + a.y * a.y) * (b.x * b.x + b.y * b.y))
-                ) > 1 - 1e-5) {
+                    Math.sqrt((a.x * a.x + a.y * a.y) * (b.x * b.x + b.y * b.y))) > 1 - 1e-5) {
                     polygon.splice(i, 1);
                     i = Math.max(-1, i - 2);
                     done = false;
@@ -236,7 +235,7 @@ namespace shriveling {
 
             uvs.push(new THREE.Vector2(
                 carto.longitude * Configuration.OVER_TWO_PI + 0.5,
-                carto.latitude * Configuration.OVER_PI + 0.5
+                carto.latitude * Configuration.OVER_PI + 0.5,
             ));
         }
 
