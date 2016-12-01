@@ -93,6 +93,7 @@ namespace shriveling {
         }
     }
     var scrapCoordinate = new Coordinate();
+    var scrapCoordinate2 = new Coordinate();
 
     export class NEDLocal {
         public cartoRef: Cartographic;
@@ -157,27 +158,9 @@ namespace shriveling {
             return result;
         }
 
-        public projectPart(begin: IDirection, end: IDirection): Cartographic[] {
-            let resultat: Cartographic[] = [];
-            let deltaClock = end.clock - begin.clock;
-            let sign = Math.sign(deltaClock);
-            function elevation(clock: number): number {
-                let r: number = begin.elevation;
-                if (Math.abs(deltaClock) > 1e-15) {
-                    let t = (clock - begin.clock) / deltaClock;
-                    r = (1 - t) * begin.elevation + t * end.elevation;
-                }
-                return r;
-            }
-            let temp = new Coordinate();
-            let distance = Configuration.extrudedHeight;
-            for (
-                let clock = begin.clock; Math.abs(clock - end.clock) >
-                Configuration.coneStep; clock += sign * Configuration.coneStep) {
-                this.direction2Position(clock, elevation(clock), temp).scalar(Configuration.extrudedHeight, temp);
-                resultat.push(this.NED2Cartographic(temp));
-            }
-            return resultat;
+        public project(clock: number, elevation: number, distance: number): Cartographic {
+            this.direction2Position(clock, elevation, scrapCoordinate2).scalar(distance, scrapCoordinate2);
+            return this.NED2Cartographic(scrapCoordinate2);
         }
     }
 

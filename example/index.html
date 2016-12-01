@@ -109,14 +109,6 @@
 						}, {
 							clock: 90 * d2r,
 							elevation: 35 * d2r
-						},
-						{
-							clock: 270 * d2r,
-							elevation: 70 * d2r
-						},
-						{
-							clock: 360 * d2r,
-							elevation: 45 * d2r
 						}]
 					}
 					let indexExtruded = shriveling.CountryGeometry.lookupGeometry['none'].extruded
@@ -125,7 +117,7 @@
 						geometry.vertices = geometry.morphTargets[indexExtruded].vertices;
 						return geometry;
 					});
-					let cone = new shriveling.ConeMesh(name, countryName, referential, base, boundaryGeometries, projectionName,false);
+					let cone = new shriveling.ConeMesh(name, countryName, referential, base, boundaryGeometries, projectionName, Math.abs(shriveling.Configuration.extrudedHeight),false);
 					scene.add(cone);
 				}
 				console.log(board);

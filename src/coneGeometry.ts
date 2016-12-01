@@ -20,15 +20,73 @@ namespace shriveling {
         [year: string]: IGeometryPremises;
     }
 
-    function generateInitialCone(referential: NEDLocal, base: IDirection[], projectionName: string): THREE.Geometry {
+    function extrapolerElevation(normalizedBase: IDirection[]): (clock: number) => number {
+        let length = normalizedBase.length;
+        return (clock: number) => {
+            let indMin = 0;
+            let indMax = length - 1;
+            let index = Math.floor(length / 2);
+            let found = false;
+            let out = 0;
+            if (clock < normalizedBase[0].clock) {
+                index = 0;
+                found = true;
+            }
+            if (clock > normalizedBase[length - 1].clock) {
+                index = indMax;
+                indMin = indMax - 1;
+                found = false;
+            }
+            while ((indMax !== indMin + 1) && !(found)) {
+                if (normalizedBase[index].clock === clock) {
+                    indMin = index;
+                    indMax = index;
+                    found = true;
+                } else {
+                    if (normalizedBase[index].clock < clock) {
+                        indMin = index;
+                    } else {
+                        if (normalizedBase[index].clock > clock) {
+                            indMax = index;
+                        }
+                    }
+                }
+                index = Math.floor((indMin + indMax) / 2);
+            }
+            if (found) {
+                out = normalizedBase[index].elevation;
+            } else {
+                // calcul du ratio
+                out = (normalizedBase[indMax].elevation - normalizedBase[indMin].elevation) * (clock - normalizedBase[indMin].clock) /
+                    (normalizedBase[indMax].clock - normalizedBase[indMin].clock) + normalizedBase[indMin].elevation;
+            }
+            return out;
+        };
+    }
+
+    function direction2Cartographic(base: IDirection[], referential: NEDLocal, distance: number): Cartographic[] {
+        let resultat: Cartographic[] = [];
         base = base.sort((a, b) => a.clock - b.clock);
-        base.push({ clock: base[0].clock + Math.PI * 2, elevation: base[0].elevation });
-        let summit = referential.cartoRef;
-        let baseCartographic: Cartographic[] = [];
-        for (let i = 0; i < base.length - 2; i++) {
-            baseCartographic.push(...referential.projectPart(base[i], base[i + 1]));
+        if (base.length > 0) {
+            let maxClock = base[base.length - 1].clock;
+            let minClock = base[0].clock;
+            if (maxClock - minClock < 2 * Math.PI) {
+                maxClock = minClock + Math.PI * 2;
+                base.push({ clock: maxClock, elevation: base[0].elevation });
+            }
+            let elevationFunction = extrapolerElevation(base);
+            let elevation: number;
+            for (let clock = minClock; clock < maxClock; clock += Configuration.coneStep) {
+                elevation = elevationFunction(clock);
+                resultat.push(referential.project(clock, elevation, distance));
+            }
         }
-        console.log(baseCartographic);
+        return resultat;
+    }
+
+    function generateInitialCone(referential: NEDLocal, base: IDirection[], projectionName: string, distance: number): THREE.Geometry {
+        let summit = referential.cartoRef;
+        let baseCartographic: Cartographic[] = direction2Cartographic(base, referential, distance);
         let uvs: THREE.Vector2[] = [];
         let vertices: THREE.Vector3[] = baseCartographic.map((carto) => {
             uvs.push(new THREE.Vector2(
@@ -88,7 +146,7 @@ namespace shriveling {
 
         public constructor(
             name: string, countryName: string, referential: NEDLocal, base: { [year: string]: IDirection[] },
-            boundaryGeometries: THREE.Geometry[], projectionName: string, facet: boolean) {
+            boundaryGeometries: THREE.Geometry[], projectionName: string, distance: number, facet: boolean) {
             super();
             this.name = name;
             this.countryName = countryName;
@@ -96,7 +154,7 @@ namespace shriveling {
                 if (base.hasOwnProperty(year)) {
                     let premises = <IGeometryPremises>{};
                     premises.morphTargets = [];
-                    let facetedCone = generateInitialCone(referential, base[year], projectionName);
+                    let facetedCone = generateInitialCone(referential, base[year], projectionName, distance);
                     if (facet) {
                         facetedCone = facetCone(facetedCone, boundaryGeometries);
                     }

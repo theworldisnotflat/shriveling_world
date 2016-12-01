@@ -109,7 +109,7 @@
         let pos =new shriveling.Cartographic(-d2r*10, d2r*30, -100, false);
         let NED=referential.cartographic2NED(pos);
         console.log(pos,NED,referential.NED2Cartographic(NED));
-        let x=new shriveling.Coordinate(0,0,0);
+        let x=new shriveling.Coordinate(30,0,6370e3);
         let carto=referential.NED2Cartographic(x);
         console.log(position,carto,referential.cartographic2NED(carto));
         console.log(referential.getClock(pos));
