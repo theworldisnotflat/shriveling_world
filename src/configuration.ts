@@ -11,6 +11,7 @@ namespace shriveling {
     export class Configuration {
         public static deg2rad: number = Math.PI / 180;
         public static rad2deg: number = 180 / Math.PI;
+        public static TWO_PI: number = 2 * Math.PI;
         public static earthRadiusMeters: number = 6371e3;
         public static highLitedMaterial: THREE.Material =
         new THREE.MeshBasicMaterial({ color: 0xffff00, morphTargets: true, transparent: true, opacity: 0.5, side: THREE.DoubleSide });

@@ -11,6 +11,7 @@ namespace shriveling {
         private _highlitedMeshName: string;
         private _selectedMeshs: THREE.Mesh[] = [];
         private _scale: number = 1;
+        private _show: boolean = true;
 
         public static extrude(
             meshes: CountryMesh[], value: number | number[] = 70, timing: number = 1000, init?: number,
@@ -68,6 +69,17 @@ namespace shriveling {
 
         set projection(value: string) {
             this.changeProjection(value);
+        }
+
+        get show(): boolean {
+            return this._show;
+        }
+
+        set show(value: boolean) {
+            this.countryMeshCollection.forEach((country) => {
+                country.visible = value;
+            });
+            this._show = value;
         }
 
         public changeProjection(

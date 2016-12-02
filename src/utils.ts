@@ -203,8 +203,11 @@ namespace shriveling {
         converter: (pos: Cartographic) => THREE.Vector3;
     }
 
-    export interface IDirection {
+    export interface IClock {
         clock: number;
+    }
+
+    export interface IDirection extends IClock {
         elevation: number;
     }
 

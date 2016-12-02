@@ -1,14 +1,12 @@
-declare namespace THREE {
-    export class CSG {
-        public static fromMesh(mesh: THREE.Mesh): CSG;
-        public static fromGeometry(geometry: THREE.Geometry): CSG;
-        public static toMesh(csg: CSG, material: THREE.Material): THREE.Mesh;
-        public static toGeometry(csg: CSG): THREE.Geometry;
-        public union(csg: CSG): CSG;
-        public subtract(csg: CSG): CSG;
-        public intersect(csg: CSG): CSG;
-    }
+declare class ThreeBSP {
+    public constructor(geo: THREE.Geometry | THREE.Mesh);
+    public subtract(a: ThreeBSP): ThreeBSP;
+    public union(a: ThreeBSP): ThreeBSP;
+    public intersect(a: ThreeBSP): ThreeBSP;
+    public toMesh(material: THREE.Material): THREE.Mesh;
+    public toGeometry(): THREE.Geometry;
 }
+
 namespace shriveling {
     'use strict';
     interface IGeometryPremises {
@@ -20,7 +18,7 @@ namespace shriveling {
         [year: string]: IGeometryPremises;
     }
 
-    function extrapolerElevation(normalizedBase: IDirection[]): (clock: number) => number {
+    function extrapoler(normalizedBase: IClock[], property: string): (clock: number) => number {
         let length = normalizedBase.length;
         return (clock: number) => {
             let indMin = 0;
@@ -54,55 +52,104 @@ namespace shriveling {
                 index = Math.floor((indMin + indMax) / 2);
             }
             if (found) {
-                out = normalizedBase[index].elevation;
+                out = normalizedBase[index][property];
             } else {
                 // calcul du ratio
-                out = (normalizedBase[indMax].elevation - normalizedBase[indMin].elevation) * (clock - normalizedBase[indMin].clock) /
-                    (normalizedBase[indMax].clock - normalizedBase[indMin].clock) + normalizedBase[indMin].elevation;
+                out = (normalizedBase[indMax][property] - normalizedBase[indMin][property]) * (clock - normalizedBase[indMin].clock) /
+                    (normalizedBase[indMax].clock - normalizedBase[indMin].clock) + normalizedBase[indMin][property];
             }
             return out;
         };
     }
 
-    function direction2Cartographic(base: IDirection[], referential: NEDLocal, distance: number): Cartographic[] {
+    function direction2Cartographic(
+        base: IDirection[], referential: NEDLocal, distanceMax: number, boundaryFunction: (clock: number) => number): Cartographic[] {
         let resultat: Cartographic[] = [];
         base = base.sort((a, b) => a.clock - b.clock);
         if (base.length > 0) {
             let maxClock = base[base.length - 1].clock;
             let minClock = base[0].clock;
-            if (maxClock - minClock < 2 * Math.PI) {
-                maxClock = minClock + Math.PI * 2;
+            if (maxClock - minClock < Configuration.TWO_PI) {
+                maxClock = minClock + Configuration.TWO_PI;
                 base.push({ clock: maxClock, elevation: base[0].elevation });
             }
-            let elevationFunction = extrapolerElevation(base);
+            let elevationFunction = extrapoler(base, 'elevation');
             let elevation: number;
+            let distance: number;
+            let cosEl: number;
             for (let clock = minClock; clock < maxClock; clock += Configuration.coneStep) {
                 elevation = elevationFunction(clock);
+                cosEl = Math.cos(elevation);
+                distance = cosEl > 0 ? Math.min(distanceMax, boundaryFunction(clock) / cosEl) : distanceMax;
                 resultat.push(referential.project(clock, elevation, distance));
             }
         }
         return resultat;
     }
 
-    function generateInitialCone(referential: NEDLocal, base: IDirection[], projectionName: string, distance: number): THREE.Geometry {
+    function getLocalLimits(boundaries: CountryGeometry[], referential: NEDLocal): { clock: number, distance: number }[] {
+        let allPoints: Coordinate[] = [];
+        boundaries.forEach((country) => {
+            country.boundary.forEach((position) => {
+                allPoints.push(referential.cartographic2NED(position));
+            });
+        });
+        let clockDistance = allPoints.map((pos) => {
+            return { clock: Math.atan2(pos.y, pos.x), distance: Math.sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z) };
+        }).reduce(
+            (result, current) => {
+                let clockClass = Math.floor(current.clock / Configuration.coneStep) * Configuration.coneStep;
+                result[clockClass] = result[clockClass] === undefined ? current.distance : Math.min(result[clockClass], current.distance);
+                return result;
+            },
+            {});
+        let resultat: { clock: number, distance: number }[] = [];
+        for (let clockString in clockDistance) {
+            if (clockDistance.hasOwnProperty(clockString)) {
+                resultat.push({ clock: parseFloat(clockString), distance: clockDistance[clockString] });
+            }
+        }
+        let length = resultat.length;
+        let temp: { clock: number, distance: number };
+        for (let i = 0; i < length; i++) {
+            temp = resultat[i];
+            resultat.push(
+                { clock: temp.clock - Configuration.TWO_PI, distance: temp.distance },
+                { clock: temp.clock + Configuration.TWO_PI, distance: temp.distance });
+        }
+        return resultat.sort((a, b) => a.clock - b.clock);
+    }
+
+    function generateInitialCone(
+        referential: NEDLocal, base: IDirection[], projectionName: string, distance: number,
+        boundaryFunction: (clock: number) => number): THREE.Geometry {
         let summit = referential.cartoRef;
-        let baseCartographic: Cartographic[] = direction2Cartographic(base, referential, distance);
+        let baseCartographic: Cartographic[] = direction2Cartographic(base, referential, distance, boundaryFunction);
+        const n = baseCartographic.length;
         let uvs: THREE.Vector2[] = [];
+        let centerDown = new Cartographic(summit.longitude, summit.latitude, 0, true);
         let vertices: THREE.Vector3[] = baseCartographic.map((carto) => {
+            centerDown.height += carto.height / n;
             uvs.push(new THREE.Vector2(
                 carto.longitude * Configuration.OVER_TWO_PI + 0.5,
                 carto.latitude * Configuration.OVER_PI + 0.5,
             ));
             return carto.toTHREEVector3(['none'])['none'];
         });
-        const n = vertices.length;
         let summitVector3 = summit.toTHREEVector3(['none'])['none'];
+        let centerDownVector3 = centerDown.toTHREEVector3(['none'])['none'];
         vertices.push(summitVector3);
+        vertices.push(centerDownVector3);
         let summitUVS = new THREE.Vector2(
             summit.longitude * Configuration.OVER_TWO_PI + 0.5,
             summit.latitude * Configuration.OVER_PI + 0.5,
         );
+        let centerDownUVS = new THREE.Vector2(
+            centerDown.longitude * Configuration.OVER_TWO_PI + 0.5,
+            centerDown.latitude * Configuration.OVER_PI + 0.5,
+        );
         uvs.push(summitUVS);
+        uvs.push(centerDownUVS);
         let faces: THREE.Face3[] = [];
         let faceVertexUvs: THREE.Vector2[][] = [];
         let ia: number, ib: number;
@@ -110,10 +157,12 @@ namespace shriveling {
             ia = i; ib = (i + 1) % n;
             faces.push(new THREE.Face3(ia, ib, n));
             faceVertexUvs.push([uvs[ia], uvs[ib], uvs[n]]);
-            if (i > 0 && i < n - 1) {
-                faces.push(new THREE.Face3(ia, ib, 0));
-                faceVertexUvs.push([uvs[ia], uvs[ib], uvs[0]]);
-            }
+            /*    if (i > 0 && i < n - 1) {
+                    faces.push(new THREE.Face3(ia, ib, 0));
+                    faceVertexUvs.push([uvs[ia], uvs[ib], uvs[0]]);
+                }*/
+            faces.push(new THREE.Face3(ia, ib, n + 1));
+            faceVertexUvs.push([uvs[ia], uvs[ib], uvs[n + 1]]);
         }
         let resultat = new THREE.Geometry();
         resultat.vertices = vertices;
@@ -127,15 +176,6 @@ namespace shriveling {
         return resultat;
     }
 
-    function facetCone(cone: THREE.Geometry, boundaryGeometries: THREE.Geometry[]): THREE.Geometry {
-        let coneCSG = THREE.CSG.fromGeometry(cone);
-        let faccetedCSG = boundaryGeometries.map((geometry) => {
-            let csg = THREE.CSG.fromGeometry(geometry);
-            return csg.intersect(coneCSG);
-        }).reduce((previous, current) => previous.union(current), THREE.CSG.fromGeometry(new THREE.Geometry()));
-        return THREE.CSG.toGeometry(faccetedCSG);
-    }
-
     export class ConeGeometry extends THREE.Geometry {
         public static lookupGeometry: { [projection: string]: number };
         public static reverseLookupGeometry: string[];
@@ -143,21 +183,20 @@ namespace shriveling {
         private _projection: string;
         private _premises: ILookupGeometryPremises = {};
         private _selectedYear: string;
+        private _simpleCountryBoundary: Cartographic[];
 
         public constructor(
             name: string, countryName: string, referential: NEDLocal, base: { [year: string]: IDirection[] },
-            boundaryGeometries: THREE.Geometry[], projectionName: string, distance: number, facet: boolean) {
+            boundaryGeometries: CountryGeometry[], projectionName: string, distance: number) {
             super();
             this.name = name;
             this.countryName = countryName;
+            let maxDistanceFunction = extrapoler(getLocalLimits(boundaryGeometries, referential), 'distance');
             for (let year in base) {
                 if (base.hasOwnProperty(year)) {
                     let premises = <IGeometryPremises>{};
                     premises.morphTargets = [];
-                    let facetedCone = generateInitialCone(referential, base[year], projectionName, distance);
-                    if (facet) {
-                        facetedCone = facetCone(facetedCone, boundaryGeometries);
-                    }
+                    let facetedCone = generateInitialCone(referential, base[year], projectionName, distance, maxDistanceFunction);
                     let vertices: { [name: string]: THREE.Vector3[] } = {};
                     for (let proj in ConeGeometry.lookupGeometry) {
                         if (ConeGeometry.lookupGeometry.hasOwnProperty(proj)) {

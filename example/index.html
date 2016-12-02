@@ -97,30 +97,35 @@
 					let projectionName = 'none';
 					//			let projectionName='Mercator';
 					board = new shriveling.CountryBoard(JSON.parse(text), projectionName, scene, camera);
-					let name = 'first';
-					let summit = new shriveling.Cartographic(60, 30, 0, false);
-					let referential = new shriveling.NEDLocal(summit);
-					let countryName = board.getCountryName(summit);
+					board.show = false;
 					let d2r = Math.PI / 180;
 					let base = {
 						2015: [{
-							clock: 0,
-							elevation: 45 * d2r
+							clock: 30 * d2r,
+							elevation: 85 * d2r
 						}, {
-							clock: 90 * d2r,
-							elevation: 35 * d2r
+							clock: 210 * d2r,
+							elevation: 30 * d2r
 						}]
 					}
-					let indexExtruded = shriveling.CountryGeometry.lookupGeometry['none'].extruded
-					let boundaryGeometries = board.getMeshes(countryName).map((mesh) => {
-						let geometry = mesh.geometry.fuzzyClone();
-						geometry.vertices = geometry.morphTargets[indexExtruded].vertices;
-						return geometry;
+					let positions = [
+						new shriveling.Cartographic(175.882524, -39.675275, 0, false),
+						new shriveling.Cartographic(46.826185, -19.309609, 0, false),
+						new shriveling.Cartographic(132.207710, -24.028092, 0, false),
+						new shriveling.Cartographic(105.063240, 61.854418, 0, false),
+						new shriveling.Cartographic(0, 0, 0, false),
+					]
+					positions.forEach((summit, index) => {
+						let name = 'index ' + index;
+						let referential = new shriveling.NEDLocal(summit);
+						let countryName = board.getCountryName(summit);
+						let boundaryGeometries = board.getMeshes(countryName).map((mesh) => mesh.geometry);
+						if (boundaryGeometries.length > 0) {
+							let cone = new shriveling.ConeMesh(name, countryName, referential, base, boundaryGeometries, projectionName, Math.abs(shriveling.Configuration.extrudedHeight));
+							scene.add(cone);
+						}
 					});
-					let cone = new shriveling.ConeMesh(name, countryName, referential, base, boundaryGeometries, projectionName, Math.abs(shriveling.Configuration.extrudedHeight),false);
-					scene.add(cone);
 				}
-				console.log(board);
 				let stop = new Date();
 				console.log((stop.getTime() - start.getTime()) / 1000);
 			});

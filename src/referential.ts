@@ -60,6 +60,12 @@ namespace shriveling {
             return result;
         }
 
+        public static distance(vec1: Coordinate, vec2: Coordinate): number {
+            return Math.sqrt((vec1.x - vec2.x) * (vec1.x - vec2.x) +
+                (vec1.y - vec2.y) * (vec1.y - vec2.y) +
+                (vec1.z - vec2.z) * (vec1.z - vec2.z));
+        }
+
         public constructor(x: number = 0, y: number = 0, z: number = 0) {
             this.x = x;
             this.y = y;
@@ -90,6 +96,9 @@ namespace shriveling {
 
         public add(vec2: Coordinate, result?: Coordinate): Coordinate {
             return Coordinate.add(this, vec2, result);
+        }
+        public distance(vec2: Coordinate): number {
+            return Coordinate.distance(this, vec2);
         }
     }
     var scrapCoordinate = new Coordinate();

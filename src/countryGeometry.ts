@@ -348,6 +348,10 @@ namespace shriveling {
             return this._projection;
         }
 
+        get boundary(): Cartographic[] {
+            return this._boundary;
+        }
+
         set projection(value: string) {
             if (this.acceptProjection(value)) {
                 this._projection = value;
