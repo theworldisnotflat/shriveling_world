@@ -87,7 +87,8 @@ namespace shriveling {
         return resultat;
     }
 
-    function getLocalLimits(boundaries: CountryGeometry[], referential: NEDLocal): { clock: number, distance: number }[] {
+    function getLocalLimits(
+        boundaries: CountryGeometry[], referential: NEDLocal, withLimit: boolean): { clock: number, distance: number }[] {
         let allPoints: Coordinate[] = [];
         boundaries.forEach((country) => {
             country.boundary.forEach((position) => {
@@ -95,7 +96,13 @@ namespace shriveling {
             });
         });
         let clockDistance = allPoints.map((pos) => {
-            return { clock: Math.atan2(pos.y, pos.x), distance: Math.sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z) };
+            let out: { clock: number, distance: number };
+            if (withLimit) {
+                out = { clock: Math.atan2(pos.y, pos.x), distance: Math.sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z) };
+            } else {
+                out = { clock: Math.atan2(pos.y, pos.x), distance: Configuration.earthRadiusMeters };
+            }
+            return out;
         }).reduce(
             (result, current) => {
                 let clockClass = Math.floor(current.clock / Configuration.coneStep) * Configuration.coneStep;
@@ -183,20 +190,20 @@ namespace shriveling {
         private _projection: string;
         private _premises: ILookupGeometryPremises = {};
         private _selectedYear: string;
-        private _simpleCountryBoundary: Cartographic[];
+        private _maxDistanceFunction: (clock: number) => number;
 
         public constructor(
             name: string, countryName: string, referential: NEDLocal, base: { [year: string]: IDirection[] },
-            boundaryGeometries: CountryGeometry[], projectionName: string, distance: number) {
+            boundaryGeometries: CountryGeometry[], projectionName: string, distance: number, withLimit: boolean) {
             super();
             this.name = name;
             this.countryName = countryName;
-            let maxDistanceFunction = extrapoler(getLocalLimits(boundaryGeometries, referential), 'distance');
+            this._maxDistanceFunction = extrapoler(getLocalLimits(boundaryGeometries, referential, withLimit), 'distance');
             for (let year in base) {
                 if (base.hasOwnProperty(year)) {
                     let premises = <IGeometryPremises>{};
                     premises.morphTargets = [];
-                    let facetedCone = generateInitialCone(referential, base[year], projectionName, distance, maxDistanceFunction);
+                    let facetedCone = generateInitialCone(referential, base[year], projectionName, distance, this._maxDistanceFunction);
                     let vertices: { [name: string]: THREE.Vector3[] } = {};
                     for (let proj in ConeGeometry.lookupGeometry) {
                         if (ConeGeometry.lookupGeometry.hasOwnProperty(proj)) {

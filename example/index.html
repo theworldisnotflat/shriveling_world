@@ -105,9 +105,10 @@
 							elevation: 85 * d2r
 						}, {
 							clock: 210 * d2r,
-							elevation: 30 * d2r
+							elevation: 60 * d2r
 						}]
-					}
+					};
+					let distance = Math.abs(shriveling.Configuration.extrudedHeight);
 					let positions = [
 						new shriveling.Cartographic(175.882524, -39.675275, 0, false),
 						new shriveling.Cartographic(46.826185, -19.309609, 0, false),
@@ -115,13 +116,14 @@
 						new shriveling.Cartographic(105.063240, 61.854418, 0, false),
 						new shriveling.Cartographic(0, 0, 0, false),
 					]
+					shriveling.Configuration.coneStep = 10 * d2r;
 					positions.forEach((summit, index) => {
 						let name = 'index ' + index;
 						let referential = new shriveling.NEDLocal(summit);
 						let countryName = board.getCountryName(summit);
 						let boundaryGeometries = board.getMeshes(countryName).map((mesh) => mesh.geometry);
 						if (boundaryGeometries.length > 0) {
-							let cone = new shriveling.ConeMesh(name, countryName, referential, base, boundaryGeometries, projectionName, Math.abs(shriveling.Configuration.extrudedHeight));
+							let cone = new shriveling.ConeMesh(name, countryName, referential, base, boundaryGeometries, projectionName, distance, true);
 							scene.add(cone);
 						}
 					});

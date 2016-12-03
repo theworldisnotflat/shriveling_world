@@ -26,8 +26,8 @@ namespace shriveling {
 
         public constructor(
             name: string, countryName: string, referential: NEDLocal, base: { [year: string]: IDirection[] },
-            boundaryGeometries: CountryGeometry[], projectionName: string, distance: number) {
-            let geometry = new ConeGeometry(name, countryName, referential, base, boundaryGeometries, projectionName, distance);
+            boundaryGeometries: CountryGeometry[], projectionName: string, distance: number, withLimit: boolean = true) {
+            let geometry = new ConeGeometry(name, countryName, referential, base, boundaryGeometries, projectionName, distance, withLimit);
             super(geometry, Configuration.NORMAL_MATERIAL);
             this.name = geometry.name;
         }

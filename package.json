@@ -5,7 +5,7 @@
   "main": "gulpfile.js",
   "dependencies": {},
   "devDependencies": {
-    "@types/three": "0.0.26",
+    "@types/three": "0.0.27",
     "babel-polyfill": "^6.16.0",
     "babel-preset-es2015": "^6.18.0",
     "compression": "^1.6.2",
@@ -35,7 +35,7 @@
     "typedoc": "^0.5.1",
     "typings": "^2.0.0",
     "vis": "^4.17.0",
-    "yargs": "^6.4.0"
+    "yargs": "^6.5.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
