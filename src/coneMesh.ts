@@ -24,12 +24,43 @@ namespace shriveling {
             }
         }
 
+        get withLimits(): boolean {
+            return (<ConeGeometry>this.geometry).withLimits;
+        }
+
+        set withLimits(value: boolean) {
+            (<ConeGeometry>this.geometry).withLimits = value;
+        }
+
+        get otherProperties(): any {
+            return (<ConeGeometry>this.geometry).otherProperties;
+        }
+
+        set otherProperties(value: any) {
+            (<ConeGeometry>this.geometry).otherProperties = value;
+        }
+
+        get countryName(): string {
+            return (<ConeGeometry>this.geometry).countryName;
+        }
+
+        get cartographicPosition(): Cartographic {
+            return (<ConeGeometry>this.geometry).cartographicPosition;
+        }
+
         public constructor(
-            name: string, countryName: string, referential: NEDLocal, base: { [year: string]: IDirection[] },
-            boundaryGeometries: CountryGeometry[], projectionName: string, distance: number, withLimit: boolean = true) {
-            let geometry = new ConeGeometry(name, countryName, referential, base, boundaryGeometries, projectionName, distance, withLimit);
+            referential: NEDLocal, base: { [year: string]: IDirection[] }, boundaryGeometries: CountryGeometry[],
+            projectionName: string, distance: number, withLimit: boolean = true, others: any = {}) {
+            let geometry =
+                new ConeGeometry(referential, base, boundaryGeometries, projectionName, distance, withLimit, others);
             super(geometry, Configuration.NORMAL_MATERIAL);
             this.name = geometry.name;
+        }
+
+        public update(distance?: number, base?: { [year: string]: IDirection[] }): void {
+            let year = this.year;
+            (<ConeGeometry>this.geometry).update(distance, base);
+            this.year = year;
         }
     }
 }

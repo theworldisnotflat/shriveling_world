@@ -29,6 +29,7 @@
 		var windowHalfX = window.innerWidth / 2;
 		var windowHalfY = window.innerHeight / 2;
 		let board;
+		var cones=[];
 		init();
 		animate();
 
@@ -96,15 +97,13 @@
 					//			let projectionName='Equirectangular';
 					let projectionName = 'none';
 					//			let projectionName='Mercator';
-					board = new shriveling.CountryBoard(JSON.parse(text), projectionName, scene, camera);
+					board = new shriveling.CountryBoard(projectionName, scene, camera);
+					board.add(JSON.parse(text));
 					board.show = false;
 					let d2r = Math.PI / 180;
 					let base = {
 						2015: [{
 							clock: 30 * d2r,
-							elevation: 85 * d2r
-						}, {
-							clock: 210 * d2r,
 							elevation: 60 * d2r
 						}]
 					};
@@ -116,15 +115,17 @@
 						new shriveling.Cartographic(105.063240, 61.854418, 0, false),
 						new shriveling.Cartographic(0, 0, 0, false),
 					]
-					shriveling.Configuration.coneStep = 10 * d2r;
+					shriveling.Configuration.coneStep = 15 * d2r;
 					positions.forEach((summit, index) => {
 						let name = 'index ' + index;
 						let referential = new shriveling.NEDLocal(summit);
 						let countryName = board.getCountryName(summit);
 						let boundaryGeometries = board.getMeshes(countryName).map((mesh) => mesh.geometry);
 						if (boundaryGeometries.length > 0) {
-							let cone = new shriveling.ConeMesh(name, countryName, referential, base, boundaryGeometries, projectionName, distance, true);
+							let cone = new shriveling.ConeMesh(referential, base, boundaryGeometries, projectionName, distance, true);
 							scene.add(cone);
+							cone.geometry.withLimits=false;
+							cones.push(cone);
 						}
 					});
 				}

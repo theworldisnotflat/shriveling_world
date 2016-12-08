@@ -63,7 +63,8 @@ namespace shriveling {
     }
 
     function direction2Cartographic(
-        base: IDirection[], referential: NEDLocal, distanceMax: number, boundaryFunction: (clock: number) => number): Cartographic[] {
+        base: IDirection[], referential: NEDLocal, distanceMax: number,
+        boundaryFunction: (clock: number) => number, withLimits: boolean): Cartographic[] {
         let resultat: Cartographic[] = [];
         base = base.sort((a, b) => a.clock - b.clock);
         if (base.length > 0) {
@@ -80,7 +81,11 @@ namespace shriveling {
             for (let clock = minClock; clock < maxClock; clock += Configuration.coneStep) {
                 elevation = elevationFunction(clock);
                 cosEl = Math.cos(elevation);
-                distance = cosEl > 0 ? Math.min(distanceMax, boundaryFunction(clock) / cosEl) : distanceMax;
+                if (withLimits && cosEl > 0) {
+                    distance = Math.min(distanceMax, boundaryFunction(clock) / cosEl);
+                } else {
+                    distance = distanceMax;
+                }
                 resultat.push(referential.project(clock, elevation, distance));
             }
         }
@@ -88,7 +93,7 @@ namespace shriveling {
     }
 
     function getLocalLimits(
-        boundaries: CountryGeometry[], referential: NEDLocal, withLimit: boolean): { clock: number, distance: number }[] {
+        boundaries: CountryGeometry[], referential: NEDLocal): { clock: number, distance: number }[] {
         let allPoints: Coordinate[] = [];
         boundaries.forEach((country) => {
             country.boundary.forEach((position) => {
@@ -96,13 +101,7 @@ namespace shriveling {
             });
         });
         let clockDistance = allPoints.map((pos) => {
-            let out: { clock: number, distance: number };
-            if (withLimit) {
-                out = { clock: Math.atan2(pos.y, pos.x), distance: Math.sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z) };
-            } else {
-                out = { clock: Math.atan2(pos.y, pos.x), distance: Configuration.earthRadiusMeters };
-            }
-            return out;
+            return { clock: Math.atan2(pos.y, pos.x), distance: Math.sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z) };
         }).reduce(
             (result, current) => {
                 let clockClass = Math.floor(current.clock / Configuration.coneStep) * Configuration.coneStep;
@@ -129,9 +128,9 @@ namespace shriveling {
 
     function generateInitialCone(
         referential: NEDLocal, base: IDirection[], projectionName: string, distance: number,
-        boundaryFunction: (clock: number) => number): THREE.Geometry {
+        boundaryFunction: (clock: number) => number, withLimits: boolean): THREE.Geometry {
         let summit = referential.cartoRef;
-        let baseCartographic: Cartographic[] = direction2Cartographic(base, referential, distance, boundaryFunction);
+        let baseCartographic: Cartographic[] = direction2Cartographic(base, referential, distance, boundaryFunction, withLimits);
         const n = baseCartographic.length;
         let uvs: THREE.Vector2[] = [];
         let centerDown = new Cartographic(summit.longitude, summit.latitude, 0, true);
@@ -164,10 +163,6 @@ namespace shriveling {
             ia = i; ib = (i + 1) % n;
             faces.push(new THREE.Face3(ia, ib, n));
             faceVertexUvs.push([uvs[ia], uvs[ib], uvs[n]]);
-            /*    if (i > 0 && i < n - 1) {
-                    faces.push(new THREE.Face3(ia, ib, 0));
-                    faceVertexUvs.push([uvs[ia], uvs[ib], uvs[0]]);
-                }*/
             faces.push(new THREE.Face3(ia, ib, n + 1));
             faceVertexUvs.push([uvs[ia], uvs[ib], uvs[n + 1]]);
         }
@@ -187,49 +182,27 @@ namespace shriveling {
         public static lookupGeometry: { [projection: string]: number };
         public static reverseLookupGeometry: string[];
         public countryName: string;
+        public otherProperties: any;
         private _projection: string;
         private _premises: ILookupGeometryPremises = {};
         private _selectedYear: string;
         private _maxDistanceFunction: (clock: number) => number;
+        private _baseData: { [year: string]: IDirection[] };
+        private _referential: NEDLocal;
+        private _withLimits: boolean;
+        private _distance: number;
 
         public constructor(
-            name: string, countryName: string, referential: NEDLocal, base: { [year: string]: IDirection[] },
-            boundaryGeometries: CountryGeometry[], projectionName: string, distance: number, withLimit: boolean) {
+            referential: NEDLocal, base: { [year: string]: IDirection[] }, boundaryGeometries: CountryGeometry[],
+            projectionName: string, distance: number, withLimits: boolean, others: any = {}) {
             super();
-            this.name = name;
-            this.countryName = countryName;
-            this._maxDistanceFunction = extrapoler(getLocalLimits(boundaryGeometries, referential, withLimit), 'distance');
-            for (let year in base) {
-                if (base.hasOwnProperty(year)) {
-                    let premises = <IGeometryPremises>{};
-                    premises.morphTargets = [];
-                    let facetedCone = generateInitialCone(referential, base[year], projectionName, distance, this._maxDistanceFunction);
-                    let vertices: { [name: string]: THREE.Vector3[] } = {};
-                    for (let proj in ConeGeometry.lookupGeometry) {
-                        if (ConeGeometry.lookupGeometry.hasOwnProperty(proj)) {
-                            vertices[proj] = [];
-                        }
-                    }
-                    facetedCone.vertices.forEach((vertex) => {
-                        let multiVertices = Cartographic.fromVector3(vertex, projectionName).toTHREEVector3();
-                        for (let proj in ConeGeometry.lookupGeometry) {
-                            if (multiVertices.hasOwnProperty(proj)) {
-                                vertices[proj].push(multiVertices[proj]);
-                            }
-                        }
-                    });
-                    let reverse: string;
-                    for (let i = 0; i < ConeGeometry.reverseLookupGeometry.length; i++) {
-                        reverse = ConeGeometry.reverseLookupGeometry[i];
-                        premises.morphTargets.push({ name: reverse, vertices: vertices[reverse] });
-                    }
-                    premises.faces = facetedCone.faces;
-                    premises.faceVertexUvs = facetedCone.faceVertexUvs;
-                    this._premises[year] = premises;
-                }
-            }
+            this._referential = referential;
+            this._maxDistanceFunction = extrapoler(getLocalLimits(boundaryGeometries, this._referential), 'distance');
             this._projection = projectionName;
-            this.year = Object.keys(base)[0];
+            this._withLimits = withLimits;
+            this.otherProperties = others;
+            this.update(distance, base);
+            this._selectedYear = Object.keys(base)[0];
         }
 
         get projection(): string {
@@ -249,15 +222,28 @@ namespace shriveling {
             }
         }
 
+        get cartographicPosition(): Cartographic {
+            return this._referential.cartoRef;
+        }
+
         get year(): string {
             return this._selectedYear;
+        }
+
+        get withLimits(): boolean {
+            return this._withLimits;
+        }
+
+        set withLimits(value: boolean) {
+            this._withLimits = value;
+            this.update();
         }
 
         set year(value: string) {
             let premise = this._premises[value];
             if (premise !== undefined) {
                 let index = ConeGeometry.lookupGeometry[this._projection];
-                this._selectedYear = value; // todo pas visible si année différente dans mesh!
+                this._selectedYear = value;
                 this.faces = premise.faces;
                 this.faceVertexUvs = premise.faceVertexUvs;
                 this.morphTargets = premise.morphTargets;
@@ -275,9 +261,51 @@ namespace shriveling {
             }
         }
 
+        public fuzzyClone(): THREE.Geometry {
+            let geometry = this.clone();
+            geometry.morphTargets = this.morphTargets;
+            return geometry;
+        }
+
+        public update(distance: number = this._distance, base: { [year: string]: IDirection[] } = this._baseData): void {
+            this._baseData = base;
+            this._distance = distance;
+            for (let year in this._baseData) {
+                if (this._baseData.hasOwnProperty(year)) {
+                    let premises = <IGeometryPremises>{};
+                    premises.morphTargets = [];
+                    let facetedCone = generateInitialCone(
+                        this._referential, this._baseData[year], 'none', distance, this._maxDistanceFunction, this._withLimits);
+                    let vertices: { [name: string]: THREE.Vector3[] } = {};
+                    for (let proj in ConeGeometry.lookupGeometry) {
+                        if (ConeGeometry.lookupGeometry.hasOwnProperty(proj)) {
+                            vertices[proj] = [];
+                        }
+                    }
+                    facetedCone.vertices.forEach((vertex) => {
+                        let multiVertices = Cartographic.fromVector3(vertex, 'none').toTHREEVector3();
+                        for (let proj in ConeGeometry.lookupGeometry) {
+                            if (multiVertices.hasOwnProperty(proj)) {
+                                vertices[proj].push(multiVertices[proj]);
+                            }
+                        }
+                    });
+                    let reverse: string;
+                    for (let i = 0; i < ConeGeometry.reverseLookupGeometry.length; i++) {
+                        reverse = ConeGeometry.reverseLookupGeometry[i];
+                        premises.morphTargets.push({ name: reverse, vertices: vertices[reverse] });
+                    }
+                    premises.faces = facetedCone.faces;
+                    premises.faceVertexUvs = facetedCone.faceVertexUvs;
+                    this._premises[year] = premises;
+                    this._selectedYear = year;
+                }
+            }
+            this.year = this.year;
+        }
+
         public acceptProjection(value: string): boolean {
             return ConeGeometry.lookupGeometry.hasOwnProperty(value) && this._premises.hasOwnProperty(this._selectedYear);
         }
-
     }
 }

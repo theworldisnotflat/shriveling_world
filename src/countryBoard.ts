@@ -41,7 +41,7 @@ namespace shriveling {
                 .start();
         }
 
-        public constructor(geoJson: any, mainProjector: string, scene: THREE.Scene, camera: THREE.Camera) {
+        public constructor(mainProjector: string, scene: THREE.Scene, camera: THREE.Camera) {
             if (!mapProjectors.hasOwnProperty(mainProjector)) {
                 mainProjector = Object.keys(mapProjectors)[0];
             }
@@ -50,7 +50,6 @@ namespace shriveling {
             this._camera = camera;
             this._raycaster = new THREE.Raycaster();
             this._projection = mainProjector;
-            this.add(geoJson);
         }
 
         public add(geoJson: any): void {
@@ -59,8 +58,10 @@ namespace shriveling {
             collection.forEach((mesh) => {
                 that.countryMeshCollection.push(mesh);
                 that._scene.add(mesh);
+                mesh.visible = that._show;
+                mesh.scale.setScalar(that._scale);
             });
-            this._projection = this._projection;
+            this.projection = this._projection;
         }
 
         get projection(): string {

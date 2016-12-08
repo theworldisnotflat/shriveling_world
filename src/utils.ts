@@ -211,6 +211,52 @@ namespace shriveling {
         elevation: number;
     }
 
+    export interface ILookupDirection {
+        [year: string]: IDirection[];
+    }
+
+    export interface ILookupTransport {
+        [transport: string]: ILookupDirection;
+    }
+
+    export interface ITownTransport {
+        countryName: string;
+        countryCode: number;
+        cityCode: number;
+        cityName: string;
+        position: Cartographic;
+        referential: NEDLocal;
+        transports: ILookupTransport;
+        layers?: { [transport: string]: ConeMesh };
+    }
+
+    export interface IlookupTownTransport {
+        [cityCode: string]: ITownTransport;
+    }
+    export interface ICitySubLayers {
+        [cityCode: number]: ConeMesh;
+    }
+    export interface ITransportLayers {
+        [transport: string]: ICitySubLayers;
+    }
+
+    export interface ICriterias {
+        [attribut: string]: number | string | Date | boolean;
+    }
+
+    export function searchCriterias<T>(collection: T[], criterias: ICriterias, forbiddenAttributes: string[] = [], child?: string): T[] {
+        let resultat = collection;
+        for (let attribut in criterias) {
+            if (criterias.hasOwnProperty(attribut) && forbiddenAttributes.indexOf(attribut) === -1) {
+                resultat = resultat.filter((object) => {
+                    let out: any = child === undefined ? object : object[child];
+                    return out[attribut] === criterias[attribut];
+                });
+            }
+        }
+        return resultat;
+    }
+
     export function DragnDrop(id: string | HTMLElement, callback: (text: string, name?: string) => void, scope: any): void {
         let container = typeof id === 'string' ? document.getElementById(id) : id;
         if (container !== null) {
