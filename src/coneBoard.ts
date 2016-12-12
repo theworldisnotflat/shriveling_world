@@ -195,6 +195,16 @@ namespace shriveling {
             return resultat;
         }
 
+        public regenerateLimits(): void {
+            let that = this;
+            this.coneMeshCollection.forEach((cone) => {
+                let countryName = that._countries.getCountryName(cone.cartographicPosition);
+                let boundaryGeometries = that._countries.getMeshes(countryName)
+                    .map((mesh) => <CountryGeometry>mesh.geometry);
+                cone.regenerateLimits(boundaryGeometries);
+            });
+        }
+
         private _reHighLight(): void {
             if (this._selectedMeshs.length > 0) {
                 let visible = this._selectedMeshs[0].material.visible;

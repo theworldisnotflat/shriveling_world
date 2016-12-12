@@ -62,5 +62,9 @@ namespace shriveling {
             (<ConeGeometry>this.geometry).update(distance, base);
             this.year = year;
         }
+
+        public regenerateLimits(boundaryGeometries: CountryGeometry[]): void {
+            (<ConeGeometry>this.geometry).regenerateLimits(boundaryGeometries);
+        }
     }
 }

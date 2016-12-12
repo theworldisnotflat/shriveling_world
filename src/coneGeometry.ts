@@ -308,6 +308,11 @@ namespace shriveling {
             this.year = this.year;
         }
 
+        public regenerateLimits(boundaryGeometries: CountryGeometry[]): void {
+            this._maxDistanceFunction = extrapoler(getLocalLimits(boundaryGeometries, this._referential), 'distance');
+            this.update();
+        }
+
         public acceptProjection(value: string): boolean {
             return ConeGeometry.lookupGeometry.hasOwnProperty(value) && this._premises.hasOwnProperty(this._selectedYear);
         }
