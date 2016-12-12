@@ -55,7 +55,7 @@ namespace shriveling {
                             }
                             othersProperties['transport'] = transport;
                             let cones = this.searchMesh(referential.cartoRef);
-                            cones = searchCriterias(cones, othersProperties, forbiddenAttributes, 'otherProperties');
+                            cones = searchCriterias(cones, { transport: transport }, forbiddenAttributes, 'otherProperties');
                             if (cones.length > 0) {
                                 let cone = cones[0];
                                 cone.update(distance, transports[transport]);
