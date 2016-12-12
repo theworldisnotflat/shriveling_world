@@ -220,10 +220,6 @@ namespace shriveling {
     }
 
     export interface ITownTransport {
-        countryName: string;
-        countryCode: number;
-        cityCode: number;
-        cityName: string;
         position: Cartographic;
         referential: NEDLocal;
         transports: ILookupTransport;
@@ -233,28 +229,70 @@ namespace shriveling {
     export interface IlookupTownTransport {
         [cityCode: string]: ITownTransport;
     }
-    export interface ICitySubLayers {
-        [cityCode: number]: ConeMesh;
-    }
-    export interface ITransportLayers {
-        [transport: string]: ICitySubLayers;
-    }
 
     export interface ICriterias {
         [attribut: string]: number | string | Date | boolean;
     }
 
-    export function searchCriterias<T>(collection: T[], criterias: ICriterias, forbiddenAttributes: string[] = [], child?: string): T[] {
-        let resultat = collection;
-        for (let attribut in criterias) {
-            if (criterias.hasOwnProperty(attribut) && forbiddenAttributes.indexOf(attribut) === -1) {
-                resultat = resultat.filter((object) => {
-                    let out: any = child === undefined ? object : object[child];
-                    return out[attribut] === criterias[attribut];
-                });
+    export interface IOrderAscendant {
+        attribute: string;
+        ascendant: boolean;
+    }
+
+    function compare(ob1: any, ob2: any, ascendant: boolean): number {
+        let resultat = 0;
+        let ob1Float = parseFloat(ob1);
+        let ob2Float = parseFloat(ob2);
+        if (ob1 instanceof Date && ob2 instanceof Date) {
+            resultat = ob1.getTime() - ob2.getTime();
+        } else if (!isNaN(ob1Float) && !isNaN(ob2Float) &&
+            (ob1.length === ob1Float.toString().length) && (ob2.length === ob2Float.toString().length)) {
+            resultat = ob1Float - ob2Float;
+        } else {
+            let ob1String = ob1.toString();
+            let ob2String = ob2.toString();
+            if (ob1String === ob2String) {
+                resultat = 0;
+            } else if (ob1String > ob2String) {
+                resultat = 1;
+            } else {
+                resultat = -1;
             }
         }
+        if (!ascendant) {
+            resultat = -resultat;
+        }
         return resultat;
+    }
+
+    export function searchCriterias<T>(collection: T[], criterias: ICriterias, forbiddenAttributes: string[] = [], child?: string): T[] {
+        let criteriasKey = Object.keys(criterias);
+        function megaFilter(item: T): boolean {
+            let found = true;
+            let out: any = child === undefined ? item : item[child];
+            let attribut: string;
+            for (let i = 0; i < criteriasKey.length && !found; i++) {
+                attribut = criteriasKey[i];
+                if (forbiddenAttributes.indexOf(attribut) === -1) {
+                    found = found && out[attribut] === criterias[attribut];
+                }
+            }
+            return found;
+        }
+        return collection.filter(megaFilter);
+    }
+
+    export function orderCriteria<T>(collection: T[], criteriaOrder: IOrderAscendant[] = []): T[] {
+        function megaSorter(item1: T, item2: T): number {
+            let resultat = 0;
+            let orderAscendant: IOrderAscendant;
+            for (let i = 0; i < criteriaOrder.length && resultat === 0; i++) {
+                orderAscendant = criteriaOrder[i];
+                resultat = compare(item1[orderAscendant.attribute], item2[orderAscendant.attribute], orderAscendant.ascendant);
+            }
+            return resultat;
+        }
+        return collection.sort(megaSorter);
     }
 
     export function DragnDrop(id: string | HTMLElement, callback: (text: string, name?: string) => void, scope: any): void {

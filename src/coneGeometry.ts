@@ -20,46 +20,50 @@ namespace shriveling {
 
     function extrapoler(normalizedBase: IClock[], property: string): (clock: number) => number {
         let length = normalizedBase.length;
-        return (clock: number) => {
-            let indMin = 0;
-            let indMax = length - 1;
-            let index = Math.floor(length / 2);
-            let found = false;
-            let out = 0;
-            if (clock < normalizedBase[0].clock) {
-                index = 0;
-                found = true;
-            }
-            if (clock > normalizedBase[length - 1].clock) {
-                index = indMax;
-                indMin = indMax - 1;
-                found = false;
-            }
-            while ((indMax !== indMin + 1) && !(found)) {
-                if (normalizedBase[index].clock === clock) {
-                    indMin = index;
-                    indMax = index;
+        let resultat = (clock: number) => 0;
+        if (length > 0) {
+            resultat = (clock: number) => {
+                let indMin = 0;
+                let indMax = length - 1;
+                let index = Math.floor(length / 2);
+                let found = false;
+                let out = 0;
+                if (clock < normalizedBase[0].clock) {
+                    index = 0;
                     found = true;
-                } else {
-                    if (normalizedBase[index].clock < clock) {
+                }
+                if (clock > normalizedBase[length - 1].clock) {
+                    index = indMax;
+                    indMin = indMax - 1;
+                    found = false;
+                }
+                while ((indMax !== indMin + 1) && !(found)) {
+                    if (normalizedBase[index].clock === clock) {
                         indMin = index;
+                        indMax = index;
+                        found = true;
                     } else {
-                        if (normalizedBase[index].clock > clock) {
-                            indMax = index;
+                        if (normalizedBase[index].clock < clock) {
+                            indMin = index;
+                        } else {
+                            if (normalizedBase[index].clock > clock) {
+                                indMax = index;
+                            }
                         }
                     }
+                    index = Math.floor((indMin + indMax) / 2);
                 }
-                index = Math.floor((indMin + indMax) / 2);
-            }
-            if (found) {
-                out = normalizedBase[index][property];
-            } else {
-                // calcul du ratio
-                out = (normalizedBase[indMax][property] - normalizedBase[indMin][property]) * (clock - normalizedBase[indMin].clock) /
-                    (normalizedBase[indMax].clock - normalizedBase[indMin].clock) + normalizedBase[indMin][property];
-            }
-            return out;
-        };
+                if (found) {
+                    out = normalizedBase[index][property];
+                } else {
+                    // calcul du ratio
+                    out = (normalizedBase[indMax][property] - normalizedBase[indMin][property]) * (clock - normalizedBase[indMin].clock) /
+                        (normalizedBase[indMax].clock - normalizedBase[indMin].clock) + normalizedBase[indMin][property];
+                }
+                return out;
+            };
+        }
+        return resultat;
     }
 
     function direction2Cartographic(

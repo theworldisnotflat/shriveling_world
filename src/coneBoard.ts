@@ -15,8 +15,9 @@ namespace shriveling {
         private _scale: number = 1;
         private _show: boolean = true;
         private _withLimits: boolean = true;
+        private _countries: CountryBoard;
 
-        public constructor(mainProjector: string, scene: THREE.Scene, camera: THREE.Camera) {
+        public constructor(mainProjector: string, scene: THREE.Scene, camera: THREE.Camera, countries: CountryBoard) {
             if (!mapProjectors.hasOwnProperty(mainProjector)) {
                 mainProjector = Object.keys(mapProjectors)[0];
             }
@@ -25,9 +26,10 @@ namespace shriveling {
             this._camera = camera;
             this._raycaster = new THREE.Raycaster();
             this._projection = mainProjector;
+            this._countries = countries;
         }
 
-        public add(lookup: IlookupTownTransport, boundaryGeometries: CountryGeometry[], distance: number, withLimit: boolean = true): void {
+        public add(lookup: IlookupTownTransport, distance: number, withLimit: boolean = true): void {
             for (let cityCode in lookup) {
                 if (lookup.hasOwnProperty(cityCode)) {
                     let commonOthersProperties = {};
@@ -52,13 +54,16 @@ namespace shriveling {
                                 }
                             }
                             othersProperties['transport'] = transport;
-                            let cones = this.searchMesh(criterias);
-
+                            let cones = this.searchMesh(referential.cartoRef);
+                            cones = searchCriterias(cones, othersProperties, forbiddenAttributes, 'otherProperties');
                             if (cones.length > 0) {
                                 let cone = cones[0];
                                 cone.update(distance, transports[transport]);
                                 cone.otherProperties = othersProperties;
                             } else {
+                                let countryName = this._countries.getCountryName(referential.cartoRef);
+                                let boundaryGeometries = this._countries.getMeshes(countryName)
+                                    .map((mesh) => <CountryGeometry>mesh.geometry);
                                 let cone = new ConeMesh(
                                     referential, transports[transport], boundaryGeometries, this._projection, distance, this._withLimits);
                                 cone.otherProperties = othersProperties;
@@ -129,7 +134,7 @@ namespace shriveling {
             mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
             this._raycaster.setFromCamera(mouse, this._camera);
             let intersects = this._raycaster.intersectObjects(this.coneMeshCollection);
-            if (intersects.length > 0 && this.coneMeshCollection.indexOf(<ConeMesh>intersects[0].object) > 0) {
+            if (intersects.length > 0) {
                 resultat = <ConeMesh>intersects[0].object;
                 this.highLight(resultat.otherProperties, highLight);
             } else {
@@ -138,6 +143,12 @@ namespace shriveling {
                 });
             }
             return resultat;
+        }
+
+        public setLimits(criterias: ICriterias, limit: boolean): void {
+            this.searchMesh(criterias).forEach((country) => {
+                country.withLimits = limit;
+            });
         }
 
         public scale(value: number): void {

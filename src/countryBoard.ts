@@ -135,7 +135,7 @@ namespace shriveling {
             mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
             this._raycaster.setFromCamera(mouse, this._camera);
             let intersects = this._raycaster.intersectObjects(this.countryMeshCollection);
-            if (intersects.length > 0 && this.countryMeshCollection.indexOf(<CountryMesh>intersects[0].object) > 0) {
+            if (intersects.length > 0) {
                 resultat = intersects[0].object.name;
                 this.highLight(resultat, highLight);
             } else {
