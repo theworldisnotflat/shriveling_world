@@ -1,35 +1,80 @@
 /// <reference path="../node_modules/@types/three/index.d.ts"/>
 namespace shriveling {
     'use strict';
-    export var deg2rad = Math.PI / 180;
-    export var rad2deg = 180 / Math.PI;
-    export var earthRadiusMeters = 6371e3;
 
     export var mapProjectors: IConverterLookup = {
-        none: (pos: Cartographic, threeRadius: number = Cartographic.THREE_EARTH_RADIUS): THREE.Vector3 => {
-            let radius = (earthRadiusMeters + pos.height) / earthRadiusMeters * threeRadius;
-            return new THREE.Vector3(
-                -Math.cos(pos.longitude) * radius * Math.cos(pos.latitude),
-                Math.sin(pos.latitude) * radius,
-                Math.sin(pos.longitude) * radius * Math.cos(pos.latitude)
-            );
+        none:
+        {
+            converter:
+            (pos: Cartographic, threeRadius: number = Cartographic.THREE_EARTH_RADIUS): THREE.Vector3 => {
+                let radius = (Configuration.earthRadiusMeters + pos.height) / Configuration.earthRadiusMeters * threeRadius;
+                return new THREE.Vector3(
+                    -Math.cos(pos.longitude) * radius * Math.cos(pos.latitude),
+                    Math.sin(pos.latitude) * radius,
+                    Math.sin(pos.longitude) * radius * Math.cos(pos.latitude),
+                );
+            },
+            reverser: (pos: THREE.Vector3, threeRadius: number = Cartographic.THREE_EARTH_RADIUS): Cartographic => {
+                let radius = pos.length();
+                let resultat = new Cartographic();
+                resultat.height = (radius * Configuration.earthRadiusMeters / threeRadius) - Configuration.earthRadiusMeters;
+                resultat.longitude = Math.atan2(pos.z, -pos.x);
+                let cos = Math.cos(resultat.longitude);
+                let sin = Math.sin(resultat.longitude);
+                if (Math.abs(sin) > 1e-13) {
+                    resultat.latitude = Math.atan2(pos.y, pos.z / sin);
+                } else if (Math.abs(cos) > 1e-13) {
+                    resultat.latitude = Math.atan2(pos.y, pos.x / cos);
+                } else {
+                    resultat.latitude = Math.asin(pos.y);
+                }
+                return resultat;
+            },
         },
-        Equirectangular: (
-            pos: Cartographic, reference = new Cartographic(), threeRadius: number = Cartographic.THREE_EARTH_RADIUS): THREE.Vector3 => {
-            return new THREE.Vector3(
-                (pos.longitude - reference.longitude) * Math.cos(reference.latitude) * threeRadius,
-                (pos.latitude - reference.latitude) * threeRadius,
-                (pos.height - reference.height) / earthRadiusMeters * threeRadius
-            );
+        Equirectangular:
+        {
+            converter:
+            (pos: Cartographic, reference = new Cartographic(), threeRadius: number = Cartographic.THREE_EARTH_RADIUS): THREE.Vector3 => {
+                return new THREE.Vector3(
+                    (pos.longitude - reference.longitude) * Math.cos(reference.latitude) * threeRadius,
+                    (pos.latitude - reference.latitude) * threeRadius,
+                    (pos.height - reference.height) / Configuration.earthRadiusMeters * threeRadius,
+                );
+            },
+            reverser:
+            (pos: THREE.Vector3, reference = new Cartographic(), threeRadius: number = Cartographic.THREE_EARTH_RADIUS): Cartographic => {
+                let cleanPos = pos.clone().multiplyScalar(1 / threeRadius);
+                let resultat = new Cartographic();
+                resultat.height = cleanPos.z * Configuration.earthRadiusMeters + reference.height;
+                resultat.latitude = cleanPos.x + reference.latitude;
+                let cos = Math.cos(resultat.latitude);
+                if (cos > 1e-13) {
+                    resultat.longitude = cleanPos.x / cos + reference.longitude;
+                }
+                return resultat;
+            },
         },
-        Mercator: (
-            pos: Cartographic, lambda0: number = 0, threeRadius: number = Cartographic.THREE_EARTH_RADIUS): THREE.Vector3 => {
-            return new THREE.Vector3(
-                (pos.longitude - lambda0) * threeRadius,
-                Math.log(Math.tan(Math.PI / 4 + pos.latitude / 2)) * threeRadius,
-                pos.height / earthRadiusMeters * threeRadius
-            );
+        Mercator:
+        {
+            converter:
+            (pos: Cartographic, lambda0: number = 0, threeRadius: number = Cartographic.THREE_EARTH_RADIUS): THREE.Vector3 => {
+                return new THREE.Vector3(
+                    (pos.longitude - lambda0) * threeRadius,
+                    Math.log(Math.tan(Math.PI / 4 + pos.latitude / 2)) * threeRadius,
+                    pos.height / Configuration.earthRadiusMeters * threeRadius,
+                );
+            },
+            reverser:
+            (pos: THREE.Vector3, lambda0: number = 0, threeRadius: number = Cartographic.THREE_EARTH_RADIUS): Cartographic => {
+                let cleanPos = pos.clone().multiplyScalar(1 / threeRadius);
+                let resultat = new Cartographic();
+                resultat.longitude = cleanPos.x + lambda0;
+                resultat.height = cleanPos.z + Configuration.earthRadiusMeters;
+                resultat.latitude = 2 * (Math.atan(Math.exp(cleanPos.y)) - Math.PI / 4);
+                return resultat;
+            },
         },
+
     };
 
     export class Cartographic {
@@ -51,6 +96,23 @@ namespace shriveling {
             return Math.acos(resultat);
         }
 
+        public static isInside(position: Cartographic, boundary: Cartographic[]): boolean {
+            let cn = 0;    // the  crossing number counter
+            let iplus: number, n = boundary.length;
+            // loop through all edges of the polygon
+            for (let i = 0; i < n; i++) {    // edge from V[i]  to V[i+1]
+                iplus = (i === n - 1) ? 0 : i + 1;
+                if (((boundary[i].latitude <= position.latitude) && (boundary[iplus].latitude > position.latitude))
+                    || ((boundary[i].latitude > position.latitude) && (boundary[iplus].latitude <= position.latitude))) {
+                    let vt = (position.latitude - boundary[i].latitude) / (boundary[iplus].latitude - boundary[i].latitude);
+                    if (position.longitude < boundary[i].longitude + vt * (boundary[iplus].longitude - boundary[i].longitude)) {
+                        cn++;
+                    }
+                }
+            }
+            return cn % 2 === 1;    // 0 if even (out), and 1 if  odd (in)
+        }
+
         public static lerp(pos1: Cartographic, pos2: Cartographic, fractions: number[] = []): Cartographic[] {
             let distance = Cartographic.distanceExacte(pos1, pos2);
             let resultat: Cartographic[] = [];
@@ -68,10 +130,24 @@ namespace shriveling {
             return resultat;
         }
 
+        public static direction(pos1: Cartographic, pos2: Cartographic): number {
+            return Math.atan2(pos2.latitude - pos1.latitude, pos2.longitude - pos1.longitude);
+        }
+
+        public static fromVector3(pos1: THREE.Vector3, projector: string): Cartographic {
+            let resultat: Cartographic;
+            if (mapProjectors.hasOwnProperty(projector)) {
+                resultat = mapProjectors[projector].reverser(pos1);
+            } else {
+                throw new Error('no projector with the name of ' + projector);
+            }
+            return resultat;
+        }
+
         constructor(longitude: number = 0, latitude: number = 0, height: number = 0, isRadians: boolean = true) {
             if (!isRadians) {
-                latitude *= deg2rad;
-                longitude *= deg2rad;
+                latitude *= Configuration.deg2rad;
+                longitude *= Configuration.deg2rad;
             }
             this.latitude = latitude;
             this.longitude = longitude;
@@ -102,20 +178,121 @@ namespace shriveling {
             let resultat: { [name: string]: THREE.Vector3 } = {};
             nameProJections.forEach((name) => {
                 if (mapProjectors.hasOwnProperty(name)) {
-                    resultat[name] = mapProjectors[name](that);
+                    resultat[name] = mapProjectors[name].converter(that);
                 }
             });
             return resultat;
         }
+
+        public direction(pos: Cartographic): number {
+            return Cartographic.direction(this, pos);
+        }
+    }
+
+    export interface IConverter {
+        converter: (pos: Cartographic) => THREE.Vector3;
+        reverser: (pos: THREE.Vector3) => Cartographic;
     }
 
     export interface IConverterLookup {
-        [name: string]: (pos: Cartographic) => THREE.Vector3;
+        [name: string]: IConverter;
     }
 
     export interface IMapProjector {
         name: string;
         converter: (pos: Cartographic) => THREE.Vector3;
+    }
+
+    export interface IClock {
+        clock: number;
+    }
+
+    export interface IDirection extends IClock {
+        elevation: number;
+    }
+
+    export interface ILookupDirection {
+        [year: string]: IDirection[];
+    }
+
+    export interface ILookupTransport {
+        [transport: string]: ILookupDirection;
+    }
+
+    export interface ITownTransport {
+        position: Cartographic;
+        referential: NEDLocal;
+        transports: ILookupTransport;
+        layers?: { [transport: string]: ConeMesh };
+    }
+
+    export interface IlookupTownTransport {
+        [cityCode: string]: ITownTransport;
+    }
+
+    export interface ICriterias {
+        [attribut: string]: number | string | Date | boolean;
+    }
+
+    export interface IOrderAscendant {
+        attribute: string;
+        ascendant: boolean;
+    }
+
+    function compare(ob1: any, ob2: any, ascendant: boolean): number {
+        let resultat = 0;
+        let ob1Float = parseFloat(ob1);
+        let ob2Float = parseFloat(ob2);
+        if (ob1 instanceof Date && ob2 instanceof Date) {
+            resultat = ob1.getTime() - ob2.getTime();
+        } else if (!isNaN(ob1Float) && !isNaN(ob2Float) &&
+            (ob1.length === ob1Float.toString().length) && (ob2.length === ob2Float.toString().length)) {
+            resultat = ob1Float - ob2Float;
+        } else {
+            let ob1String = ob1.toString();
+            let ob2String = ob2.toString();
+            if (ob1String === ob2String) {
+                resultat = 0;
+            } else if (ob1String > ob2String) {
+                resultat = 1;
+            } else {
+                resultat = -1;
+            }
+        }
+        if (!ascendant) {
+            resultat = -resultat;
+        }
+        return resultat;
+    }
+
+    export function searchCriterias<T>(collection: T[], criterias: ICriterias, forbiddenAttributes: string[] = [], child?: string): T[] {
+        let criteriasKey = Object.keys(criterias);
+        function megaFilter(item: T): boolean {
+            let found = true;
+            let out: any = child === undefined ? item : item[child];
+            let attribut: string;
+            for (let i = 0; i < criteriasKey.length && !found; i++) {
+                attribut = criteriasKey[i];
+                if (forbiddenAttributes.indexOf(attribut) === -1) {
+                    found = found && out[attribut] === criterias[attribut];
+                }
+            }
+            return found;
+        }
+        return collection.filter(megaFilter);
+    }
+
+    export function orderCriteria<T>(collection: T[], criteriaOrder: IOrderAscendant[] = []): T[] {
+        function megaSorter(item1: T, item2: T): number {
+            let resultat = 0;
+            let orderAscendant: IOrderAscendant;
+            for (let i = 0; i < criteriaOrder.length && resultat === 0; i++) {
+                orderAscendant = criteriaOrder[i];
+                resultat = compare(item1[orderAscendant.attribute], item2[orderAscendant.attribute], orderAscendant.ascendant);
+            }
+            return resultat;
+        }
+        return collection.sort(megaSorter);
     }
 
     export function DragnDrop(id: string | HTMLElement, callback: (text: string, name?: string) => void, scope: any): void {

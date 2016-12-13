@@ -1,42 +1,15 @@
 namespace shriveling {
     'use strict';
 
-    export interface ICountryTextureURL {
-        map: string;
-        specularMap: string;
-        bumpMap: string;
-        normalMap: string;
-    }
-
     export class CountryMesh extends THREE.Mesh {
-        public static COUNTRY_TEXTURES: ICountryTextureURL = {
-            map: 'assets/earthmap4k.jpg',
-            specularMap: 'assets/earthspec4k.jpg',
-            bumpMap: 'assets/earthbump4k.jpg',
-            normalMap: 'assets/earth_normalmap_flat4k.jpg',
-        };
-        private static NORMAL_MATERIAL: THREE.Material;
         private _extruded: number = 0;
         private _reprojectName: string;
         private _reprojectIndex: number = -1;
         private _extrudedIndex: number = -1;
 
         public static generator(geoJson: any, mainProjector: string): CountryMesh[] {
+            Configuration.prepareConfiguration();
             let resultat: CountryMesh[] = [];
-            let loader = new THREE.TextureLoader();
-
-            let earthMaterial = new THREE.MeshPhongMaterial({
-                morphTargets: true, opacity: 0.5, depthTest: true, depthWrite: true, transparent: false,
-            });
-            earthMaterial.map = loader.load(CountryMesh.COUNTRY_TEXTURES.map);
-            earthMaterial.specularMap = loader.load(CountryMesh.COUNTRY_TEXTURES.specularMap);
-            earthMaterial.specular = new THREE.Color(0x262626);
-            earthMaterial.bumpMap = loader.load(CountryMesh.COUNTRY_TEXTURES.bumpMap);
-            earthMaterial.bumpScale = 0.15;
-            earthMaterial.normalMap = loader.load(CountryMesh.COUNTRY_TEXTURES.normalMap);
-            earthMaterial.normalScale = new THREE.Vector2(0.5, 0.7);
-            earthMaterial.side = THREE.DoubleSide;
-            CountryMesh.NORMAL_MATERIAL = earthMaterial;
 
             let geometries = CountryGeometry.generator(geoJson, mainProjector);
             geometries.forEach((geometry) => {
@@ -92,10 +65,13 @@ namespace shriveling {
             }
         }
 
+        public isInside(pos: Cartographic): boolean {
+            return (<CountryGeometry>this.geometry).isInside(pos);
+        }
+
         private constructor(geometry: CountryGeometry) {
-            super(geometry, CountryMesh.NORMAL_MATERIAL);
+            super(geometry, Configuration.NORMAL_MATERIAL);
             this.name = geometry.name;
-            this.projection = this.projection;
         }
     }
 }

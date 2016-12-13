@@ -23,7 +23,7 @@ gulp server
 and go to http://localhost:8080 . For now you can just drag'n'drop geojson files into example/datas in the web app.
 
 # Road map
-- [ ] create classes for the generation of cones
-- [ ] create a board class to manage cones
+- [X] create classes for the generation of cones
+- [X] create a board class to manage cones
 - [ ] create bigboard to manage all the application
 - [ ] incorpore the parser of csv in order to provide some cones

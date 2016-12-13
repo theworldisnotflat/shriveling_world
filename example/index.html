@@ -28,7 +28,8 @@
 		var camera, scene, renderer;
 		var windowHalfX = window.innerWidth / 2;
 		var windowHalfY = window.innerHeight / 2;
-		let board;
+		let countryBoard, coneBoard;
+		var cones = [];
 		init();
 		animate();
 
@@ -87,21 +88,56 @@
 			var skybox = new THREE.Mesh(skyGeometry, skyMaterial);
 			scene.add(skybox);
 
+			//			let projectionName='Equirectangular';
+			let projectionName = 'none';
+			//			let projectionName='Mercator';
+			let d2r = Math.PI / 180;
+			let distance = Math.abs(shriveling.Configuration.extrudedHeight);
+			shriveling.Configuration.coneStep = 15 * d2r;
 			shriveling.DragnDrop(container, (text, name) => {
 				console.log(name);
 				let start = new Date();
-				if (board) {
-					board.add(JSON.parse(text));
+				if (countryBoard) {
+					countryBoard.add(JSON.parse(text));
 				} else {
-					board = new shriveling.CountryBoard(JSON.parse(text), 'Equirectangular', scene, camera);
+					countryBoard = new shriveling.CountryBoard(projectionName, scene, camera);
+					coneBoard = new shriveling.ConeBoard(projectionName, scene, camera, countryBoard);
+					countryBoard.add(JSON.parse(text));
+					countryBoard.show = false;
+					let sample = {};
+					let positions = [
+						new shriveling.Cartographic(175.882524, -39.675275, 0, false),
+						new shriveling.Cartographic(46.826185, -19.309609, 0, false),
+						new shriveling.Cartographic(132.207710, -24.028092, 0, false),
+						new shriveling.Cartographic(105.063240, 61.854418, 0, false),
+						new shriveling.Cartographic(0, 0, 0, false),
+					];
+					let base = {
+						2015: [{
+							clock: 30 * d2r,
+							elevation: 60 * d2r
+						}]
+					};
+					positions.forEach((position, index) => {
+						let cityCode = parseInt(Math.random() * 10000, 10)
+						let referential = new shriveling.NEDLocal(position);
+						let transports = {};
+						transports.air = base;
+						sample[cityCode] = {
+							referential: referential,
+							position: position,
+							transports: transports,
+							order: index
+						};
+					});
+					coneBoard.add(sample, distance, false);
 				}
-				console.log(board);
 				let stop = new Date();
 				console.log((stop.getTime() - start.getTime()) / 1000);
 			});
 			container.addEventListener('dblclick', (evt) => {
-				if (board) {
-					let name = board.getMeshByMouse(evt, true);
+				if (countryBoard) {
+					let name = countryBoard.getMeshByMouse(evt, true);
 					console.log(name);
 				}
 			});

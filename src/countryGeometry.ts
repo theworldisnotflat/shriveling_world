@@ -1,14 +1,16 @@
 namespace shriveling {
     'use strict';
-    export var deg2rad = Math.PI / 180;
-    export var rad2deg = 180 / Math.PI;
-    export var earthRadiusMeters = 6371e3;
-    const OVER_PI = 1 / Math.PI;
-    const OVER_TWO_PI = 1 / (2 * Math.PI);
 
     export interface ITypeExtrusion {
         none: number;
         extruded: number;
+    }
+
+    export interface IBBox {
+        minLat: number;
+        maxLat: number;
+        minLong: number;
+        maxLong: number;
     }
 
     interface IReverseLookupExtrusion {
@@ -22,12 +24,14 @@ namespace shriveling {
         morphs: { [name: string]: THREE.Vector3[] };
         verticesExtruded: THREE.Vector3[];
         morphsExtruded: { [name: string]: THREE.Vector3[] };
+        surfaceBoundary: Cartographic[];
     }
 
     interface IVerticesTriangles {
         vertices: Cartographic[];
         polygons: number[][];
         triangles: number[];
+        surfaceBoundary: Cartographic[];
     }
 
     function cnPnPolyIsIn(P: number[], V: number[][]): boolean {
@@ -107,7 +111,7 @@ namespace shriveling {
             swctx.addPoints(steinerPoints);
             swctx.triangulate();
             let triangles = swctx.getTriangles();
-            let resultat: IVerticesTriangles = { vertices: [], polygons: [], triangles: [] };
+            let resultat: IVerticesTriangles = { vertices: [], polygons: [], triangles: [], surfaceBoundary: [] };
             let verticesPoly2Tri: poly2tri.IPointLike[] = [];
 
             function findAndAddVertexIndex(p: poly2tri.IPointLike): number {
@@ -135,7 +139,8 @@ namespace shriveling {
                 resultat.triangles.push(findAndAddVertexIndex(triangle.getPoint(1)));
                 resultat.triangles.push(findAndAddVertexIndex(triangle.getPoint(2)));
             });
-            resultat.vertices = verticesPoly2Tri.map((v) => new Cartographic(v.x, v.y, 1, false));
+            resultat.surfaceBoundary = contour.map((point) => new Cartographic(point.x, point.y, 0, false));
+            resultat.vertices = verticesPoly2Tri.map((v) => new Cartographic(v.x, v.y, 0, false));
             return resultat;
         });
     }
@@ -163,8 +168,7 @@ namespace shriveling {
                 b = { x: q[0] - p[0], y: q[1] - p[1] };
                 if (Math.abs(
                     (a.x * b.x + a.y * b.y) /
-                    Math.sqrt((a.x * a.x + a.y * a.y) * (b.x * b.x + b.y * b.y))
-                ) > 1 - 1e-5) {
+                    Math.sqrt((a.x * a.x + a.y * a.y) * (b.x * b.x + b.y * b.y))) > 1 - 1e-5) {
                     polygon.splice(i, 1);
                     i = Math.max(-1, i - 2);
                     done = false;
@@ -197,9 +201,7 @@ namespace shriveling {
         return polygon;
     }
 
-    function prepareGeometry(
-        verticesAndTriangles: IVerticesTriangles, mainProjector: string, heightRatio: number = 0.01,
-        extrudedHeightRatio: number = 0.5): IPreGeometry {
+    function prepareGeometry(verticesAndTriangles: IVerticesTriangles, mainProjector: string): IPreGeometry {
         let resultat: IPreGeometry = <IPreGeometry>{};
         let cartoVertices = verticesAndTriangles.vertices;
         let cartoVerticesExtruded: Cartographic[] = [...cartoVertices];
@@ -211,8 +213,6 @@ namespace shriveling {
         let faces: THREE.Face3[] = [];
         let faceVertexUvs: THREE.Vector2[][] = [];
         const n = cartoVertices.length;
-        const hatHeight = earthRadiusMeters * heightRatio;
-        const extrudedHeight = earthRadiusMeters * extrudedHeightRatio;
 
         for (let name in mapProjectors) {
             if (mapProjectors.hasOwnProperty(name)) {
@@ -226,16 +226,16 @@ namespace shriveling {
             let carto = cartoVertices[i];
 
             cartoHat = carto.clone();
-            cartoHat.height = hatHeight;
+            cartoHat.height = Configuration.hatHeight;
             cartoVertices.push(cartoHat);
 
             cartoHat = carto.clone();
-            cartoHat.height = extrudedHeight;
+            cartoHat.height = Configuration.extrudedHeight;
             cartoVerticesExtruded.push(cartoHat);
 
             uvs.push(new THREE.Vector2(
-                carto.longitude * OVER_TWO_PI + 0.5,
-                carto.latitude * OVER_PI + 0.5
+                carto.longitude * Configuration.OVER_TWO_PI + 0.5,
+                carto.latitude * Configuration.OVER_PI + 0.5,
             ));
         }
 
@@ -307,6 +307,8 @@ namespace shriveling {
     export class CountryGeometry extends THREE.Geometry {
         public static lookupGeometry: { [projection: string]: ITypeExtrusion } = {};
         public properties: any;
+        private _boundary: Cartographic[];
+        private _boundaryBox: IBBox;
         private _projection: string;
 
         public static generator(geoJson: any, mainProjector: string): CountryGeometry[] {
@@ -346,6 +348,10 @@ namespace shriveling {
             return this._projection;
         }
 
+        get boundary(): Cartographic[] {
+            return this._boundary;
+        }
+
         set projection(value: string) {
             if (this.acceptProjection(value)) {
                 this._projection = value;
@@ -369,11 +375,29 @@ namespace shriveling {
             return geometry;
         }
 
+        public isInside(pos: Cartographic): boolean {
+            let resultat = false;
+            if (pos.latitude >= this._boundaryBox.minLat && pos.latitude <= this._boundaryBox.maxLat &&
+                pos.longitude >= this._boundaryBox.minLong && pos.longitude <= this._boundaryBox.maxLong) {
+                resultat = Cartographic.isInside(pos, this._boundary);
+            }
+            return resultat;
+        }
+
         private constructor(
             name: string, properties: any, boundary: IVerticesTriangles, mainProjector: string, reverseLookup: IReverseLookupExtrusion[]) {
             super();
             this.properties = properties;
             this.name = name;
+            this._boundary = boundary.surfaceBoundary;
+            this._boundaryBox = { minLat: 1000, minLong: 1000, maxLat: -1000, maxLong: -1000 };
+            for (let i = 0; i < this._boundary.length; i++) {
+                let pos = this._boundary[i];
+                this._boundaryBox.minLong = Math.min(this._boundaryBox.minLong, pos.longitude);
+                this._boundaryBox.minLat = Math.min(this._boundaryBox.minLat, pos.latitude);
+                this._boundaryBox.maxLong = Math.max(this._boundaryBox.maxLong, pos.longitude);
+                this._boundaryBox.maxLat = Math.max(this._boundaryBox.maxLat, pos.latitude);
+            }
             let preparedGeometry = prepareGeometry(boundary, mainProjector);
             this.morphTargets = [];
             let list: THREE.Vector3[], reverse: IReverseLookupExtrusion, morphName: string;
