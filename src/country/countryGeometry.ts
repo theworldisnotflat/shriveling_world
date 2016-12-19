@@ -230,7 +230,7 @@ namespace shriveling {
             cartoVertices.push(cartoHat);
 
             cartoHat = carto.clone();
-            cartoHat.height = Configuration.extrudedHeight;
+            cartoHat.height = -Configuration.extrudedHeight;
             cartoVerticesExtruded.push(cartoHat);
 
             uvs.push(new THREE.Vector2(
@@ -306,7 +306,7 @@ namespace shriveling {
 
     export class CountryGeometry extends THREE.Geometry {
         public static lookupGeometry: { [projection: string]: ITypeExtrusion } = {};
-        public properties: any;
+        public otherProperties: any;
         private _boundary: Cartographic[];
         private _boundaryBox: IBBox;
         private _projection: string;
@@ -333,9 +333,8 @@ namespace shriveling {
                 }
                 (<GeoJSON.FeatureCollection<GeoJSON.GeometryObject>>geoJson).features.forEach((feature) => {
                     let properties = feature.properties;
-                    let name = properties.name ? properties.name : properties[Object.keys(properties)[0]];
                     generateVertices(feature.geometry).forEach((item, index) => {
-                        resultat.push(new CountryGeometry(name, properties, item, mainProjector, reverseLookup));
+                        resultat.push(new CountryGeometry( properties, item, mainProjector, reverseLookup));
                     });
                 });
             } else {
@@ -385,10 +384,9 @@ namespace shriveling {
         }
 
         private constructor(
-            name: string, properties: any, boundary: IVerticesTriangles, mainProjector: string, reverseLookup: IReverseLookupExtrusion[]) {
+          properties: any, boundary: IVerticesTriangles, mainProjector: string, reverseLookup: IReverseLookupExtrusion[]) {
             super();
-            this.properties = properties;
-            this.name = name;
+            this.otherProperties = properties;
             this._boundary = boundary.surfaceBoundary;
             this._boundaryBox = { minLat: 1000, minLong: 1000, maxLat: -1000, maxLong: -1000 };
             for (let i = 0; i < this._boundary.length; i++) {

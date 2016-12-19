@@ -18,9 +18,9 @@ namespace shriveling {
         public static OVER_PI: number = 1 / Math.PI;
         public static OVER_TWO_PI: number = 1 / (2 * Math.PI);
         public static heightRatio: number = 0.01;
-        public static intrudedHeightRatio: number = 0.8;
-        public static coneStep: number = 5 * Configuration.deg2rad;
-        public static extrudedHeight: number = - Configuration.earthRadiusMeters * Configuration.intrudedHeightRatio;
+        public static intrudedHeightRatio: number = 0.6;
+        public static coneStep: number = 10 * Configuration.deg2rad;
+        public static extrudedHeight: number = Configuration.earthRadiusMeters * Configuration.intrudedHeightRatio;
         public static hatHeight: number = Configuration.earthRadiusMeters * Configuration.heightRatio;
         public static COUNTRY_TEXTURES: ICountryTextureURL = {
             map: 'assets/earthmap4k.jpg',
@@ -29,6 +29,10 @@ namespace shriveling {
             normalMap: 'assets/earth_normalmap_flat4k.jpg',
         };
         public static NORMAL_MATERIAL: THREE.Material;
+        public static SKYBOX_URLS: string[] = [
+            'assets/px.jpg', 'assets/nx.jpg', 'assets/py.jpg', 'assets/ny.jpg', 'assets/pz.jpg', 'assets/nz.jpg',
+        ];
+        public static TWEEN_TIMING: number = 1000;
 
         public static prepareConfiguration(): void {
             if (Configuration.NORMAL_MATERIAL === undefined) {

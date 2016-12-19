@@ -82,9 +82,9 @@
 					map: loader.load(urls[i]),
 					side: THREE.BackSide
 				}));
-
+			shriveling.Configuration.prepareConfiguration();
 			var skyGeometry = new THREE.CubeGeometry(10000, 10000, 10000);
-			var skyMaterial = new THREE.MeshFaceMaterial(materialArray);
+			var skyMaterial = new THREE.MultiMaterial(materialArray);
 			var skybox = new THREE.Mesh(skyGeometry, skyMaterial);
 			scene.add(skybox);
 
@@ -92,7 +92,7 @@
 			let projectionName = 'none';
 			//			let projectionName='Mercator';
 			let d2r = Math.PI / 180;
-			let distance = Math.abs(shriveling.Configuration.extrudedHeight);
+			let distance = shriveling.Configuration.extrudedHeight;
 			shriveling.Configuration.coneStep = 15 * d2r;
 			shriveling.DragnDrop(container, (text, name) => {
 				console.log(name);
@@ -103,7 +103,7 @@
 					countryBoard = new shriveling.CountryBoard(projectionName, scene, camera);
 					coneBoard = new shriveling.ConeBoard(projectionName, scene, camera, countryBoard);
 					countryBoard.add(JSON.parse(text));
-					countryBoard.show = false;
+				//	countryBoard.show = false;
 					let sample = {};
 					let positions = [
 						new shriveling.Cartographic(175.882524, -39.675275, 0, false),

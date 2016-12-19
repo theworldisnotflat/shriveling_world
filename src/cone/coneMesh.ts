@@ -3,6 +3,8 @@ namespace shriveling {
 
     export class ConeMesh extends THREE.Mesh {
 
+        private _year: string;
+
         get projection(): string {
             return (<ConeGeometry>this.geometry).projection;
         }
@@ -19,15 +21,20 @@ namespace shriveling {
 
         set year(value: string) {
             (<ConeGeometry>this.geometry).year = value;
-            if ((<ConeGeometry>this.geometry).year === value) {
-                this.visible = false;
+            this._year = value;
+            this.visible = (<ConeGeometry>this.geometry).year !== this._year;
+        }
+
+        set visible(value: boolean) {
+            if (this.geometry !== undefined && (<ConeGeometry>this.geometry).year !== undefined) {
+                value = value && this._year === (<ConeGeometry>this.geometry).year;
             }
+            super.visible = value;
         }
 
         get withLimits(): boolean {
             return (<ConeGeometry>this.geometry).withLimits;
         }
-
         set withLimits(value: boolean) {
             (<ConeGeometry>this.geometry).withLimits = value;
         }
@@ -35,13 +42,8 @@ namespace shriveling {
         get otherProperties(): any {
             return (<ConeGeometry>this.geometry).otherProperties;
         }
-
         set otherProperties(value: any) {
             (<ConeGeometry>this.geometry).otherProperties = value;
-        }
-
-        get countryName(): string {
-            return (<ConeGeometry>this.geometry).countryName;
         }
 
         get cartographicPosition(): Cartographic {
@@ -54,7 +56,6 @@ namespace shriveling {
             let geometry =
                 new ConeGeometry(referential, base, boundaryGeometries, projectionName, distance, withLimit, others);
             super(geometry, Configuration.NORMAL_MATERIAL);
-            this.name = geometry.name;
         }
 
         public update(distance?: number, base?: { [year: string]: IDirection[] }): void {

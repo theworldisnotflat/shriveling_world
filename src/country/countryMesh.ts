@@ -8,7 +8,6 @@ namespace shriveling {
         private _extrudedIndex: number = -1;
 
         public static generator(geoJson: any, mainProjector: string): CountryMesh[] {
-            Configuration.prepareConfiguration();
             let resultat: CountryMesh[] = [];
 
             let geometries = CountryGeometry.generator(geoJson, mainProjector);
@@ -29,14 +28,13 @@ namespace shriveling {
             }
         }
 
-        get properties(): any {
-            return (<CountryGeometry>this.geometry).properties;
+        get otherProperties(): any {
+            return (<CountryGeometry>this.geometry).otherProperties;
         }
 
-        set properties(value: any) {
-            (<CountryGeometry>this.geometry).properties = value;
+        set otherProperties(value: any) {
+            (<CountryGeometry>this.geometry).otherProperties = value;
         }
-
         get projection(): string {
             return (<CountryGeometry>this.geometry).projection;
         }

@@ -230,8 +230,13 @@ namespace shriveling {
         [cityCode: string]: ITownTransport;
     }
 
+    export interface IItemCriteria {
+        value: number | string | Date | boolean;
+        comparator?: '=' | '>' | '>=' | '<' | '<=' | '!=';
+    }
+
     export interface ICriterias {
-        [attribut: string]: number | string | Date | boolean;
+        [attribut: string]: IItemCriteria;
     }
 
     export interface IOrderAscendant {
@@ -239,8 +244,53 @@ namespace shriveling {
         ascendant: boolean;
     }
 
+    export interface ISumUpCriteria {
+        [attribut: string]: { max: Date | number, min: Date | number } | string[];
+    }
+
+    export function updateSumUpCriteria(sumup: ISumUpCriteria, properties: any): ISumUpCriteria {
+        let temp: any, subObject: { max: Date | number, min: Date | number };
+        let comparMin: number, comparMax: number;
+        for (let attribute in properties) {
+            if (properties.hasOwnProperty(attribute)) {
+                temp = properties[attribute];
+                if (temp !== undefined || temp !== null) {
+                    if (sumup.hasOwnProperty(attribute)) {
+                        if (Array.isArray(sumup[attribute])) {
+                            (<string[]>sumup[attribute]).push(temp.toString());
+                        } else {
+                            subObject = <{ max: Date | number, min: Date | number }>sumup[attribute];
+                            comparMin = compare(subObject.min, temp, true);
+                            comparMax = compare(subObject.max, temp, true);
+                            if (comparMin > 0) {
+                                subObject.min = temp;
+                            }
+                            if (comparMax < 0) {
+                                subObject.max = temp;
+                            }
+                        }
+                    } else {
+                        if (typeof temp === 'string') {
+                            sumup[attribute] = [];
+                            (<string[]>sumup[attribute]).push(temp);
+                        } else {
+                            sumup[attribute] = <{ max: Date | number, min: Date | number }>{ max: temp, min: temp };
+                        }
+                    }
+                }
+            }
+        }
+        return sumup;
+    }
+
     function compare(ob1: any, ob2: any, ascendant: boolean): number {
         let resultat = 0;
+        if (ob1 === undefined || ob1 === null) {
+            ob1 = '';
+        }
+        if (ob2 === undefined || ob2 === null) {
+            ob2 = '';
+        }
         let ob1Float = parseFloat(ob1);
         let ob2Float = parseFloat(ob2);
         if (ob1 instanceof Date && ob2 instanceof Date) {
@@ -249,8 +299,8 @@ namespace shriveling {
             (ob1.length === ob1Float.toString().length) && (ob2.length === ob2Float.toString().length)) {
             resultat = ob1Float - ob2Float;
         } else {
-            let ob1String = ob1.toString();
-            let ob2String = ob2.toString();
+            let ob1String = ob1.toString().toLowerCase();
+            let ob2String = ob2.toString().toLowerCase();
             if (ob1String === ob2String) {
                 resultat = 0;
             } else if (ob1String > ob2String) {
@@ -265,16 +315,49 @@ namespace shriveling {
         return resultat;
     }
 
+    function compareItemCriteria(value: any, itemCriteria: IItemCriteria): boolean {
+        let resultat = false;
+        let comparison = compare(value, itemCriteria.value, true);
+        let comparator = itemCriteria.comparator;
+        if (comparator === '>') {
+            if (comparison > 0) {
+                resultat = true;
+            }
+        } else if (comparator === '>=') {
+            if (comparison >= 0) {
+                resultat = true;
+            }
+        } else if (comparator === '<') {
+            if (comparison < 0) {
+                resultat = true;
+            }
+        } else if (comparator === '<=') {
+            if (comparison <= 0) {
+                resultat = true;
+            }
+        } else if (comparator === '!=') {
+            if (comparison !== 0) {
+                resultat = true;
+            }
+        } else {
+            // =
+            if (comparison === 0) {
+                resultat = true;
+            }
+        }
+        return resultat;
+    }
+
     export function searchCriterias<T>(collection: T[], criterias: ICriterias, forbiddenAttributes: string[] = [], child?: string): T[] {
         let criteriasKey = Object.keys(criterias);
         function megaFilter(item: T): boolean {
             let found = true;
             let out: any = child === undefined ? item : item[child];
             let attribut: string;
-            for (let i = 0; i < criteriasKey.length && !found; i++) {
+            for (let i = 0; i < criteriasKey.length && found; i++) {
                 attribut = criteriasKey[i];
                 if (forbiddenAttributes.indexOf(attribut) === -1) {
-                    found = found && out[attribut] === criterias[attribut];
+                    found = found && compareItemCriteria(out[attribut], criterias[attribut]);
                 }
             }
             return found;

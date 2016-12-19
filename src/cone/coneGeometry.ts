@@ -185,7 +185,6 @@ namespace shriveling {
     export class ConeGeometry extends THREE.Geometry {
         public static lookupGeometry: { [projection: string]: number };
         public static reverseLookupGeometry: string[];
-        public countryName: string;
         public otherProperties: any;
         private _projection: string;
         private _premises: ILookupGeometryPremises = {};
@@ -252,17 +251,22 @@ namespace shriveling {
                 this.faceVertexUvs = premise.faceVertexUvs;
                 this.morphTargets = premise.morphTargets;
                 this.vertices = this.morphTargets[index].vertices;
-
-                this.uvsNeedUpdate = true;
-                this.normalsNeedUpdate = true;
-                this.colorsNeedUpdate = true;
-                this.verticesNeedUpdate = true;
-                this.elementsNeedUpdate = true;
-
-                this.computeMorphNormals();
-                this.computeBoundingBox();
-                this.computeBoundingSphere();
+            } else {
+                this.faces = [];
+                this.faceVertexUvs[0] = [];
+                this.morphTargets = [];
+                this.vertices = [];
             }
+
+            this.uvsNeedUpdate = true;
+            this.normalsNeedUpdate = true;
+            this.colorsNeedUpdate = true;
+            this.verticesNeedUpdate = true;
+            this.elementsNeedUpdate = true;
+
+            this.computeMorphNormals();
+            this.computeBoundingBox();
+            this.computeBoundingSphere();
         }
 
         public fuzzyClone(): THREE.Geometry {
