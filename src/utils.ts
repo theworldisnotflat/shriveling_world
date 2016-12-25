@@ -215,14 +215,22 @@ namespace shriveling {
         [year: string]: IDirection[];
     }
 
+    export interface ILookupTransportSpeed {
+        [transport: string]: { year: number, speed: number }[];
+    }
+
     export interface ILookupTransport {
         [transport: string]: ILookupDirection;
     }
 
+    export interface ILookupDestination {
+        [cityCode: string]: ILookupTransportSpeed;
+    }
+
     export interface ITownTransport {
-        position: Cartographic;
         referential: NEDLocal;
         transports: ILookupTransport;
+        destinations: ILookupDestination;
         layers?: { [transport: string]: ConeMesh };
     }
 
@@ -246,6 +254,46 @@ namespace shriveling {
 
     export interface ISumUpCriteria {
         [attribut: string]: { max: Date | number, min: Date | number } | string[];
+    }
+
+    export interface IPopulation {
+        cityCode?: number;
+    }
+
+    export interface ICity {
+        countryCode: number;
+        countryName: string;
+        cityCode: number;
+        urbanagglomeration: string;
+        latitude: number;
+        longitude: number;
+        radius: number;
+        populations?: IPopulation;
+        destinations?: ITransportNetwork[];
+    }
+
+    export interface ITransportModeSpeed {
+        year: number;
+        transportModeCode?: number;
+        speedKPH: number;
+    }
+
+    export interface ITransportModeCode {
+        name: string;
+        code: number;
+        yearBegin: number;
+        yearEnd?: number;
+        speeds: ITransportModeSpeed[];
+    }
+
+    export interface ITransportNetwork {
+        yearBegin: number;
+        yearEnd?: number;
+        idOri?: number;
+        idDes: number;
+        transportMode: number;
+        //  transportDetails: ITransportModeCode;
+        destination?: number;
     }
 
     export function updateSumUpCriteria(sumup: ISumUpCriteria, properties: any): ISumUpCriteria {
@@ -348,11 +396,26 @@ namespace shriveling {
         return resultat;
     }
 
+    function getObjectByString(objet: any, path: string): any {
+        path = path.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+        path = path.replace(/^\./, '');           // strip a leading dot
+        let tab = path.split('.');
+        let length = tab.length;
+        let subAttribut: any;
+        for (let i = 0; i < length; ++i) {
+            subAttribut = tab[i];
+            if (subAttribut in objet) {
+                objet = objet[subAttribut];
+            }
+        }
+        return objet;
+    }
+
     export function searchCriterias<T>(collection: T[], criterias: ICriterias, forbiddenAttributes: string[] = [], child?: string): T[] {
         let criteriasKey = Object.keys(criterias);
         function megaFilter(item: T): boolean {
             let found = true;
-            let out: any = child === undefined ? item : item[child];
+            let out: any = child === undefined ? item : getObjectByString(item, child);
             let attribut: string;
             for (let i = 0; i < criteriasKey.length && found; i++) {
                 attribut = criteriasKey[i];
@@ -406,6 +469,55 @@ namespace shriveling {
         } else {
             throw new Error('not an HTML Element');
         }
+    }
+
+    export function extrapolator<U>(normalizedBase: U[], xProperty: string, yProperty: string): (x: number) => number {
+        let length = normalizedBase.length;
+        let resultat = (x: number) => 0;
+        if (length > 0) {
+            resultat = (x: number) => {
+                let indMin = 0;
+                let indMax = length - 1;
+                let index = Math.floor(length / 2);
+                let found = false;
+                let out = 0;
+                if (x < normalizedBase[0][xProperty]) {
+                    index = 0;
+                    found = true;
+                }
+                if (x > normalizedBase[length - 1][xProperty]) {
+                    index = indMax;
+                    indMin = indMax - 1;
+                    found = false;
+                }
+                while ((indMax !== indMin + 1) && !(found)) {
+                    if (normalizedBase[index][xProperty] === x) {
+                        indMin = index;
+                        indMax = index;
+                        found = true;
+                    } else {
+                        if (normalizedBase[index][xProperty] < x) {
+                            indMin = index;
+                        } else {
+                            if (normalizedBase[index][xProperty] > x) {
+                                indMax = index;
+                            }
+                        }
+                    }
+                    index = Math.floor((indMin + indMax) / 2);
+                }
+                if (found) {
+                    out = normalizedBase[index][yProperty];
+                } else {
+                    // calcul du ratio
+                    out = (normalizedBase[indMax][yProperty] - normalizedBase[indMin][yProperty]) *
+                        (x - normalizedBase[indMin][xProperty]) /
+                        (normalizedBase[indMax][xProperty] - normalizedBase[indMin][xProperty]) + normalizedBase[indMin][yProperty];
+                }
+                return out;
+            };
+        }
+        return resultat;
     }
 
 }

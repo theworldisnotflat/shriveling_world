@@ -1,8 +1,6 @@
+declare var Stats: any;
 namespace shriveling {
     'use strict';
-    class Stats {
-    }
-
     export class BigBoard {
         // prepare new datas for cones
         // configuration helper (radians, pourcentage...)?
@@ -21,14 +19,32 @@ namespace shriveling {
         private _windowHalfX: number = window.innerWidth / 2;
         private _windowHalfY: number = window.innerHeight / 2;
         private _projectionName: string;
+        private _merger: Merger;
 
         constructor() {
             this.updateConfiguration();
             this._projectionName = this.projectionNames[0];
+            this._merger = new Merger();
             this._init();
             this._countries = new CountryBoard(this._projectionName, this._scene, this._camera);
             this._cones = new ConeBoard(this._projectionName, this._scene, this._camera, this._countries);
-            // todo  DragnDrop(   this._container, (text, name) => {}, this);
+            let that = this;
+            DragnDrop(
+                this._container, (text, name) => {
+                    if (name.toLowerCase().endsWith('.csv')) {
+                        that._merger.add(text);
+                        if (that.state === 'ready') {
+                            that._merger.merge();
+                        }
+                    } else if (name.toLowerCase().endsWith('.geojson')) {
+                        that._countries.add(JSON.parse(text));
+                        console.log(that._countries);
+                    }
+                    if (that._merger.state === 'complete' && that._countries.countryMeshCollection.length > 0) {
+                        that._cones.add(that._merger.datas, Configuration.extrudedHeight);
+                    }
+                },
+                this);
             //
             /*            container.addEventListener('dblclick', (evt) => {
                             if (countryBoard) {
@@ -54,6 +70,7 @@ namespace shriveling {
                     Configuration.TWEEN_TIMING);
             }
         }
+
         get scaleCountries(): number {
             return this._countries.scale;
         }
@@ -87,6 +104,18 @@ namespace shriveling {
         }
         set year(value: string) {
             this._cones.year = value;
+        }
+
+        get lookupCountries(): ISumUpCriteria {
+            return this._countries.lookupCriterias;
+        }
+
+        get lookupCones(): ISumUpCriteria {
+            return this._cones.lookupCriterias;
+        }
+
+        get state(): IMergerState {
+            return this._merger.state;
         }
 
         public updateConfiguration(): void {
@@ -219,10 +248,13 @@ namespace shriveling {
         }
 
         private _animate(): void {
-            requestAnimationFrame(this._animate);
-            this._renderer.render(this._scene, this._camera);
-            this._stats.update();
-            this._controls.update();
+            let that = this;
+            let scene = this._scene;
+            let camera = this._camera;
+            requestAnimationFrame(() => that._animate());
+            that._renderer.render(scene, camera);
+            that._stats.update();
+            that._controls.update();
             TWEEN.update();
         }
 

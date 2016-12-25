@@ -1,4 +1,4 @@
-year;transport_mode;speed
+year;transportModeCode;speedKPH
 1920;1;100
 1920;3;70
 1920;7;70

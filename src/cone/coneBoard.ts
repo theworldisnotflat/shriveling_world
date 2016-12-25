@@ -93,7 +93,6 @@ namespace shriveling {
                     let townTransport = lookup[cityCode];
                     let referential = townTransport.referential;
                     let transports = townTransport.transports;
-                    let criterias = { cityCode: cityCode };
 
                     for (let attribute in townTransport) {
                         if (townTransport.hasOwnProperty(attribute) && forbiddenAttributes.indexOf(attribute) === -1) {
@@ -103,7 +102,6 @@ namespace shriveling {
 
                     for (let transport in transports) {
                         if (transports.hasOwnProperty(transport)) {
-                            criterias['transport'] = transport;
                             let othersProperties = {};
                             for (let att in commonOthersProperties) {
                                 if (commonOthersProperties.hasOwnProperty(att)) {
@@ -200,12 +198,12 @@ namespace shriveling {
             });
         }
 
-        public searchMesh(criterias: ICriterias | Cartographic): ConeMesh[] {
+        public searchMesh(criterias: ICriterias | Cartographic, path: string = ''): ConeMesh[] {
             let resultat: ConeMesh[];
             if (criterias instanceof Cartographic) {
                 resultat = this.coneMeshCollection.filter((cone) => cone.cartographicPosition.distanceApproximee(criterias) < 1e-13);
             } else {
-                resultat = searchCriterias(this.coneMeshCollection, criterias, forbiddenAttributes, 'otherProperties');
+                resultat = searchCriterias(this.coneMeshCollection, criterias, forbiddenAttributes, 'otherProperties.' + path);
             }
             return resultat;
         }

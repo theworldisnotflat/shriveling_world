@@ -200,12 +200,12 @@ namespace shriveling {
             });
         }
 
-        public searchMesh(criterias: ICriterias | Cartographic): CountryMesh[] {
+        public searchMesh(criterias: ICriterias | Cartographic, path: string = ''): CountryMesh[] {
             let resultat: CountryMesh[];
             if (criterias instanceof Cartographic) {
                 resultat = this.countryMeshCollection.filter((country) => country.isInside(criterias));
             } else {
-                resultat = searchCriterias(this.countryMeshCollection, criterias, [], 'otherProperties');
+                resultat = searchCriterias(this.countryMeshCollection, criterias, [], 'otherProperties.' + path);
             }
             return resultat;
         }

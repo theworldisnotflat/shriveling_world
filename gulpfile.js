@@ -18,7 +18,7 @@ var sources = {
         ts: ['typings/globals/**/*.d.ts','node_modules/@types/**/*.d.ts', './src/**/**/*.ts'],
         appThirdParty: ['node_modules/three/build/three.js', 'node_modules/three/examples/js/libs/stats.min.js', 'node_modules/three/examples/js/Detector.js',
             'node_modules/three/examples/js/controls/OrbitControls.js', 'node_modules/tween.js/src/Tween.js',
-            'node_modules/poly2tri/dist/poly2tri.js'
+            'node_modules/poly2tri/dist/poly2tri.js','node_modules/papaparse/papaparse.js'
         ],
         appThirdPartyES6: []
     }

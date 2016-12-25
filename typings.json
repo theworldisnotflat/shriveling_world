@@ -1,9 +1,13 @@
 {
   "name": "shriveling_world",
   "dependencies": {},
+    "ambientDependencies": {
+    "geojson": "registry:dt/geojson",
+    "poly2tri": "registry:dt/poly2tri",
+    "tween.js": "registry:dt/tween.js"
+  },
   "globalDependencies": {
     "geojson": "registry:dt/geojson",
-    "papaparse": "registry:dt/papaparse",
     "poly2tri": "registry:dt/poly2tri",
     "tween.js": "registry:dt/tween.js"
   }
