@@ -18,59 +18,11 @@ namespace shriveling {
         [year: string]: IGeometryPremises;
     }
 
-    function extrapoler(normalizedBase: IClock[], property: string): (clock: number) => number {
-        let length = normalizedBase.length;
-        let resultat = (clock: number) => 0;
-        if (length > 0) {
-            resultat = (clock: number) => {
-                let indMin = 0;
-                let indMax = length - 1;
-                let index = Math.floor(length / 2);
-                let found = false;
-                let out = 0;
-                if (clock < normalizedBase[0].clock) {
-                    index = 0;
-                    found = true;
-                }
-                if (clock > normalizedBase[length - 1].clock) {
-                    index = indMax;
-                    indMin = indMax - 1;
-                    found = false;
-                }
-                while ((indMax !== indMin + 1) && !(found)) {
-                    if (normalizedBase[index].clock === clock) {
-                        indMin = index;
-                        indMax = index;
-                        found = true;
-                    } else {
-                        if (normalizedBase[index].clock < clock) {
-                            indMin = index;
-                        } else {
-                            if (normalizedBase[index].clock > clock) {
-                                indMax = index;
-                            }
-                        }
-                    }
-                    index = Math.floor((indMin + indMax) / 2);
-                }
-                if (found) {
-                    out = normalizedBase[index][property];
-                } else {
-                    // calcul du ratio
-                    out = (normalizedBase[indMax][property] - normalizedBase[indMin][property]) * (clock - normalizedBase[indMin].clock) /
-                        (normalizedBase[indMax].clock - normalizedBase[indMin].clock) + normalizedBase[indMin][property];
-                }
-                return out;
-            };
-        }
-        return resultat;
-    }
-
     function direction2Cartographic(
         base: IDirection[], referential: NEDLocal, distanceMax: number,
         boundaryFunction: (clock: number) => number, withLimits: boolean): Cartographic[] {
         let resultat: Cartographic[] = [];
-        base = base.sort((a, b) => a.clock - b.clock);
+        //  base = base.sort((a, b) => a.clock - b.clock);
         if (base.length > 0) {
             let maxClock = base[base.length - 1].clock;
             let minClock = base[0].clock;
@@ -78,7 +30,7 @@ namespace shriveling {
                 maxClock = minClock + Configuration.TWO_PI;
                 base.push({ clock: maxClock, elevation: base[0].elevation });
             }
-            let elevationFunction = extrapoler(base, 'elevation');
+            let elevationFunction = extrapolator(base, 'clock', 'elevation');
             let elevation: number;
             let distance: number;
             let cosEl: number;
@@ -185,7 +137,6 @@ namespace shriveling {
     export class ConeGeometry extends THREE.Geometry {
         public static lookupGeometry: { [projection: string]: number };
         public static reverseLookupGeometry: string[];
-        public countryName: string;
         public otherProperties: any;
         private _projection: string;
         private _premises: ILookupGeometryPremises = {};
@@ -201,7 +152,7 @@ namespace shriveling {
             projectionName: string, distance: number, withLimits: boolean, others: any = {}) {
             super();
             this._referential = referential;
-            this._maxDistanceFunction = extrapoler(getLocalLimits(boundaryGeometries, this._referential), 'distance');
+            this._maxDistanceFunction = extrapolator(getLocalLimits(boundaryGeometries, this._referential), 'clock', 'distance');
             this._projection = projectionName;
             this._withLimits = withLimits;
             this.otherProperties = others;
@@ -252,17 +203,22 @@ namespace shriveling {
                 this.faceVertexUvs = premise.faceVertexUvs;
                 this.morphTargets = premise.morphTargets;
                 this.vertices = this.morphTargets[index].vertices;
-
-                this.uvsNeedUpdate = true;
-                this.normalsNeedUpdate = true;
-                this.colorsNeedUpdate = true;
-                this.verticesNeedUpdate = true;
-                this.elementsNeedUpdate = true;
-
-                this.computeMorphNormals();
-                this.computeBoundingBox();
-                this.computeBoundingSphere();
+            } else {
+                this.faces = [];
+                this.faceVertexUvs[0] = [];
+                this.morphTargets = [];
+                this.vertices = [];
             }
+
+            this.uvsNeedUpdate = true;
+            this.normalsNeedUpdate = true;
+            this.colorsNeedUpdate = true;
+            this.verticesNeedUpdate = true;
+            this.elementsNeedUpdate = true;
+
+            this.computeMorphNormals();
+            this.computeBoundingBox();
+            this.computeBoundingSphere();
         }
 
         public fuzzyClone(): THREE.Geometry {
@@ -309,7 +265,7 @@ namespace shriveling {
         }
 
         public regenerateLimits(boundaryGeometries: CountryGeometry[]): void {
-            this._maxDistanceFunction = extrapoler(getLocalLimits(boundaryGeometries, this._referential), 'distance');
+            this._maxDistanceFunction = extrapolator(getLocalLimits(boundaryGeometries, this._referential), 'clock', 'distance');
             this.update();
         }
 

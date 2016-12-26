@@ -4,7 +4,6 @@ namespace shriveling {
     const forbiddenAttributes = ['referential', 'layers', 'position', 'transports'];
 
     export class ConeBoard {
-        private static forbiddenAttribute: string[] = [];
         public coneMeshCollection: ConeMesh[] = [];
         private _projection: string;
         private _scene: THREE.Scene;
@@ -16,12 +15,70 @@ namespace shriveling {
         private _show: boolean = true;
         private _withLimits: boolean = true;
         private _countries: CountryBoard;
+        private _year: string;
+        private _sumUpProperties: ISumUpCriteria = {};
+
+        get projection(): string {
+            return this._projection;
+        }
+        set projection(value: string) {
+            this.coneMeshCollection.forEach((mesh) => {
+                mesh.projection = value;
+            });
+            this._projection = value;
+        }
+
+        get show(): boolean {
+            return this._show;
+        }
+        set show(value: boolean) {
+            this.coneMeshCollection.forEach((country) => {
+                country.visible = value;
+            });
+            this._show = value;
+        }
+
+        get withLimits(): boolean {
+            return this._withLimits;
+        }
+        set withLimits(value: boolean) {
+            this.coneMeshCollection.forEach((country) => {
+                country.withLimits = value;
+            });
+            this._withLimits = value;
+        }
+
+        get scale(): number {
+            return this._scale;
+        }
+        set scale(value: number) {
+            this._selectedMeshs.forEach((mesh) => {
+                mesh.scale.setScalar(value);
+            });
+            this.coneMeshCollection.forEach((mesh) => {
+                mesh.scale.setScalar(value);
+            });
+            this._scale = value;
+        }
+
+        get year(): string {
+            return this._year;
+        }
+        set year(value: string) {
+            this.coneMeshCollection.forEach((cone) => {
+                cone.year = value;
+            });
+            this._year = value;
+        }
+
+        get lookupCriterias(): ISumUpCriteria {
+            return this._sumUpProperties;
+        }
 
         public constructor(mainProjector: string, scene: THREE.Scene, camera: THREE.Camera, countries: CountryBoard) {
             if (!mapProjectors.hasOwnProperty(mainProjector)) {
                 mainProjector = Object.keys(mapProjectors)[0];
             }
-            Configuration.prepareConfiguration();
             this._scene = scene;
             this._camera = camera;
             this._raycaster = new THREE.Raycaster();
@@ -29,14 +86,13 @@ namespace shriveling {
             this._countries = countries;
         }
 
-        public add(lookup: IlookupTownTransport, distance: number, withLimit: boolean = true): void {
+        public add(lookup: IlookupTownTransport, distance: number): void {
             for (let cityCode in lookup) {
                 if (lookup.hasOwnProperty(cityCode)) {
                     let commonOthersProperties = {};
                     let townTransport = lookup[cityCode];
                     let referential = townTransport.referential;
                     let transports = townTransport.transports;
-                    let criterias = { cityCode: cityCode };
 
                     for (let attribute in townTransport) {
                         if (townTransport.hasOwnProperty(attribute) && forbiddenAttributes.indexOf(attribute) === -1) {
@@ -46,7 +102,6 @@ namespace shriveling {
 
                     for (let transport in transports) {
                         if (transports.hasOwnProperty(transport)) {
-                            criterias['transport'] = transport;
                             let othersProperties = {};
                             for (let att in commonOthersProperties) {
                                 if (commonOthersProperties.hasOwnProperty(att)) {
@@ -55,14 +110,14 @@ namespace shriveling {
                             }
                             othersProperties['transport'] = transport;
                             let cones = this.searchMesh(referential.cartoRef);
-                            cones = searchCriterias(cones, { transport: transport }, forbiddenAttributes, 'otherProperties');
+                            cones = searchCriterias(cones, { transport: { value: transport } }, forbiddenAttributes, 'otherProperties');
+                            updateSumUpCriteria(this._sumUpProperties, othersProperties);
                             if (cones.length > 0) {
                                 let cone = cones[0];
                                 cone.update(distance, transports[transport]);
                                 cone.otherProperties = othersProperties;
                             } else {
-                                let countryName = this._countries.getCountryName(referential.cartoRef);
-                                let boundaryGeometries = this._countries.getMeshes(countryName)
+                                let boundaryGeometries = this._countries.searchMesh(referential.cartoRef)
                                     .map((mesh) => <CountryGeometry>mesh.geometry);
                                 let cone = new ConeMesh(
                                     referential, transports[transport], boundaryGeometries, this._projection, distance, this._withLimits);
@@ -82,41 +137,8 @@ namespace shriveling {
             }
         }
 
-        get projection(): string {
-            return this._projection;
-        }
-
-        set projection(value: string) {
-            this.coneMeshCollection.forEach((mesh) => {
-                mesh.projection = value;
-            });
-            this._projection = value;
-        }
-
-        get show(): boolean {
-            return this._show;
-        }
-
-        set show(value: boolean) {
-            this.coneMeshCollection.forEach((country) => {
-                country.visible = value;
-            });
-            this._show = value;
-        }
-
-        get withLimits(): boolean {
-            return this._withLimits;
-        }
-
-        set withLimits(value: boolean) {
-            this.coneMeshCollection.forEach((country) => {
-                country.withLimits = value;
-            });
-            this._withLimits = value;
-        }
-
         public setLayer(transport: string, show: boolean): void {
-            this.searchMesh({ transport: transport }).forEach((mesh) => {
+            this.searchMesh({ transport: { value: transport } }).forEach((mesh) => {
                 mesh.visible = show;
             });
         }
@@ -125,6 +147,7 @@ namespace shriveling {
                 this._scene.remove(this.coneMeshCollection[i]);
                 this.coneMeshCollection.splice(i, 1);
             }
+            this._sumUpProperties = {};
         }
 
         public getMeshByMouse(event: MouseEvent, highLight: boolean = false): ConeMesh {
@@ -151,17 +174,7 @@ namespace shriveling {
             });
         }
 
-        public scale(value: number): void {
-            this._selectedMeshs.forEach((mesh) => {
-                mesh.scale.setScalar(value);
-            });
-            this.coneMeshCollection.forEach((mesh) => {
-                mesh.scale.setScalar(value);
-            });
-            this._scale = value;
-        }
-
-        public highLight(criterias: ICriterias, light: boolean = true): void {
+        public highLight(criterias: ICriterias, light: boolean): void {
             if (criterias !== this._highlitedCriterias) {
                 this._highlitedCriterias = criterias;
                 let that = this;
@@ -185,21 +198,27 @@ namespace shriveling {
             });
         }
 
-        public searchMesh(criterias: ICriterias | Cartographic): ConeMesh[] {
+        public searchMesh(criterias: ICriterias | Cartographic, path: string = ''): ConeMesh[] {
             let resultat: ConeMesh[];
             if (criterias instanceof Cartographic) {
                 resultat = this.coneMeshCollection.filter((cone) => cone.cartographicPosition.distanceApproximee(criterias) < 1e-13);
             } else {
-                resultat = searchCriterias(this.coneMeshCollection, criterias, forbiddenAttributes, 'otherProperties');
+                resultat = searchCriterias(this.coneMeshCollection, criterias, forbiddenAttributes, 'otherProperties.' + path);
             }
             return resultat;
+        }
+
+        public showCriterias(criterias: ICriterias, state: boolean): void {
+            let realState = state && this._show;
+            this.searchMesh(criterias).forEach((cone) => {
+                cone.visible = realState;
+            });
         }
 
         public regenerateLimits(): void {
             let that = this;
             this.coneMeshCollection.forEach((cone) => {
-                let countryName = that._countries.getCountryName(cone.cartographicPosition);
-                let boundaryGeometries = that._countries.getMeshes(countryName)
+                let boundaryGeometries = this._countries.searchMesh(cone.cartographicPosition)
                     .map((mesh) => <CountryGeometry>mesh.geometry);
                 cone.regenerateLimits(boundaryGeometries);
             });

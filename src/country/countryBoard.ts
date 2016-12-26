@@ -8,13 +8,14 @@ namespace shriveling {
         private _isReprojecting: boolean = false;
         private _camera: THREE.Camera;
         private _raycaster: THREE.Raycaster;
-        private _highlitedMeshName: string;
+        private _highlitedCriterias: ICriterias = {};
         private _selectedMeshs: THREE.Mesh[] = [];
         private _scale: number = 1;
         private _show: boolean = true;
+        private _sumUpProperties: ISumUpCriteria = {};
 
         public static extrude(
-            meshes: CountryMesh[], value: number | number[] = 70, timing: number = 1000, init?: number,
+            meshes: CountryMesh[], timing: number, value: number | number[] = 70, init?: number,
             easingFunction: { (k: number): number } = TWEEN.Easing.Linear.None, callBack?: { func: () => void, scope: any }): void {
             let begin = {}, end = {};
             if (typeof value === 'number') {
@@ -41,11 +42,44 @@ namespace shriveling {
                 .start();
         }
 
+        get projection(): string {
+            return this._projection;
+        }
+        set projection(value: string) {
+            this.changeProjection(value);
+        }
+
+        get show(): boolean {
+            return this._show;
+        }
+        set show(value: boolean) {
+            this.countryMeshCollection.forEach((country) => {
+                country.visible = value;
+            });
+            this._show = value;
+        }
+
+        get scale(): number {
+            return this._scale;
+        }
+        set scale(value: number) {
+            this._selectedMeshs.forEach((mesh) => {
+                mesh.scale.setScalar(value);
+            });
+            this.countryMeshCollection.forEach((mesh) => {
+                mesh.scale.setScalar(value);
+            });
+            this._scale = value;
+        }
+
+        get lookupCriterias(): ISumUpCriteria {
+            return this._sumUpProperties;
+        }
+
         public constructor(mainProjector: string, scene: THREE.Scene, camera: THREE.Camera) {
             if (!mapProjectors.hasOwnProperty(mainProjector)) {
                 mainProjector = Object.keys(mapProjectors)[0];
             }
-            Configuration.prepareConfiguration();
             this._scene = scene;
             this._camera = camera;
             this._raycaster = new THREE.Raycaster();
@@ -60,31 +94,14 @@ namespace shriveling {
                 that._scene.add(mesh);
                 mesh.visible = that._show;
                 mesh.scale.setScalar(that._scale);
+                updateSumUpCriteria(that._sumUpProperties, mesh.otherProperties);
             });
             this.projection = this._projection;
         }
 
-        get projection(): string {
-            return this._projection;
-        }
-
-        set projection(value: string) {
-            this.changeProjection(value);
-        }
-
-        get show(): boolean {
-            return this._show;
-        }
-
-        set show(value: boolean) {
-            this.countryMeshCollection.forEach((country) => {
-                country.visible = value;
-            });
-            this._show = value;
-        }
-
         public changeProjection(
-            projection: string, timing: number = 1000, easingFunction: { (k: number): number } = TWEEN.Easing.Linear.None): void {
+            projection: string, timing: number = Configuration.TWEEN_TIMING,
+            easingFunction: { (k: number): number } = TWEEN.Easing.Linear.None): void {
             if (mapProjectors.hasOwnProperty(projection) && this._isReprojecting === false) {
                 this._isReprojecting = true;
                 let value = { stage: 0 };
@@ -114,7 +131,7 @@ namespace shriveling {
                         that._isReprojecting = false;
                         that._projection = projection;
                         CountryBoard.extrude(
-                            that.countryMeshCollection, extruded, 1000, 0,
+                            that.countryMeshCollection, timing, extruded, 0,
                             TWEEN.Easing.Elastic.InOut, { func: that._reHighLight, scope: that });
                     })
                     .start();
@@ -126,18 +143,22 @@ namespace shriveling {
                 this._scene.remove(this.countryMeshCollection[i]);
                 this.countryMeshCollection.splice(i, 1);
             }
+            this._selectedMeshs.forEach((mesh) => {
+                mesh.visible = false;
+            });
+            this._sumUpProperties = {};
         }
 
-        public getMeshByMouse(event: MouseEvent, highLight: boolean = false): string {
-            let resultat: string;
+        public getMeshByMouse(event: MouseEvent, highLight: boolean = false): CountryMesh {
+            let resultat: CountryMesh;
             let mouse = new THREE.Vector2();
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
             this._raycaster.setFromCamera(mouse, this._camera);
             let intersects = this._raycaster.intersectObjects(this.countryMeshCollection);
             if (intersects.length > 0) {
-                resultat = intersects[0].object.name;
-                this.highLight(resultat, highLight);
+                resultat = <CountryMesh>intersects[0].object;
+                this.highLight(resultat.otherProperties, highLight);
             } else {
                 this._selectedMeshs.forEach((mesh) => {
                     mesh.material.visible = false;
@@ -146,55 +167,23 @@ namespace shriveling {
             return resultat;
         }
 
-        public getMeshes(name: string): CountryMesh[] {
-            return this.countryMeshCollection.filter((mesh) => mesh.name === name);
-        }
-
-        public getCountryName(pos: Cartographic): string {
-            let resultat: string;
-            for (let i = 0; i < this.countryMeshCollection.length && resultat === undefined; i++) {
-                let inside = (<CountryGeometry>this.countryMeshCollection[i].geometry).isInside(pos);
-                if (inside) {
-                    resultat = this.countryMeshCollection[i].name;
-                }
-            }
-            return resultat;
-        }
-
-        public extrudeByName(name: string, value?: number): void {
+        public extrude(criterias: ICriterias, value?: number): void {
             this._selectedMeshs.forEach((mesh) => {
-                mesh.material.visible = false;
+                mesh.visible = false;
             });
             let that = this;
-            CountryBoard.extrude(this.getMeshes(name), value, undefined, undefined, undefined, { func: that._reHighLight, scope: that });
+            CountryBoard.extrude(
+                this.searchMesh(criterias), value, undefined, undefined, undefined, { func: that._reHighLight, scope: that });
         }
 
-        public extrudeByArray(tab: CountryMesh[] = this.countryMeshCollection, value?: number): void {
-            this._selectedMeshs.forEach((mesh) => {
-                mesh.material.visible = false;
-            });
-            let that = this;
-            CountryBoard.extrude(tab, value, undefined, undefined, undefined, { func: that._reHighLight, scope: that });
-        }
-
-        public scale(value: number): void {
-            this._selectedMeshs.forEach((mesh) => {
-                mesh.scale.setScalar(value);
-            });
-            this.countryMeshCollection.forEach((mesh) => {
-                mesh.scale.setScalar(value);
-            });
-            this._scale = value;
-        }
-
-        public highLight(name: string, light: boolean = true): void {
-            if (name !== this._highlitedMeshName) {
-                this._highlitedMeshName = name;
+        public highLight(criterias: ICriterias, light: boolean): void {
+            if (criterias !== this._highlitedCriterias) {
+                this._highlitedCriterias = criterias;
                 let that = this;
                 this._selectedMeshs.forEach((mesh) => {
                     that._scene.remove(mesh);
                 });
-                this._selectedMeshs = this.getMeshes(name).map((mesh) => {
+                this._selectedMeshs = this.searchMesh(criterias).map((mesh) => {
                     let geometry = (<CountryGeometry>mesh.geometry).fuzzyClone();
                     let out = new THREE.Mesh(geometry, Configuration.highLitedMaterial);
                     out.updateMorphTargets();
@@ -211,12 +200,29 @@ namespace shriveling {
             });
         }
 
+        public searchMesh(criterias: ICriterias | Cartographic, path: string = ''): CountryMesh[] {
+            let resultat: CountryMesh[];
+            if (criterias instanceof Cartographic) {
+                resultat = this.countryMeshCollection.filter((country) => country.isInside(criterias));
+            } else {
+                resultat = searchCriterias(this.countryMeshCollection, criterias, [], 'otherProperties.' + path);
+            }
+            return resultat;
+        }
+
+        public showCriterias(criterias: ICriterias, state: boolean): void {
+            let realState = state && this._show;
+            this.searchMesh(criterias).forEach((country) => {
+                country.visible = realState;
+            });
+        }
+
         private _reHighLight(): void {
             if (this._selectedMeshs.length > 0) {
                 let visible = this._selectedMeshs[0].material.visible;
-                let name = this._highlitedMeshName;
-                this._highlitedMeshName = undefined;
-                this.highLight(name, visible);
+                let criterias = this._highlitedCriterias;
+                this._highlitedCriterias = undefined;
+                this.highLight(criterias, visible);
             }
         }
     }
