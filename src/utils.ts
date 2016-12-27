@@ -471,7 +471,8 @@ namespace shriveling {
         }
     }
 
-    export function extrapolator<U>(normalizedBase: U[], xProperty: string, yProperty: string): (x: number) => number {
+    export function extrapolator<U>(
+        normalizedBase: U[], xProperty: string, yProperty: string, strongLimit: boolean = false): (x: number) => number {
         let length = normalizedBase.length;
         let resultat = (x: number) => 0;
         if (length > 0) {
@@ -482,15 +483,19 @@ namespace shriveling {
                 let found = false;
                 let out = 0;
                 if (x < normalizedBase[0][xProperty]) {
-                    index = 0;
+                    index = strongLimit === true ? -1 : 0;
                     found = true;
                 }
                 if (x > normalizedBase[length - 1][xProperty]) {
                     index = indMax;
                     indMin = indMax - 1;
                     found = false;
+                    if (strongLimit === true) {
+                        found = true;
+                        index = -1;
+                    }
                 }
-                while ((indMax !== indMin + 1) && !(found)) {
+                while ((indMax !== indMin + 1) && !found) {
                     if (normalizedBase[index][xProperty] === x) {
                         indMin = index;
                         indMax = index;
@@ -507,7 +512,7 @@ namespace shriveling {
                     index = Math.floor((indMin + indMax) / 2);
                 }
                 if (found) {
-                    out = normalizedBase[index][yProperty];
+                    out = index < 0 ? 0 : normalizedBase[index][yProperty];
                 } else {
                     // calcul du ratio
                     out = (normalizedBase[indMax][yProperty] - normalizedBase[indMin][yProperty]) *

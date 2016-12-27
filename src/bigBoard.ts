@@ -27,6 +27,7 @@ namespace shriveling {
             this._merger = new Merger();
             this._init();
             this._countries = new CountryBoard(this._projectionName, this._scene, this._camera);
+            this._countries.show = false;
             this._cones = new ConeBoard(this._projectionName, this._scene, this._camera, this._countries);
             let that = this;
             DragnDrop(
@@ -34,11 +35,14 @@ namespace shriveling {
                     if (name.toLowerCase().endsWith('.csv')) {
                         that._merger.add(text);
                         if (that.state === 'ready') {
+                            let start = new Date();
                             that._merger.merge();
+                            let end = new Date();
+                            console.log((end.getTime() - start.getTime()) / 1000, ' secondes');
                         }
                     } else if (name.toLowerCase().endsWith('.geojson')) {
                         that._countries.add(JSON.parse(text));
-                        console.log(that._countries);
+                        //  console.log(that._countries);
                     }
                     if (that._merger.state === 'complete' && that._countries.countryMeshCollection.length > 0) {
                         that._cones.add(that._merger.datas, Configuration.extrudedHeight);
