@@ -204,22 +204,20 @@ namespace shriveling {
                 if (!transports.hasOwnProperty('Road')) {
                     transports['Road'] = {};
                 }
-                let tab = speedPerTransportPerYear[roadCode];
+                let tab = speedPerTransportPerYear[roadCode].tabSpeed;
                 let maxSpeed: number;
                 for (let year = roadBegin; year <= maxYear; year++) {
-                    if (tab[year] !== undefined) {
-                        if (!transports['Road'].hasOwnProperty(year)) {
-                            transports['Road'][year] = [];
-                        }
-                        maxSpeed = speedMaxPerYear[year] === undefined ? tab[year] : speedMaxPerYear[year];
-                        elevation = Math.atan(Math.sqrt(
-                            (maxSpeed / tab[year]) * (maxSpeed / tab[year]) - 1));
-                        transports['Road'][year].push(
-                            { clock: 0, elevation: elevation },
-                            { clock: Configuration.deg2rad * 91, elevation: elevation },
-                            { clock: Configuration.deg2rad * 180, elevation: elevation },
-                            { clock: Configuration.deg2rad * 350, elevation: elevation });
+                    if (!transports['Road'].hasOwnProperty(year)) {
+                        transports['Road'][year] = [];
                     }
+                    maxSpeed = speedMaxPerYear[year] === undefined ? tab[year] : speedMaxPerYear[year];
+                    elevation = Math.atan(Math.sqrt(
+                        (maxSpeed / tab[year]) * (maxSpeed / tab[year]) - 1));
+                    transports['Road'][year].push(
+                        { clock: 0, elevation: elevation },
+                        { clock: Configuration.deg2rad * 91, elevation: elevation },
+                        { clock: Configuration.deg2rad * 180, elevation: elevation },
+                        { clock: Configuration.deg2rad * 350, elevation: elevation });
                 }
 
                 for (let transport in transports) {
