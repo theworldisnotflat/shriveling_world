@@ -68,7 +68,7 @@ namespace shriveling {
         }
 
         private constructor(geometry: CountryGeometry) {
-            super(geometry, Configuration.NORMAL_MATERIAL);
+            super(geometry, Configuration.COUNTRY_MATERIAL);
             this.name = geometry.name;
         }
     }

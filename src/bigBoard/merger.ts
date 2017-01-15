@@ -45,19 +45,6 @@ namespace shriveling {
         }
     }
 
-    /* tslint:disable */
-    let iso8601RegExp = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))/;
-    /* tslint:enable */
-
-    function jsonDataParse(key, value): any {
-        if (typeof value === 'string') {
-            let temp = value.replace(' ', '');
-            if (iso8601RegExp.exec(temp)) {
-                value = new Date(temp);
-            }
-        }
-        return value;
-    }
     const keyWords: { name: string, words: string[] }[] = [
         { name: '_cities', words: ['cityCode', 'latitude', 'longitude', 'radius'] },
         { name: '_transportModeSpeed', words: ['transportModeCode', 'year', 'speedKPH'] },
@@ -80,8 +67,8 @@ namespace shriveling {
     export type IMergerState = 'missing' | 'ready' | 'pending' | 'complete';
 
     function toTownTransport(
-        transportModeCode: ITransportModeCode[], cities: ICity[], transportNetwork: ITransportNetwork[]): IlookupTownTransport {
-        let resultat: IlookupTownTransport = {};
+        transportModeCode: ITransportModeCode[], cities: ICity[], transportNetwork: ITransportNetwork[]): ILookupTownTransport {
+        let resultat: ILookupTownTransport = {};
         // déterminer la fourchette de temps considéré OK
         let actualYear = (new Date()).getFullYear();
         let minYear = actualYear, maxYear = 0;
@@ -243,13 +230,13 @@ namespace shriveling {
         private _transportModeCode: ITransportModeCode[] = [];
         private _transportNetwork: ITransportNetwork[] = [];
         private _state: IMergerState = 'missing';
-        private _mergedData: IlookupTownTransport = {};
+        private _mergedData: ILookupTownTransport = {};
 
         get state(): IMergerState {
             return this._state;
         }
 
-        get datas(): IlookupTownTransport {
+        get datas(): ILookupTownTransport {
             return this._mergedData;
         }
 
@@ -297,11 +284,11 @@ namespace shriveling {
         public merge(): void {
             if (this._state === 'ready') {
                 this._state = 'pending';
-                let cities: ICity[] = JSON.parse(JSON.stringify(this._cities), jsonDataParse);
-                let population: IPopulation[] = JSON.parse(JSON.stringify(this._populations), jsonDataParse);
-                let transportModeCode: ITransportModeCode[] = JSON.parse(JSON.stringify(this._transportModeCode), jsonDataParse);
-                let transportModeSpeed: ITransportModeSpeed[] = JSON.parse(JSON.stringify(this._transportModeSpeed), jsonDataParse);
-                let transportNetwork: ITransportNetwork[] = JSON.parse(JSON.stringify(this._transportNetwork), jsonDataParse);
+                let cities: ICity[] = JSON.parse(JSON.stringify(this._cities), reviver);
+                let population: IPopulation[] = JSON.parse(JSON.stringify(this._populations), reviver);
+                let transportModeCode: ITransportModeCode[] = JSON.parse(JSON.stringify(this._transportModeCode), reviver);
+                let transportModeSpeed: ITransportModeSpeed[] = JSON.parse(JSON.stringify(this._transportModeSpeed), reviver);
+                let transportNetwork: ITransportNetwork[] = JSON.parse(JSON.stringify(this._transportNetwork), reviver);
 
                 merger(transportModeCode, transportModeSpeed, 'code', 'transportModeCode', 'speeds', true, true, false);
                 //    merger(transportNetwork, transportModeCode, 'transportMode', 'code', 'transportDetails', false, false, false);

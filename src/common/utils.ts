@@ -1,18 +1,17 @@
-/// <reference path="../node_modules/@types/three/index.d.ts"/>
 namespace shriveling {
     'use strict';
 
     export var mapProjectors: IConverterLookup = {
         none:
         {
-            converter:
-            (pos: Cartographic, threeRadius: number = Cartographic.THREE_EARTH_RADIUS): THREE.Vector3 => {
+            converter: (
+                pos: Cartographic, toPack: boolean,
+                threeRadius: number = Cartographic.THREE_EARTH_RADIUS): THREE.Vector3 | number[] => {
                 let radius = (Configuration.earthRadiusMeters + pos.height) / Configuration.earthRadiusMeters * threeRadius;
-                return new THREE.Vector3(
-                    -Math.cos(pos.longitude) * radius * Math.cos(pos.latitude),
-                    Math.sin(pos.latitude) * radius,
-                    Math.sin(pos.longitude) * radius * Math.cos(pos.latitude),
-                );
+                let x = -Math.cos(pos.longitude) * radius * Math.cos(pos.latitude);
+                let y = Math.sin(pos.latitude) * radius;
+                let z = Math.sin(pos.longitude) * radius * Math.cos(pos.latitude);
+                return toPack === true ? [x, y, z] : new THREE.Vector3(x, y, z);
             },
             reverser: (pos: THREE.Vector3, threeRadius: number = Cartographic.THREE_EARTH_RADIUS): Cartographic => {
                 let radius = pos.length();
@@ -33,16 +32,17 @@ namespace shriveling {
         },
         Equirectangular:
         {
-            converter:
-            (pos: Cartographic, reference = new Cartographic(), threeRadius: number = Cartographic.THREE_EARTH_RADIUS): THREE.Vector3 => {
-                return new THREE.Vector3(
-                    (pos.longitude - reference.longitude) * Math.cos(reference.latitude) * threeRadius,
-                    (pos.latitude - reference.latitude) * threeRadius,
-                    (pos.height - reference.height) / Configuration.earthRadiusMeters * threeRadius,
-                );
+            converter: (
+                pos: Cartographic, toPack: boolean, reference = new Cartographic(),
+                threeRadius: number = Cartographic.THREE_EARTH_RADIUS): THREE.Vector3 | number[] => {
+                let x = (pos.longitude - reference.longitude) * Math.cos(reference.latitude) * threeRadius;
+                let y = (pos.latitude - reference.latitude) * threeRadius;
+                let z = (pos.height - reference.height) / Configuration.earthRadiusMeters * threeRadius;
+                return toPack === true ? [x, y, z] : new THREE.Vector3(x, y, z);
             },
-            reverser:
-            (pos: THREE.Vector3, reference = new Cartographic(), threeRadius: number = Cartographic.THREE_EARTH_RADIUS): Cartographic => {
+            reverser: (
+                pos: THREE.Vector3, reference = new Cartographic(),
+                threeRadius: number = Cartographic.THREE_EARTH_RADIUS): Cartographic => {
                 let cleanPos = pos.clone().multiplyScalar(1 / threeRadius);
                 let resultat = new Cartographic();
                 resultat.height = cleanPos.z * Configuration.earthRadiusMeters + reference.height;
@@ -56,16 +56,17 @@ namespace shriveling {
         },
         Mercator:
         {
-            converter:
-            (pos: Cartographic, lambda0: number = 0, threeRadius: number = Cartographic.THREE_EARTH_RADIUS): THREE.Vector3 => {
-                return new THREE.Vector3(
-                    (pos.longitude - lambda0) * threeRadius,
-                    Math.log(Math.tan(Math.PI / 4 + pos.latitude / 2)) * threeRadius,
-                    pos.height / Configuration.earthRadiusMeters * threeRadius,
-                );
+            converter: (
+                pos: Cartographic, toPseudo: boolean, lambda0: number = 0,
+                threeRadius: number = Cartographic.THREE_EARTH_RADIUS): THREE.Vector3 | number[] => {
+                let x = (pos.longitude - lambda0) * threeRadius;
+                let y = Math.log(Math.tan(Math.PI / 4 + pos.latitude / 2)) * threeRadius;
+                let z = pos.height / Configuration.earthRadiusMeters * threeRadius;
+                return toPseudo === true ? [x, y, z] : new THREE.Vector3(x, y, z);
             },
-            reverser:
-            (pos: THREE.Vector3, lambda0: number = 0, threeRadius: number = Cartographic.THREE_EARTH_RADIUS): Cartographic => {
+            reverser: (
+                pos: THREE.Vector3, lambda0: number = 0,
+                threeRadius: number = Cartographic.THREE_EARTH_RADIUS): Cartographic => {
                 let cleanPos = pos.clone().multiplyScalar(1 / threeRadius);
                 let resultat = new Cartographic();
                 resultat.longitude = cleanPos.x + lambda0;
@@ -74,7 +75,6 @@ namespace shriveling {
                 return resultat;
             },
         },
-
     };
 
     export class Cartographic {
@@ -144,6 +144,10 @@ namespace shriveling {
             return resultat;
         }
 
+        public static fromJSON(value: any): any {
+            return Generic_fromJSON(Cartographic, value.data);
+        }
+
         constructor(longitude: number = 0, latitude: number = 0, height: number = 0, isRadians: boolean = true) {
             if (!isRadians) {
                 latitude *= Configuration.deg2rad;
@@ -170,7 +174,8 @@ namespace shriveling {
             return Cartographic.lerp(this, pos2, fractions);
         }
 
-        public toTHREEVector3(nameProJections: string[] = []): { [name: string]: THREE.Vector3 } {
+        public toTHREEVector3(
+            nameProJections: string[] = []): { [name: string]: THREE.Vector3 } {
             if (nameProJections.length === 0) {
                 nameProJections = [...Object.keys(mapProjectors)];
             }
@@ -178,7 +183,22 @@ namespace shriveling {
             let resultat: { [name: string]: THREE.Vector3 } = {};
             nameProJections.forEach((name) => {
                 if (mapProjectors.hasOwnProperty(name)) {
-                    resultat[name] = mapProjectors[name].converter(that);
+                    resultat[name] = <THREE.Vector3>mapProjectors[name].converter(that, false);
+                }
+            });
+            return resultat;
+        }
+
+        public toPack(
+            nameProJections: string[] = []): { [name: string]: number[] } {
+            if (nameProJections.length === 0) {
+                nameProJections = [...Object.keys(mapProjectors)];
+            }
+            let that = this;
+            let resultat: { [name: string]: number[] } = {};
+            nameProJections.forEach((name) => {
+                if (mapProjectors.hasOwnProperty(name)) {
+                    resultat[name] = <number[]>mapProjectors[name].converter(that, true);
                 }
             });
             return resultat;
@@ -187,10 +207,18 @@ namespace shriveling {
         public direction(pos: Cartographic): number {
             return Cartographic.direction(this, pos);
         }
+
+        public toJSON(): { ctor: string, data: any } {
+            return Generic_toJSON('Cartographic', this);
+        }
     }
 
+    export var ZERO_CARTOGRAPHIC = new Cartographic();
+
+    Object.freeze(ZERO_CARTOGRAPHIC);
+
     export interface IConverter {
-        converter: (pos: Cartographic) => THREE.Vector3;
+        converter: (pos: Cartographic, toPack: boolean) => THREE.Vector3 | number[];
         reverser: (pos: THREE.Vector3) => Cartographic;
     }
 
@@ -231,10 +259,9 @@ namespace shriveling {
         referential: NEDLocal;
         transports: ILookupTransport;
         destinations: ILookupDestination;
-        layers?: { [transport: string]: ConeMesh };
     }
 
-    export interface IlookupTownTransport {
+    export interface ILookupTownTransport {
         [cityCode: string]: ITownTransport;
     }
 
@@ -294,6 +321,41 @@ namespace shriveling {
         transportMode: number;
         //  transportDetails: ITransportModeCode;
         destination?: number;
+    }
+
+    export interface IBBox {
+        minLat: number;
+        maxLat: number;
+        minLong: number;
+        maxLong: number;
+        boundary: Cartographic[];
+    }
+
+    export interface IPseudoGeometry {
+        uv: ArrayBuffer;
+        index: ArrayBuffer;
+        vertices: { [projectionName: string]: ArrayBuffer };
+    }
+
+    export interface IPseudoGeometryPremises {
+        withLimits: IPseudoGeometry;
+        withoutLimits: IPseudoGeometry;
+    }
+
+    export interface ILookupPseudoGeometryPremises {
+        [year: string]: IPseudoGeometryPremises;
+    }
+
+    export interface ILookupTownPseudoGeometryPremises {
+        transports: { [transport: string]: ILookupPseudoGeometryPremises };
+        position: Cartographic;
+        otherProperties: any;
+    }
+
+    export interface IDataConeGeneratorIn {
+        lookup: ILookupTownTransport;
+        bboxes: IBBox[];
+        distance: number;
     }
 
     export function updateSumUpCriteria(sumup: ISumUpCriteria, properties: any): ISumUpCriteria {
@@ -525,4 +587,66 @@ namespace shriveling {
         return resultat;
     }
 
+    /* tslint:disable */
+    let iso8601RegExp = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))/;
+    /* tslint:enable */
+
+    // to use for JSON.parse
+    export var reviver: any = <U>(key: string, value: any): U | any => {
+        let resultat: any | U = value;
+
+        if (value !== null && typeof value === 'object' &&
+            typeof value.ctor === 'string' &&
+            typeof value.data !== 'undefined') {
+            let ctor = reviver.constructors[value.ctor];
+            if (typeof ctor === 'function' &&
+                typeof ctor.fromJSON === 'function') {
+                resultat = <U>ctor.fromJSON(value);
+            } else if (typeof value === 'string') {
+                let temp = value.replace(' ', '');
+                if (iso8601RegExp.exec(temp)) {
+                    value = new Date(temp);
+                }
+            }
+        }
+        return resultat;
+    };
+
+    export function Generic_toJSON(ctorName: string, obj: any, keys?: string[]): { ctor: string, data: any } {
+        let data, index, key;
+
+        if (keys === undefined) {
+            keys = Object.keys(obj);
+        }
+
+        data = {};
+        for (index = 0; index < keys.length; ++index) {
+            key = keys[index];
+            data[key] = obj[key];
+        }
+        return { ctor: ctorName, data: data };
+    }
+
+    export function Generic_fromJSON<U>(ctor: any, data: any): U {
+        let obj: U, name: string;
+
+        obj = new ctor();
+        for (name in data) {
+            if (data.hasOwnProperty(name)) {
+                obj[name] = data[name];
+            }
+        }
+        return obj;
+    }
+
+    reviver.constructors = {};
+    reviver.constructors.Cartographic = Cartographic;
+    reviver.constructors.Coordinate = Coordinate;
+    reviver.constructors.NEDLocal = NEDLocal;
+
 }
+self['console2'] = {
+    log: (...args: any[]): void => {
+        (<any>self).postMessage({ action: 'console', data: JSON.stringify(args, null, 4) });
+    },
+};

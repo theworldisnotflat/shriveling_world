@@ -6,13 +6,6 @@ namespace shriveling {
         extruded: number;
     }
 
-    export interface IBBox {
-        minLat: number;
-        maxLat: number;
-        minLong: number;
-        maxLong: number;
-    }
-
     interface IReverseLookupExtrusion {
         projection: string;
         extruded: boolean;
@@ -240,7 +233,7 @@ namespace shriveling {
         }
 
         cartoVertices.forEach((carto) => {
-            let lookupPos = carto.toTHREEVector3();
+            let lookupPos = <{ [x: string]: THREE.Vector3 }>carto.toTHREEVector3();
             for (let name in vertices) {
                 if (lookupPos.hasOwnProperty(name) && vertices.hasOwnProperty(name)) {
                     vertices[name].push(lookupPos[name]);
@@ -248,7 +241,7 @@ namespace shriveling {
             }
         });
         cartoVerticesExtruded.forEach((carto) => {
-            let lookupPos = carto.toTHREEVector3();
+            let lookupPos = <{ [x: string]: THREE.Vector3 }>carto.toTHREEVector3();
             for (let name in verticesExtruded) {
                 if (lookupPos.hasOwnProperty(name) && verticesExtruded.hasOwnProperty(name)) {
                     verticesExtruded[name].push(lookupPos[name]);
@@ -307,7 +300,6 @@ namespace shriveling {
     export class CountryGeometry extends THREE.Geometry {
         public static lookupGeometry: { [projection: string]: ITypeExtrusion } = {};
         public otherProperties: any;
-        private _boundary: Cartographic[];
         private _boundaryBox: IBBox;
         private _projection: string;
 
@@ -334,7 +326,7 @@ namespace shriveling {
                 (<GeoJSON.FeatureCollection<GeoJSON.GeometryObject>>geoJson).features.forEach((feature) => {
                     let properties = feature.properties;
                     generateVertices(feature.geometry).forEach((item, index) => {
-                        resultat.push(new CountryGeometry( properties, item, mainProjector, reverseLookup));
+                        resultat.push(new CountryGeometry(properties, item, mainProjector, reverseLookup));
                     });
                 });
             } else {
@@ -347,8 +339,8 @@ namespace shriveling {
             return this._projection;
         }
 
-        get boundary(): Cartographic[] {
-            return this._boundary;
+        get bbox(): IBBox {
+            return this._boundaryBox;
         }
 
         set projection(value: string) {
@@ -378,19 +370,18 @@ namespace shriveling {
             let resultat = false;
             if (pos.latitude >= this._boundaryBox.minLat && pos.latitude <= this._boundaryBox.maxLat &&
                 pos.longitude >= this._boundaryBox.minLong && pos.longitude <= this._boundaryBox.maxLong) {
-                resultat = Cartographic.isInside(pos, this._boundary);
+                resultat = Cartographic.isInside(pos, this._boundaryBox.boundary);
             }
             return resultat;
         }
 
         private constructor(
-          properties: any, boundary: IVerticesTriangles, mainProjector: string, reverseLookup: IReverseLookupExtrusion[]) {
+            properties: any, boundary: IVerticesTriangles, mainProjector: string, reverseLookup: IReverseLookupExtrusion[]) {
             super();
             this.otherProperties = properties;
-            this._boundary = boundary.surfaceBoundary;
-            this._boundaryBox = { minLat: 1000, minLong: 1000, maxLat: -1000, maxLong: -1000 };
-            for (let i = 0; i < this._boundary.length; i++) {
-                let pos = this._boundary[i];
+            this._boundaryBox = { minLat: 1000, minLong: 1000, maxLat: -1000, maxLong: -1000, boundary: boundary.surfaceBoundary };
+            for (let i = 0; i < this._boundaryBox.boundary.length; i++) {
+                let pos = this._boundaryBox.boundary[i];
                 this._boundaryBox.minLong = Math.min(this._boundaryBox.minLong, pos.longitude);
                 this._boundaryBox.minLat = Math.min(this._boundaryBox.minLat, pos.latitude);
                 this._boundaryBox.maxLong = Math.max(this._boundaryBox.maxLong, pos.longitude);

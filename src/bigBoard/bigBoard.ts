@@ -1,6 +1,34 @@
 declare var Stats: any;
 namespace shriveling {
     'use strict';
+
+    function prepareConfiguration(): void {
+        if (Configuration.COUNTRY_MATERIAL === undefined) {
+            Configuration.highLitedMaterial = new THREE.MeshBasicMaterial(
+                { color: 0xffff00, morphTargets: true, transparent: true, opacity: 0.5, side: THREE.DoubleSide });
+            let loader = new THREE.TextureLoader();
+
+            let earthMaterial = new THREE.MeshPhongMaterial({
+                morphTargets: true, opacity: 0.5, depthTest: true, depthWrite: true, transparent: false,
+            });
+            earthMaterial.map = loader.load(Configuration.COUNTRY_TEXTURES.map);
+            earthMaterial.specularMap = loader.load(Configuration.COUNTRY_TEXTURES.specularMap);
+            earthMaterial.specular = new THREE.Color(0x262626);
+            earthMaterial.bumpMap = loader.load(Configuration.COUNTRY_TEXTURES.bumpMap);
+            earthMaterial.bumpScale = 0.15;
+            earthMaterial.normalMap = loader.load(Configuration.COUNTRY_TEXTURES.normalMap);
+            earthMaterial.normalScale = new THREE.Vector2(0.5, 0.7);
+            earthMaterial.side = THREE.DoubleSide;
+            Configuration.COUNTRY_MATERIAL = earthMaterial;
+            Configuration.BASIC_CONE_MATERIAL = new THREE.MeshPhongMaterial({
+                transparent: true,
+                opacity: 0.5,
+                color: 0xff3333,
+            });
+            Configuration.BASIC_CONE_MATERIAL.side = THREE.DoubleSide;
+        }
+    }
+
     export class BigBoard {
         // prepare new datas for cones
         // configuration helper (radians, pourcentage...)?
@@ -28,17 +56,15 @@ namespace shriveling {
             this._init();
             this._countries = new CountryBoard(this._projectionName, this._scene, this._camera);
             this._countries.show = false;
-            this._cones = new ConeBoard(this._projectionName, this._scene, this._camera, this._countries);
+            this._cones = new ConeBoard(this._projectionName, this._scene, this._camera, this._countries, this._renderer);
+            this.year = '1930';
             let that = this;
             DragnDrop(
                 this._container, (text, name) => {
                     if (name.toLowerCase().endsWith('.csv')) {
                         that._merger.add(text);
                         if (that.state === 'ready') {
-                            let start = new Date();
                             that._merger.merge();
-                            let end = new Date();
-                            console.log((end.getTime() - start.getTime()) / 1000, ' secondes');
                         }
                     } else if (name.toLowerCase().endsWith('.geojson')) {
                         that._countries.add(JSON.parse(text));
@@ -118,30 +144,37 @@ namespace shriveling {
             return this._cones.lookupCriterias;
         }
 
+        get withLimits(): boolean {
+            return this._cones.withLimits;
+        }
+        set withLimits(value: boolean) {
+            this._cones.withLimits = value;
+        }
+
         get state(): IMergerState {
             return this._merger.state;
         }
 
         public updateConfiguration(): void {
             this.projectionNames = Object.keys(mapProjectors);
-            Configuration.prepareConfiguration();
+            prepareConfiguration();
         }
 
         public cleanCountries(): void {
             this._countries.clean();
-            this._cones.regenerateLimits();
+            //        this._cones.regenerateLimits();
         }
 
         public addCountries(geoJson: any): void {
             this._countries.add(geoJson);
-            this._cones.regenerateLimits();
+            //      this._cones.regenerateLimits();
         }
 
         public cleanCones(): void {
             this._cones.clean();
         }
 
-        public addCones(lookup: IlookupTownTransport): void {
+        public addCones(lookup: ILookupTownTransport): void {
             this._cones.add(lookup, Configuration.extrudedHeight);
         }
 
