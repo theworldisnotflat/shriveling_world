@@ -45,19 +45,6 @@ namespace shriveling {
         }
     }
 
-    /* tslint:disable */
-    let iso8601RegExp = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))/;
-    /* tslint:enable */
-
-    function jsonDataParse(key, value): any {
-        if (typeof value === 'string') {
-            let temp = value.replace(' ', '');
-            if (iso8601RegExp.exec(temp)) {
-                value = new Date(temp);
-            }
-        }
-        return value;
-    }
     const keyWords: { name: string, words: string[] }[] = [
         { name: '_cities', words: ['cityCode', 'latitude', 'longitude', 'radius'] },
         { name: '_transportModeSpeed', words: ['transportModeCode', 'year', 'speedKPH'] },
@@ -80,10 +67,11 @@ namespace shriveling {
     export type IMergerState = 'missing' | 'ready' | 'pending' | 'complete';
 
     function toTownTransport(
-        transportModeCode: ITransportModeCode[], cities: ICity[], transportNetwork: ITransportNetwork[]): IlookupTownTransport {
-        let resultat: IlookupTownTransport = {};
+        transportModeCode: ITransportModeCode[], cities: ICity[], transportNetwork: ITransportNetwork[]): ILookupTownTransport {
+        let resultat: ILookupTownTransport = {};
         // déterminer la fourchette de temps considéré OK
-        let minYear = (new Date()).getFullYear(), maxYear = minYear;
+        let actualYear = (new Date()).getFullYear();
+        let minYear = actualYear, maxYear = 0;
         transportNetwork.forEach((item) => {
             if (minYear > item.yearBegin) {
                 minYear = item.yearBegin;
@@ -102,18 +90,34 @@ namespace shriveling {
             tabSpeed: { [year: string]: number };
             name: string;
         }
+        let roadCode: number, roadBegin: number;
         let speedPerTransportPerYear: { [transportCode: string]: ISpeedPertransportPerYearItem } = {};
         transportModeCode.forEach((transportMode) => {
             let transportCode = transportMode.code;
             let transportName = transportMode.name;
+            if (transportName === 'Road') {
+                roadCode = transportCode;
+                roadBegin = Math.max(transportMode.yearBegin, minYear);
+            }
+            let minYearTransport = Math.max(transportMode.yearBegin, minYear);
+            let maxYearTransport = transportMode.yearEnd !== undefined ? transportMode.yearEnd : actualYear;
             let tempTransportCodeTab: ITransportCodeItem[] = [], tabSpeed: { [year: string]: number } = {};
+            let tempMaxYear: number;
             transportMode.speeds.forEach((transportSpeed) => {
                 tempTransportCodeTab.push({ speed: transportSpeed.speedKPH, year: transportSpeed.year });
+                if (maxYear < transportSpeed.year) {
+                    maxYear = transportSpeed.year;
+                }
+                if (tempMaxYear === undefined) {
+                    tempMaxYear = transportSpeed.year;
+                }
+                tempMaxYear = Math.max(tempMaxYear, transportSpeed.year);
             });
+            maxYearTransport = Math.min(maxYearTransport, tempMaxYear);
             tempTransportCodeTab = tempTransportCodeTab.sort((a, b) => a.year - b.year);
-            let extrapolation = extrapolator(tempTransportCodeTab, 'year', 'speed');
+            let extrapolation = extrapolator(tempTransportCodeTab, 'year', 'speed', true);
             let speed: number;
-            for (let year = minYear; year <= maxYear; year++) {
+            for (let year = minYearTransport; year <= maxYearTransport; year++) {
                 speed = extrapolation(year);
                 tabSpeed[year] = speed;
                 if (speedMaxPerYear.hasOwnProperty(year)) {
@@ -132,47 +136,46 @@ namespace shriveling {
             let position = new Cartographic(city.longitude, city.latitude, 0, false);
             lookupPosition[city.cityCode] = new NEDLocal(position);
         });
-        cities
-            .filter((city) => city.destinations.length > 0)
-            .forEach((city) => {
-                let cacheBearing: { [cityCode: string]: number } = {};
-                let originCityCode = city.cityCode;
-                let referential = lookupPosition[originCityCode];
-                if (referential instanceof NEDLocal) {
-                    let transports: ILookupTransport = {};
-                    let destinations: ILookupDestination = {};
-                    let lookupTransport: ILookupTransport, codeDestination: number, posDestination: Cartographic;
-                    let edge: ITransportNetwork, min: number, max: number, bearing: number, elevation: number;
-                    let transportName: string, transportMode: ISpeedPertransportPerYearItem;
-                    for (let i = 0; i < city.destinations.length; i++) {
-                        edge = city.destinations[i];
-                        min = Math.max(edge.yearBegin, minYear);
-                        max = edge.yearEnd ? edge.yearEnd : maxYear;
-                        codeDestination = edge.idDes;
-                        transportMode = speedPerTransportPerYear[edge.transportMode];
-                        if (cacheBearing.hasOwnProperty(codeDestination)) {
-                            bearing = cacheBearing[codeDestination];
+        cities.forEach((city) => {
+            let cacheBearing: { [cityCode: string]: number } = {};
+            let originCityCode = city.cityCode;
+            let referential = lookupPosition[originCityCode];
+            if (referential instanceof NEDLocal) {
+                let transports: ILookupTransport = {};
+                let destinations: ILookupDestination = {};
+                let lookupTransport: ILookupTransport, codeDestination: number, posDestination: Cartographic;
+                let edge: ITransportNetwork, min: number, max: number, bearing: number, elevation: number;
+                let transportName: string, transportMode: ISpeedPertransportPerYearItem;
+                for (let i = 0; i < city.destinations.length; i++) {
+                    edge = city.destinations[i];
+                    min = Math.max(edge.yearBegin, minYear);
+                    max = edge.yearEnd ? edge.yearEnd : maxYear;
+                    codeDestination = edge.idDes;
+                    transportMode = speedPerTransportPerYear[edge.transportMode];
+                    if (cacheBearing.hasOwnProperty(codeDestination)) {
+                        bearing = cacheBearing[codeDestination];
+                    } else {
+                        if (lookupPosition.hasOwnProperty(codeDestination)) {
+                            bearing = referential.getClock(lookupPosition[codeDestination].cartoRef);
+                            cacheBearing[codeDestination] = bearing;
                         } else {
-                            if (lookupPosition.hasOwnProperty(codeDestination)) {
-                                bearing = referential.getClock(lookupPosition[codeDestination].cartoRef);
-                                cacheBearing[codeDestination] = bearing;
-                            } else {
-                                bearing = undefined;
-                            }
+                            bearing = undefined;
                         }
-                        if (bearing !== undefined && transportMode !== undefined) {
-                            transportName = transportMode.name;
-                            if (!transports.hasOwnProperty(transportName)) {
-                                transports[transportName] = {};
-                            }
-                            if (!destinations.hasOwnProperty(codeDestination)) {
-                                destinations[codeDestination] = {};
-                            }
-                            if (!destinations[codeDestination].hasOwnProperty(transportName)) {
-                                destinations[codeDestination][transportName] = [];
-                            }
-                            let tab = transportMode.tabSpeed;
-                            for (let year = min; year <= max; year++) {
+                    }
+                    if (bearing !== undefined && transportMode !== undefined) {
+                        transportName = transportMode.name;
+                        if (!transports.hasOwnProperty(transportName)) {
+                            transports[transportName] = {};
+                        }
+                        if (!destinations.hasOwnProperty(codeDestination)) {
+                            destinations[codeDestination] = {};
+                        }
+                        if (!destinations[codeDestination].hasOwnProperty(transportName)) {
+                            destinations[codeDestination][transportName] = [];
+                        }
+                        let tab = transportMode.tabSpeed;
+                        for (let year = min; year <= max; year++) {
+                            if (tab[year] !== undefined) {
                                 if (!transports[transportName].hasOwnProperty(year)) {
                                     transports[transportName][year] = [];
                                 }
@@ -183,19 +186,39 @@ namespace shriveling {
                             }
                         }
                     }
-                    for (let transport in transports) {
-                        if (transports.hasOwnProperty(transport)) {
-                            for (let year in transports[transport]) {
-                                if (transports[transport].hasOwnProperty(year)) {
-                                    transports[transport][year] = transports[transport][year].sort((a, b) => a.clock - b.clock);
-                                }
+                }
+                // utiliser roadCode pour remplir les routes
+                if (!transports.hasOwnProperty('Road')) {
+                    transports['Road'] = {};
+                }
+                let tab = speedPerTransportPerYear[roadCode].tabSpeed;
+                let maxSpeed: number;
+                for (let year = roadBegin; year <= maxYear; year++) {
+                    if (!transports['Road'].hasOwnProperty(year)) {
+                        transports['Road'][year] = [];
+                    }
+                    maxSpeed = speedMaxPerYear[year] === undefined ? tab[year] : speedMaxPerYear[year];
+                    elevation = Math.atan(Math.sqrt(
+                        (maxSpeed / tab[year]) * (maxSpeed / tab[year]) - 1));
+                    transports['Road'][year].push(
+                        { clock: 0, elevation: elevation },
+                        { clock: Configuration.deg2rad * 91, elevation: elevation },
+                        { clock: Configuration.deg2rad * 180, elevation: elevation },
+                        { clock: Configuration.deg2rad * 350, elevation: elevation });
+                }
+
+                for (let transport in transports) {
+                    if (transports.hasOwnProperty(transport)) {
+                        for (let year in transports[transport]) {
+                            if (transports[transport].hasOwnProperty(year)) {
+                                transports[transport][year] = transports[transport][year].sort((a, b) => a.clock - b.clock);
                             }
                         }
                     }
-
-                    resultat[originCityCode] = { referential: referential, transports: transports, destinations: destinations };
                 }
-            });
+                resultat[originCityCode] = { referential: referential, transports: transports, destinations: destinations };
+            }
+        });
         // todo add road cones??
         return resultat;
     }
@@ -207,13 +230,13 @@ namespace shriveling {
         private _transportModeCode: ITransportModeCode[] = [];
         private _transportNetwork: ITransportNetwork[] = [];
         private _state: IMergerState = 'missing';
-        private _mergedData: IlookupTownTransport = {};
+        private _mergedData: ILookupTownTransport = {};
 
         get state(): IMergerState {
             return this._state;
         }
 
-        get datas(): IlookupTownTransport {
+        get datas(): ILookupTownTransport {
             return this._mergedData;
         }
 
@@ -261,11 +284,11 @@ namespace shriveling {
         public merge(): void {
             if (this._state === 'ready') {
                 this._state = 'pending';
-                let cities: ICity[] = JSON.parse(JSON.stringify(this._cities), jsonDataParse);
-                let population: IPopulation[] = JSON.parse(JSON.stringify(this._populations), jsonDataParse);
-                let transportModeCode: ITransportModeCode[] = JSON.parse(JSON.stringify(this._transportModeCode), jsonDataParse);
-                let transportModeSpeed: ITransportModeSpeed[] = JSON.parse(JSON.stringify(this._transportModeSpeed), jsonDataParse);
-                let transportNetwork: ITransportNetwork[] = JSON.parse(JSON.stringify(this._transportNetwork), jsonDataParse);
+                let cities: ICity[] = JSON.parse(JSON.stringify(this._cities), reviver);
+                let population: IPopulation[] = JSON.parse(JSON.stringify(this._populations), reviver);
+                let transportModeCode: ITransportModeCode[] = JSON.parse(JSON.stringify(this._transportModeCode), reviver);
+                let transportModeSpeed: ITransportModeSpeed[] = JSON.parse(JSON.stringify(this._transportModeSpeed), reviver);
+                let transportNetwork: ITransportNetwork[] = JSON.parse(JSON.stringify(this._transportNetwork), reviver);
 
                 merger(transportModeCode, transportModeSpeed, 'code', 'transportModeCode', 'speeds', true, true, false);
                 //    merger(transportNetwork, transportModeCode, 'transportMode', 'code', 'transportDetails', false, false, false);

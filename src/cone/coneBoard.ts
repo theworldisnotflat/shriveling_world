@@ -3,6 +3,10 @@ namespace shriveling {
 
     const forbiddenAttributes = ['referential', 'layers', 'position', 'transports'];
 
+    export interface ITownTransport {
+        layers?: { [transport: string]: ConeMesh };
+    }
+
     export class ConeBoard {
         public coneMeshCollection: ConeMesh[] = [];
         private _projection: string;
@@ -17,6 +21,7 @@ namespace shriveling {
         private _countries: CountryBoard;
         private _year: string;
         private _sumUpProperties: ISumUpCriteria = {};
+        private _renderer: THREE.WebGLRenderer;
 
         get projection(): string {
             return this._projection;
@@ -75,7 +80,8 @@ namespace shriveling {
             return this._sumUpProperties;
         }
 
-        public constructor(mainProjector: string, scene: THREE.Scene, camera: THREE.Camera, countries: CountryBoard) {
+        public constructor(
+            mainProjector: string, scene: THREE.Scene, camera: THREE.Camera, countries: CountryBoard, renderer: THREE.WebGLRenderer) {
             if (!mapProjectors.hasOwnProperty(mainProjector)) {
                 mainProjector = Object.keys(mapProjectors)[0];
             }
@@ -84,57 +90,52 @@ namespace shriveling {
             this._raycaster = new THREE.Raycaster();
             this._projection = mainProjector;
             this._countries = countries;
+            this._renderer = renderer;
         }
 
-        public add(lookup: IlookupTownTransport, distance: number): void {
-            for (let cityCode in lookup) {
-                if (lookup.hasOwnProperty(cityCode)) {
-                    let commonOthersProperties = {};
-                    let townTransport = lookup[cityCode];
-                    let referential = townTransport.referential;
-                    let transports = townTransport.transports;
-
-                    for (let attribute in townTransport) {
-                        if (townTransport.hasOwnProperty(attribute) && forbiddenAttributes.indexOf(attribute) === -1) {
-                            commonOthersProperties[attribute] = townTransport[attribute];
-                        }
-                    }
-
-                    for (let transport in transports) {
-                        if (transports.hasOwnProperty(transport)) {
-                            let othersProperties = {};
-                            for (let att in commonOthersProperties) {
-                                if (commonOthersProperties.hasOwnProperty(att)) {
-                                    othersProperties[att] = commonOthersProperties[att];
-                                }
-                            }
-                            othersProperties['transport'] = transport;
-                            let cones = this.searchMesh(referential.cartoRef);
-                            cones = searchCriterias(cones, { transport: { value: transport } }, forbiddenAttributes, 'otherProperties');
-                            updateSumUpCriteria(this._sumUpProperties, othersProperties);
-                            if (cones.length > 0) {
-                                let cone = cones[0];
-                                cone.update(distance, transports[transport]);
-                                cone.otherProperties = othersProperties;
-                            } else {
-                                let boundaryGeometries = this._countries.searchMesh(referential.cartoRef)
-                                    .map((mesh) => <CountryGeometry>mesh.geometry);
-                                let cone = new ConeMesh(
-                                    referential, transports[transport], boundaryGeometries, this._projection, distance, this._withLimits);
-                                cone.otherProperties = othersProperties;
-                                this.coneMeshCollection.push(cone);
-                                cone.visible = this._show;
-                                cone.scale.setScalar(this._scale);
-                                if (!townTransport.hasOwnProperty('layers')) {
-                                    townTransport.layers = {};
-                                }
-                                townTransport.layers[transport] = cone;
-                                this._scene.add(cone);
-                            }
-                        }
-                    }
+        public add(lookup: ILookupTownTransport, distance: number): void {
+            /*
+                        let cityCode = Object.keys(lookup)[0];
+                        let temp = lookup[cityCode];
+                        lookup = {};
+                        lookup[cityCode] = temp;
+                        console.log(lookup);
+            */
+            let that = this;
+            let coneGeneratorWorker = Workers.generateWorker('coneGenerator');
+            coneGeneratorWorker.addEventListener('message', (e) => {
+                if (e.data.action === 'end') {
+                    coneGeneratorWorker.terminate();
+                    console.log('done');
+                } else if (e.data.action === 'cones') {
+                    let data = <ILookupTownPseudoGeometryPremises>e.data.data;
+                    let cones = ConeMesh.generator(data, that._year, that._projection);
+                    cones.forEach((cone) => {
+                        updateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
+                        that.coneMeshCollection.push(cone);
+                        cone.visible = that._show;
+                        cone.scale.setScalar(that._scale);
+                        /*      if (!townTransport.hasOwnProperty('layers')) {
+                                  townTransport.layers = {};
+                              }
+                              townTransport.layers[transport] = cone;*/
+                        that._scene.add(cone);
+                        that._renderer.render(that._scene, that._camera);
+                    });
+                } else if (e.data.action === 'console') {
+                    console.log(e.data.data);
                 }
-            }
+            });
+            let bboxes = this._countries.countryMeshCollection.map((country) => (<CountryGeometry>country.geometry).bbox);
+            let toSend = JSON.stringify(
+                <IDataConeGeneratorIn>{ lookup: lookup, bboxes: bboxes, distance: distance }, (k, v) => {
+                    if (k === 'layers') {
+                        v = undefined;
+                    }
+                    return v;
+                },
+                4);
+            coneGeneratorWorker.postMessage(toSend);
         }
 
         public setLayer(transport: string, show: boolean): void {
@@ -182,7 +183,7 @@ namespace shriveling {
                     that._scene.remove(mesh);
                 });
                 this._selectedMeshs = this.searchMesh(criterias).map((mesh) => {
-                    let geometry = (<ConeGeometry>mesh.geometry).fuzzyClone();
+                    let geometry = <THREE.BufferGeometry>mesh.geometry.clone();
                     let out = new THREE.Mesh(geometry, Configuration.highLitedMaterial);
                     out.updateMorphTargets();
                     for (let i = 0; i < (<any>mesh).morphTargetInfluences.length; i++) {
@@ -212,15 +213,6 @@ namespace shriveling {
             let realState = state && this._show;
             this.searchMesh(criterias).forEach((cone) => {
                 cone.visible = realState;
-            });
-        }
-
-        public regenerateLimits(): void {
-            let that = this;
-            this.coneMeshCollection.forEach((cone) => {
-                let boundaryGeometries = this._countries.searchMesh(cone.cartographicPosition)
-                    .map((mesh) => <CountryGeometry>mesh.geometry);
-                cone.regenerateLimits(boundaryGeometries);
             });
         }
 
