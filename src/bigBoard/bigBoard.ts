@@ -182,7 +182,7 @@ namespace shriveling {
             return this._countries.getMeshByMouse(event, highLight);
         }
 
-        public getConeByMouse(event: MouseEvent, highLight: boolean = false): ConeMesh {
+        public getConeByMouse(event: MouseEvent, highLight: boolean = false): PseudoCone {
             return this._cones.getMeshByMouse(event, highLight);
         }
 
@@ -214,8 +214,8 @@ namespace shriveling {
             return resultat;
         }
 
-        public getCones(criterias: ICriterias): ConeMesh[] {
-            let resultat: ConeMesh[] = [];
+        public getCones(criterias: ICriterias): PseudoCone[] {
+            let resultat: PseudoCone[] = [];
             if (this._cones.show === true) {
                 resultat = this._cones.searchMesh(criterias);
             }
@@ -279,8 +279,7 @@ namespace shriveling {
                 }));
 
             let skyGeometry = new THREE.CubeGeometry(10000, 10000, 10000);
-            let skyMaterial = new THREE.MultiMaterial(materialArray);
-            let skybox = new THREE.Mesh(skyGeometry, skyMaterial);
+            let skybox = new THREE.Mesh(skyGeometry, <any>materialArray);
             this._scene.add(skybox);
         }
 

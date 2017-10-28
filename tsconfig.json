@@ -14,9 +14,8 @@
         "temp"
     ],
     "include": [
-        "node_modules/@types/**/**/*.d.ts",
         "typings",
-        "src/**/**/*.ts"
+        "src"
     ]
 
 }

@@ -77,10 +77,10 @@ namespace shriveling {
         let coordinates: number[][][][] = [[[[]]]];
         switch (geometry.type) {
             case 'Polygon':
-                coordinates = [geometry.coordinates];
+                coordinates = [(<any>geometry).coordinates];
                 break;
             case 'MultiPolygon':
-                coordinates = geometry.coordinates;
+                coordinates = (<any>geometry).coordinates;
                 break;
             default:
         }

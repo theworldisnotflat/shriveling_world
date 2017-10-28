@@ -30,51 +30,51 @@ namespace shriveling {
                 return resultat;
             },
         },
-        Equirectangular:
-        {
-            converter: (
-                pos: Cartographic, toPack: boolean, reference = new Cartographic(),
-                threeRadius: number = Cartographic.THREE_EARTH_RADIUS): THREE.Vector3 | number[] => {
-                let x = (pos.longitude - reference.longitude) * Math.cos(reference.latitude) * threeRadius;
-                let y = (pos.latitude - reference.latitude) * threeRadius;
-                let z = (pos.height - reference.height) / Configuration.earthRadiusMeters * threeRadius;
-                return toPack === true ? [x, y, z] : new THREE.Vector3(x, y, z);
-            },
-            reverser: (
-                pos: THREE.Vector3, reference = new Cartographic(),
-                threeRadius: number = Cartographic.THREE_EARTH_RADIUS): Cartographic => {
-                let cleanPos = pos.clone().multiplyScalar(1 / threeRadius);
-                let resultat = new Cartographic();
-                resultat.height = cleanPos.z * Configuration.earthRadiusMeters + reference.height;
-                resultat.latitude = cleanPos.x + reference.latitude;
-                let cos = Math.cos(resultat.latitude);
-                if (cos > 1e-13) {
-                    resultat.longitude = cleanPos.x / cos + reference.longitude;
-                }
-                return resultat;
-            },
-        },
-        Mercator:
-        {
-            converter: (
-                pos: Cartographic, toPseudo: boolean, lambda0: number = 0,
-                threeRadius: number = Cartographic.THREE_EARTH_RADIUS): THREE.Vector3 | number[] => {
-                let x = (pos.longitude - lambda0) * threeRadius;
-                let y = Math.log(Math.tan(Math.PI / 4 + pos.latitude / 2)) * threeRadius;
-                let z = pos.height / Configuration.earthRadiusMeters * threeRadius;
-                return toPseudo === true ? [x, y, z] : new THREE.Vector3(x, y, z);
-            },
-            reverser: (
-                pos: THREE.Vector3, lambda0: number = 0,
-                threeRadius: number = Cartographic.THREE_EARTH_RADIUS): Cartographic => {
-                let cleanPos = pos.clone().multiplyScalar(1 / threeRadius);
-                let resultat = new Cartographic();
-                resultat.longitude = cleanPos.x + lambda0;
-                resultat.height = cleanPos.z + Configuration.earthRadiusMeters;
-                resultat.latitude = 2 * (Math.atan(Math.exp(cleanPos.y)) - Math.PI / 4);
-                return resultat;
-            },
-        },
+        /*  Equirectangular:
+          {
+              converter: (
+                  pos: Cartographic, toPack: boolean, reference = new Cartographic(),
+                  threeRadius: number = Cartographic.THREE_EARTH_RADIUS): THREE.Vector3 | number[] => {
+                  let x = (pos.longitude - reference.longitude) * Math.cos(reference.latitude) * threeRadius;
+                  let y = (pos.latitude - reference.latitude) * threeRadius;
+                  let z = (pos.height - reference.height) / Configuration.earthRadiusMeters * threeRadius;
+                  return toPack === true ? [x, y, z] : new THREE.Vector3(x, y, z);
+              },
+              reverser: (
+                  pos: THREE.Vector3, reference = new Cartographic(),
+                  threeRadius: number = Cartographic.THREE_EARTH_RADIUS): Cartographic => {
+                  let cleanPos = pos.clone().multiplyScalar(1 / threeRadius);
+                  let resultat = new Cartographic();
+                  resultat.height = cleanPos.z * Configuration.earthRadiusMeters + reference.height;
+                  resultat.latitude = cleanPos.x + reference.latitude;
+                  let cos = Math.cos(resultat.latitude);
+                  if (cos > 1e-13) {
+                      resultat.longitude = cleanPos.x / cos + reference.longitude;
+                  }
+                  return resultat;
+              },
+          },
+          Mercator:
+          {
+              converter: (
+                  pos: Cartographic, toPseudo: boolean, lambda0: number = 0,
+                  threeRadius: number = Cartographic.THREE_EARTH_RADIUS): THREE.Vector3 | number[] => {
+                  let x = (pos.longitude - lambda0) * threeRadius;
+                  let y = Math.log(Math.tan(Math.PI / 4 + pos.latitude / 2)) * threeRadius;
+                  let z = pos.height / Configuration.earthRadiusMeters * threeRadius;
+                  return toPseudo === true ? [x, y, z] : new THREE.Vector3(x, y, z);
+              },
+              reverser: (
+                  pos: THREE.Vector3, lambda0: number = 0,
+                  threeRadius: number = Cartographic.THREE_EARTH_RADIUS): Cartographic => {
+                  let cleanPos = pos.clone().multiplyScalar(1 / threeRadius);
+                  let resultat = new Cartographic();
+                  resultat.longitude = cleanPos.x + lambda0;
+                  resultat.height = cleanPos.z + Configuration.earthRadiusMeters;
+                  resultat.latitude = 2 * (Math.atan(Math.exp(cleanPos.y)) - Math.PI / 4);
+                  return resultat;
+              },
+          },*/
     };
 
     export class Cartographic {
@@ -237,6 +237,12 @@ namespace shriveling {
 
     export interface IDirection extends IClock {
         elevation: number;
+        speed?: number;
+        clockDegree?: number;
+        elevationDegree?: number;
+        destination?: number;
+        transport?: string;
+        year?: number;
     }
 
     export interface ILookupDirection {
@@ -259,6 +265,7 @@ namespace shriveling {
         referential: NEDLocal;
         transports: ILookupTransport;
         destinations: ILookupDestination;
+        cityProperties: ICity;
     }
 
     export interface ILookupTownTransport {
@@ -279,8 +286,15 @@ namespace shriveling {
         ascendant: boolean;
     }
 
+    export type sumUpType = 'number' | 'date' | 'string' | 'array' | 'object' | 'boolean' | 'undefined';
+
+    export interface ISumUpCriteriaItem {
+        type: sumUpType;
+        sumUp?: { max: Date | number, min: Date | number } | string[] | ISumUpCriteria;
+    }
+
     export interface ISumUpCriteria {
-        [attribut: string]: { max: Date | number, min: Date | number } | string[];
+        [attribut: string]: ISumUpCriteriaItem;
     }
 
     export interface IPopulation {
@@ -319,7 +333,6 @@ namespace shriveling {
         idOri?: number;
         idDes: number;
         transportMode: number;
-        //  transportDetails: ITransportModeCode;
         destination?: number;
     }
 
@@ -349,6 +362,7 @@ namespace shriveling {
     export interface ILookupTownPseudoGeometryPremises {
         transports: { [transport: string]: ILookupPseudoGeometryPremises };
         position: Cartographic;
+        cityCode: string;
         otherProperties: any;
     }
 
@@ -358,33 +372,104 @@ namespace shriveling {
         distance: number;
     }
 
+    function updateSumupCriteriaByDateOrNumber(subObject: { max: Date | number, min: Date | number }, temp: Date | number): void {
+        let comparMin = compare(subObject.min, temp, true);
+        let comparMax = compare(subObject.max, temp, true);
+        if (comparMin > 0) {
+            subObject.min = temp;
+        }
+        if (comparMax < 0) {
+            subObject.max = temp;
+        }
+    }
+
     export function updateSumUpCriteria(sumup: ISumUpCriteria, properties: any): ISumUpCriteria {
         let temp: any, subObject: { max: Date | number, min: Date | number };
-        let comparMin: number, comparMax: number;
+        let comparMin: number, comparMax: number, typeofTemp: string;
+        // attention si properties est un tableau
         for (let attribute in properties) {
             if (properties.hasOwnProperty(attribute)) {
                 temp = properties[attribute];
                 if (temp !== undefined || temp !== null) {
+                    typeofTemp = typeof temp;
                     if (sumup.hasOwnProperty(attribute)) {
-                        if (Array.isArray(sumup[attribute])) {
-                            (<string[]>sumup[attribute]).push(temp.toString());
-                        } else {
-                            subObject = <{ max: Date | number, min: Date | number }>sumup[attribute];
-                            comparMin = compare(subObject.min, temp, true);
-                            comparMax = compare(subObject.max, temp, true);
-                            if (comparMin > 0) {
-                                subObject.min = temp;
-                            }
-                            if (comparMax < 0) {
-                                subObject.max = temp;
-                            }
+                        switch (typeofTemp) {
+                            case 'string':
+                                if (sumup[attribute].type === 'string') {
+                                    if ((<string[]>sumup[attribute].sumUp).indexOf(temp) === -1) {
+                                        (<string[]>sumup[attribute].sumUp).push(temp);
+                                    }
+                                } else {
+                                    sumup[attribute].type = 'undefined';
+                                    delete sumup[attribute].sumUp;
+                                }
+                                break;
+                            case 'object':
+                                if (temp instanceof Date && sumup[attribute].type === 'date') {
+                                    updateSumupCriteriaByDateOrNumber(<{ max: Date, min: Date }>sumup[attribute].sumUp, temp);
+                                } else if (Array.isArray(temp) && sumup[attribute].type === 'array') {
+                                    temp.forEach((item) => {
+                                        updateSumUpCriteria(<ISumUpCriteria>sumup[attribute].sumUp, item);
+                                    });
+                                } else if (sumup[attribute].type === 'object') {
+                                    updateSumUpCriteria(<ISumUpCriteria>sumup[attribute].sumUp, temp);
+                                } else {
+                                    sumup[attribute].type = 'undefined';
+                                    delete sumup[attribute].sumUp;
+                                }
+                                break;
+                            case 'boolean':
+                                if (sumup[attribute].type !== 'boolean') {
+                                    sumup[attribute].type = 'undefined';
+                                    delete sumup[attribute].sumUp;
+                                }
+                                break;
+                            case 'symbol':
+                                break;
+                            case 'function':
+                                break;
+                            case 'number':
+                                if (sumup[attribute].type === 'number') {
+                                    updateSumupCriteriaByDateOrNumber(<{ max: number, min: number }>sumup[attribute].sumUp, temp);
+                                } else {
+                                    sumup[attribute].type = 'undefined';
+                                    delete sumup[attribute].sumUp;
+                                }
+                                break;
+                            default:
+
                         }
                     } else {
-                        if (typeof temp === 'string') {
-                            sumup[attribute] = [];
-                            (<string[]>sumup[attribute]).push(temp);
-                        } else {
-                            sumup[attribute] = <{ max: Date | number, min: Date | number }>{ max: temp, min: temp };
+                        switch (typeofTemp) {
+                            case 'string':
+                                sumup[attribute] = { type: 'string', sumUp: [] };
+                                (<string[]>sumup[attribute].sumUp).push(temp);
+                                break;
+                            case 'object':
+                                if (temp instanceof Date) {
+                                    sumup[attribute] = { type: 'date', sumUp: { max: temp, min: temp } };
+                                } else if (Array.isArray(temp)) {
+                                    sumup[attribute] = { type: 'array', sumUp: {} };
+                                    temp.forEach((item) => {
+                                        updateSumUpCriteria(<ISumUpCriteria>sumup[attribute].sumUp, item);
+                                    });
+                                } else {
+                                    sumup[attribute] = { type: 'object', sumUp: {} };
+                                    updateSumUpCriteria(<ISumUpCriteria>sumup[attribute].sumUp, temp);
+                                }
+                                break;
+                            case 'boolean':
+                                sumup[attribute] = { type: 'boolean' };
+                                break;
+                            case 'symbol':
+                                break;
+                            case 'function':
+                                break;
+                            case 'number':
+                                sumup[attribute] = { type: 'number', sumUp: { max: temp, min: temp } };
+                                break;
+                            default:
+
                         }
                     }
                 }
@@ -427,62 +512,89 @@ namespace shriveling {
 
     function compareItemCriteria(value: any, itemCriteria: IItemCriteria): boolean {
         let resultat = false;
-        let comparison = compare(value, itemCriteria.value, true);
-        let comparator = itemCriteria.comparator;
-        if (comparator === '>') {
-            if (comparison > 0) {
-                resultat = true;
-            }
-        } else if (comparator === '>=') {
-            if (comparison >= 0) {
-                resultat = true;
-            }
-        } else if (comparator === '<') {
-            if (comparison < 0) {
-                resultat = true;
-            }
-        } else if (comparator === '<=') {
-            if (comparison <= 0) {
-                resultat = true;
-            }
-        } else if (comparator === '!=') {
-            if (comparison !== 0) {
-                resultat = true;
-            }
+        if (Array.isArray(value)) {
+            value.forEach((item) => {
+                resultat = resultat || compareItemCriteria(item, itemCriteria);
+            });
         } else {
-            // =
-            if (comparison === 0) {
-                resultat = true;
+            let comparison = compare(value, itemCriteria.value, true);
+            let comparator = itemCriteria.comparator;
+            if (comparator === '>') {
+                if (comparison > 0) {
+                    resultat = true;
+                }
+            } else if (comparator === '>=') {
+                if (comparison >= 0) {
+                    resultat = true;
+                }
+            } else if (comparator === '<') {
+                if (comparison < 0) {
+                    resultat = true;
+                }
+            } else if (comparator === '<=') {
+                if (comparison <= 0) {
+                    resultat = true;
+                }
+            } else if (comparator === '!=') {
+                if (comparison !== 0) {
+                    resultat = true;
+                }
+            } else {
+                // =
+                if (comparison === 0) {
+                    resultat = true;
+                }
             }
         }
         return resultat;
     }
 
     function getObjectByString(objet: any, path: string): any {
-        path = path.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+        path = path.replace(/\[(\w+|\*)\]/g, '.$1'); // convert indexes to properties
         path = path.replace(/^\./, '');           // strip a leading dot
         let tab = path.split('.');
-        let length = tab.length;
-        let subAttribut: any;
-        for (let i = 0; i < length; ++i) {
-            subAttribut = tab[i];
-            if (subAttribut in objet) {
+        let subAttribut = tab.shift();
+        let finished = false;
+        while (subAttribut !== undefined && finished === false && objet !== undefined) {
+            // todo faire le même principe pour un objet quelconque!!
+            if (subAttribut === '') {
+                // nothing
+            } else if (subAttribut === '*') {
+                let subPath = tab.join('.');
+                if (Array.isArray(objet)) {
+                    objet = objet.map((item) => getObjectByString(item, subPath));
+                    finished = true;
+                } else if (typeof objet === 'object' && !(objet instanceof Date)) {
+                    objet = Object.getOwnPropertyNames(objet).map((attributName) => getObjectByString(objet[attributName], subPath));
+                    finished = true;
+                }
+            } else if (subAttribut in objet) {
                 objet = objet[subAttribut];
+            } else {
+                objet = undefined;
             }
+            subAttribut = tab.shift();
         }
         return objet;
     }
 
     export function searchCriterias<T>(collection: T[], criterias: ICriterias, forbiddenAttributes: string[] = [], child?: string): T[] {
         let criteriasKey = Object.keys(criterias);
+        let regex = new RegExp('(' + forbiddenAttributes.join('|') + ')', 'g');
         function megaFilter(item: T): boolean {
             let found = true;
+            let foundedObject: any;
             let out: any = child === undefined ? item : getObjectByString(item, child);
             let attribut: string;
-            for (let i = 0; i < criteriasKey.length && found; i++) {
+            for (let i = 0; i < criteriasKey.length && found === true; i++) {
                 attribut = criteriasKey[i];
-                if (forbiddenAttributes.indexOf(attribut) === -1) {
-                    found = found && compareItemCriteria(out[attribut], criterias[attribut]);
+                if (attribut.match(regex) === null) {
+                    foundedObject = getObjectByString(out, attribut);
+                    if (foundedObject === undefined) {
+                        found = false;
+                    } else {
+                        found = found && compareItemCriteria(foundedObject, criterias[attribut]);
+                    }
                 }
             }
             return found;
@@ -645,8 +757,3 @@ namespace shriveling {
     reviver.constructors.NEDLocal = NEDLocal;
 
 }
-self['console2'] = {
-    log: (...args: any[]): void => {
-        (<any>self).postMessage({ action: 'console', data: JSON.stringify(args, null, 4) });
-    },
-};

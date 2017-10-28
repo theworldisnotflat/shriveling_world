@@ -194,6 +194,7 @@ namespace shriveling {
                 let townTransport = lookup[cityCode];
                 let referential = townTransport.referential;
                 let transports = townTransport.transports;
+                let boundaryGeometries = matchingBBox(referential.cartoRef, bboxes);
 
                 for (let attribute in townTransport) {
                     if (townTransport.hasOwnProperty(attribute) && forbiddenAttributes.indexOf(attribute) === -1) {
@@ -201,13 +202,11 @@ namespace shriveling {
                     }
                 }
                 let coneLookup: ILookupTownPseudoGeometryPremises
-                    = { transports: {}, position: referential.cartoRef, otherProperties: properties };
+                    = { transports: {}, position: referential.cartoRef, otherProperties: properties, cityCode: cityCode };
                 let transferableDatas: ArrayBuffer[] = [];
 
                 for (let transport in transports) {
                     if (transports.hasOwnProperty(transport)) {
-                        let boundaryGeometries = matchingBBox(referential.cartoRef, bboxes);
-
                         let intermed = pseudoConeGenerator(referential, transports[transport], boundaryGeometries, distance);
                         coneLookup.transports[transport] = intermed.payload;
                         transferableDatas.push(...intermed.transferables);

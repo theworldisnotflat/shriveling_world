@@ -18,7 +18,7 @@ let gulp = require('gulp'),
 let sources = {
     app: {
         ts: [
-            'typings/globals/**/*.d.ts', 'node_modules/@types/**/*.d.ts', './src/**/**/*.ts', '!./src/webWorkers/**/*.ts'
+             'node_modules/@types/**/*.d.ts','node_modules/poly2tri/src/poly2tri.d.ts', './src/**/**/*.ts', '!./src/webWorkers/**/*.ts'
         ],
         tsWorker: ['./src/webWorkers/**/*.ts'],
         common: [

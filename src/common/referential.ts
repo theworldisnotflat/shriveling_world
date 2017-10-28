@@ -88,7 +88,7 @@ namespace shriveling {
 
         public dot(vec2): number {
             return Coordinate.dot(this, vec2);
-        };
+        }
 
         public multiplyVector(vec2: Coordinate, result?: Coordinate): Coordinate {
             return Coordinate.multiplyVector(this, vec2, result);

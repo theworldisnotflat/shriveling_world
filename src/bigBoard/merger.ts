@@ -144,7 +144,7 @@ namespace shriveling {
                 let transports: ILookupTransport = {};
                 let destinations: ILookupDestination = {};
                 let lookupTransport: ILookupTransport, codeDestination: number, posDestination: Cartographic;
-                let edge: ITransportNetwork, min: number, max: number, bearing: number, elevation: number;
+                let edge: ITransportNetwork, min: number, max: number, bearing: number, elevation: number, elevationDegree: number;
                 let transportName: string, transportMode: ISpeedPertransportPerYearItem;
                 for (let i = 0; i < city.destinations.length; i++) {
                     edge = city.destinations[i];
@@ -181,7 +181,15 @@ namespace shriveling {
                                 }
                                 elevation = Math.atan(Math.sqrt(
                                     (speedMaxPerYear[year] / tab[year]) * (speedMaxPerYear[year] / tab[year]) - 1));
-                                transports[transportName][year].push({ clock: bearing, elevation: elevation });
+                                elevationDegree = elevation / Configuration.deg2rad;
+                                transports[transportName][year].push({
+                                    clock: bearing, elevation: elevation, speed: tab[year],
+                                    clockDegree: bearing / Configuration.deg2rad,
+                                    elevationDegree: elevationDegree,
+                                    destination: codeDestination,
+                                    transport: transportName,
+                                    year: year,
+                                });
                                 destinations[codeDestination][transportName].push({ year: year, speed: tab[year] });
                             }
                         }
@@ -200,11 +208,24 @@ namespace shriveling {
                     maxSpeed = speedMaxPerYear[year] === undefined ? tab[year] : speedMaxPerYear[year];
                     elevation = Math.atan(Math.sqrt(
                         (maxSpeed / tab[year]) * (maxSpeed / tab[year]) - 1));
+                    elevationDegree = elevation / Configuration.deg2rad;
                     transports['Road'][year].push(
-                        { clock: 0, elevation: elevation },
-                        { clock: Configuration.deg2rad * 91, elevation: elevation },
-                        { clock: Configuration.deg2rad * 180, elevation: elevation },
-                        { clock: Configuration.deg2rad * 350, elevation: elevation });
+                        {
+                            clock: 0, elevation: elevation, speed: tab[year],
+                            clockDegree: 0, elevationDegree: elevationDegree, transport: 'Road', year: year,
+                        },
+                        {
+                            clock: Configuration.deg2rad * 91, elevation: elevation, speed: tab[year],
+                            clockDegree: 91, elevationDegree: elevationDegree, transport: 'Road', year: year,
+                        },
+                        {
+                            clock: Configuration.deg2rad * 180, elevation: elevation, speed: tab[year],
+                            clockDegree: 180, elevationDegree: elevationDegree, transport: 'Road', year: year,
+                        },
+                        {
+                            clock: Configuration.deg2rad * 350, elevation: elevation, speed: tab[year],
+                            clockDegree: 3500, elevationDegree: elevationDegree, transport: 'Road', year: year,
+                        });
                 }
 
                 for (let transport in transports) {
@@ -216,10 +237,12 @@ namespace shriveling {
                         }
                     }
                 }
-                resultat[originCityCode] = { referential: referential, transports: transports, destinations: destinations };
+                resultat[originCityCode] = {
+                    referential: referential, transports: transports,
+                    destinations: destinations, cityProperties: city,
+                };
             }
         });
-        // todo add road cones??
         return resultat;
     }
 
@@ -295,8 +318,8 @@ namespace shriveling {
                 merger(cities, population, 'cityCode', 'cityCode', 'populations', false, true, false);
                 merger(transportNetwork, cities, 'idDes', 'cityCode', 'destination', false, false, false);
                 merger(cities, transportNetwork, 'cityCode', 'idOri', 'destinations', true, true, false);
-
                 this._mergedData = toTownTransport(transportModeCode, cities, transportNetwork);
+                // console.log(cities, transportModeCode, transportNetwork, this._mergedData);
                 this._state = 'missing';
                 this._checkState();
             }

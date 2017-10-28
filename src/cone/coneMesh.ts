@@ -14,9 +14,10 @@ namespace shriveling {
         [year: string]: ISimpleItemBufferGeometry;
     }
 
-    export class ConeMesh extends THREE.Mesh {
+    export class ConeMesh extends PseudoCone {
 
         public otherProperties: any;
+        private _cityCode: string;
         private _year: string;
         private _projection: string;
         private _bufferGeometries: IBufferGeometry;
@@ -26,6 +27,7 @@ namespace shriveling {
         public static generator(
             lookupTown: ILookupTownPseudoGeometryPremises, yearConsigned: string, projectionConsigned: string): ConeMesh[] {
             let position = lookupTown.position;
+            let cityCode = lookupTown.cityCode;
             let othersProperties = lookupTown.otherProperties;
             let resultat: ConeMesh[] = [];
             for (let transport in lookupTown.transports) {
@@ -68,7 +70,7 @@ namespace shriveling {
                         }
                     }
                     resultat.push(new ConeMesh(
-                        coneMeshBuffers, position, yearConsigned, projectionConsigned, true, properties));
+                        coneMeshBuffers, cityCode, position, yearConsigned, projectionConsigned, true, properties));
                 }
             }
             return resultat;
@@ -102,10 +104,16 @@ namespace shriveling {
             return this._position;
         }
 
+        get cityCode(): string {
+            return this._cityCode;
+        }
+
         private constructor(
-            lookupBuffer: IBufferGeometry, position: Cartographic, year: string,
+            lookupBuffer: IBufferGeometry, cityCode: string, position: Cartographic, year: string,
             projectionName: string, withLimit: boolean, others: any = {}) {
             super(ZERO_BUFFER_GEOMETRY, Configuration.BASIC_CONE_MATERIAL);
+            this._position = position;
+            this._cityCode = cityCode;
             this._year = year;
             this._projection = projectionName;
             this._withLimits = withLimit;

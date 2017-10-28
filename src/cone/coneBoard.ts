@@ -1,14 +1,14 @@
 namespace shriveling {
     'use strict';
 
-    const forbiddenAttributes = ['referential', 'layers', 'position', 'transports'];
+    const forbiddenAttributes = ['referential', 'layers', 'position'];
 
     export interface ITownTransport {
         layers?: { [transport: string]: ConeMesh };
     }
 
     export class ConeBoard {
-        public coneMeshCollection: ConeMesh[] = [];
+        public coneMeshCollection: PseudoCone[] = [];
         private _projection: string;
         private _scene: THREE.Scene;
         private _camera: THREE.Camera;
@@ -94,23 +94,35 @@ namespace shriveling {
         }
 
         public add(lookup: ILookupTownTransport, distance: number): void {
-            /*
-                        let cityCode = Object.keys(lookup)[0];
-                        let temp = lookup[cityCode];
-                        lookup = {};
-                        lookup[cityCode] = temp;
-                        console.log(lookup);
-            */
+            let myConsistentLookup = <ILookupTownTransport>{};
+            for (let cityCode in lookup) {
+                if (lookup.hasOwnProperty(cityCode) && Object.keys(lookup[cityCode].transports).length > 1) {
+                    myConsistentLookup[cityCode] = lookup[cityCode];
+                }
+            }
+            lookup = myConsistentLookup;
+
             let that = this;
             let coneGeneratorWorker = Workers.generateWorker('coneGenerator');
             coneGeneratorWorker.addEventListener('message', (e) => {
                 if (e.data.action === 'end') {
                     coneGeneratorWorker.terminate();
                     console.log('done');
+                    console.log(that._sumUpProperties);
+                    console.log(that.searchMesh(
+                        { 'destinations[23083][Supersonic][*].year': { value: 1990, comparator: '>=' } }));
+                    console.log(that.searchMesh(
+                        { 'cityProperties.*.*.*.*': { value: 23083, comparator: '=' } }));
                 } else if (e.data.action === 'cones') {
                     let data = <ILookupTownPseudoGeometryPremises>e.data.data;
                     let cones = ConeMesh.generator(data, that._year, that._projection);
                     cones.forEach((cone) => {
+                        let transport = <string>cone.otherProperties['transport'];
+                        let cityCode = cone.cityCode;
+                        let directions = lookup[cityCode].transports[transport];
+                        cone.otherProperties = Object.assign(
+                            cone.otherProperties,
+                            { directions: directions, cityProperties: lookup[cityCode].cityProperties });
                         updateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
                         that.coneMeshCollection.push(cone);
                         cone.visible = that._show;
@@ -133,8 +145,7 @@ namespace shriveling {
                         v = undefined;
                     }
                     return v;
-                },
-                4);
+                });
             coneGeneratorWorker.postMessage(toSend);
         }
 
@@ -163,7 +174,9 @@ namespace shriveling {
                 this.highLight(resultat.otherProperties, highLight);
             } else {
                 this._selectedMeshs.forEach((mesh) => {
-                    mesh.material.visible = false;
+                    if (!Array.isArray(mesh.material)) {
+                        mesh.material.visible = false;
+                    }
                 });
             }
             return resultat;
@@ -195,12 +208,14 @@ namespace shriveling {
                 });
             }
             this._selectedMeshs.forEach((mesh) => {
-                mesh.material.visible = light;
+                if (!Array.isArray(mesh.material)) {
+                    mesh.material.visible = light;
+                }
             });
         }
 
-        public searchMesh(criterias: ICriterias | Cartographic, path: string = ''): ConeMesh[] {
-            let resultat: ConeMesh[];
+        public searchMesh(criterias: ICriterias | Cartographic, path: string = ''): PseudoCone[] {
+            let resultat: PseudoCone[];
             if (criterias instanceof Cartographic) {
                 resultat = this.coneMeshCollection.filter((cone) => cone.cartographicPosition.distanceApproximee(criterias) < 1e-13);
             } else {
@@ -218,7 +233,11 @@ namespace shriveling {
 
         private _reHighLight(): void {
             if (this._selectedMeshs.length > 0) {
-                let visible = this._selectedMeshs[0].material.visible;
+                let visible = false;
+                let temp = this._selectedMeshs[0];
+                if (!Array.isArray(temp.material)) {
+                    visible = temp.material.visible;
+                }
                 let criterias = this._highlitedCriterias;
                 this._highlitedCriterias = undefined;
                 this.highLight(criterias, visible);
