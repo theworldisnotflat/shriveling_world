@@ -14,7 +14,7 @@
         "temp"
     ],
     "include": [
-        "typings",
+        "node_modules/poly2tri/src/poly2tri.d.ts",
         "src"
     ]
 

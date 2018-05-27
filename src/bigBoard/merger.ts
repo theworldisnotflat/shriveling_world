@@ -53,7 +53,7 @@ namespace shriveling {
         { name: '_populations', words: ['cityCode'] },
     ];
 
-    const config: PapaParse.ParseConfig = {
+    const config: Papa.ParseConfig = {
         header: true,
         dynamicTyping: true,
         skipEmptyLines: true,
@@ -113,7 +113,7 @@ namespace shriveling {
                 }
                 tempMaxYear = Math.max(tempMaxYear, transportSpeed.year);
             });
-            maxYearTransport = Math.min(maxYearTransport, tempMaxYear);
+            maxYearTransport = Math.max(maxYearTransport, tempMaxYear);
             tempTransportCodeTab = tempTransportCodeTab.sort((a, b) => a.year - b.year);
             let extrapolation = extrapolator(tempTransportCodeTab, 'year', 'speed', true);
             let speed: number;
@@ -143,7 +143,7 @@ namespace shriveling {
             if (referential instanceof NEDLocal) {
                 let transports: ILookupTransport = {};
                 let destinations: ILookupDestination = {};
-                let lookupTransport: ILookupTransport, codeDestination: number, posDestination: Cartographic;
+                let codeDestination: number;
                 let edge: ITransportNetwork, min: number, max: number, bearing: number, elevation: number, elevationDegree: number;
                 let transportName: string, transportMode: ISpeedPertransportPerYearItem;
                 for (let i = 0; i < city.destinations.length; i++) {
@@ -181,15 +181,19 @@ namespace shriveling {
                                 }
                                 elevation = Math.atan(Math.sqrt(
                                     (speedMaxPerYear[year] / tab[year]) * (speedMaxPerYear[year] / tab[year]) - 1));
+                                if (elevation < 0) {
+                                    elevation += Configuration.TWO_PI;
+                                }
                                 elevationDegree = elevation / Configuration.deg2rad;
-                                transports[transportName][year].push({
-                                    clock: bearing, elevation: elevation, speed: tab[year],
-                                    clockDegree: bearing / Configuration.deg2rad,
-                                    elevationDegree: elevationDegree,
-                                    destination: codeDestination,
-                                    transport: transportName,
-                                    year: year,
-                                });
+                                transports[transportName][year].push(
+                                    {
+                                        clock: bearing, elevation: elevation, speed: tab[year],
+                                        clockDegree: bearing / Configuration.deg2rad,
+                                        elevationDegree: elevationDegree,
+                                        destination: codeDestination,
+                                        transport: transportName,
+                                        year: year,
+                                    });
                                 destinations[codeDestination][transportName].push({ year: year, speed: tab[year] });
                             }
                         }
@@ -208,25 +212,17 @@ namespace shriveling {
                     maxSpeed = speedMaxPerYear[year] === undefined ? tab[year] : speedMaxPerYear[year];
                     elevation = Math.atan(Math.sqrt(
                         (maxSpeed / tab[year]) * (maxSpeed / tab[year]) - 1));
+                    if (elevation < 0) {
+                        elevation += Configuration.TWO_PI;
+                    }
                     elevationDegree = elevation / Configuration.deg2rad;
                     transports['Road'][year].push(
                         {
                             clock: 0, elevation: elevation, speed: tab[year],
                             clockDegree: 0, elevationDegree: elevationDegree, transport: 'Road', year: year,
-                        },
-                        {
-                            clock: Configuration.deg2rad * 91, elevation: elevation, speed: tab[year],
-                            clockDegree: 91, elevationDegree: elevationDegree, transport: 'Road', year: year,
-                        },
-                        {
-                            clock: Configuration.deg2rad * 180, elevation: elevation, speed: tab[year],
-                            clockDegree: 180, elevationDegree: elevationDegree, transport: 'Road', year: year,
-                        },
-                        {
-                            clock: Configuration.deg2rad * 350, elevation: elevation, speed: tab[year],
-                            clockDegree: 3500, elevationDegree: elevationDegree, transport: 'Road', year: year,
                         });
                 }
+                // console.log(originCityCode, transports['Road']);
 
                 for (let transport in transports) {
                     if (transports.hasOwnProperty(transport)) {

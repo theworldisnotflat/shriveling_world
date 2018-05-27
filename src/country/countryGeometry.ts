@@ -1,3 +1,4 @@
+/// <reference path='../../node_modules/poly2tri/src/poly2tri.d.ts' />
 namespace shriveling {
     'use strict';
 

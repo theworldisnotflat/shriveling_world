@@ -6,14 +6,14 @@ namespace shriveling {
         {
             converter: (
                 pos: Cartographic, toPack: boolean,
-                threeRadius: number = Cartographic.THREE_EARTH_RADIUS): THREE.Vector3 | number[] => {
+                threeRadius: number = Configuration.THREE_EARTH_RADIUS): THREE.Vector3 | number[] => {
                 let radius = (Configuration.earthRadiusMeters + pos.height) / Configuration.earthRadiusMeters * threeRadius;
                 let x = -Math.cos(pos.longitude) * radius * Math.cos(pos.latitude);
                 let y = Math.sin(pos.latitude) * radius;
                 let z = Math.sin(pos.longitude) * radius * Math.cos(pos.latitude);
                 return toPack === true ? [x, y, z] : new THREE.Vector3(x, y, z);
             },
-            reverser: (pos: THREE.Vector3, threeRadius: number = Cartographic.THREE_EARTH_RADIUS): Cartographic => {
+            reverser: (pos: THREE.Vector3, threeRadius: number = Configuration.THREE_EARTH_RADIUS): Cartographic => {
                 let radius = pos.length();
                 let resultat = new Cartographic();
                 resultat.height = (radius * Configuration.earthRadiusMeters / threeRadius) - Configuration.earthRadiusMeters;
@@ -34,7 +34,7 @@ namespace shriveling {
           {
               converter: (
                   pos: Cartographic, toPack: boolean, reference = new Cartographic(),
-                  threeRadius: number = Cartographic.THREE_EARTH_RADIUS): THREE.Vector3 | number[] => {
+                  threeRadius: number = Configuration.THREE_EARTH_RADIUS): THREE.Vector3 | number[] => {
                   let x = (pos.longitude - reference.longitude) * Math.cos(reference.latitude) * threeRadius;
                   let y = (pos.latitude - reference.latitude) * threeRadius;
                   let z = (pos.height - reference.height) / Configuration.earthRadiusMeters * threeRadius;
@@ -42,7 +42,7 @@ namespace shriveling {
               },
               reverser: (
                   pos: THREE.Vector3, reference = new Cartographic(),
-                  threeRadius: number = Cartographic.THREE_EARTH_RADIUS): Cartographic => {
+                  threeRadius: number = Configuration.THREE_EARTH_RADIUS): Cartographic => {
                   let cleanPos = pos.clone().multiplyScalar(1 / threeRadius);
                   let resultat = new Cartographic();
                   resultat.height = cleanPos.z * Configuration.earthRadiusMeters + reference.height;
@@ -58,7 +58,7 @@ namespace shriveling {
           {
               converter: (
                   pos: Cartographic, toPseudo: boolean, lambda0: number = 0,
-                  threeRadius: number = Cartographic.THREE_EARTH_RADIUS): THREE.Vector3 | number[] => {
+                  threeRadius: number = Configuration.THREE_EARTH_RADIUS): THREE.Vector3 | number[] => {
                   let x = (pos.longitude - lambda0) * threeRadius;
                   let y = Math.log(Math.tan(Math.PI / 4 + pos.latitude / 2)) * threeRadius;
                   let z = pos.height / Configuration.earthRadiusMeters * threeRadius;
@@ -66,7 +66,7 @@ namespace shriveling {
               },
               reverser: (
                   pos: THREE.Vector3, lambda0: number = 0,
-                  threeRadius: number = Cartographic.THREE_EARTH_RADIUS): Cartographic => {
+                  threeRadius: number = Configuration.THREE_EARTH_RADIUS): Cartographic => {
                   let cleanPos = pos.clone().multiplyScalar(1 / threeRadius);
                   let resultat = new Cartographic();
                   resultat.longitude = cleanPos.x + lambda0;
@@ -76,10 +76,12 @@ namespace shriveling {
               },
           },*/
     };
-
-    export class Cartographic {
-        public static THREE_EARTH_RADIUS: number = 100;
-
+    export interface ICartographic {
+        latitude?: number;
+        longitude?: number;
+        height?: number;
+    }
+    export class Cartographic implements ICartographic {
         public latitude: number;
         public longitude: number;
         public height: number;
@@ -211,6 +213,10 @@ namespace shriveling {
         public toJSON(): { ctor: string, data: any } {
             return Generic_toJSON('Cartographic', this);
         }
+
+        public toThreeGLSL(): number[] {
+            return [this.longitude, this.latitude, this.height];
+        }
     }
 
     export var ZERO_CARTOGRAPHIC = new Cartographic();
@@ -231,11 +237,8 @@ namespace shriveling {
         converter: (pos: Cartographic) => THREE.Vector3;
     }
 
-    export interface IClock {
+    export interface IDirection {
         clock: number;
-    }
-
-    export interface IDirection extends IClock {
         elevation: number;
         speed?: number;
         clockDegree?: number;
@@ -370,6 +373,21 @@ namespace shriveling {
         lookup: ILookupTownTransport;
         bboxes: IBBox[];
         distance: number;
+    }
+
+    export type MessageConeShaderType = 'init' | 'coneStep' | 'year' | 'limits' | 'projectionBegin' | 'other'|'information';
+    export interface IDataMessageConeShader {
+        towns?: { [cityCode: string]: NEDLocal };
+        bboxes?: IBBox[];
+        cones?: { cityCode: string, directions: ILookupDirection }[];
+        conestep?: number;
+        year?: string;
+        limits?: ArrayBuffer;
+        uniforms?: { [x: string]: number | ArrayBufferView };
+    }
+    export interface IMessageConeShader {
+        action: MessageConeShaderType;
+        data: IDataMessageConeShader;
     }
 
     function updateSumupCriteriaByDateOrNumber(subObject: { max: Date | number, min: Date | number }, temp: Date | number): void {
@@ -756,4 +774,63 @@ namespace shriveling {
     reviver.constructors.Coordinate = Coordinate;
     reviver.constructors.NEDLocal = NEDLocal;
 
+    export function matchingBBox(pos: Cartographic, bboxes: IBBox[]): Cartographic[][] {
+        return bboxes.filter((bboxe) => pos.latitude >= bboxe.minLat && pos.latitude <= bboxe.maxLat &&
+            pos.longitude >= bboxe.minLong && pos.longitude <= bboxe.maxLong && Cartographic.isInside(pos, bboxe.boundary))
+            .map((bboxe) => bboxe.boundary);
+    }
+
+    export function getLocalLimits(
+        boundaries: Cartographic[][], referential: NEDLocal): { clock: number, distance: number }[] {
+        let allPoints: Coordinate[] = [];
+        boundaries.forEach((boundary) => {
+            boundary.forEach((position) => {
+                allPoints.push(referential.cartographic2NED(position));
+            });
+        });
+        let clockDistance = allPoints.map((pos) => {
+            return { clock: Math.atan2(pos.y, pos.x), distance: Math.sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z) };
+        }).reduce(
+            (result, current) => {
+                let clockClass = Math.floor(current.clock / Configuration.coneStep) * Configuration.coneStep;
+                result[clockClass] = result[clockClass] === undefined ? current.distance : Math.min(result[clockClass], current.distance);
+                return result;
+            },
+            {});
+        let resultat: { clock: number, distance: number }[] = [];
+        for (let clockString in clockDistance) {
+            if (clockDistance.hasOwnProperty(clockString)) {
+                resultat.push({ clock: parseFloat(clockString), distance: clockDistance[clockString] });
+            }
+        }
+        let length = resultat.length;
+        let temp: { clock: number, distance: number };
+        for (let i = 0; i < length; i++) {
+            temp = resultat[i];
+            resultat.push(
+                { clock: temp.clock - Configuration.TWO_PI, distance: temp.distance },
+                { clock: temp.clock + Configuration.TWO_PI, distance: temp.distance });
+        }
+        return resultat.sort((a, b) => a.clock - b.clock);
+    }
+
+    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+    let rnd = 0, r;
+
+    export function generateUUID(): string {
+        let uuid = '';
+        for (let i = 0; i < 36; i++) {
+            if (i === 8 || i === 13 || i === 18 || i === 23) {
+                uuid += '-';
+            } else if (i === 14) {
+                uuid += '4';
+            } else {
+                if (rnd <= 0x02) { rnd = 0x2000000 + (Math.random() * 0x1000000) | 0; }
+                r = rnd & 0xf;
+                rnd = rnd >> 4;
+                uuid += chars[(i === 19) ? (r & 0x3) | 0x8 : r];
+            }
+        }
+        return uuid;
+    }
 }
