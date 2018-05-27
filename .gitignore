@@ -5,3 +5,4 @@ node_modules
 typings
 dist
 example/javascript
+.vscode

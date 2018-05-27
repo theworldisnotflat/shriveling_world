@@ -1,3 +1,4 @@
+/// <reference path='../../node_modules/poly2tri/src/poly2tri.d.ts' />
 namespace shriveling {
     'use strict';
 
@@ -77,10 +78,10 @@ namespace shriveling {
         let coordinates: number[][][][] = [[[[]]]];
         switch (geometry.type) {
             case 'Polygon':
-                coordinates = [geometry.coordinates];
+                coordinates = [(<any>geometry).coordinates];
                 break;
             case 'MultiPolygon':
-                coordinates = geometry.coordinates;
+                coordinates = (<any>geometry).coordinates;
                 break;
             default:
         }

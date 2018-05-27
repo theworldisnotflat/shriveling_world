@@ -30,10 +30,6 @@ namespace shriveling {
     }
 
     export class BigBoard {
-        // prepare new datas for cones
-        // configuration helper (radians, pourcentage...)?
-
-        // merge datas to stock and generate cones
         public projectionNames: string[];
         private _cones: ConeBoard;
         private _countries: CountryBoard;
@@ -57,7 +53,7 @@ namespace shriveling {
             this._countries = new CountryBoard(this._projectionName, this._scene, this._camera);
             this._countries.show = false;
             this._cones = new ConeBoard(this._projectionName, this._scene, this._camera, this._countries, this._renderer);
-            this.year = '1930';
+            Configuration.year = '2010';
             let that = this;
             DragnDrop(
                 this._container, (text, name) => {
@@ -68,37 +64,33 @@ namespace shriveling {
                         }
                     } else if (name.toLowerCase().endsWith('.geojson')) {
                         that._countries.add(JSON.parse(text));
-                        //  console.log(that._countries);
                     }
                     if (that._merger.state === 'complete' && that._countries.countryMeshCollection.length > 0) {
                         that._cones.add(that._merger.datas, Configuration.extrudedHeight);
                     }
                 },
                 this);
+            Configuration.addEventListener('heightRatio intrudedHeightRatio coneStep', (name: configurationObservableEvt, value: any) => {
+                if (that._merger.state === 'complete' && that._countries.countryMeshCollection.length > 0) {
+                    that._cones.clean();
+                    switch (name) {
+                        case 'heightRatio':
+                        case 'intrudedHeightRatio':
+                        case 'coneStep':
+                            that._cones.add(that._merger.datas, Configuration.extrudedHeight);
+                            break;
+                        default:
+                    }
+                }
+            });
             //
-            /*            container.addEventListener('dblclick', (evt) => {
-                            if (countryBoard) {
-                                let name = countryBoard.getMeshByMouse(evt, true);
-                                console.log(name);
-                            }
-                        });
-                        */
+            // this._container.addEventListener('dblclick', (evt) => {
+            //     if (countryBoard) {
+            //         let name = countryBoard.getMeshByMouse(evt, true);
+            //         console.log(name);
+            //     }
+            // });
             this._animate();
-        }
-
-        get projection(): string {
-            return this._projectionName;
-        }
-        set projection(value: string) {
-            if (this.projection.indexOf(value) > -1) {
-                this._countries.changeProjection(value, Configuration.TWEEN_TIMING);
-                let that = this;
-                setTimeout(
-                    () => {
-                        that._cones.projection = value;
-                    },
-                    Configuration.TWEEN_TIMING);
-            }
         }
 
         get scaleCountries(): number {
@@ -127,13 +119,6 @@ namespace shriveling {
         }
         set showCones(value: boolean) {
             this._cones.show = value;
-        }
-
-        get year(): string {
-            return this._cones.year;
-        }
-        set year(value: string) {
-            this._cones.year = value;
         }
 
         get lookupCountries(): ISumUpCriteria {
@@ -182,7 +167,7 @@ namespace shriveling {
             return this._countries.getMeshByMouse(event, highLight);
         }
 
-        public getConeByMouse(event: MouseEvent, highLight: boolean = false): ConeMesh {
+        public getConeByMouse(event: MouseEvent, highLight: boolean = false): PseudoCone {
             return this._cones.getMeshByMouse(event, highLight);
         }
 
@@ -214,8 +199,8 @@ namespace shriveling {
             return resultat;
         }
 
-        public getCones(criterias: ICriterias): ConeMesh[] {
-            let resultat: ConeMesh[] = [];
+        public getCones(criterias: ICriterias): PseudoCone[] {
+            let resultat: PseudoCone[] = [];
             if (this._cones.show === true) {
                 resultat = this._cones.searchMesh(criterias);
             }
@@ -279,8 +264,7 @@ namespace shriveling {
                 }));
 
             let skyGeometry = new THREE.CubeGeometry(10000, 10000, 10000);
-            let skyMaterial = new THREE.MultiMaterial(materialArray);
-            let skybox = new THREE.Mesh(skyGeometry, skyMaterial);
+            let skybox = new THREE.Mesh(skyGeometry, <any>materialArray);
             this._scene.add(skybox);
         }
 
@@ -293,6 +277,7 @@ namespace shriveling {
             that._stats.update();
             that._controls.update();
             TWEEN.update();
+            Configuration.tick();
         }
 
     }

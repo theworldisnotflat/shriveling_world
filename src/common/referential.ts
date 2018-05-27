@@ -88,7 +88,7 @@ namespace shriveling {
 
         public dot(vec2): number {
             return Coordinate.dot(this, vec2);
-        };
+        }
 
         public multiplyVector(vec2: Coordinate, result?: Coordinate): Coordinate {
             return Coordinate.multiplyVector(this, vec2, result);
@@ -112,11 +112,19 @@ namespace shriveling {
     var scrapCoordinate = new Coordinate();
     var scrapCoordinate2 = new Coordinate();
 
+    export interface INEDLocalGLSL {
+        ned2ECEF0: number[];
+        ned2ECEF1: number[];
+        ned2ECEF2: number[];
+        summit: number[];
+    }
+
     export class NEDLocal {
         public cartoRef: Cartographic;
         private _ECEFRef: Coordinate;
         private _matECEF2NED: Coordinate[];
         private _matNED2ECEF: Coordinate[];
+        private _glslData: INEDLocalGLSL;
 
         public static fromJSON(value: any): any {
             return Generic_fromJSON(NEDLocal, value.data);
@@ -186,6 +194,20 @@ namespace shriveling {
 
         public toJSON(): { ctor: string, data: any } {
             return Generic_toJSON('NEDLocal', this);
+        }
+
+        get ned2ECEFMatrix(): INEDLocalGLSL {
+            if (this._glslData === undefined) {
+                let mat = this._matECEF2NED;
+                let summit = this.cartoRef.toThreeGLSL();
+                this._glslData = {
+                    ned2ECEF0: [mat[0].x, mat[0].y, mat[0].z],
+                    ned2ECEF1: [mat[1].x, mat[1].y, mat[1].z],
+                    ned2ECEF2: [mat[2].x, mat[2].y, mat[2].z],
+                    summit: summit,
+                };
+            }
+            return this._glslData;
         }
     }
 }

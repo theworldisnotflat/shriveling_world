@@ -1,14 +1,10 @@
 namespace shriveling {
     'use strict';
 
-    const forbiddenAttributes = ['referential', 'layers', 'position', 'transports'];
-
-    export interface ITownTransport {
-        layers?: { [transport: string]: ConeMesh };
-    }
+    const forbiddenAttributes = ['referential', 'position'];
 
     export class ConeBoard {
-        public coneMeshCollection: ConeMesh[] = [];
+        public coneMeshCollection: PseudoCone[] = [];
         private _projection: string;
         private _scene: THREE.Scene;
         private _camera: THREE.Camera;
@@ -22,16 +18,6 @@ namespace shriveling {
         private _year: string;
         private _sumUpProperties: ISumUpCriteria = {};
         private _renderer: THREE.WebGLRenderer;
-
-        get projection(): string {
-            return this._projection;
-        }
-        set projection(value: string) {
-            this.coneMeshCollection.forEach((mesh) => {
-                mesh.projection = value;
-            });
-            this._projection = value;
-        }
 
         get show(): boolean {
             return this._show;
@@ -66,16 +52,6 @@ namespace shriveling {
             this._scale = value;
         }
 
-        get year(): string {
-            return this._year;
-        }
-        set year(value: string) {
-            this.coneMeshCollection.forEach((cone) => {
-                cone.year = value;
-            });
-            this._year = value;
-        }
-
         get lookupCriterias(): ISumUpCriteria {
             return this._sumUpProperties;
         }
@@ -94,48 +70,25 @@ namespace shriveling {
         }
 
         public add(lookup: ILookupTownTransport, distance: number): void {
-            /*
-                        let cityCode = Object.keys(lookup)[0];
-                        let temp = lookup[cityCode];
-                        lookup = {};
-                        lookup[cityCode] = temp;
-                        console.log(lookup);
-            */
+            let myConsistentLookup = <ILookupTownTransport>{};
+            // for (let cityCode in lookup) {
+            //     if (lookup.hasOwnProperty(cityCode) && Object.keys(lookup[cityCode].transports).length > 1) {
+            //         myConsistentLookup[cityCode] = lookup[cityCode];
+            //     }
+            // }
+            // lookup = myConsistentLookup;
             let that = this;
-            let coneGeneratorWorker = Workers.generateWorker('coneGenerator');
-            coneGeneratorWorker.addEventListener('message', (e) => {
-                if (e.data.action === 'end') {
-                    coneGeneratorWorker.terminate();
-                    console.log('done');
-                } else if (e.data.action === 'cones') {
-                    let data = <ILookupTownPseudoGeometryPremises>e.data.data;
-                    let cones = ConeMesh.generator(data, that._year, that._projection);
-                    cones.forEach((cone) => {
-                        updateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
-                        that.coneMeshCollection.push(cone);
-                        cone.visible = that._show;
-                        cone.scale.setScalar(that._scale);
-                        /*      if (!townTransport.hasOwnProperty('layers')) {
-                                  townTransport.layers = {};
-                              }
-                              townTransport.layers[transport] = cone;*/
-                        that._scene.add(cone);
-                        that._renderer.render(that._scene, that._camera);
-                    });
-                } else if (e.data.action === 'console') {
-                    console.log(e.data.data);
-                }
-            });
             let bboxes = this._countries.countryMeshCollection.map((country) => (<CountryGeometry>country.geometry).bbox);
-            let toSend = JSON.stringify(
-                <IDataConeGeneratorIn>{ lookup: lookup, bboxes: bboxes, distance: distance }, (k, v) => {
-                    if (k === 'layers') {
-                        v = undefined;
-                    }
-                    return v;
-                },
-                4);
-            coneGeneratorWorker.postMessage(toSend);
+            ConeMeshShader.generateCones(lookup, bboxes).then((cones) => {
+                cones.forEach((cone) => {
+                    updateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
+                    that.coneMeshCollection.push(cone);
+                    cone.visible = that._show;
+                    cone.scale.setScalar(that._scale);
+                    that._scene.add(cone);
+                    that._renderer.render(that._scene, that._camera);
+                });
+            });
         }
 
         public setLayer(transport: string, show: boolean): void {
@@ -146,24 +99,27 @@ namespace shriveling {
         public clean(): void {
             for (let i = this.coneMeshCollection.length - 1; i >= 0; i--) {
                 this._scene.remove(this.coneMeshCollection[i]);
+                this.coneMeshCollection[i].dispose();
                 this.coneMeshCollection.splice(i, 1);
             }
             this._sumUpProperties = {};
         }
 
-        public getMeshByMouse(event: MouseEvent, highLight: boolean = false): ConeMesh {
-            let resultat: ConeMesh;
+        public getMeshByMouse(event: MouseEvent, highLight: boolean = false): PseudoCone {
+            let resultat: PseudoCone;
             let mouse = new THREE.Vector2();
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
             this._raycaster.setFromCamera(mouse, this._camera);
             let intersects = this._raycaster.intersectObjects(this.coneMeshCollection);
             if (intersects.length > 0) {
-                resultat = <ConeMesh>intersects[0].object;
+                resultat = <PseudoCone>intersects[0].object;
                 this.highLight(resultat.otherProperties, highLight);
             } else {
                 this._selectedMeshs.forEach((mesh) => {
-                    mesh.material.visible = false;
+                    if (!Array.isArray(mesh.material)) {
+                        mesh.material.visible = false;
+                    }
                 });
             }
             return resultat;
@@ -195,12 +151,14 @@ namespace shriveling {
                 });
             }
             this._selectedMeshs.forEach((mesh) => {
-                mesh.material.visible = light;
+                if (!Array.isArray(mesh.material)) {
+                    mesh.material.visible = light;
+                }
             });
         }
 
-        public searchMesh(criterias: ICriterias | Cartographic, path: string = ''): ConeMesh[] {
-            let resultat: ConeMesh[];
+        public searchMesh(criterias: ICriterias | Cartographic, path: string = ''): PseudoCone[] {
+            let resultat: PseudoCone[];
             if (criterias instanceof Cartographic) {
                 resultat = this.coneMeshCollection.filter((cone) => cone.cartographicPosition.distanceApproximee(criterias) < 1e-13);
             } else {
@@ -218,7 +176,11 @@ namespace shriveling {
 
         private _reHighLight(): void {
             if (this._selectedMeshs.length > 0) {
-                let visible = this._selectedMeshs[0].material.visible;
+                let visible = false;
+                let temp = this._selectedMeshs[0];
+                if (!Array.isArray(temp.material)) {
+                    visible = temp.material.visible;
+                }
                 let criterias = this._highlitedCriterias;
                 this._highlitedCriterias = undefined;
                 this.highLight(criterias, visible);

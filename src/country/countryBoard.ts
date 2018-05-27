@@ -114,7 +114,9 @@ namespace shriveling {
                             mesh.reProject(projection);
                         });
                         that._selectedMeshs.forEach((mesh) => {
-                            mesh.material.visible = false;
+                            if (!Array.isArray(mesh.material)) {
+                                mesh.material.visible = false;
+                            }
                         });
                     })
                     .onUpdate(() => {
@@ -161,7 +163,9 @@ namespace shriveling {
                 this.highLight(resultat.otherProperties, highLight);
             } else {
                 this._selectedMeshs.forEach((mesh) => {
-                    mesh.material.visible = false;
+                    if (!Array.isArray(mesh.material)) {
+                        mesh.material.visible = false;
+                    }
                 });
             }
             return resultat;
@@ -196,7 +200,9 @@ namespace shriveling {
                 });
             }
             this._selectedMeshs.forEach((mesh) => {
-                mesh.material.visible = light;
+                if (!Array.isArray(mesh.material)) {
+                    mesh.material.visible = light;
+                }
             });
         }
 
@@ -219,7 +225,11 @@ namespace shriveling {
 
         private _reHighLight(): void {
             if (this._selectedMeshs.length > 0) {
-                let visible = this._selectedMeshs[0].material.visible;
+                let visible = false;
+                let temp = this._selectedMeshs[0].material;
+                if (!Array.isArray(temp)) {
+                    visible = temp.visible;
+                }
                 let criterias = this._highlitedCriterias;
                 this._highlitedCriterias = undefined;
                 this.highLight(criterias, visible);
