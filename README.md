@@ -20,7 +20,18 @@ gulp
 ```
 gulp server
 ```
-and go to http://localhost:8080 . For now you can just drag'n'drop geojson files into example/datas in the web app.
+and go to http://localhost:8080 . 
+
+## First instructions
+
+Drag'n'drop the following geojson and csv files found in example/datas in the web app:
+- cities.csv
+- population.csv
+- transport_mode_code.csv
+- transport_mode_speed.csv
+- transport_network.csv
+- 110m_land_shrivel.geojson
+
 
 # Road map
 - [X] create classes for the generation of cones
