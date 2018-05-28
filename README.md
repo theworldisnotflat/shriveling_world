@@ -5,7 +5,23 @@ The  "shriveling_world" project aims at producing images of the global time-spac
 The word "shriveling" was introduced by Waldo Tobler in his comments of L'Hostis-Mathis time-space relief image, in order to describe the complex contraction process suggested by the model.
 
 # How to use
-TODO
+
+## launch server
+```
+Go in the application folder and open a terminal:
+gulp server
+```
+then open in browser http://localhost:8080. 
+
+## First instructions
+
+Drag'n'drop the following geojson and csv files found in example/datas in the web app:
+- cities.csv
+- population.csv
+- transport_mode_code.csv
+- transport_mode_speed.csv
+- transport_network.csv
+- 110m_land_shrivel.geojson
 
 # How to
 ## install
@@ -20,17 +36,9 @@ gulp
 ```
 gulp server
 ```
-and go to http://localhost:8080 . 
+and go to http://localhost:8080. 
 
-## First instructions
 
-Drag'n'drop the following geojson and csv files found in example/datas in the web app:
-- cities.csv
-- population.csv
-- transport_mode_code.csv
-- transport_mode_speed.csv
-- transport_network.csv
-- 110m_land_shrivel.geojson
 
 
 # Road map
