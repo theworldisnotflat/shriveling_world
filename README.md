@@ -7,8 +7,8 @@ The word "shriveling" was introduced by Waldo Tobler in his comments of L'Hostis
 # How to use
 
 ## launch server
-```
 Go in the application folder and open a terminal:
+```
 gulp server
 ```
 then open in browser http://localhost:8080. 
@@ -45,4 +45,5 @@ and go to http://localhost:8080.
 - [X] create classes for the generation of cones
 - [X] create a board class to manage cones
 - [ ] create bigboard to manage all the application
-- [ ] incorpore the parser of csv in order to provide some cones
+- [x] incorpore the parser of csv in order to provide some cones
+- [ ] draw edges
