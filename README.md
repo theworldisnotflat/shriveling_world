@@ -35,9 +35,9 @@ with XXX and value in the following range:
 - intrudedHeightRatio : for the heigth of cones
 - coneStep :  modifies the visual aspect of cones (defautl value is 15 degrees)
 - projectionBegin : initial projection in the following range : 
--- 'none' for a three dimensional unprojected representation
--- 'equirectangular' or 1 for an equilateral flat representation
--- 'Mercator' or 2 for a 2-dimensional Mercator
+  - 'none' for a three dimensional unprojected representation
+  - 'equirectangular' or 1 for an equilateral flat representation
+  - 'Mercator' or 2 for a 2-dimensional Mercator
 - projectionEnd : the final projection with value as projectionBegin
 - projectionPercent: transition value between projectionBegin and projectionEnd. Value included in the range 0 to 100 included.
 - year: base year of the representation (value in the networks files)
