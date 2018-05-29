@@ -6,7 +6,7 @@ The word "shriveling" was introduced by Waldo Tobler in his comments of L'Hostis
 
 # How to use
 
-## launch server
+## Launching the server
 Go in the application folder and open a terminal:
 ```
 gulp server
