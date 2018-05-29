@@ -24,7 +24,7 @@ Drag'n'drop the following geojson and csv files found in example/datas in the we
 - transport_network.csv
 - 110m_land_shrivel.geojson
 
-## First instructions
+## Instructions for use
 Instructions to the application are entered in the console (F12) of the browser
 ```
 Shriveling.Configuration.XXX=value
@@ -34,7 +34,7 @@ with XXX and value in the following range:
 - heightRatio : for the heigth of cones
 - intrudedHeightRatio : for the heigth of cones
 - coneStep :  modifies the visual aspect of cones (defautl value is 15 degrees)
-- projectionBegin : initial projection in the following range : 
+- projectionBegin : initial projection with values in in the following range : 
   - 'none' for a three dimensional unprojected representation
   - 'equirectangular' or 1 for an equilateral flat representation
   - 'Mercator' or 2 for a 2-dimensional Mercator
