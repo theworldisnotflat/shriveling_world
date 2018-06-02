@@ -6,3 +6,5 @@ typings
 dist
 example/javascript
 .vscode
+.rpt2_cache
+declarations

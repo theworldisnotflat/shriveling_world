@@ -1,21 +1,26 @@
 {
-    "compileOnSave": false,
-    "compilerOptions": {
-        "declaration": false,
-        "target": "ES6",
-        "removeComments": true,
-        "allowJs": false,
-        "pretty": true
+  "compileOnSave": false,
+  "compilerOptions": {
+    "declaration": true,
+    "declarationDir": "declarations",
+    "target": "es6",
+    "removeComments": true,
+    "allowJs": false,
+    "module": "es6",
+    "pretty": false,
+    "outDir": "dist",
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node"
 
-    },
-    "exclude": [
-        "dist",
-        "examples",
-        "temp"
-    ],
-    "include": [
-        "node_modules/poly2tri/src/poly2tri.d.ts",
-        "src"
-    ]
+  },
+  "exclude": [
+    "dist",
+    "node_modules",
+    "examples",
+    "temp"
+  ],
+  "include": [
+    "src"
+  ]
 
 }
