@@ -27,20 +27,22 @@ Drag'n'drop the following geojson and csv files found in example/datas in the we
 ## Instructions for use
 Instructions to the application are entered in the console (F12) of the browser
 ```
-Shriveling.Configuration.XXX=value
+shriveling.configuration.XXX=value
 ```
 with XXX and value in the following range:
 
 - heightRatio : for the heigth of cones
 - intrudedHeightRatio : for the heigth of cones
 - coneStep :  modifies the visual aspect of cones (defautl value is 15 degrees)
-- projectionBegin : initial projection with values in in the following range : 
+- projectionInit : initial projection with values in in the following range : 
   - 'none' for a three dimensional unprojected representation
   - 'equirectangular' or 1 for an equilateral flat representation
   - 'Mercator' or 2 for a 2-dimensional Mercator
 - projectionEnd : the final projection with value as projectionBegin
 - projectionPercent: transition value between projectionBegin and projectionEnd. Value included in the range 0 to 100 included.
 - year: base year of the representation (value in the networks files)
+- pointsPerLine=X where X is an integer between 1 and 199 included. This value influences the way curves are drawn.
+
 
 
 ## install
