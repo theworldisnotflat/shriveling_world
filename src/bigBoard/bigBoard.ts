@@ -161,6 +161,8 @@ export default class BigBoard {
             });
         });
         // pays /mise en exergue avec listen?
+        let countryFolder = gui.addFolder('pays');
+        countryFolder.add(this._countries, 'show');
 
         DragnDrop(
             this._container, (text, name) => {
