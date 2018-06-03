@@ -180,7 +180,6 @@ export default class BigBoard {
                 }
             },
             this);
-        //
         // this._container.addEventListener('dblclick', (evt) => {
         //     if (countryBoard) {
         //         let name = countryBoard.getMeshByMouse(evt, true);
