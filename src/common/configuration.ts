@@ -28,7 +28,7 @@ let _THREE_EARTH_RADIUS: number = 0;
 let _projectionInit: PROJECTION_ENUM = PROJECTION_ENUM.none;
 let _projectionEnd: PROJECTION_ENUM = PROJECTION_ENUM.none;
 let _projectionPercent: number = 0;
-let _year: string = '';
+let _year: string | number = 1980;
 let _highLitedMaterial: THREE.Material;
 let _COUNTRY_MATERIAL: THREE.Material;
 let _BASIC_CONE_MATERIAL: THREE.Material;
@@ -110,7 +110,7 @@ export const CONFIGURATION = {
     },
     get pointsPerLine(): number { return _pointsPerLine; },
     set pointsPerLine(value: number) {
-        if (value >= 1 && value < 200) {
+        if (value >= 1 && value <= 200) {
             _pointsPerLine = value;
             fireEvents('pointsPerLine', value);
         }
@@ -155,8 +155,8 @@ export const CONFIGURATION = {
     set TWEEN_TIMING(value: number) { _TWEEN_TIMING = value; fireEvents('TWEEN_TIMING', value); },
     get lambda0Mercator(): number { return _lambda0Mercator; },
     set lambda0Mercator(value: number) { _lambda0Mercator = value; fireEvents('lambda0Mercator', value); },
-    get year(): string { return _year; },
-    set year(value: string) { _year = value; fireEvents('year', value); },
+    get year(): string | number { return _year; },
+    set year(value: string | number) { _year = value; fireEvents('year', value); },
 
     get projectionInit(): PROJECTION_ENUM { return _projectionInit; },
     set projectionInit(value: PROJECTION_ENUM) {

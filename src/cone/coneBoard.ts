@@ -88,8 +88,7 @@ export class ConeBoard {
                 myConsistentLookup[cityCode] = lookup.lookupTownTransport[cityCode];
             }
         }
-        console.log(lookup.lookupTownTransport);
-        lookup.lookupTownTransport = myConsistentLookup;
+        // lookup.lookupTownTransport = myConsistentLookup;
         let that = this;
         let bboxes = this._countries.countryMeshCollection.map((country) => (<CountryGeometry>country.geometry).bbox);
         ConeMeshShader.generateCones(lookup.lookupTownTransport, lookup.maxSpeedPerYear, bboxes).then((cones) => {

@@ -226,6 +226,7 @@ export class ConeMeshShader extends PseudoCone {
     public otherProperties: any;
     private _withLimits: boolean;
     private _cityCode: string;
+    private _transportName: string;
     private _position: Cartographic;
     private _directions: { [year: string]: number };
 
@@ -284,7 +285,7 @@ export class ConeMeshShader extends PseudoCone {
                 ]).then(() => {
                     uuid = CONFIGURATION.addEventListener(
                         'heightRatio intrudedHeightRatio coneStep  referenceEquiRectangular lambda0Mercator THREE_EARTH_RADIUS ' +
-                        'projectionType projectionPercent year tick',
+                        'projectionBegin projectionEnd projectionPercent year tick',
                         (name: string, value: any) => {
                             if (_ready === true) {
                                 switch (name) {
@@ -411,7 +412,7 @@ export class ConeMeshShader extends PseudoCone {
         }
     }
 
-    public getElevation(year: string): number {
+    public getElevation(year: string | number): number {
         return this._directions[year];
     }
 
@@ -435,6 +436,7 @@ export class ConeMeshShader extends PseudoCone {
         this._directions = {};
         this._withLimits = true;
         this.visible = true;
+        this._transportName = transportName;
 
         for (let year in directions) {
             if (directions.hasOwnProperty(year) && _forbiddenTransportYear[year] !== transportName) {
@@ -445,6 +447,9 @@ export class ConeMeshShader extends PseudoCone {
 
     get cityCode(): string {
         return this._cityCode;
+    }
+    get transportName(): string {
+        return this._transportName;
     }
     get cartographicPosition(): Cartographic {
         return this._position;

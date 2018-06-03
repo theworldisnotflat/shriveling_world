@@ -31,7 +31,8 @@ let sources = {
       'node_modules/three/examples/js/controls/OrbitControls.js',
       'node_modules/tween.js/src/Tween.js',
       'node_modules/poly2tri/dist/poly2tri.js',
-      'node_modules/papaparse/papaparse.js'
+      'node_modules/papaparse/papaparse.js',
+      'node_modules/dat.gui/build/dat.gui.js'
     ],
     workerThirdParty: ['node_modules/twgl.js/dist/4.x/twgl.js']
   }
@@ -44,12 +45,13 @@ let destinations = {
   }
 };
 
-const rollupExternal = ['three', 'papaparse', 'poly2tri', 'twgl.js'];
+const rollupExternal = ['three', 'papaparse', 'poly2tri', 'twgl.js','dat.gui'];
 const rollupGlobal = {
   'three': 'THREE',
   'papaparse': 'Papa',
   'poly2tri': 'poly2tri',
-  'twgl.js': 'twgl'
+  'twgl.js': 'twgl',
+  'dat.gui':'dat'
 };
 const rollupPlugins = [
   typescript({useTsconfigDeclarationDir: true}),

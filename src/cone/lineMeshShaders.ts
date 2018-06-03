@@ -128,7 +128,7 @@ export class LineMeshShader extends Line {
                 ]).then(() => {
                     uuid = CONFIGURATION.addEventListener(
                         'heightRatio intrudedHeightRatio  referenceEquiRectangular lambda0Mercator THREE_EARTH_RADIUS ' +
-                        'projectionType projectionPercent year pointsPerLine',
+                        'projectionBegin projectionEnd projectionPercent year pointsPerLine',
                         (name: string, value: any) => {
                             if (_ready === true) {
                                 switch (name) {
@@ -214,12 +214,12 @@ export class LineMeshShader extends Line {
         }
     }
 
-    public isAvailable(year: string): boolean {
+    public isAvailable(year: string | number): boolean {
         return this.years[year] !== undefined;
     }
 
     private constructor(begin: string | number, end: string | number, opening: number, years: ILookupTransportPerYear) {
-        const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(200 * 4), 4).setDynamic(true);
+        const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(204 * 4), 4).setDynamic(true);
         const interleavedBufferAttributePosition = new InterleavedBufferAttribute(interleavedBufferPosition, 3, 0, false);
         const bufferGeometry = new BufferGeometry();
         bufferGeometry.addAttribute('position', interleavedBufferAttributePosition);
