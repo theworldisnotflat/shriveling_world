@@ -79,12 +79,15 @@ export default class BigBoard {
             'projection initiale': 0,
             'projection finale': 0,
             'transition projection': 0,
-            'nombre de points': 2,
+            'nombre de points': 50,
+            // initialement:2
             'type de transport': '',
-            'couleur des cônes': '#ff0000',
+            'couleur des cônes': '#ebdede',
+            // initialement: '#ff0000'   ensuite #ebdede = presque blanc
             'transparence des cônes': 1,
             'couleur des lignes': '#0000ff',
-            'transparence des lignes': 1,
+            'transparence des lignes': .3,
+            // initialement 1
         };
 
         let generalFolder = gui.addFolder('Généralités');
