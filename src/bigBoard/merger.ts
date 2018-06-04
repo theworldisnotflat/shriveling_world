@@ -60,6 +60,9 @@ const keyWords: { name: string, words: string[] }[] = [
     { name: '_populations', words: ['cityCode'] },
 ];
 
+let _minYear: number = 1930;
+let _maxYear: number = 1932;
+let _transportName: string[] = [];
 const config: Papa.ParseConfig = {
     header: true,
     dynamicTyping: true,
@@ -124,6 +127,7 @@ function toTownTransport(
         opening: number;
     }
     let roadCode: number, roadBegin: number;
+    _transportName = [];
     let speedPerTransportPerYear: { [transportCode: string]: ISpeedPertransportPerYearItem } = {};
     transportModeCode.forEach((transportMode) => {
         let transportCode = transportMode.code;
@@ -132,6 +136,7 @@ function toTownTransport(
             roadCode = transportCode;
             roadBegin = Math.max(transportMode.yearBegin, minYear);
         }
+        _transportName.push(transportName);
         let minYearTransport = Math.max(transportMode.yearBegin, minYear);
         let maxYearTransport = transportMode.yearEnd !== undefined ? transportMode.yearEnd : actualYear;
         let tempTransportCodeTab: ITransportCodeItem[] = [], tabSpeed: { [year: string]: number } = {};
@@ -165,6 +170,8 @@ function toTownTransport(
         }
         speedPerTransportPerYear[transportCode] = { tabSpeed: tabSpeed, name: transportName };
     });
+    _minYear = minYear;
+    _maxYear = maxYear;
     // faire lookup des cartographic/referential par citycode. OK
     let lookupPosition: { [cityCode: string]: NEDLocal } = {};
     let lookupMiddle: { [cityCodeBegin: number]: { [cityCodeEnd: number]: ILookupCache } } = {};
@@ -218,11 +225,13 @@ function toTownTransport(
             let codeDestination: number;
             let edge: ITransportNetwork, min: number, max: number, bearing: number, elevation: number, elevationDegree: number;
             let transportName: string, transportMode: ISpeedPertransportPerYearItem;
+            if (city.destinations.length === 0) {
+                city.destinations.push({ yearBegin: minYear, idDes: -Infinity, transportMode: roadCode });
+            }
             for (let i = 0; i < city.destinations.length; i++) {
                 edge = city.destinations[i];
                 codeDestination = edge.idDes;
                 transportMode = speedPerTransportPerYear[edge.transportMode];
-                // todo pour la route, ajouter une ligne?
                 if (lookupPosition.hasOwnProperty(codeDestination)) {
                     min = Math.max(edge.yearBegin, minYear);
                     max = edge.yearEnd ? edge.yearEnd : maxYear;
@@ -339,13 +348,17 @@ export class Merger {
     private _state: IMergerState = 'missing';
     private _mergedData: ILookupAndMaxSpeedAndLine = <ILookupAndMaxSpeedAndLine>{};
 
-    get state(): IMergerState {
+    public get state(): IMergerState {
         return this._state;
     }
 
-    get datas(): ILookupAndMaxSpeedAndLine {
+    public get datas(): ILookupAndMaxSpeedAndLine {
         return this._mergedData;
     }
+
+    public get minYear(): number { return _minYear; }
+    public get maxYear(): number { return _maxYear; }
+    public get transportNames(): string[] { return _transportName; }
 
     public clear(): void {
         this._cities = [];

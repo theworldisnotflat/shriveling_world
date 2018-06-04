@@ -2,7 +2,7 @@
 import { CONFIGURATION } from '../common/configuration';
 import {
     MeshBasicMaterial, DoubleSide, TextureLoader, MeshPhongMaterial, Color, Vector2, PerspectiveCamera,
-    OrbitControls, Scene, WebGLRenderer, BackSide, CubeGeometry, PointLight, Fog, AmbientLight, Mesh,
+    OrbitControls, Scene, WebGLRenderer, BackSide, CubeGeometry, PointLight, Fog, AmbientLight, Mesh, LineBasicMaterial,
 } from 'three';
 import { ConeBoard } from '../cone/coneBoard';
 import { CountryBoard } from '../country/countryBoard';
@@ -11,6 +11,7 @@ import { DragnDrop, mapProjectors } from '../common/utils';
 import { configurationObservableEvt, IMergerState, ISumUpCriteria, ILookupAndMaxSpeedAndLine, ICriterias } from '../definitions/project';
 import { PseudoCone } from '../cone/base';
 import { CountryMesh } from '../country/countryMesh';
+import * as dat from 'dat.gui';
 declare var Stats: any;
 
 function prepareConfiguration(): void {
@@ -40,6 +41,8 @@ function prepareConfiguration(): void {
     }
 }
 
+let _lookupTransportColor: { [transportName: string]: { color: string, opacity: number } } = {};
+
 export default class BigBoard {
     public static configuration: any = CONFIGURATION;
     public projectionNames: string[];
@@ -66,7 +69,101 @@ export default class BigBoard {
         this._countries.show = false;
         this._cones = new ConeBoard(this._projectionName, this._scene, this._camera, this._countries, this._renderer);
         CONFIGURATION.year = '2010';
+
         let that = this;
+        const gui = new dat.GUI();
+        let conf = {
+            coneStep: CONFIGURATION.coneStep * CONFIGURATION.rad2deg,
+            year: parseInt(CONFIGURATION.year, 10),
+            projection: { aucun: 0, equirectangulaire: 1, Mercator: 2 },
+            'projection initiale': 0,
+            'projection finale': 0,
+            'transition projection': 0,
+            'nombre de points': 2,
+            'type de transport': '',
+            'couleur des cônes': '#ff0000',
+            'transparence des cônes': 1,
+            'couleur des lignes': '#0000ff',
+            'transparence des lignes': 1,
+        };
+
+        let generalFolder = gui.addFolder('Généralités');
+        let annees = generalFolder.add(conf, 'year', 1930, 1990).step(1);
+        annees.onChange(v => CONFIGURATION.year = v);
+        generalFolder.add(conf, 'projection initiale', conf.projection).onFinishChange(v => CONFIGURATION.projectionInit = v);
+        generalFolder.add(conf, 'projection finale', conf.projection).onFinishChange(v => CONFIGURATION.projectionEnd = v);
+        generalFolder.add(conf, 'transition projection', 0, 100).step(1).onChange(v => CONFIGURATION.percentProjection = v);
+
+        let coneFolder = gui.addFolder('Cones');
+        coneFolder.add(conf, 'coneStep', 1, 360).step(1).
+            onChange(value => CONFIGURATION.coneStep = value * CONFIGURATION.deg2rad);
+        coneFolder.add(this, 'withLimits');
+        let coneSelectTransport = coneFolder.add(conf, 'type de transport', this._merger.transportNames);
+        coneSelectTransport.onChange((v) => {
+            if (!_lookupTransportColor.hasOwnProperty(v)) {
+                _lookupTransportColor[v] = { color: '#ff0000', opacity: 1 };
+            }
+            coneColor.setValue(_lookupTransportColor[v].color).updateDisplay();
+            coneOpacity.setValue(_lookupTransportColor[v].opacity).updateDisplay();
+        });
+        let coneColor = coneFolder.addColor(conf, 'couleur des cônes');
+        coneColor.onChange((v) => {
+            let selectedTransport = <string>coneSelectTransport.getValue();
+            let opacity = <number>coneOpacity.getValue();
+            let color = new Color(v);
+            that._cones.coneMeshCollection.filter((cone) => selectedTransport === cone.transportName)
+                .forEach((cone) => {
+                    let material = (<MeshPhongMaterial>cone.material);
+                    material.color.r = color.r;
+                    material.color.g = color.g;
+                    material.color.b = color.b;
+                    material.opacity = opacity;
+                });
+        });
+        let coneOpacity = coneFolder.add(conf, 'transparence des cônes', 0, 1).step(0.01);
+        coneOpacity.onChange((v) => {
+            let selectedTransport = <string>coneSelectTransport.getValue();
+            let opacity = v;
+            let color = new Color(coneOpacity.getValue());
+            that._cones.coneMeshCollection.filter((cone) => selectedTransport === cone.transportName)
+                .forEach((cone) => {
+                    let material = (<MeshPhongMaterial>cone.material);
+                    material.color.r = color.r;
+                    material.color.g = color.g;
+                    material.color.b = color.b;
+                    material.opacity = opacity;
+                });
+        });
+        let lineFolder = gui.addFolder('Lignes');
+        lineFolder.add(conf, 'nombre de points', 1, 200).step(1).onChange(v => CONFIGURATION.pointsPerLine = v);
+        let lineColor = lineFolder.addColor(conf, 'couleur des lignes');
+        lineColor.onChange((v) => {
+            let opacity = <number>lineOpacity.getValue();
+            let color = new Color(v);
+            that._cones.lineCollection.forEach((line) => {
+                let material = (<LineBasicMaterial>line.material);
+                material.color.r = color.r;
+                material.color.g = color.g;
+                material.color.b = color.b;
+                material.opacity = opacity;
+            });
+        });
+        let lineOpacity = lineFolder.add(conf, 'transparence des lignes', 0, 1).step(0.01);
+        lineOpacity.onChange((v) => {
+            let opacity = v;
+            let color = new Color(lineColor.getValue());
+            that._cones.lineCollection.forEach((line) => {
+                let material = (<LineBasicMaterial>line.material);
+                material.color.r = color.r;
+                material.color.g = color.g;
+                material.color.b = color.b;
+                material.opacity = opacity;
+            });
+        });
+        // pays /mise en exergue avec listen?
+        let countryFolder = gui.addFolder('pays');
+        countryFolder.add(this._countries, 'show');
+
         DragnDrop(
             this._container, (text, name) => {
                 if (name.toLowerCase().endsWith('.csv')) {
@@ -78,11 +175,13 @@ export default class BigBoard {
                     that._countries.add(JSON.parse(text));
                 }
                 if (that._merger.state === 'complete' && that._countries.countryMeshCollection.length > 0) {
+                    _lookupTransportColor = {};
+                    annees.min(that._merger.minYear).max(that._merger.maxYear).updateDisplay();
+                    coneSelectTransport.options(that._merger.transportNames).setValue(that._merger.transportNames[0]).updateDisplay();
                     that._cones.add(that._merger.datas, CONFIGURATION.extrudedHeight);
                 }
             },
             this);
-        //
         // this._container.addEventListener('dblclick', (evt) => {
         //     if (countryBoard) {
         //         let name = countryBoard.getMeshByMouse(evt, true);
