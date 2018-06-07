@@ -1,10 +1,10 @@
-yearBegin;yearEnd;idOri;nameOri;idDes;nameDes;transportMode;notes
-1977;2004;20985;Paris;23083;New York-Newark;11;Concorde
-1977;2004;22860;London;23083;New York-Newark;11;Concorde
-1947;;20985;Paris;23083;New York-Newark;1;air
-1947;;22860;London;23083;New York-Newark;1;air
-1930;;204296;Berlin;22860;London;1;air
-1930;;204296;Berlin;22860;London;1;air
+yearBegin;yearEnd;idOri;nameOri;idDes;nameDes;transportMode;length;notes
+1977;2004;20985;Paris;23083;New York-Newark;11;;Concorde
+1977;2004;22860;London;23083;New York-Newark;11;;Concorde
+1947;;20985;Paris;23083;New York-Newark;1;;air
+1947;;22860;London;23083;New York-Newark;1;;air
+1930;;204296;Berlin;22860;London;1;;air
+1930;;204296;Berlin;22860;London;1;;air
 1953;;23052;Los Angeles;23083;New York-Newark;1;air https://en.wikipedia.org/wiki/Transcontinental_flight
 1958;;23013;Honolulu;23052;Los Angeles;1;air Bartolomew 1958
 1958;;23013;Honolulu;23130;San Francisco-Oakland;1;air Bartolomew 1958
