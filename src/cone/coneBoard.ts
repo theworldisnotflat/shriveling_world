@@ -23,7 +23,7 @@ export class ConeBoard {
     private _highlitedCriterias: ICriterias = {};
     private _selectedMeshs: Mesh[] = [];
     private _scale: number = 0.1;
-    // ALH: originellement 1
+    // alh: originellement 1
     private _show: boolean = true;
     private _withLimits: boolean = true;
     private _countries: CountryBoard;
