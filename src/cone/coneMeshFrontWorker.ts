@@ -30,6 +30,7 @@ export class ConeMeshFrontWorker extends PseudoCone {
     private _withLimits: boolean;
     private _cityCode: string;
     private _position: Cartographic;
+    private _transportName: string;
 
     public static generateCones(lookup: ILookupTownTransport, bboxes: IBBox[]): Promise<ConeMeshFrontWorker[]> {
         _ready = false;
@@ -54,7 +55,7 @@ export class ConeMeshFrontWorker extends PseudoCone {
                         let directions = transports[transportName];
                         let specificProperties =
                             Object.assign({}, commonProperties, { directions: directions, transport: transportName });
-                        _cones.push(new ConeMeshFrontWorker(cityCode, position, specificProperties));
+                        _cones.push(new ConeMeshFrontWorker(cityCode, position, specificProperties, transportName));
                         coneWorkers.push({ cityCode: cityCode, directions: directions });
                     }
                 }
@@ -193,7 +194,7 @@ export class ConeMeshFrontWorker extends PseudoCone {
         return Promise.resolve([..._cones]);
     }
 
-    private constructor(cityCode: string, position: Cartographic, properties: any) {
+    private constructor(cityCode: string, position: Cartographic, properties: any, transportName: string) {
         const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(400 * 4), 4).setDynamic(true);
         const interleavedBufferAttributePosition = new InterleavedBufferAttribute(interleavedBufferPosition, 3, 0, false);
         const interleavedBufferNormal = new InterleavedBuffer(new Float32Array(400 * 4), 4).setDynamic(true);
@@ -212,6 +213,7 @@ export class ConeMeshFrontWorker extends PseudoCone {
         this.otherProperties = properties;
         this._withLimits = true;
         this.visible = true;
+        this._transportName = transportName;
     }
 
     get cityCode(): string {
@@ -230,5 +232,9 @@ export class ConeMeshFrontWorker extends PseudoCone {
             _dirtyLimits = true;
             this._withLimits = value;
         }
+    }
+
+    get transportName(): string {
+        return this._transportName;
     }
 }

@@ -3,7 +3,7 @@ import { CONFIGURATION } from './configuration';
 import { Vector3 } from 'three';
 import { NEDLocal, Coordinate } from './referential';
 import {
-    ICartographic, IConverterLookup, ISumUpCriteria, IItemCriteria, ICriterias, IOrderAscendant, IBBox,
+    ICartographic, IConverterLookup, ISumUpCriteria, IItemCriteria, ICriterias, IOrderAscendant, IBBox, IListFile,
 } from '../definitions/project';
 
 export var mapProjectors: IConverterLookup = {
@@ -422,7 +422,7 @@ export function orderCriteria<T>(collection: T[], criteriaOrder: IOrderAscendant
     return collection.sort(megaSorter);
 }
 
-export function DragnDrop(id: string | HTMLElement, callback: (text: string, name?: string) => void, scope: any): void {
+export function DragnDrop(id: string | HTMLElement, callback: (list: IListFile[]) => void, scope: any): void {
     let container = typeof id === 'string' ? document.getElementById(id) : id;
     if (container !== null) {
 
@@ -436,13 +436,15 @@ export function DragnDrop(id: string | HTMLElement, callback: (text: string, nam
             evt.stopPropagation();
             evt.preventDefault();
             let files = evt.dataTransfer.files;
-            for (let i = 0; i < files.length; i++) {
-                let reader = new FileReader();
-                reader.onload = () => {
-                    callback.call(scope, reader.result, files[i].name);
-                };
-                reader.readAsText(files[i]);
-            }
+            Promise.all(Array.from(files, file => {
+                return new Promise((resolve) => {
+                    let reader = new FileReader();
+                    reader.onload = () => {
+                        resolve({ name: file.name, text: reader.result });
+                    };
+                    reader.readAsText(file);
+                });
+            })).then(tab => callback.call(scope, tab));
         }
 
         container.addEventListener('dragover', handleDragOver, false);

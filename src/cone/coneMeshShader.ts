@@ -125,7 +125,7 @@ function regenerateFromConeStep(): void {
         boundaries.set(cacheBoundary[_cityCodeOrder[i]], i * _width);
     }
 
-    console.log(_width, _height);
+    //  console.log(_width, _height);
     let options = {
         u_clocks: { src: _clocks, width: _width, height: 1 },
         u_boundaryLimits: { src: boundaries, width: _width, height: _height },

@@ -1,5 +1,5 @@
 'use strict';
-import { Scene, Camera, WebGLRenderer, Raycaster, Mesh, Vector2, BufferGeometry } from 'three';
+import { Scene, Camera, WebGLRenderer, Raycaster, Mesh, Vector2, BufferGeometry, Material } from 'three';
 import { CONFIGURATION } from '../common/configuration';
 import { PseudoCone } from './base';
 import { ConeMeshShader } from './coneMeshShader';
@@ -9,7 +9,6 @@ import {
     ILookupTransportPerYear, ILookupLine,
 } from '../definitions/project';
 import { CountryBoard } from '../country/countryBoard';
-import { CountryGeometry } from '../country/countryGeometry';
 import { LineMeshShader } from './lineMeshShaders';
 const forbiddenAttributes = ['referential', 'position'];
 
@@ -22,14 +21,14 @@ export class ConeBoard {
     private _raycaster: Raycaster;
     private _highlitedCriterias: ICriterias = {};
     private _selectedMeshs: Mesh[] = [];
-    private _scale: number = 0.1;
-    // alh: originellement 1
+    private _scale: number = 1;
     private _show: boolean = true;
     private _withLimits: boolean = true;
     private _countries: CountryBoard;
     private _year: string;
     private _sumUpProperties: ISumUpCriteria = {};
     private _renderer: WebGLRenderer;
+    private _opacity: number = 1;
 
     get show(): boolean {
         return this._show;
@@ -67,7 +66,16 @@ export class ConeBoard {
     get lookupCriterias(): ISumUpCriteria {
         return this._sumUpProperties;
     }
+    get opacity(): number {
+        return this._opacity;
+    }
 
+    set opacity(value: number) {
+        if (value > 0 && value <= 1) {
+            this._opacity = value;
+            this.coneMeshCollection.forEach(cone => (<Material>cone.material).opacity = value);
+        }
+    }
     public constructor(
         mainProjector: string, scene: Scene, camera: Camera, countries: CountryBoard, renderer: WebGLRenderer) {
         if (!mapProjectors.hasOwnProperty(mainProjector)) {
@@ -82,6 +90,7 @@ export class ConeBoard {
     }
 
     public add(lookup: ILookupAndMaxSpeedAndLine, distance: number): void {
+        this.clean();
         let myConsistentLookup = <ILookupTownTransport>{};
         for (let cityCode in lookup.lookupTownTransport) {
             if (lookup.lookupTownTransport.hasOwnProperty(cityCode) &&
@@ -91,7 +100,7 @@ export class ConeBoard {
         }
         // lookup.lookupTownTransport = myConsistentLookup;
         let that = this;
-        let bboxes = this._countries.countryMeshCollection.map((country) => (<CountryGeometry>country.geometry).bbox);
+        let bboxes = this._countries.countryMeshCollection.map((country) => country.bbox);
         ConeMeshShader.generateCones(lookup.lookupTownTransport, lookup.maxSpeedPerYear, bboxes).then((cones) => {
             cones.forEach((cone) => {
                 updateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
@@ -163,10 +172,6 @@ export class ConeBoard {
             this._selectedMeshs = this.searchMesh(criterias).map((mesh) => {
                 let geometry = <BufferGeometry>mesh.geometry.clone();
                 let out = new Mesh(geometry, CONFIGURATION.highLitedMaterial);
-                out.updateMorphTargets();
-                for (let i = 0; i < (<any>mesh).morphTargetInfluences.length; i++) {
-                    (<any>out).morphTargetInfluences[i] = (<any>mesh).morphTargetInfluences[i];
-                }
                 that._scene.add(out);
                 out.scale.setScalar(that._scale);
                 return out;
