@@ -1,25 +1,25 @@
 'use strict';
-import { Scene, Camera, Raycaster, Mesh, Vector2 } from 'three';
+import { Scene, Camera, Raycaster, Mesh, Vector2, Material } from 'three';
 import { mapProjectors, updateSumUpCriteria, Cartographic, searchCriterias } from '../common/utils';
 import { ISumUpCriteria, ICriterias } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
-import { CountryMesh } from './countryMesh';
-import { CountryGeometry } from './countryGeometry';
+import { CountryMeshShader } from './countryMeshShader';
 export class CountryBoard {
-    public countryMeshCollection: CountryMesh[] = [];
-    private _projection: string;
+    public countryMeshCollection: CountryMeshShader[] = [];
+    public ready: boolean = false;
     private _scene: Scene;
-    private _isReprojecting: boolean = false;
     private _camera: Camera;
     private _raycaster: Raycaster;
     private _highlitedCriterias: ICriterias = {};
     private _selectedMeshs: Mesh[] = [];
     private _scale: number = 1;
     private _show: boolean = true;
+    private _opacity: number = 1;
     private _sumUpProperties: ISumUpCriteria = {};
+    private _extruded: number = 1;
 
     public static extrude(
-        meshes: CountryMesh[], timing: number, value: number | number[] = 70, init?: number,
+        meshes: CountryMeshShader[], timing: number, value: number | number[] = 70, init?: number,
         easingFunction: { (k: number): number } = TWEEN.Easing.Linear.None, callBack?: { func: () => void, scope: any }): void {
         let begin = {}, end = {};
         if (typeof value === 'number') {
@@ -46,13 +46,6 @@ export class CountryBoard {
             .start();
     }
 
-    get projection(): string {
-        return this._projection;
-    }
-    set projection(value: string) {
-        this.changeProjection(value);
-    }
-
     get show(): boolean {
         return this._show;
     }
@@ -61,6 +54,16 @@ export class CountryBoard {
             country.visible = value;
         });
         this._show = value;
+    }
+
+    get extruded(): number {
+        return this._extruded;
+    }
+    set extruded(value: number) {
+        this.countryMeshCollection.forEach((country) => {
+            country.extruded = value;
+        });
+        this._extruded = value;
     }
 
     get scale(): number {
@@ -80,6 +83,17 @@ export class CountryBoard {
         return this._sumUpProperties;
     }
 
+    get opacity(): number {
+        return this._opacity;
+    }
+
+    set opacity(value: number) {
+        if (value > 0 && value <= 1) {
+            this._opacity = value;
+            this.countryMeshCollection.forEach(country => (<Material>country.material).opacity = value);
+        }
+    }
+
     public constructor(mainProjector: string, scene: Scene, camera: Camera) {
         if (!mapProjectors.hasOwnProperty(mainProjector)) {
             mainProjector = Object.keys(mapProjectors)[0];
@@ -87,61 +101,21 @@ export class CountryBoard {
         this._scene = scene;
         this._camera = camera;
         this._raycaster = new Raycaster();
-        this._projection = mainProjector;
     }
 
-    public add(geoJson: any): void {
-        let collection = CountryMesh.generator(geoJson, this._projection);
+    public async add(geoJson: any): Promise<void> {
+        this.ready = false;
+        this.clean();
+        let collection = await CountryMeshShader.generator(geoJson);
         let that = this;
-        collection.forEach((mesh) => {
-            that.countryMeshCollection.push(mesh);
-            that._scene.add(mesh);
-            mesh.visible = that._show;
-            mesh.scale.setScalar(that._scale);
-            updateSumUpCriteria(that._sumUpProperties, mesh.otherProperties);
+        collection.forEach(mesh => {
+            this.countryMeshCollection.push(mesh);
+            this._scene.add(mesh);
+            mesh.visible = this._show;
+            mesh.scale.setScalar(this._scale);
+            updateSumUpCriteria(this._sumUpProperties, mesh.otherProperties);
         });
-        this.projection = this._projection;
-    }
-
-    public changeProjection(
-        projection: string, timing: number = CONFIGURATION.TWEEN_TIMING,
-        easingFunction: { (k: number): number } = TWEEN.Easing.Linear.None): void {
-        if (mapProjectors.hasOwnProperty(projection) && this._isReprojecting === false) {
-            this._isReprojecting = true;
-            let value = { stage: 0 };
-            let that = this;
-            new TWEEN.Tween(value)
-                .to({ stage: 100 }, timing)
-                .easing(easingFunction)
-                .onStart(() => {
-                    that.countryMeshCollection.forEach((mesh) => {
-                        mesh.reProject(projection);
-                    });
-                    that._selectedMeshs.forEach((mesh) => {
-                        if (!Array.isArray(mesh.material)) {
-                            mesh.material.visible = false;
-                        }
-                    });
-                })
-                .onUpdate(() => {
-                    that.countryMeshCollection.forEach((mesh) => {
-                        mesh.reProject(value.stage);
-                    });
-                })
-                .onComplete(() => {
-                    let extruded: number[] = [];
-                    that.countryMeshCollection.forEach((mesh) => {
-                        extruded.push(mesh.extruded);
-                        mesh.projection = projection;
-                    });
-                    that._isReprojecting = false;
-                    that._projection = projection;
-                    CountryBoard.extrude(
-                        that.countryMeshCollection, timing, extruded, 0,
-                        TWEEN.Easing.Elastic.InOut, { func: that._reHighLight, scope: that });
-                })
-                .start();
-        }
+        this.ready = true;
     }
 
     public clean(): void {
@@ -155,15 +129,15 @@ export class CountryBoard {
         this._sumUpProperties = {};
     }
 
-    public getMeshByMouse(event: MouseEvent, highLight: boolean = false): CountryMesh {
-        let resultat: CountryMesh;
+    public getMeshByMouse(event: MouseEvent, highLight: boolean = false): CountryMeshShader {
+        let resultat: CountryMeshShader;
         let mouse = new Vector2();
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
         this._raycaster.setFromCamera(mouse, this._camera);
         let intersects = this._raycaster.intersectObjects(this.countryMeshCollection);
         if (intersects.length > 0) {
-            resultat = <CountryMesh>intersects[0].object;
+            resultat = <CountryMeshShader>intersects[0].object;
             this.highLight(resultat.otherProperties, highLight);
         } else {
             this._selectedMeshs.forEach((mesh) => {
@@ -192,12 +166,8 @@ export class CountryBoard {
                 that._scene.remove(mesh);
             });
             this._selectedMeshs = this.searchMesh(criterias).map((mesh) => {
-                let geometry = (<CountryGeometry>mesh.geometry).fuzzyClone();
+                let geometry = mesh.geometry;
                 let out = new Mesh(geometry, CONFIGURATION.highLitedMaterial);
-                out.updateMorphTargets();
-                for (let i = 0; i < (<any>mesh).morphTargetInfluences.length; i++) {
-                    (<any>out).morphTargetInfluences[i] = (<any>mesh).morphTargetInfluences[i];
-                }
                 that._scene.add(out);
                 out.scale.setScalar(that._scale);
                 return out;
@@ -210,8 +180,8 @@ export class CountryBoard {
         });
     }
 
-    public searchMesh(criterias: ICriterias | Cartographic, path: string = ''): CountryMesh[] {
-        let resultat: CountryMesh[];
+    public searchMesh(criterias: ICriterias | Cartographic, path: string = ''): CountryMeshShader[] {
+        let resultat: CountryMeshShader[];
         if (criterias instanceof Cartographic) {
             resultat = this.countryMeshCollection.filter((country) => country.isInside(criterias));
         } else {

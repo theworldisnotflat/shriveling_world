@@ -37,7 +37,6 @@ function regenerateStep(): void {
     t.push(1);
     _t = new Float32Array(t);
     _width = _t.length;
-    console.log(_width, _height);
     let options = {
         u_tSample: { src: _t, width: _width, height: 1 },
     };
@@ -208,7 +207,6 @@ export class LineMeshShader extends Line {
             center.setZ(boundingSphereData[2]);
             bufferedGeometry.boundingSphere.radius = boundingSphereData[3];
             bufferedGeometry.setDrawRange(0, _width);
-            // console.log(positions, _t);
         } else {
             bufferedGeometry.setDrawRange(0, 0);
         }
@@ -223,11 +221,9 @@ export class LineMeshShader extends Line {
         const interleavedBufferAttributePosition = new InterleavedBufferAttribute(interleavedBufferPosition, 3, 0, false);
         const bufferGeometry = new BufferGeometry();
         bufferGeometry.addAttribute('position', interleavedBufferAttributePosition);
-        // bufferGeometry.setDrawRange(0, 0);
         bufferGeometry.computeBoundingSphere();
         bufferGeometry.boundingSphere = new Sphere();
-        super(bufferGeometry, new LineBasicMaterial({ color: 0x0000ff, linewidth: 5, side: DoubleSide }));
-        // à revoir TODO pour les couleurs
+        super(bufferGeometry, CONFIGURATION.BASIC_LINE_MATERIAL.clone());
         this.years = years;
         this.opening = opening;
         this.end = end;

@@ -239,3 +239,11 @@ export interface ILookupLineItem {
 export interface ILookupLine {
     [cityCodeBegin: number]: ILookupLineItem;
 }
+export interface IMarkLimits {
+    begin: number; // inclusif
+    end: number; // exclusif
+}
+export interface IListFile {
+    name: string;
+    text: string;
+}

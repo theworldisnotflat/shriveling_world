@@ -387,6 +387,7 @@ export class Merger {
             }
         }
         if (name !== undefined) {
+            this[name] = [];
             this[name].push(...getCSV(someString));
             if (name === '_transportModeCode' || name === '_transportNetwork') {
                 this[name].forEach((item) => {

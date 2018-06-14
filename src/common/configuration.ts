@@ -1,5 +1,5 @@
 'use strict';
-import { Material } from 'three';
+import {  MeshBasicMaterial, LineBasicMaterial } from 'three';
 import { generateUUID } from './utils';
 import {
     PROJECTION_ENUM, ICountryTextureURL, ICartographic, configurationObservableEvt, configurationCallback,
@@ -29,10 +29,11 @@ let _projectionInit: PROJECTION_ENUM = PROJECTION_ENUM.none;
 let _projectionEnd: PROJECTION_ENUM = PROJECTION_ENUM.none;
 let _projectionPercent: number = 0;
 let _year: string | number = 1980;
-let _highLitedMaterial: THREE.Material;
-let _COUNTRY_MATERIAL: THREE.Material;
-let _BASIC_CONE_MATERIAL: THREE.Material;
-let _pointsPerLine: number = 1;
+let _highLitedMaterial: MeshBasicMaterial;
+let _COUNTRY_MATERIAL: MeshBasicMaterial;
+let _BASIC_CONE_MATERIAL: MeshBasicMaterial;
+let _BASIC_LINE_MATERIAL: LineBasicMaterial;
+let _pointsPerLine: number = 50;
 
 let _extrudedHeight: number = 0;
 let _hatHeight: number = 0;
@@ -87,8 +88,8 @@ export const CONFIGURATION = {
     get earthRadiusMeters(): number { return _earthRadiusMeters; },
     get OVER_PI(): number { return _OVER_PI; },
     get OVER_TWO_PI(): number { return _OVER_TWO_PI; },
-    get highLitedMaterial(): THREE.Material { return _highLitedMaterial; },
-    set highLitedMaterial(value: THREE.Material) { _highLitedMaterial = value; },
+    get highLitedMaterial(): MeshBasicMaterial { return _highLitedMaterial; },
+    set highLitedMaterial(value: MeshBasicMaterial) { _highLitedMaterial = value; },
     get heightRatio(): number { return _heightRatio; },
     set heightRatio(value: number) {
         _heightRatio = value;
@@ -123,10 +124,12 @@ export const CONFIGURATION = {
         bumpMap: 'assets/earthbump4k.jpg',
         normalMap: 'assets/earth_normalmap_flat4k.jpg',
     },
-    get COUNTRY_MATERIAL(): THREE.Material { return _COUNTRY_MATERIAL; },
-    get BASIC_CONE_MATERIAL(): THREE.Material { return _BASIC_CONE_MATERIAL; },
-    set COUNTRY_MATERIAL(value: THREE.Material) { _COUNTRY_MATERIAL = value; },
-    set BASIC_CONE_MATERIAL(value: THREE.Material) { _BASIC_CONE_MATERIAL = value; },
+    get COUNTRY_MATERIAL(): MeshBasicMaterial { return _COUNTRY_MATERIAL; },
+    get BASIC_CONE_MATERIAL(): MeshBasicMaterial { return _BASIC_CONE_MATERIAL; },
+    set COUNTRY_MATERIAL(value: MeshBasicMaterial) { _COUNTRY_MATERIAL = value; },
+    set BASIC_CONE_MATERIAL(value: MeshBasicMaterial) { _BASIC_CONE_MATERIAL = value; },
+    get BASIC_LINE_MATERIAL(): LineBasicMaterial { return _BASIC_LINE_MATERIAL; },
+    set BASIC_LINE_MATERIAL(value: LineBasicMaterial) { _BASIC_LINE_MATERIAL = value; },
     SKYBOX_URLS: <string[]>[
         'assets/px.jpg', 'assets/nx.jpg', 'assets/py.jpg', 'assets/ny.jpg', 'assets/pz.jpg', 'assets/nz.jpg',
     ],
@@ -175,7 +178,6 @@ export const CONFIGURATION = {
             fireEvents('projectionPercent', value);
         }
     },
-
     addEventListener(events: string, callBack: configurationCallback, uuid = generateUUID(), scope?: any): string {
         let eventNames = events.split(' ');
         eventNames.forEach((name) => {
