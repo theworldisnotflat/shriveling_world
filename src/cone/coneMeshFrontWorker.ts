@@ -112,7 +112,7 @@ export class ConeMeshFrontWorker extends PseudoCone {
                 }
             });
             uuid = CONFIGURATION.addEventListener(
-                'heightRatio intrudedHeightRatio coneStep referenceEquiRectangular lambda0Mercator THREE_EARTH_RADIUS ' +
+                'heightRatio intrudedHeightRatio coneStep referenceEquiRectangular THREE_EARTH_RADIUS ' +
                 'projectionBegin projectionEnd projectionPercent year tick',
                 (name: string, value: any) => {
                     if (_ready === true) {
@@ -158,7 +158,6 @@ export class ConeMeshFrontWorker extends PseudoCone {
                             uniforms.threeRadius = CONFIGURATION.THREE_EARTH_RADIUS;
                             uniforms.earthRadius = CONFIGURATION.earthRadiusMeters;
                             uniforms.referenceEquiRectangular = CONFIGURATION.referenceEquiRectangularArray;
-                            uniforms.lambda0 = CONFIGURATION.lambda0Mercator;
                             uniforms.representationInit = CONFIGURATION.projectionInit;
                             uniforms.representationEnd = CONFIGURATION.projectionEnd;
                             uniforms.percentRepresentation = CONFIGURATION.percentProjection;
@@ -185,7 +184,6 @@ export class ConeMeshFrontWorker extends PseudoCone {
         uniforms.threeRadius = CONFIGURATION.THREE_EARTH_RADIUS;
         uniforms.earthRadius = CONFIGURATION.earthRadiusMeters;
         uniforms.referenceEquiRectangular = CONFIGURATION.referenceEquiRectangularArray;
-        uniforms.lambda0 = CONFIGURATION.lambda0Mercator;
         uniforms.representationInit = CONFIGURATION.projectionInit;
         uniforms.representationEnd = CONFIGURATION.projectionEnd;
         uniforms.percentRepresentation = CONFIGURATION.percentProjection;

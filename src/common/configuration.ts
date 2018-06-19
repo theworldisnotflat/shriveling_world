@@ -1,5 +1,5 @@
 'use strict';
-import {  MeshBasicMaterial, LineBasicMaterial } from 'three';
+import { MeshBasicMaterial, MeshStandardMaterial, LineBasicMaterial, MeshPhongMaterial, Material } from 'three';
 import { generateUUID } from './utils';
 import {
     PROJECTION_ENUM, ICountryTextureURL, ICartographic, configurationObservableEvt, configurationCallback,
@@ -20,7 +20,6 @@ const _OVER_TWO_PI: number = 1 / (2 * Math.PI);
 const _referenceEquiRectangular: ICartographic = { latitude: 0, longitude: 0, height: 0 };
 const _referenceEquiRectangularFloat32Array = new Float32Array(3);
 let _heightRatio: number = 0;
-let _lambda0Mercator: number = 0;
 let _intrudedHeightRatio: number = 0;
 let _coneStep: number = 0;
 let _TWEEN_TIMING: number = 0;
@@ -30,8 +29,8 @@ let _projectionEnd: PROJECTION_ENUM = PROJECTION_ENUM.none;
 let _projectionPercent: number = 0;
 let _year: string | number = 1980;
 let _highLitedMaterial: MeshBasicMaterial;
-let _COUNTRY_MATERIAL: MeshBasicMaterial;
-let _BASIC_CONE_MATERIAL: MeshBasicMaterial;
+let _COUNTRY_MATERIAL: Material;
+let _BASIC_CONE_MATERIAL: Material;
 let _BASIC_LINE_MATERIAL: LineBasicMaterial;
 let _pointsPerLine: number = 50;
 
@@ -43,7 +42,6 @@ const _listeners: {
     coneStep: IEventListItem[],
     TWEEN_TIMING: IEventListItem[],
     referenceEquiRectangular: IEventListItem[],
-    lambda0Mercator: IEventListItem[],
     THREE_EARTH_RADIUS: IEventListItem[],
     projectionBegin: IEventListItem[],
     projectionEnd: IEventListItem[],
@@ -57,7 +55,6 @@ const _listeners: {
         coneStep: [],
         TWEEN_TIMING: [],
         referenceEquiRectangular: [],
-        lambda0Mercator: [],
         THREE_EARTH_RADIUS: [],
         projectionBegin: [],
         projectionEnd: [],
@@ -124,10 +121,11 @@ export const CONFIGURATION = {
         bumpMap: 'assets/earthbump4k.jpg',
         normalMap: 'assets/earth_normalmap_flat4k.jpg',
     },
-    get COUNTRY_MATERIAL(): MeshBasicMaterial { return _COUNTRY_MATERIAL; },
-    get BASIC_CONE_MATERIAL(): MeshBasicMaterial { return _BASIC_CONE_MATERIAL; },
-    set COUNTRY_MATERIAL(value: MeshBasicMaterial) { _COUNTRY_MATERIAL = value; },
-    set BASIC_CONE_MATERIAL(value: MeshBasicMaterial) { _BASIC_CONE_MATERIAL = value; },
+    CONE_TEXTURE: 'assets/coneTexture.png',
+    get COUNTRY_MATERIAL(): Material { return _COUNTRY_MATERIAL; },
+    get BASIC_CONE_MATERIAL(): Material { return _BASIC_CONE_MATERIAL; },
+    set COUNTRY_MATERIAL(value: Material) { _COUNTRY_MATERIAL = value; },
+    set BASIC_CONE_MATERIAL(value: Material) { _BASIC_CONE_MATERIAL = value; },
     get BASIC_LINE_MATERIAL(): LineBasicMaterial { return _BASIC_LINE_MATERIAL; },
     set BASIC_LINE_MATERIAL(value: LineBasicMaterial) { _BASIC_LINE_MATERIAL = value; },
     SKYBOX_URLS: <string[]>[
@@ -156,8 +154,6 @@ export const CONFIGURATION = {
     set THREE_EARTH_RADIUS(value: number) { _THREE_EARTH_RADIUS = value; fireEvents('THREE_EARTH_RADIUS', value); },
     get TWEEN_TIMING(): number { return _TWEEN_TIMING; },
     set TWEEN_TIMING(value: number) { _TWEEN_TIMING = value; fireEvents('TWEEN_TIMING', value); },
-    get lambda0Mercator(): number { return _lambda0Mercator; },
-    set lambda0Mercator(value: number) { _lambda0Mercator = value; fireEvents('lambda0Mercator', value); },
     get year(): string | number { return _year; },
     set year(value: string | number) { _year = value; fireEvents('year', value); },
 

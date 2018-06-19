@@ -171,7 +171,6 @@ function computation(withNormals: boolean): void {
     uniforms.threeRadius = CONFIGURATION.THREE_EARTH_RADIUS;
     uniforms.earthRadius = CONFIGURATION.earthRadiusMeters;
     uniforms.referenceEquiRectangular = CONFIGURATION.referenceEquiRectangularArray;
-    uniforms.lambda0 = CONFIGURATION.lambda0Mercator;
     uniforms.representationInit = CONFIGURATION.projectionInit;
     uniforms.representationEnd = CONFIGURATION.projectionEnd;
     uniforms.percentRepresentation = CONFIGURATION.percentProjection;
@@ -195,22 +194,23 @@ function computation(withNormals: boolean): void {
     }
 
     let normals: Float32Array;
-    if (withNormals === true) {
-        options = {
-            points: { src: finalPositions, width: _width + 1, height: _height },
-        };
-        _gpgpu.rawNormals.updateTextures(options);
-        let raws = _gpgpu.rawNormals.calculate(_width + 1, _height)[0];
-
-        options['rawNormals'] = { src: raws, width: _width + 1, height: _height };
-        _gpgpu.normals.updateTextures(options);
-        normals = _gpgpu.normals.calculate(_width + 1, _height)[0];
-    }
+    withNormals = false;
+    // if (withNormals === true) {
+    //     options = {
+    //         points: { src: finalPositions, width: _width + 1, height: _height },
+    //     };
+    //     _gpgpu.rawNormals.updateTextures(options);
+    //     let raws = _gpgpu.rawNormals.calculate(_width + 1, _height)[0];
+    //
+    //     options['rawNormals'] = { src: raws, width: _width + 1, height: _height };
+    //     _gpgpu.normals.updateTextures(options);
+    //     normals = _gpgpu.normals.calculate(_width + 1, _height)[0];
+    // }
     let boundingBox: Float32Array;
     let norms: Float32Array;
     for (let i = 0; i < _height; i++) {
         boundingBox = boundingBoxes.subarray(i * 4, (i + 1) * 4);
-        norms = withNormals === true ? normals.subarray(i * (_width + 1) * 4, (i + 1) * (_width + 1) * 4) : undefined;
+        // norms = withNormals === true ? normals.subarray(i * (_width + 1) * 4, (i + 1) * (_width + 1) * 4) : undefined;
         _cones[i].setGeometry(finalPositions.subarray(i * (_width + 1) * 4, (i + 1) * (_width + 1) * 4), boundingBox, norms);
     }
 }
@@ -284,7 +284,7 @@ export class ConeMeshShader extends PseudoCone {
                             }),
                 ]).then(() => {
                     uuid = CONFIGURATION.addEventListener(
-                        'heightRatio intrudedHeightRatio coneStep  referenceEquiRectangular lambda0Mercator THREE_EARTH_RADIUS ' +
+                        'heightRatio intrudedHeightRatio coneStep  referenceEquiRectangular THREE_EARTH_RADIUS ' +
                         'projectionBegin projectionEnd projectionPercent year tick',
                         (name: string, value: any) => {
                             if (_ready === true) {
@@ -394,6 +394,8 @@ export class ConeMeshShader extends PseudoCone {
             center.setY(boundingSphereData[1]);
             center.setZ(boundingSphereData[2]);
             bufferedGeometry.boundingSphere.radius = boundingSphereData[3];
+            bufferedGeometry.computeVertexNormals();
+            bufferedGeometry.computeBoundingSphere();
             if (normals !== undefined) {
                 interleavedBuffer = (<InterleavedBufferAttribute>bufferedGeometry.getAttribute('normal')).data;
                 interleavedBuffer.set(normals, 0);
@@ -437,6 +439,7 @@ export class ConeMeshShader extends PseudoCone {
         this._withLimits = true;
         this.visible = true;
         this._transportName = transportName;
+        this.castShadow = true;
 
         for (let year in directions) {
             if (directions.hasOwnProperty(year) && _forbiddenTransportYear[year] !== transportName) {
