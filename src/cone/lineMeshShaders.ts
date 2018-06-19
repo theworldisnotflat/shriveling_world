@@ -59,7 +59,6 @@ function computation(): void {
     uniforms.threeRadius = CONFIGURATION.THREE_EARTH_RADIUS;
     uniforms.earthRadius = CONFIGURATION.earthRadiusMeters;
     uniforms.referenceEquiRectangular = CONFIGURATION.referenceEquiRectangularArray;
-    uniforms.lambda0 = CONFIGURATION.lambda0Mercator;
     uniforms.representationInit = CONFIGURATION.projectionInit;
     uniforms.representationEnd = CONFIGURATION.projectionEnd;
     uniforms.percentRepresentation = CONFIGURATION.percentProjection;
@@ -126,7 +125,7 @@ export class LineMeshShader extends Line {
                             }),
                 ]).then(() => {
                     uuid = CONFIGURATION.addEventListener(
-                        'heightRatio intrudedHeightRatio  referenceEquiRectangular lambda0Mercator THREE_EARTH_RADIUS ' +
+                        'heightRatio intrudedHeightRatio  referenceEquiRectangular THREE_EARTH_RADIUS ' +
                         'projectionBegin projectionEnd projectionPercent year pointsPerLine',
                         (name: string, value: any) => {
                             if (_ready === true) {

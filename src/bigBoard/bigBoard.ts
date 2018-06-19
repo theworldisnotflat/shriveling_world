@@ -1,8 +1,9 @@
 'use strict';
 import { CONFIGURATION } from '../common/configuration';
 import {
-    MeshBasicMaterial, DoubleSide, TextureLoader, MeshPhongMaterial, Color, Vector2, PerspectiveCamera,
+    MeshBasicMaterial, DoubleSide, TextureLoader, MeshPhongMaterial, Color, Vector2, PerspectiveCamera, MeshStandardMaterial,
     OrbitControls, Scene, WebGLRenderer, BackSide, CubeGeometry, PointLight, Fog, AmbientLight, Mesh, LineBasicMaterial,
+    SphereBufferGeometry,
 } from 'three';
 import { ConeBoard } from '../cone/coneBoard';
 import { CountryBoard } from '../country/countryBoard';
@@ -21,27 +22,41 @@ function prepareConfiguration(): void {
     if (CONFIGURATION.COUNTRY_MATERIAL === undefined) {
         CONFIGURATION.highLitedMaterial = new MeshBasicMaterial(
             { color: 0xffff00, transparent: true, opacity: 0.5, side: DoubleSide });
-        let loader = new TextureLoader();
-
         let earthMaterial = new MeshBasicMaterial({
             opacity: 0.8, depthTest: true, depthWrite: true, side: DoubleSide, transparent: true,
         });
-        earthMaterial.map = loader.load(CONFIGURATION.COUNTRY_TEXTURES.map);
+        earthMaterial.map = new TextureLoader().load(CONFIGURATION.COUNTRY_TEXTURES.map);
+        earthMaterial.specularMap = new TextureLoader().load(CONFIGURATION.COUNTRY_TEXTURES.specularMap);
+        // earthMaterial.bumpMap = new TextureLoader().load(CONFIGURATION.COUNTRY_TEXTURES.bumpMap);
+        // earthMaterial.normalMap = new TextureLoader().load(CONFIGURATION.COUNTRY_TEXTURES.normalMap);
         CONFIGURATION.COUNTRY_MATERIAL = earthMaterial;
         CONFIGURATION.BASIC_CONE_MATERIAL = new MeshPhongMaterial({
             transparent: true,
             opacity: 0.5,
             color: 0xebdede,
             side: DoubleSide,
+            // shininess: 0,
+            // specularMap: 0,
+            // roughness: 0,
+            // metalness: 0.5,
         });
+        // a CONFIGURATION.BASIC_CONE_MATERIAL.map = new TextureLoader().load(CONFIGURATION.CONE_TEXTURE);
         CONFIGURATION.BASIC_LINE_MATERIAL = new LineBasicMaterial({
-            color: 0x1000ff, linewidth: 5, side: DoubleSide, transparent: true, opacity: 0.3,
+            color: 0x1000ff, linewidth: .5, side: DoubleSide, transparent: true, opacity: 0.3,
         });
     }
 }
 
 let _lookupTransportColor: { [transportName: string]: { color: string, opacity: number } } = {};
 let _filesData: IListFile[] = [];
+let _light = new PointLight(0xffffff, 5, 1000, 2);
+let _lightMesh = new Mesh(new SphereBufferGeometry(5, 16, 8), new MeshBasicMaterial({ color: 0xffffff }));
+// _light.castShadow = true;
+_light.shadow.mapSize.width = 512;  // default
+_light.shadow.mapSize.height = 512; // default
+_light.shadow.camera.near = 0.5;       // default
+_light.shadow.camera.far = 500;    // default
+_light.add(_lightMesh);
 
 export default class BigBoard {
     public static configuration: any = CONFIGURATION;
@@ -205,15 +220,14 @@ export default class BigBoard {
         this._camera.lookAt(this._scene.position);
         this._scene.fog = new Fog(0x000000, 1, 15000);
 
-        let light = new PointLight(0xffffff);
-        light.position.set(1000, 1000, 1000);
-        this._scene.add(light);
+        _light.position.set(50, 50, 50);
+        this._scene.add(_light);
 
         let ambient = new AmbientLight(0xffffff);
         this._scene.add(ambient);
 
         this._renderer = new WebGLRenderer({ antialias: true });
-        this._renderer.setClearColor(0x222222);
+        this._renderer.setClearColor(0xffffff);
         this._renderer.setPixelRatio(window.devicePixelRatio);
         this._renderer.setSize(window.innerWidth, window.innerHeight);
         this._renderer.sortObjects = false;
@@ -261,22 +275,57 @@ export default class BigBoard {
         let conf = {
             coneStep: CONFIGURATION.coneStep * CONFIGURATION.rad2deg,
             year: parseInt(<string>CONFIGURATION.year, 10),
-            projection: { aucun: 0, equirectangulaire: 1, Mercator: 2 },
+            projection: { aucun: 0, equirectangulaire: 1, Mercator: 2, Cassini: 3 },
             'type de transport': '',
-            'couleur des cônes': '#' + CONFIGURATION.BASIC_CONE_MATERIAL.color.getHex().toString(16),
+            'couleur des cônes': '#' + (<any>CONFIGURATION.BASIC_CONE_MATERIAL).color.getHex().toString(16),
             'transparence des cônes': CONFIGURATION.BASIC_CONE_MATERIAL.opacity,
             'couleur des lignes': '#' + CONFIGURATION.BASIC_LINE_MATERIAL.color.getHex().toString(16),
             'transparence des lignes': CONFIGURATION.BASIC_LINE_MATERIAL.opacity,
+            'couleur lumière': '#' + _light.color.getHex().toString(16),
+            'longitude': CONFIGURATION.referenceEquiRectangular.longitude,
+            'latitude': CONFIGURATION.referenceEquiRectangular.latitude,
+            'hauteur': CONFIGURATION.referenceEquiRectangular.height,
         };
 
         let that = this;
+        // lumière
+        let lightFolder = gui.addFolder('lumière');
+        lightFolder.addColor(conf, 'couleur lumière').onChange(v => {
+            let color = parseInt(v.replace('#', ''), 16);
+            _light.color.setHex(color);
+            (<MeshBasicMaterial>_lightMesh.material).color.setHex(color);
+        });
+        lightFolder.add(_light.position, 'x', -1000, 1000).step(1);
+        lightFolder.add(_light.position, 'y', -1000, 1000).step(1);
+        lightFolder.add(_light.position, 'z', -1000, 1000).step(1);
+        lightFolder.add(_light.shadow.mapSize, 'width', 0, 1000).step(1);
+        lightFolder.add(_light.shadow.mapSize, 'height', 0, 1000).step(1);
+        lightFolder.add(_light.shadow.camera, 'near', 0, 1000).step(0.5);
+        lightFolder.add(_light.shadow.camera, 'far', 0, 1000).step(1);
+
         // généralités
         let generalFolder = gui.addFolder('Généralités');
-        let annees = generalFolder.add(conf, 'year', 1930, 1990).step(1);
+        let projectionFolder = generalFolder.addFolder('projection');
+        let referenceFolder = projectionFolder.addFolder('projection');
+        const radius = CONFIGURATION.earthRadiusMeters;
+        function changeReference(): void {
+            CONFIGURATION.referenceEquiRectangular = {
+                longitude: refLong.getValue() * CONFIGURATION.deg2rad,
+                latitude: refLat.getValue() * CONFIGURATION.deg2rad,
+                height: refHeight.getValue(),
+            };
+        }
+        let refLong = referenceFolder.add(conf, 'longitude', -180, 180).step(0.01);
+        refLong.onChange(changeReference);
+        let refLat = referenceFolder.add(conf, 'latitude', -89.99, 89.99).step(0.01);
+        refLat.onChange(changeReference);
+        let refHeight = referenceFolder.add(conf, 'hauteur', -radius + 10, radius + 10).step(1000);
+        refHeight.onChange(changeReference);
+        projectionFolder.add(CONFIGURATION, 'projectionInit', conf.projection).name('projection initiale');
+        projectionFolder.add(CONFIGURATION, 'projectionEnd', conf.projection).name('projection finale');
+        projectionFolder.add(CONFIGURATION, 'percentProjection', 0, 100).step(1).name('transition projection');
+        let annees = projectionFolder.add(conf, 'year', 1930, 1990).step(1);
         annees.onChange(v => CONFIGURATION.year = v);
-        generalFolder.add(CONFIGURATION, 'projectionInit', conf.projection).name('projection initiale');
-        generalFolder.add(CONFIGURATION, 'projectionEnd', conf.projection).name('projection finale');
-        generalFolder.add(CONFIGURATION, 'percentProjection', 0, 100).step(1).name('transition projection');
 
         // cônes
         let coneFolder = gui.addFolder('Cones');
@@ -354,7 +403,7 @@ export default class BigBoard {
                         this._countries.add(JSON.parse(json)).then(() => {
                             while (countryControllersList.length > 0) {
                                 let subGui = countryControllersList.pop();
-                                countryFolder.removeFolder(subGui);
+                                (<any>countryFolder).removeFolder(subGui);
                             }
                             let synonymes: string[] = [];
                             this._countries.countryMeshCollection.sort((a, b) => a.mainName.localeCompare(b.mainName))

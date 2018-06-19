@@ -12,6 +12,7 @@ export enum PROJECTION_ENUM {
     none = 0,
     equirectangular = 1,
     Mercator = 2,
+    Cassini = 3,
 }
 
 export type internalFormatType =
@@ -208,7 +209,7 @@ export type IMergerState = 'missing' | 'ready' | 'pending' | 'complete';
 
 export type configurationObservableEvt =
     'heightRatio' | 'intrudedHeightRatio' | 'coneStep' | 'TWEEN_TIMING' | 'referenceEquiRectangular' | 'pointsPerLine' |
-    'lambda0Mercator' | 'THREE_EARTH_RADIUS' | 'projectionBegin' | 'projectionEnd' | 'projectionPercent' | 'year' | 'tick';
+    'THREE_EARTH_RADIUS' | 'projectionBegin' | 'projectionEnd' | 'projectionPercent' | 'year' | 'tick';
 
 export type configurationCallback = (name: configurationObservableEvt, value: any) => void;
 export type ShaderTypes = 'fragment' | 'vertex';

@@ -8,7 +8,6 @@ uniform sampler2D u_Positions;
 uniform float threeRadius;
 uniform float earthRadius;
 uniform vec3 referenceEquiRectangular;
-uniform float lambda0;
 uniform int representationInit;
 uniform int representationEnd;
 uniform float percentRepresentation;
@@ -23,6 +22,6 @@ void main() {
 
   vec3 modelPosition = displayConversions(
       cartoPosition, threeRadius, earthRadius, referenceEquiRectangular,
-      lambda0, representationInit, representationEnd, percentRepresentation);
+      representationInit, representationEnd, percentRepresentation);
   myOutputColor = vec4(modelPosition, 0.0);
 }
