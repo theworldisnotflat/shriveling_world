@@ -257,7 +257,7 @@ export default class BigBoard {
 
         let skyGeometry = new CubeGeometry(10000, 10000, 10000);
         let skybox = new Mesh(skyGeometry, <any>materialArray);
-        this._scene.add(skybox);
+        // this._scene.add(skybox);
     }
 
     private _animate(): void {
