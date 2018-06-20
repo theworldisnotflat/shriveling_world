@@ -6,37 +6,6 @@ import {
     ICartographic, IConverterLookup, ISumUpCriteria, IItemCriteria, ICriterias, IOrderAscendant, IBBox, IListFile,
 } from '../definitions/project';
 
-export var mapProjectors: IConverterLookup = {
-    none:
-        {
-            converter: (
-                pos: Cartographic, toPack: boolean,
-                threeRadius: number = CONFIGURATION.THREE_EARTH_RADIUS): Vector3 | number[] => {
-                let radius = (CONFIGURATION.earthRadiusMeters + pos.height) / CONFIGURATION.earthRadiusMeters * threeRadius;
-                let x = -Math.cos(pos.longitude) * radius * Math.cos(pos.latitude);
-                let y = Math.sin(pos.latitude) * radius;
-                let z = Math.sin(pos.longitude) * radius * Math.cos(pos.latitude);
-                return toPack === true ? [x, y, z] : new Vector3(x, y, z);
-            },
-            reverser: (pos: Vector3, threeRadius: number = CONFIGURATION.THREE_EARTH_RADIUS): Cartographic => {
-                let radius = pos.length();
-                let resultat = new Cartographic();
-                resultat.height = (radius * CONFIGURATION.earthRadiusMeters / threeRadius) - CONFIGURATION.earthRadiusMeters;
-                resultat.longitude = Math.atan2(pos.z, -pos.x);
-                let cos = Math.cos(resultat.longitude);
-                let sin = Math.sin(resultat.longitude);
-                if (Math.abs(sin) > 1e-13) {
-                    resultat.latitude = Math.atan2(pos.y, pos.z / sin);
-                } else if (Math.abs(cos) > 1e-13) {
-                    resultat.latitude = Math.atan2(pos.y, pos.x / cos);
-                } else {
-                    resultat.latitude = Math.asin(pos.y);
-                }
-                return resultat;
-            },
-        },
-};
-
 export class Cartographic implements ICartographic {
     public latitude: number;
     public longitude: number;
@@ -92,16 +61,6 @@ export class Cartographic implements ICartographic {
         return Math.atan2(pos2.latitude - pos1.latitude, pos2.longitude - pos1.longitude);
     }
 
-    public static fromVector3(pos1: Vector3, projector: string): Cartographic {
-        let resultat: Cartographic;
-        if (mapProjectors.hasOwnProperty(projector)) {
-            resultat = mapProjectors[projector].reverser(pos1);
-        } else {
-            throw new Error('no projector with the name of ' + projector);
-        }
-        return resultat;
-    }
-
     public static fromJSON(value: any): any {
         return Generic_fromJSON(Cartographic, value.data);
     }
@@ -130,36 +89,6 @@ export class Cartographic implements ICartographic {
 
     public lerp(pos2: Cartographic, fractions: number[] = []): Cartographic[] {
         return Cartographic.lerp(this, pos2, fractions);
-    }
-
-    public toTHREEVector3(
-        nameProJections: string[] = []): { [name: string]: Vector3 } {
-        if (nameProJections.length === 0) {
-            nameProJections = [...Object.keys(mapProjectors)];
-        }
-        let that = this;
-        let resultat: { [name: string]: Vector3 } = {};
-        nameProJections.forEach((name) => {
-            if (mapProjectors.hasOwnProperty(name)) {
-                resultat[name] = <Vector3>mapProjectors[name].converter(that, false);
-            }
-        });
-        return resultat;
-    }
-
-    public toPack(
-        nameProJections: string[] = []): { [name: string]: number[] } {
-        if (nameProJections.length === 0) {
-            nameProJections = [...Object.keys(mapProjectors)];
-        }
-        let that = this;
-        let resultat: { [name: string]: number[] } = {};
-        nameProJections.forEach((name) => {
-            if (mapProjectors.hasOwnProperty(name)) {
-                resultat[name] = <number[]>mapProjectors[name].converter(that, true);
-            }
-        });
-        return resultat;
     }
 
     public direction(pos: Cartographic): number {

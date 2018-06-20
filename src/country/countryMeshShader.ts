@@ -5,7 +5,7 @@ import {
     BufferAttribute, Sphere,
 } from 'three';
 import { CONFIGURATION } from '../common/configuration';
-import { Cartographic, mapProjectors } from '../common/utils';
+import { Cartographic } from '../common/utils';
 import { IBBox, ITypeExtrusion, IMarkLimits } from '../definitions/project';
 import { GPUComputer } from '../common/gpuComputer';
 import { Shaders } from '../shaders';

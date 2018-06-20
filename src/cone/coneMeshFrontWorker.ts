@@ -6,7 +6,7 @@ import {
 import { Workers } from '../workers';
 import { CONFIGURATION } from '../common/configuration';
 import { PseudoCone } from './base';
-import { mapProjectors, updateSumUpCriteria, Cartographic, searchCriterias } from '../common/utils';
+import { updateSumUpCriteria, Cartographic, searchCriterias } from '../common/utils';
 import { ISumUpCriteria, ILookupTownTransport, ICriterias, IBBox, ILookupDirection } from '../definitions/project';
 import { NEDLocal } from '../common/referential';
 

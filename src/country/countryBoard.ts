@@ -1,6 +1,6 @@
 'use strict';
 import { Scene, Camera, Raycaster, Mesh, Vector2, Material } from 'three';
-import { mapProjectors, updateSumUpCriteria, Cartographic, searchCriterias } from '../common/utils';
+import { updateSumUpCriteria, Cartographic, searchCriterias } from '../common/utils';
 import { ISumUpCriteria, ICriterias } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
 import { CountryMeshShader } from './countryMeshShader';
@@ -94,10 +94,7 @@ export class CountryBoard {
         }
     }
 
-    public constructor(mainProjector: string, scene: Scene, camera: Camera) {
-        if (!mapProjectors.hasOwnProperty(mainProjector)) {
-            mainProjector = Object.keys(mapProjectors)[0];
-        }
+    public constructor( scene: Scene, camera: Camera) {
         this._scene = scene;
         this._camera = camera;
         this._raycaster = new Raycaster();

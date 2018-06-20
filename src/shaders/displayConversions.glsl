@@ -1,3 +1,27 @@
+#define ECKERT_CONST 2.26750802723822639138
+#define ECKERT_ITERATION 40
+
+const float exckert_delta_const = 2.57079632679489661923;
+
+float deltaEckert(in float theta, in float phi) {
+  return -(theta + sin(theta) - exckert_delta_const * sin(phi)) /
+         (1.0 + cos(theta));
+}
+
+vec3 eckert(in vec3 pos, in float threeRadius, in float earthRadius,
+            in vec3 reference) {
+  vec3 resultat = vec3(0.0);
+  float theta = reference.y;
+  for (int i = 0; i < ECKERT_ITERATION; i++) {
+    theta += deltaEckert(theta, pos.y);
+  }
+  resultat.x =
+      (pos.x - reference.x) * (1.0 + cos(theta)) / ECKERT_CONST * threeRadius;
+  resultat.y = 2.0 * theta / ECKERT_CONST * threeRadius;
+  resultat.z = (pos.z - reference.z) / earthRadius * threeRadius;
+  return resultat;
+}
+
 vec3 noRepresentation(in vec3 pos, in float threeRadius, in float earthRadius) {
   float radius = (earthRadius + pos.z) / earthRadius * threeRadius;
   vec3 resultat = vec3(0.0);
@@ -25,16 +49,23 @@ vec3 mercator(in vec3 pos, in float threeRadius, in float earthRadius,
   return resultat;
 }
 
-vec3 cassini(in vec3 pos, in float threeRadius, in float earthRadius,
-             in vec3 reference) {
+vec3 winkel(in vec3 pos, in float threeRadius, in float earthRadius,
+            in vec3 reference) {
   vec3 resultat = vec3(0.0);
   float cosPhi = cos(pos.y);
-  float sinLambda = sin(pos.x - reference.x);
   float sinPhi = sin(pos.y);
-  float cosLambda = cos(pos.x - reference.x);
-
-  resultat.x = asin(cosPhi * sinLambda) * threeRadius;
-  resultat.y = atan(sinPhi, cosPhi * cosLambda) * threeRadius;
+  float alpha = acos(cosPhi * cos(pos.x / 2.0));
+  float cardinalAlpha;
+  if (abs(alpha) < .0000001) {
+    cardinalAlpha = 1.0;
+  } else {
+    cardinalAlpha = sin(alpha) / alpha;
+  }
+  resultat.x = ((pos.x - reference.x) * cos(reference.y) +
+                2.0 * cosPhi * sin(pos.x / 2.0) / cardinalAlpha) *
+               threeRadius / 2.0;
+  resultat.y =
+      ((pos.y - reference.y) + sinPhi / cardinalAlpha) * threeRadius / 2.0;
   resultat.z = (pos.z - reference.z) / earthRadius * threeRadius;
   return resultat;
 }
@@ -49,7 +80,9 @@ vec3 convertor(in vec3 pos, in float threeRadius, in float earthRadius,
   } else if (representation == 2) {
     resultat = mercator(pos, threeRadius, earthRadius, reference.x);
   } else if (representation == 3) {
-    resultat = cassini(pos, threeRadius, earthRadius, reference);
+    resultat = winkel(pos, threeRadius, earthRadius, reference);
+  }else if (representation == 4) {
+    resultat = eckert(pos, threeRadius, earthRadius, reference);
   }
   return resultat;
 }
@@ -59,13 +92,13 @@ vec3 transit(in vec3 pos, in float threeRadius, in float earthRadius,
              in int representationEnd, in float percent) {
   vec3 resultat;
   if (representationInit == representationEnd) {
-    resultat = convertor(pos, threeRadius, earthRadius, reference,
-                         representationInit);
+    resultat =
+        convertor(pos, threeRadius, earthRadius, reference, representationInit);
   } else {
-    vec3 initVec = convertor(pos, threeRadius, earthRadius, reference,
-                             representationInit);
-    vec3 endVec = convertor(pos, threeRadius, earthRadius, reference,
-                            representationEnd);
+    vec3 initVec =
+        convertor(pos, threeRadius, earthRadius, reference, representationInit);
+    vec3 endVec =
+        convertor(pos, threeRadius, earthRadius, reference, representationEnd);
     resultat = mix(initVec, endVec, percent / 100.0);
   }
   return resultat;

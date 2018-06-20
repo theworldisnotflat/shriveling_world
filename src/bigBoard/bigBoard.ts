@@ -3,12 +3,12 @@ import { CONFIGURATION } from '../common/configuration';
 import {
     MeshBasicMaterial, DoubleSide, TextureLoader, MeshPhongMaterial, Color, Vector2, PerspectiveCamera, MeshStandardMaterial,
     OrbitControls, Scene, WebGLRenderer, BackSide, CubeGeometry, PointLight, Fog, AmbientLight, Mesh, LineBasicMaterial,
-    SphereBufferGeometry,
+    SphereBufferGeometry, PCFSoftShadowMap, PointLightHelper,
 } from 'three';
 import { ConeBoard } from '../cone/coneBoard';
 import { CountryBoard } from '../country/countryBoard';
 import { Merger } from './merger';
-import { DragnDrop, mapProjectors } from '../common/utils';
+import { DragnDrop } from '../common/utils';
 import {
     configurationObservableEvt, IMergerState, ISumUpCriteria, ILookupAndMaxSpeedAndLine, ICriterias,
     IListFile,
@@ -32,7 +32,7 @@ function prepareConfiguration(): void {
         CONFIGURATION.COUNTRY_MATERIAL = earthMaterial;
         CONFIGURATION.BASIC_CONE_MATERIAL = new MeshPhongMaterial({
             transparent: true,
-            opacity: 0.5,
+            opacity: 0.8,
             color: 0xebdede,
             side: DoubleSide,
             // shininess: 0,
@@ -40,7 +40,7 @@ function prepareConfiguration(): void {
             // roughness: 0,
             // metalness: 0.5,
         });
-        // a CONFIGURATION.BASIC_CONE_MATERIAL.map = new TextureLoader().load(CONFIGURATION.CONE_TEXTURE);
+        (<MeshPhongMaterial>CONFIGURATION.BASIC_CONE_MATERIAL).map = new TextureLoader().load(CONFIGURATION.CONE_TEXTURE);
         CONFIGURATION.BASIC_LINE_MATERIAL = new LineBasicMaterial({
             color: 0x1000ff, linewidth: .5, side: DoubleSide, transparent: true, opacity: 0.3,
         });
@@ -49,18 +49,17 @@ function prepareConfiguration(): void {
 
 let _lookupTransportColor: { [transportName: string]: { color: string, opacity: number } } = {};
 let _filesData: IListFile[] = [];
-let _light = new PointLight(0xffffff, 5, 1000, 2);
+let _light = new PointLight(0xffffff, 5); // (0xffffff, 5, 1000, 2);
 let _lightMesh = new Mesh(new SphereBufferGeometry(5, 16, 8), new MeshBasicMaterial({ color: 0xffffff }));
-// _light.castShadow = true;
+_light.castShadow = true;
 _light.shadow.mapSize.width = 512;  // default
 _light.shadow.mapSize.height = 512; // default
 _light.shadow.camera.near = 0.5;       // default
 _light.shadow.camera.far = 500;    // default
-_light.add(_lightMesh);
+// _light.add(_lightMesh);
 
 export default class BigBoard {
     public static configuration: any = CONFIGURATION;
-    public projectionNames: string[];
     private _cones: ConeBoard;
     private _countries: CountryBoard;
     private _container: HTMLDivElement;
@@ -72,17 +71,15 @@ export default class BigBoard {
     private _renderer: WebGLRenderer;
     private _windowHalfX: number = window.innerWidth / 2;
     private _windowHalfY: number = window.innerHeight / 2;
-    private _projectionName: string;
     private _merger: Merger;
 
     constructor() {
         this.updateConfiguration();
-        this._projectionName = this.projectionNames[0];
         this._merger = new Merger();
         this._init();
-        this._countries = new CountryBoard(this._projectionName, this._scene, this._camera);
+        this._countries = new CountryBoard(this._scene, this._camera);
         this._countries.show = true;
-        this._cones = new ConeBoard(this._projectionName, this._scene, this._camera, this._countries, this._renderer);
+        this._cones = new ConeBoard(this._scene, this._camera, this._countries, this._renderer);
         CONFIGURATION.year = '2010';
         this.initInteraction();
         this._animate();
@@ -136,7 +133,6 @@ export default class BigBoard {
     }
 
     public updateConfiguration(): void {
-        this.projectionNames = Object.keys(mapProjectors);
         prepareConfiguration();
     }
 
@@ -222,11 +218,16 @@ export default class BigBoard {
 
         _light.position.set(50, 50, 50);
         this._scene.add(_light);
+        let helper = new PointLightHelper(_light);
+        this._scene.add(helper);
 
         let ambient = new AmbientLight(0xffffff);
         this._scene.add(ambient);
 
         this._renderer = new WebGLRenderer({ antialias: true });
+        this._renderer.shadowMap.enabled = true;
+        this._renderer.shadowMap.type = PCFSoftShadowMap;
+
         this._renderer.setClearColor(0xffffff);
         this._renderer.setPixelRatio(window.devicePixelRatio);
         this._renderer.setSize(window.innerWidth, window.innerHeight);
@@ -275,7 +276,7 @@ export default class BigBoard {
         let conf = {
             coneStep: CONFIGURATION.coneStep * CONFIGURATION.rad2deg,
             year: parseInt(<string>CONFIGURATION.year, 10),
-            projection: { aucun: 0, equirectangulaire: 1, Mercator: 2, Cassini: 3 },
+            projection: { aucun: 0, equirectangulaire: 1, Mercator: 2, Winkel: 3, Eckert: 4 },
             'type de transport': '',
             'couleur des cônes': '#' + (<any>CONFIGURATION.BASIC_CONE_MATERIAL).color.getHex().toString(16),
             'transparence des cônes': CONFIGURATION.BASIC_CONE_MATERIAL.opacity,
@@ -324,7 +325,7 @@ export default class BigBoard {
         projectionFolder.add(CONFIGURATION, 'projectionInit', conf.projection).name('projection initiale');
         projectionFolder.add(CONFIGURATION, 'projectionEnd', conf.projection).name('projection finale');
         projectionFolder.add(CONFIGURATION, 'percentProjection', 0, 100).step(1).name('transition projection');
-        let annees = projectionFolder.add(conf, 'year', 1930, 1990).step(1);
+        let annees = generalFolder.add(conf, 'year', 1930, 1990).step(1);
         annees.onChange(v => CONFIGURATION.year = v);
 
         // cônes
