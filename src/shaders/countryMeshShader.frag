@@ -8,6 +8,8 @@ uniform sampler2D u_Positions;
 uniform float threeRadius;
 uniform float earthRadius;
 uniform vec3 referenceEquiRectangular;
+uniform float standardParallel1;
+uniform float standardParallel2;
 uniform int representationInit;
 uniform int representationEnd;
 uniform float percentRepresentation;
@@ -21,7 +23,7 @@ void main() {
   vec3 cartoPosition = texelFetch(u_Positions, pos2, 0).xyz;
 
   vec3 modelPosition = displayConversions(
-      cartoPosition, threeRadius, earthRadius, referenceEquiRectangular,
+      cartoPosition, threeRadius, earthRadius, referenceEquiRectangular,standardParallel1,standardParallel2,
       representationInit, representationEnd, percentRepresentation);
   myOutputColor = vec4(modelPosition, 0.0);
 }

@@ -12,6 +12,8 @@ uniform sampler2D u_PControls3;
 uniform float threeRadius;
 uniform float earthRadius;
 uniform vec3 referenceEquiRectangular;
+uniform float standardParallel1;
+uniform float standardParallel2;
 uniform int representationInit;
 uniform int representationEnd;
 uniform float percentRepresentation;
@@ -34,7 +36,7 @@ void main() {
                        3.0 * minusT * pow(ta, 2.0) * p2 + pow(ta, 3.0) * p3;
 
   vec3 modelPosition = displayConversions(
-      cartoPosition, threeRadius, earthRadius, referenceEquiRectangular,
+      cartoPosition, threeRadius, earthRadius, referenceEquiRectangular,standardParallel1,standardParallel2,
       representationInit, representationEnd, percentRepresentation);
   myOutputColor = vec4(modelPosition, 0.0);
 }

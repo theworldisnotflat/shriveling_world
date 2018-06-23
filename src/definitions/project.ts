@@ -14,6 +14,8 @@ export enum PROJECTION_ENUM {
     Mercator = 2,
     Winkel = 3,
     Eckert = 4,
+    vanDerGrinten = 5,
+    conicEquidistant = 6,
 }
 
 export type internalFormatType =

@@ -16,9 +16,7 @@ interface IShaderElevation {
 }
 
 let _cones: ConeMeshShader[];
-let _uvsArr: Float32Array;
 let _indexesArr: Uint16Array;
-
 let _localLimitsLookup: { [x: string]: { clock: number, distance: number }[] };
 let _conesWithoutDisplay: ConeMeshShader[] = [];
 let _cityCodeOrder: string[];
@@ -40,7 +38,6 @@ function fullCleanArrays(): void {
     _cityCodeOrder = [];
     _clocks = new Float32Array(0);
     _elevations = {};
-    _uvsArr = new Float32Array(0);
     _indexesArr = new Uint16Array(0);
 }
 fullCleanArrays();
@@ -84,28 +81,24 @@ function localLimitsFunction(tab: { clock: number, distance: number }[], coneSte
     return extrapolator(temporaire, 'clock', 'distance');
 }
 
-// quand on change constep!!
+// quand on change conestep!!
 function regenerateFromConeStep(): void {
     const step = CONFIGURATION.coneStep;
-    let uvs: number[] = [];
     let clocks: number[] = [];
     let index: number[] = [];
     let x: number, y: number, ib: number;
     for (let i = 0; i < CONFIGURATION.TWO_PI; i += step) {
         x = Math.cos(i);
         y = Math.sin(i);
-        uvs.push(x, y);
         clocks.push(i);
     }
     let length = clocks.length;
-    uvs.push(.5, .5, .5, .5);
     clocks.push(-1);
     for (let i = 0; i < length; i++) {
         ib = (i + 1) % length;
         index.push(i, ib, length, i, ib, length + 1);
     }
     _clocks = new Float32Array(clocks);
-    _uvsArr = new Float32Array(uvs);
     _indexesArr = new Uint16Array(index);
 
     _width = _clocks.length;
@@ -174,44 +167,32 @@ function computation(withNormals: boolean): void {
     uniforms.representationInit = CONFIGURATION.projectionInit;
     uniforms.representationEnd = CONFIGURATION.projectionEnd;
     uniforms.percentRepresentation = CONFIGURATION.percentProjection;
+    uniforms.standardParallel1 = CONFIGURATION.standardParallel1;
+    uniforms.standardParallel2 = CONFIGURATION.standardParallel2;
     _gpgpu.positions.updateUniforms(uniforms);
-    let allPositions = _gpgpu.positions.calculate(_width, _height)[0];
-
+    let [allPositions, uvs] = _gpgpu.positions.calculate(_width, _height);
     let options = {
         points: { src: allPositions, width: _width, height: _height },
     };
     _gpgpu.boundingSphere.updateTextures(options);
-    let temp = _gpgpu.boundingSphere.calculate(1, _height);
-    let boundingBoxes = temp[0];
-    let lastPosition = temp[1];
+    let [boundingBoxes, lastPosition] = _gpgpu.boundingSphere.calculate(1, _height);
 
     let finalPositions = new Float32Array((_width + 1) * _height * 4);
+    let finalUV = new Float32Array((_width + 1) * _height * 4);
     let offset: number;
     for (let i = 0; i < _height; i++) {
         offset = i * (_width + 1) * 4;
         finalPositions.set(allPositions.subarray(i * _width * 4, (i + 1) * _width * 4), offset);
         finalPositions.set(lastPosition.subarray(i * 4, (i + 1) * 4), offset + 4 * _width);
+        finalUV.set(uvs.subarray(i * _width * 4, (i + 1) * _width * 4), offset);
+        finalUV.set(uvs.subarray((i + 1) * _width * 4 - 4, (i + 1) * _width * 4), offset + 4 * _width);
     }
 
-    let normals: Float32Array;
-    withNormals = false;
-    // if (withNormals === true) {
-    //     options = {
-    //         points: { src: finalPositions, width: _width + 1, height: _height },
-    //     };
-    //     _gpgpu.rawNormals.updateTextures(options);
-    //     let raws = _gpgpu.rawNormals.calculate(_width + 1, _height)[0];
-    //
-    //     options['rawNormals'] = { src: raws, width: _width + 1, height: _height };
-    //     _gpgpu.normals.updateTextures(options);
-    //     normals = _gpgpu.normals.calculate(_width + 1, _height)[0];
-    // }
-    let boundingBox: Float32Array;
-    let norms: Float32Array;
     for (let i = 0; i < _height; i++) {
-        boundingBox = boundingBoxes.subarray(i * 4, (i + 1) * 4);
-        // norms = withNormals === true ? normals.subarray(i * (_width + 1) * 4, (i + 1) * (_width + 1) * 4) : undefined;
-        _cones[i].setGeometry(finalPositions.subarray(i * (_width + 1) * 4, (i + 1) * (_width + 1) * 4), boundingBox, norms);
+        _cones[i].setGeometry(
+            finalPositions.subarray(i * (_width + 1) * 4, (i + 1) * (_width + 1) * 4),
+            boundingBoxes.subarray(i * 4, (i + 1) * 4),
+            finalUV.subarray(i * (_width + 1) * 4, (i + 1) * (_width + 1) * 4));
     }
 }
 let start = performance.now();
@@ -250,27 +231,9 @@ export class ConeMeshShader extends PseudoCone {
                             u_ned2ECEF2s: 'RGB32F',
                             u_withLimits: 'R8',
                         },
-                        1).then(
+                        2).then(
                             (instance) => {
                                 _gpgpu.positions = instance;
-                                return instance;
-                            }),
-                    GPUComputer.GPUComputerFactory(
-                        Shaders.getShader('rawVerticeNormal', 'fragment'), {
-                            points: 'RGBA32F',
-                        },
-                        1).then(
-                            (instance) => {
-                                _gpgpu.rawNormals = instance;
-                                return instance;
-                            }),
-                    GPUComputer.GPUComputerFactory(
-                        Shaders.getShader('verticeNormal', 'fragment'), {
-                            points: 'RGBA32F',
-                        },
-                        1).then(
-                            (instance) => {
-                                _gpgpu.normals = instance;
                                 return instance;
                             }),
                     GPUComputer.GPUComputerFactory(
@@ -292,7 +255,6 @@ export class ConeMeshShader extends PseudoCone {
                                     case 'coneStep':
                                         _clocks = new Float32Array(0);
                                         _elevations = {};
-                                        _uvsArr = new Float32Array(0);
                                         _indexesArr = new Uint16Array(0);
                                         regenerateFromConeStep();
                                         updateElevations();
@@ -383,7 +345,7 @@ export class ConeMeshShader extends PseudoCone {
         super.dispose();
     }
 
-    public setGeometry(positions: Float32Array, boundingSphereData: Float32Array, normals?: Float32Array): void {
+    public setGeometry(positions: Float32Array, boundingSphereData: Float32Array, uv: Float32Array): void {
         let bufferedGeometry = <BufferGeometry>this.geometry;
         if (_conesWithoutDisplay.indexOf(this) === -1) {
             let interleavedBuffer = (<InterleavedBufferAttribute>bufferedGeometry.getAttribute('position')).data;
@@ -396,17 +358,12 @@ export class ConeMeshShader extends PseudoCone {
             bufferedGeometry.boundingSphere.radius = boundingSphereData[3];
             bufferedGeometry.computeVertexNormals();
             bufferedGeometry.computeBoundingSphere();
-            if (normals !== undefined) {
-                interleavedBuffer = (<InterleavedBufferAttribute>bufferedGeometry.getAttribute('normal')).data;
-                interleavedBuffer.set(normals, 0);
-                interleavedBuffer.needsUpdate = true;
-            }
+            interleavedBuffer = (<InterleavedBufferAttribute>bufferedGeometry.getAttribute('uv')).data;
+            interleavedBuffer.set(uv, 0);
+            interleavedBuffer.needsUpdate = true;
             if (bufferedGeometry.drawRange.count !== _indexesArr.length) {
                 bufferedGeometry.getIndex().set(_indexesArr);
                 bufferedGeometry.getIndex().needsUpdate = true;
-                let bufferAttribute = (<BufferAttribute>bufferedGeometry.getAttribute('uv'));
-                bufferAttribute.set(_uvsArr);
-                bufferAttribute.needsUpdate = true;
                 bufferedGeometry.setDrawRange(0, _indexesArr.length);
             }
         } else {
@@ -421,12 +378,11 @@ export class ConeMeshShader extends PseudoCone {
     private constructor(cityCode: string, position: Cartographic, directions: ILookupDirection, properties: any, transportName: string) {
         const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(400 * 4), 4).setDynamic(true);
         const interleavedBufferAttributePosition = new InterleavedBufferAttribute(interleavedBufferPosition, 3, 0, false);
-        const interleavedBufferNormal = new InterleavedBuffer(new Float32Array(400 * 4), 4).setDynamic(true);
-        const interleavedBufferAttributeNormal = new InterleavedBufferAttribute(interleavedBufferNormal, 3, 0, false);
+        const interleavedBufferUV = new InterleavedBuffer(new Float32Array(400 * 4), 4).setDynamic(true);
+        const interleavedBufferAttributeUV = new InterleavedBufferAttribute(interleavedBufferUV, 3, 0, false);
         const bufferGeometry = new BufferGeometry();
         bufferGeometry.addAttribute('position', interleavedBufferAttributePosition);
-        bufferGeometry.addAttribute('normal', interleavedBufferAttributeNormal);
-        bufferGeometry.addAttribute('uv', new BufferAttribute(new Float32Array(400 * 2), 2).setDynamic(true));
+        bufferGeometry.addAttribute('uv', interleavedBufferAttributeUV);
         bufferGeometry.setIndex(new BufferAttribute(new Uint16Array(400 * 6), 1).setDynamic(true));
         bufferGeometry.setDrawRange(0, 0);
         bufferGeometry.computeBoundingSphere();

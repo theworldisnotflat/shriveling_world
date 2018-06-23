@@ -2,8 +2,8 @@
 import { CONFIGURATION } from '../common/configuration';
 import {
     MeshBasicMaterial, DoubleSide, TextureLoader, MeshPhongMaterial, Color, Vector2, PerspectiveCamera, MeshStandardMaterial,
-    OrbitControls, Scene, WebGLRenderer, BackSide, CubeGeometry, PointLight, Fog, AmbientLight, Mesh, LineBasicMaterial,
-    SphereBufferGeometry, PCFSoftShadowMap, PointLightHelper,
+    OrbitControls, Scene, WebGLRenderer, BackSide, CubeGeometry, SpotLight, Fog, AmbientLight, Mesh, LineBasicMaterial,
+    SphereBufferGeometry, PCFSoftShadowMap, SpotLightHelper, PlaneBufferGeometry,
 } from 'three';
 import { ConeBoard } from '../cone/coneBoard';
 import { CountryBoard } from '../country/countryBoard';
@@ -49,15 +49,14 @@ function prepareConfiguration(): void {
 
 let _lookupTransportColor: { [transportName: string]: { color: string, opacity: number } } = {};
 let _filesData: IListFile[] = [];
-let _light = new PointLight(0xffffff, 5); // (0xffffff, 5, 1000, 2);
-let _lightMesh = new Mesh(new SphereBufferGeometry(5, 16, 8), new MeshBasicMaterial({ color: 0xffffff }));
+let _light = new SpotLight(0xffffff, 2, 800, Math.PI / 3, 0.1); // (0xffffff, 5, 1000, 2);
 _light.castShadow = true;
 _light.shadow.mapSize.width = 512;  // default
 _light.shadow.mapSize.height = 512; // default
 _light.shadow.camera.near = 0.5;       // default
-_light.shadow.camera.far = 500;    // default
-// _light.add(_lightMesh);
+_light.shadow.camera.far = 800;    // default
 
+let _ambient = new AmbientLight(0xffffff);
 export default class BigBoard {
     public static configuration: any = CONFIGURATION;
     private _cones: ConeBoard;
@@ -72,6 +71,7 @@ export default class BigBoard {
     private _windowHalfX: number = window.innerWidth / 2;
     private _windowHalfY: number = window.innerHeight / 2;
     private _merger: Merger;
+    private _helper: SpotLightHelper;
 
     constructor() {
         this.updateConfiguration();
@@ -216,13 +216,12 @@ export default class BigBoard {
         this._camera.lookAt(this._scene.position);
         this._scene.fog = new Fog(0x000000, 1, 15000);
 
-        _light.position.set(50, 50, 50);
+        _light.position.set(0, 0, 1);
         this._scene.add(_light);
-        let helper = new PointLightHelper(_light);
-        this._scene.add(helper);
+        this._helper = new SpotLightHelper(_light);
+        this._scene.add(this._helper);
 
-        let ambient = new AmbientLight(0xffffff);
-        this._scene.add(ambient);
+        this._scene.add(_ambient);
 
         this._renderer = new WebGLRenderer({ antialias: true });
         this._renderer.shadowMap.enabled = true;
@@ -231,7 +230,13 @@ export default class BigBoard {
         this._renderer.setClearColor(0xffffff);
         this._renderer.setPixelRatio(window.devicePixelRatio);
         this._renderer.setSize(window.innerWidth, window.innerHeight);
-        this._renderer.sortObjects = false;
+        // this._renderer.sortObjects = false;
+        let planeGeometry = new PlaneBufferGeometry(1000, 1000, 32, 32);
+        let planeMaterial = new MeshStandardMaterial({ color: 0x00ff00 });
+        let plane = new Mesh(planeGeometry, planeMaterial);
+        plane.position.z = -200;
+        plane.receiveShadow = true;
+        this._scene.add(plane);
         this._container.appendChild(this._renderer.domElement);
         this._controls = new OrbitControls(this._camera, this._renderer.domElement);
 
@@ -256,8 +261,8 @@ export default class BigBoard {
             }));
 
         let skyGeometry = new CubeGeometry(10000, 10000, 10000);
-        let skybox = new Mesh(skyGeometry, <any>materialArray);
-        // this._scene.add(skybox);
+        let skybox = new Mesh(skyGeometry, materialArray);
+        this._scene.add(skybox);
     }
 
     private _animate(): void {
@@ -276,7 +281,7 @@ export default class BigBoard {
         let conf = {
             coneStep: CONFIGURATION.coneStep * CONFIGURATION.rad2deg,
             year: parseInt(<string>CONFIGURATION.year, 10),
-            projection: { aucun: 0, equirectangulaire: 1, Mercator: 2, Winkel: 3, Eckert: 4 },
+            projection: { aucun: 0, equirectangulaire: 1, Mercator: 2, Winkel: 3, Eckert: 4, 'Van Der Grinten': 5, 'conic equidistant': 6 },
             'type de transport': '',
             'couleur des cônes': '#' + (<any>CONFIGURATION.BASIC_CONE_MATERIAL).color.getHex().toString(16),
             'transparence des cônes': CONFIGURATION.BASIC_CONE_MATERIAL.opacity,
@@ -286,19 +291,23 @@ export default class BigBoard {
             'longitude': CONFIGURATION.referenceEquiRectangular.longitude,
             'latitude': CONFIGURATION.referenceEquiRectangular.latitude,
             'hauteur': CONFIGURATION.referenceEquiRectangular.height,
+            'parallèle standard 1': CONFIGURATION.standardParallel1 * CONFIGURATION.rad2deg,
+            'parallèle standard 2': CONFIGURATION.standardParallel2 * CONFIGURATION.rad2deg,
         };
 
         let that = this;
         // lumière
         let lightFolder = gui.addFolder('lumière');
+        lightFolder.add(_ambient, 'intensity', 0, 5, 0.01).name('intensité ambiante');
         lightFolder.addColor(conf, 'couleur lumière').onChange(v => {
             let color = parseInt(v.replace('#', ''), 16);
             _light.color.setHex(color);
-            (<MeshBasicMaterial>_lightMesh.material).color.setHex(color);
+            this._helper.color = color;
+            this._helper.update();
         });
-        lightFolder.add(_light.position, 'x', -1000, 1000).step(1);
-        lightFolder.add(_light.position, 'y', -1000, 1000).step(1);
-        lightFolder.add(_light.position, 'z', -1000, 1000).step(1);
+        lightFolder.add(_light.position, 'x', -200, 200, 0.001).onChange(v => this._helper.update());
+        lightFolder.add(_light.position, 'y', -200, 200, 0.001).onChange(v => this._helper.update());
+        lightFolder.add(_light.position, 'z', -200, 200, 0.001).onChange(v => this._helper.update());
         lightFolder.add(_light.shadow.mapSize, 'width', 0, 1000).step(1);
         lightFolder.add(_light.shadow.mapSize, 'height', 0, 1000).step(1);
         lightFolder.add(_light.shadow.camera, 'near', 0, 1000).step(0.5);
@@ -322,10 +331,14 @@ export default class BigBoard {
         refLat.onChange(changeReference);
         let refHeight = referenceFolder.add(conf, 'hauteur', -radius + 10, radius + 10).step(1000);
         refHeight.onChange(changeReference);
+        referenceFolder.add(conf, 'parallèle standard 1', -90, 90, 0.1)
+            .onChange(v => CONFIGURATION.standardParallel1 = v * CONFIGURATION.deg2rad);
+        referenceFolder.add(conf, 'parallèle standard 2', -90, 90, 0.1)
+            .onChange(v => CONFIGURATION.standardParallel2 = v * CONFIGURATION.deg2rad);
         projectionFolder.add(CONFIGURATION, 'projectionInit', conf.projection).name('projection initiale');
         projectionFolder.add(CONFIGURATION, 'projectionEnd', conf.projection).name('projection finale');
         projectionFolder.add(CONFIGURATION, 'percentProjection', 0, 100).step(1).name('transition projection');
-        let annees = generalFolder.add(conf, 'year', 1930, 1990).step(1);
+        let annees = generalFolder.add(conf, 'year', 1930, 2030).step(1);
         annees.onChange(v => CONFIGURATION.year = v);
 
         // cônes
@@ -404,7 +417,7 @@ export default class BigBoard {
                         this._countries.add(JSON.parse(json)).then(() => {
                             while (countryControllersList.length > 0) {
                                 let subGui = countryControllersList.pop();
-                                (<any>countryFolder).removeFolder(subGui);
+                                countryFolder.removeFolder(subGui);
                             }
                             let synonymes: string[] = [];
                             this._countries.countryMeshCollection.sort((a, b) => a.mainName.localeCompare(b.mainName))

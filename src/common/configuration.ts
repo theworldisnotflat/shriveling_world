@@ -19,6 +19,8 @@ const _OVER_PI: number = 1 / Math.PI;
 const _OVER_TWO_PI: number = 1 / (2 * Math.PI);
 const _referenceEquiRectangular: ICartographic = { latitude: 0, longitude: 0, height: 0 };
 const _referenceEquiRectangularFloat32Array = new Float32Array(3);
+let _standardParallel1: number = 30 * _deg2rad;
+let _standardParallel2: number = 45 * _deg2rad;
 let _heightRatio: number = 0;
 let _intrudedHeightRatio: number = 0;
 let _coneStep: number = 0;
@@ -147,8 +149,21 @@ export const CONFIGURATION = {
             fireEvents('referenceEquiRectangular', _referenceEquiRectangular);
         }
     },
-
     get referenceEquiRectangularArray(): Float32Array { return _referenceEquiRectangularFloat32Array; },
+    get standardParallel1(): number { return _standardParallel1; },
+    get standardParallel2(): number { return _standardParallel2; },
+    set standardParallel1(value: number) {
+        if (Math.abs(value) < Math.PI / 2 && Math.abs(value - _standardParallel2) > .00000001) {
+            _standardParallel1 = value;
+            fireEvents('referenceEquiRectangular', _referenceEquiRectangular);
+        }
+    },
+    set standardParallel2(value: number) {
+      if (Math.abs(value) < Math.PI / 2 && Math.abs(value - _standardParallel1) > .00000001) {
+          _standardParallel2 = value;
+          fireEvents('referenceEquiRectangular', _referenceEquiRectangular);
+      }
+    },
 
     get THREE_EARTH_RADIUS(): number { return _THREE_EARTH_RADIUS; },
     set THREE_EARTH_RADIUS(value: number) { _THREE_EARTH_RADIUS = value; fireEvents('THREE_EARTH_RADIUS', value); },
