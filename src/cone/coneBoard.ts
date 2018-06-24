@@ -3,7 +3,7 @@ import { Scene, Camera, WebGLRenderer, Raycaster, Mesh, Vector2, BufferGeometry,
 import { CONFIGURATION } from '../common/configuration';
 import { PseudoCone } from './base';
 import { ConeMeshShader } from './coneMeshShader';
-import { mapProjectors, updateSumUpCriteria, Cartographic, searchCriterias } from '../common/utils';
+import { updateSumUpCriteria, Cartographic, searchCriterias } from '../common/utils';
 import {
     ISumUpCriteria, ILookupAndMaxSpeedAndLine, ICriterias, ILookupTownTransport,
     ILookupTransportPerYear, ILookupLine,
@@ -15,7 +15,6 @@ const forbiddenAttributes = ['referential', 'position'];
 export class ConeBoard {
     public coneMeshCollection: PseudoCone[] = [];
     public lineCollection: LineMeshShader[] = [];
-    private _projection: string;
     private _scene: Scene;
     private _camera: Camera;
     private _raycaster: Raycaster;
@@ -76,15 +75,10 @@ export class ConeBoard {
             this.coneMeshCollection.forEach(cone => (<Material>cone.material).opacity = value);
         }
     }
-    public constructor(
-        mainProjector: string, scene: Scene, camera: Camera, countries: CountryBoard, renderer: WebGLRenderer) {
-        if (!mapProjectors.hasOwnProperty(mainProjector)) {
-            mainProjector = Object.keys(mapProjectors)[0];
-        }
+    public constructor(scene: Scene, camera: Camera, countries: CountryBoard, renderer: WebGLRenderer) {
         this._scene = scene;
         this._camera = camera;
         this._raycaster = new Raycaster();
-        this._projection = mainProjector;
         this._countries = countries;
         this._renderer = renderer;
     }
@@ -98,7 +92,7 @@ export class ConeBoard {
                 myConsistentLookup[cityCode] = lookup.lookupTownTransport[cityCode];
             }
         }
-        lookup.lookupTownTransport = myConsistentLookup;
+        // lookup.lookupTownTransport = myConsistentLookup;
         let that = this;
         let bboxes = this._countries.countryMeshCollection.map((country) => country.bbox);
         ConeMeshShader.generateCones(lookup.lookupTownTransport, lookup.maxSpeedPerYear, bboxes).then((cones) => {

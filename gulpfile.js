@@ -140,7 +140,8 @@ gulp.task('build', [
   }
   await bundle.write(outputOptions);
   let {code, map} = await bundle.generate(outputOptions);
-  code = externalLibraries + code.replace(/.__SHADERS_HERE__./, shadersString).replace(/.__LIBRARIES_HERE__./, librariesString).replace(/.'__WORKERS_HERE__'./, JSON.stringify(workers)).replace(/twgl_js/g, 'twgl');
+  code = externalLibraries + code.replace(/.__SHADERS_HERE__./, shadersString).replace(/.__LIBRARIES_HERE__./, librariesString)
+  .replace(/.'__WORKERS_HERE__'./g, JSON.stringify(workers));
   await fs.outputFile(__dirname + '/dist/shriveling.js', code);
 });
 

@@ -5,7 +5,7 @@ import {
     BufferAttribute, Sphere,
 } from 'three';
 import { CONFIGURATION } from '../common/configuration';
-import { Cartographic, mapProjectors } from '../common/utils';
+import { Cartographic } from '../common/utils';
 import { IBBox, ITypeExtrusion, IMarkLimits } from '../definitions/project';
 import { GPUComputer } from '../common/gpuComputer';
 import { Shaders } from '../shaders';
@@ -302,6 +302,8 @@ function computation(): void {
     uniforms.representationInit = CONFIGURATION.projectionInit;
     uniforms.representationEnd = CONFIGURATION.projectionEnd;
     uniforms.percentRepresentation = CONFIGURATION.percentProjection;
+    uniforms.standardParallel1 = CONFIGURATION.standardParallel1;
+    uniforms.standardParallel2 = CONFIGURATION.standardParallel2;
     _gpgpu.positions.updateUniforms(uniforms);
     let options: { [x: string]: { src: ArrayBufferView, width: number, height: number, depth?: number } } = {
         u_Positions: { src: _vertexArrayEntries, width: _width, height: _height },
@@ -481,5 +483,7 @@ export class CountryMeshShader extends Mesh {
         this.outputLimits = outputLimits;
         this._mainProperty = preMesh.properties[mainProperty];
         this.extruded = 1;
+        this.castShadow = true;
+        this.receiveShadow = true;
     }
 }

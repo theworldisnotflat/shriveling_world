@@ -62,6 +62,8 @@ function computation(): void {
     uniforms.representationInit = CONFIGURATION.projectionInit;
     uniforms.representationEnd = CONFIGURATION.projectionEnd;
     uniforms.percentRepresentation = CONFIGURATION.percentProjection;
+    uniforms.standardParallel1 = CONFIGURATION.standardParallel1;
+    uniforms.standardParallel2 = CONFIGURATION.standardParallel2;
     _gpgpu.positions.updateUniforms(uniforms);
     let tempo = _gpgpu.positions.calculate(_width, _height);
     let allPositions = tempo[0];

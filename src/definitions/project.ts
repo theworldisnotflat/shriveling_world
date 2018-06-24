@@ -1,4 +1,4 @@
-import { mapProjectors, updateSumUpCriteria, Cartographic } from '../common/utils';
+import { updateSumUpCriteria, Cartographic } from '../common/utils';
 import { Vector3 } from 'three';
 import { NEDLocal } from '../common/referential';
 export interface ICountryTextureURL {
@@ -12,7 +12,10 @@ export enum PROJECTION_ENUM {
     none = 0,
     equirectangular = 1,
     Mercator = 2,
-    Cassini = 3,
+    Winkel = 3,
+    Eckert = 4,
+    vanDerGrinten = 5,
+    conicEquidistant = 6,
 }
 
 export type internalFormatType =

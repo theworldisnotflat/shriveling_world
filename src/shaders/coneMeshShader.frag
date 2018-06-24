@@ -17,6 +17,8 @@ uniform isampler2D u_withLimits;
 uniform float threeRadius;
 uniform float earthRadius;
 uniform vec3 referenceEquiRectangular;
+uniform float standardParallel1;
+uniform float standardParallel2;
 uniform int representationInit;
 uniform int representationEnd;
 uniform float percentRepresentation;
@@ -25,6 +27,7 @@ uniform float percentRepresentation;
 #pragma glslify: displayConversions =require(./src/shaders/displayConversions.glsl)
 in vec2 pos;
 layout(location = 0) out vec4 myOutputColor;
+layout(location = 1) out vec4 uvs;
 // pos.x => clock ; pos.y => town
 void main() {
   ivec2 pos2=ivec2(pos);
@@ -52,7 +55,8 @@ void main() {
                                        ned2ECEF, earthRadius);
   }
   vec3 modelPosition = displayConversions(
-      cartoPosition, threeRadius, earthRadius, referenceEquiRectangular,
+      cartoPosition, threeRadius, earthRadius, referenceEquiRectangular,standardParallel1,standardParallel2,
       representationInit, representationEnd, percentRepresentation);
   myOutputColor = vec4(modelPosition,0.0);
+  uvs = vec4(cartoPosition.x / PI + 0.5, cartoPosition.x / (2.0 * PI) + 0.5, 0.0, 0.0);
 }
