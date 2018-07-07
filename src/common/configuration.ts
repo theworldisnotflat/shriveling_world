@@ -1,5 +1,5 @@
 'use strict';
-import { MeshBasicMaterial, MeshStandardMaterial, LineBasicMaterial, MeshPhongMaterial, Material } from 'three';
+import { MeshBasicMaterial, MeshStandardMaterial, LineBasicMaterial, MeshPhongMaterial, MeshMaterial } from 'three';
 import { generateUUID } from './utils';
 import {
     PROJECTION_ENUM, ICountryTextureURL, ICartographic, configurationObservableEvt, configurationCallback,
@@ -31,8 +31,8 @@ let _projectionEnd: PROJECTION_ENUM = PROJECTION_ENUM.none;
 let _projectionPercent: number = 0;
 let _year: string | number = 1980;
 let _highLitedMaterial: MeshBasicMaterial;
-let _COUNTRY_MATERIAL: Material;
-let _BASIC_CONE_MATERIAL: Material;
+let _COUNTRY_MATERIAL: MeshMaterial;
+let _BASIC_CONE_MATERIAL: MeshMaterial;
 let _BASIC_LINE_MATERIAL: LineBasicMaterial;
 let _pointsPerLine: number = 50;
 
@@ -124,10 +124,10 @@ export const CONFIGURATION = {
         normalMap: 'assets/earth_normalmap_flat4k.jpg',
     },
     CONE_TEXTURE: 'assets/coneTexture.png',
-    get COUNTRY_MATERIAL(): Material { return _COUNTRY_MATERIAL; },
-    get BASIC_CONE_MATERIAL(): Material { return _BASIC_CONE_MATERIAL; },
-    set COUNTRY_MATERIAL(value: Material) { _COUNTRY_MATERIAL = value; },
-    set BASIC_CONE_MATERIAL(value: Material) { _BASIC_CONE_MATERIAL = value; },
+    get COUNTRY_MATERIAL(): MeshMaterial { return _COUNTRY_MATERIAL; },
+    get BASIC_CONE_MATERIAL(): MeshMaterial { return _BASIC_CONE_MATERIAL; },
+    set COUNTRY_MATERIAL(value: MeshMaterial) { _COUNTRY_MATERIAL = value; },
+    set BASIC_CONE_MATERIAL(value: MeshMaterial) { _BASIC_CONE_MATERIAL = value; },
     get BASIC_LINE_MATERIAL(): LineBasicMaterial { return _BASIC_LINE_MATERIAL; },
     set BASIC_LINE_MATERIAL(value: LineBasicMaterial) { _BASIC_LINE_MATERIAL = value; },
     SKYBOX_URLS: <string[]>[

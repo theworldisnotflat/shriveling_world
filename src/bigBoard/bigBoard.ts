@@ -15,6 +15,7 @@ import {
 } from '../definitions/project';
 import { PseudoCone } from '../cone/base';
 import { CountryMeshShader } from '../country/countryMeshShader';
+import { LineMeshShader } from '../cone/lineMeshShaders';
 import * as dat from 'dat.gui';
 declare var Stats: any;
 
@@ -47,7 +48,6 @@ function prepareConfiguration(): void {
     }
 }
 
-let _lookupTransportColor: { [transportName: string]: { color: string, opacity: number } } = {};
 let _filesData: IListFile[] = [];
 let _light = new SpotLight(0xffffff, 2, 800, Math.PI / 3, 0.1); // (0xffffff, 5, 1000, 2);
 _light.castShadow = true;
@@ -293,6 +293,7 @@ export default class BigBoard {
             'hauteur': CONFIGURATION.referenceEquiRectangular.height,
             'parallèle standard 1': CONFIGURATION.standardParallel1 * CONFIGURATION.rad2deg,
             'parallèle standard 2': CONFIGURATION.standardParallel2 * CONFIGURATION.rad2deg,
+            'with limits': true,
         };
 
         let that = this;
@@ -316,7 +317,7 @@ export default class BigBoard {
         // généralités
         let generalFolder = gui.addFolder('Généralités');
         let projectionFolder = generalFolder.addFolder('projection');
-        let referenceFolder = projectionFolder.addFolder('projection');
+        let referenceFolder = projectionFolder.addFolder('references');
         const radius = CONFIGURATION.earthRadiusMeters;
         function changeReference(): void {
             CONFIGURATION.referenceEquiRectangular = {
@@ -343,50 +344,20 @@ export default class BigBoard {
 
         // cônes
         let coneFolder = gui.addFolder('Cones');
-        function colorListener(): void {
-            let selectedTransport = <string>coneSelectTransport.getValue();
-            let opacity = <number>coneOpacity.getValue();
-            let color = parseInt(coneColor.getValue().replace('#', ''), 16);
-            that._cones.coneMeshCollection.filter((cone) => selectedTransport === cone.transportName)
-                .forEach((cone) => {
-                    let material = (<MeshPhongMaterial>cone.material);
-                    material.color.setHex(color);
-                    material.opacity = opacity;
-                });
-        }
+
         coneFolder.add(conf, 'coneStep', 1, 360).step(1).
             onChange(value => CONFIGURATION.coneStep = value * CONFIGURATION.deg2rad);
-        coneFolder.add(this, 'withLimits');
+        coneFolder.add(this, 'withLimits').onChange(value => conf['with limits'] = value);
         coneFolder.add(this._cones, 'opacity', 0, 1).step(0.01).name('opacité');
-        let coneSelectTransport: dat.GUIController = coneFolder.add(conf, 'type de transport', this._merger.transportNames);
-        coneSelectTransport.onChange((v) => {
-            if (!_lookupTransportColor.hasOwnProperty(v)) {
-                _lookupTransportColor[v] = { color: '#ff0000', opacity: 1 };
-            }
-            coneColor.setValue(_lookupTransportColor[v].color).updateDisplay();
-            coneOpacity.setValue(_lookupTransportColor[v].opacity).updateDisplay();
-        });
-        let coneColor = coneFolder.addColor(conf, 'couleur des cônes');
-        coneColor.onChange(colorListener);
-        let coneOpacity = coneFolder.add(conf, 'transparence des cônes', 0, 1).step(0.01);
-        coneOpacity.onChange(colorListener);
+        let terresterialFolder = coneFolder.addFolder('configurations spécifiques');
+        let terrestrialControllersList: dat.GUI[] = [];
+        let flagTransportDone = false;
 
         // lignes
-        let lineFolder = gui.addFolder('Lignes');
-        function lineListener(): void {
-            let opacity = <number>lineOpacity.getValue();
-            let color = parseInt(lineColor.getValue().replace('#', ''), 16);
-            that._cones.lineCollection.forEach((line) => {
-                let material = (<LineBasicMaterial>line.material);
-                material.color.setHex(color);
-                material.opacity = opacity;
-            });
-        }
-        lineFolder.add(CONFIGURATION, 'pointsPerLine', 0, 200).step(1).name('nombre de points');
-        let lineColor = lineFolder.addColor(conf, 'couleur des lignes');
-        lineColor.onChange(lineListener);
-        let lineOpacity = lineFolder.add(conf, 'transparence des lignes', 0, 1).step(0.01);
-        lineOpacity.onChange(lineListener);
+        let aerialFolder = gui.addFolder('Lignes');
+        aerialFolder.add(LineMeshShader, 'coefficient', 0, 10, .1);
+        aerialFolder.add(CONFIGURATION, 'pointsPerLine', 0, 200).step(1).name('nombre de points');
+        let aerialControllersList: dat.GUI[] = [];
 
         // pays /mise en exergue avec listen?
         let countryFolder = gui.addFolder('pays');
@@ -412,44 +383,100 @@ export default class BigBoard {
                         }
                     }
                 });
-                new Promise(resolve => {
-                    if (this._countries.ready === false && json !== undefined) {
-                        this._countries.add(JSON.parse(json)).then(() => {
-                            while (countryControllersList.length > 0) {
-                                let subGui = countryControllersList.pop();
-                                countryFolder.removeFolder(subGui);
-                            }
-                            let synonymes: string[] = [];
-                            this._countries.countryMeshCollection.sort((a, b) => a.mainName.localeCompare(b.mainName))
-                                .forEach(country => {
-                                    let countryName = country.mainName;
-                                    let i = -1;
-                                    while (synonymes.indexOf(countryName) > -1) {
-                                        i++;
-                                        countryName = country.mainName + i;
-                                    }
-                                    synonymes.push(countryName);
-                                    let folder = countryFolder.addFolder(countryName);
-                                    folder.add(country, 'extruded', -100, 100).step(1).listen();
-                                    folder.add(country, 'visible').listen();
-                                    folder.add(country.material, 'opacity', 0, 1).step(0.01).listen();
-                                    countryControllersList.push(folder);
-                                });
+                Promise.all([
+                    new Promise(resolve => {
+                        if (this._countries.ready === false && json !== undefined) {
+                            this._countries.add(JSON.parse(json)).then(() => {
+                                while (countryControllersList.length > 0) {
+                                    let subGui = countryControllersList.pop();
+                                    countryFolder.removeFolder(subGui);
+                                }
+                                let synonymes: string[] = [];
+                                this._countries.countryMeshCollection.sort((a, b) => a.mainName.localeCompare(b.mainName))
+                                    .forEach(country => {
+                                        let countryName = country.mainName;
+                                        let i = -1;
+                                        while (synonymes.indexOf(countryName) > -1) {
+                                            i++;
+                                            countryName = country.mainName + i;
+                                        }
+                                        synonymes.push(countryName);
+                                        let folder = countryFolder.addFolder(countryName);
+                                        folder.add(country, 'extruded', -100, 100).step(1).listen();
+                                        folder.add(country, 'visible').listen();
+                                        folder.add(country.material, 'opacity', 0, 1).step(0.01).listen();
+                                        countryControllersList.push(folder);
+                                    });
+                                resolve();
+                            });
+                        } else {
                             resolve();
-                        });
-                    } else {
+                        }
+                    }),
+                    new Promise(resolve => {
+                        if (this.state === 'complete' && flagTransportDone === false) {
+                            flagTransportDone = true;
+                            while (terrestrialControllersList.length > 0) {
+                                let subGui = terrestrialControllersList.pop();
+                                terresterialFolder.removeFolder(subGui);
+                            }
+                            this._merger.transportNames.cones.forEach(transportName => {
+                                let folder = terresterialFolder.addFolder(transportName);
+                                terrestrialControllersList.push(folder);
+                                function colorListener(): void {
+                                    let opacity = <number>coneOpacity.getValue();
+                                    let color = parseInt(coneColor.getValue().replace('#', ''), 16);
+                                    let limits = <boolean>coneLimits.getValue();
+                                    that._cones.coneMeshCollection.filter((cone) => transportName === cone.transportName)
+                                        .forEach((cone) => {
+                                            let material = (<MeshPhongMaterial>cone.material);
+                                            material.color.setHex(color);
+                                            material.opacity = opacity;
+                                            cone.withLimits = limits;
+                                        });
+                                }
+                                let coneColor = folder.addColor(conf, 'couleur des cônes').name('couleur');
+                                coneColor.onChange(colorListener);
+                                let coneOpacity = folder.add(conf, 'transparence des cônes', 0, 1, .01).name('transparence');
+                                coneOpacity.onChange(colorListener);
+                                let coneLimits = folder.add(conf, 'with limits').listen();
+                                coneLimits.onChange(colorListener);
+                            });
+
+                            while (aerialControllersList.length > 0) {
+                                let subGui = aerialControllersList.pop();
+                                aerialFolder.removeFolder(subGui);
+                            }
+                            this._merger.transportNames.lines.forEach(transportName => {
+                                let folder = aerialFolder.addFolder(transportName);
+                                aerialControllersList.push(folder);
+                                function lineListener(): void {
+                                    let opacity = <number>lineOpacity.getValue();
+                                    let color = parseInt(lineColor.getValue().replace('#', ''), 16);
+                                    that._cones.lineCollection.filter((line) => transportName === line.transportName)
+                                        .forEach((line) => {
+                                            let material = (<LineBasicMaterial>line.material);
+                                            material.color.setHex(color);
+                                            material.opacity = opacity;
+                                        });
+                                }
+                                let lineColor = folder.addColor(conf, 'couleur des lignes').name('couleur');
+                                lineColor.onChange(lineListener);
+                                let lineOpacity = folder.add(conf, 'transparence des lignes', 0, 1, .01).name('transparence');
+                                lineOpacity.onChange(lineListener);
+                            });
+                        }
                         resolve();
-                    }
-                }).then(() => {
-                    if (this._countries.ready === true && this.state === 'complete') {
-                        _lookupTransportColor = {};
-                        annees.min(this._merger.minYear).max(this._merger.maxYear).updateDisplay();
-                        coneSelectTransport.options(this._merger.transportNames).setValue(this._merger.transportNames[0]).updateDisplay();
-                        this._cones.add(this._merger.datas, CONFIGURATION.extrudedHeight);
-                        this._merger.clear();
-                        _filesData = [];
-                    }
-                });
+                    })]).then(() => {
+                        if (this._countries.ready === true && this.state === 'complete') {
+                            flagTransportDone = false;
+                            annees.min(this._merger.minYear).max(this._merger.maxYear).updateDisplay();
+                            this._cones.add(this._merger.datas, CONFIGURATION.extrudedHeight);
+                            this._merger.clear();
+                            _filesData = [];
+
+                        }
+                    });
             },
             this);
     }

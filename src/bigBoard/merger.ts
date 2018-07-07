@@ -55,14 +55,15 @@ function merger<U, V>(
 const keyWords: { name: string, words: string[] }[] = [
     { name: '_cities', words: ['cityCode', 'latitude', 'longitude', 'radius'] },
     { name: '_transportModeSpeed', words: ['transportModeCode', 'year', 'speedKPH'] },
-    { name: '_transportModeCode', words: ['code', 'name', 'yearBegin'] },
+    { name: '_transportModeCode', words: ['code', 'name', 'yearBegin', 'terrestrial'] },
     { name: '_transportNetwork', words: ['transportMode', 'idDes', 'idOri'] },
     { name: '_populations', words: ['cityCode'] },
 ];
 
+const thetaLimit = 2000 / CONFIGURATION.earthRadiusMeters / 1000;
 let _minYear: number = 1930;
 let _maxYear: number = 1932;
-let _transportName: string[] = [];
+let _transportName: { lines: string[], cones: string[] } = { lines: [], cones: [] };
 const config: Papa.ParseConfig = {
     header: true,
     dynamicTyping: true,
@@ -70,11 +71,23 @@ const config: Papa.ParseConfig = {
     fastMode: true,
 };
 
-function getCSV(text: string): any {
+function getCSV(text: string, isTransportModeCode: boolean = false): any {
+    config['transform'] = undefined;
+    if (isTransportModeCode === true) {
+        config['transform'] = (value, field) => {
+            if ('terrestrial' === field) {
+                value = value === '1' ? 'true' : 'false';
+            }
+            return value;
+        };
+    }
     return Papa.parse(text, config).data;
 }
-function getTheMiddle(posA: Cartographic, posB: Cartographic, coeff: number = 1): { middle: Cartographic, opening: number } {
-    const semiTheta = posA.distanceExacte(posB) / 2;
+
+function getTheMiddle(posA: Cartographic, posB: Cartographic)
+    : { middle: Cartographic, opening: number } {
+    const theta = posA.distanceExacte(posB);
+    const semiTheta = theta / 2;
     const sinSemiTheta = Math.sin(semiTheta);
     const cosSemiTheta = Math.cos(semiTheta);
     const deltaLambda = posB.longitude - posA.longitude;
@@ -85,12 +98,13 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic, coeff: number = 1)
     const bx = cosPhi2 * Math.cos(deltaLambda);
     const by = cosPhi2 * Math.sin(deltaLambda);
     let resultat = new Cartographic();
-    resultat.height =
-        (Math.sqrt(cosSemiTheta) + Math.sqrt(semiTheta * semiTheta - sinSemiTheta * sinSemiTheta) - 1) *
-        CONFIGURATION.earthRadiusMeters * coeff;
     resultat.latitude = Math.atan2(sinPhi1 + sinPhi2, Math.sqrt((cosPhi1 + bx) * (cosPhi1 + bx) + by * by));
     resultat.longitude = posA.longitude + Math.atan2(by, cosPhi1 + bx);
-    return { middle: resultat, opening: semiTheta * 2 };
+    return { middle: resultat, opening: theta };
+}
+
+function getRatio(theta: number, speedMax: number, speed: number): number {
+    return theta < thetaLimit ? speedMax / 4778.25 : speedMax * theta / (2 * speed);
 }
 
 function toTownTransport(
@@ -110,7 +124,6 @@ function toTownTransport(
         [year: string]: number;
     }
     let speedMaxPerYear: ISpeedPerYear = {};
-    let maxTransportSpeedPerYear: ILookupTransportPerYear = {};
     interface ITransportCodeItem {
         speed: number;
         year: number;
@@ -127,7 +140,7 @@ function toTownTransport(
         opening: number;
     }
     let roadCode: number, roadBegin: number;
-    _transportName = [];
+    _transportName = { lines: [], cones: [] };
     let speedPerTransportPerYear: { [transportCode: string]: ISpeedPertransportPerYearItem } = {};
     transportModeCode.forEach((transportMode) => {
         let transportCode = transportMode.code;
@@ -136,11 +149,12 @@ function toTownTransport(
             roadCode = transportCode;
             roadBegin = Math.max(transportMode.yearBegin, minYear);
         }
-        _transportName.push(transportName);
+        let transportType = transportMode.terrestrial === true ? 'cones' : 'lines';
+        _transportName[transportType].push(transportName);
         let minYearTransport = Math.max(transportMode.yearBegin, minYear);
         let maxYearTransport = transportMode.yearEnd !== undefined ? transportMode.yearEnd : actualYear;
         let tempTransportCodeTab: ITransportCodeItem[] = [], tabSpeed: { [year: string]: number } = {};
-        let tempMaxYear: number;
+        let tempMaxYear: number = transportMode.yearEnd;
         transportMode.speeds.forEach((transportSpeed) => {
             tempTransportCodeTab.push({ speed: transportSpeed.speedKPH, year: transportSpeed.year });
             if (maxYear < transportSpeed.year) {
@@ -161,11 +175,9 @@ function toTownTransport(
             if (speedMaxPerYear.hasOwnProperty(year)) {
                 if (speedMaxPerYear[year] < speed) {
                     speedMaxPerYear[year] = speed;
-                    maxTransportSpeedPerYear[year] = transportName;
                 }
             } else {
                 speedMaxPerYear[year] = speed;
-                maxTransportSpeedPerYear[year] = transportName;
             }
         }
         speedPerTransportPerYear[transportCode] = { tabSpeed: tabSpeed, name: transportName };
@@ -185,25 +197,25 @@ function toTownTransport(
         res.end = { cityCode: end, position: lookupPosition[end].cartoRef };
         if (lookupMiddle.hasOwnProperty(begin)) {
             if (!lookupMiddle[begin].hasOwnProperty(end)) {
-                let middle = getTheMiddle(lookupPosition[begin].cartoRef, lookupPosition[end].cartoRef);
-                let pointP = getTheMiddle(lookupPosition[begin].cartoRef, middle.middle, 1.1).middle;
-                let pointQ = getTheMiddle(middle.middle, lookupPosition[end].cartoRef, 1.1).middle;
-                lookupMiddle[begin][end] = { pointP: pointP, pointQ: pointQ, middle: middle.middle, opening: middle.opening };
+                let { middle, opening } = getTheMiddle(lookupPosition[begin].cartoRef, lookupPosition[end].cartoRef);
+                let pointP = getTheMiddle(lookupPosition[begin].cartoRef, middle).middle;
+                let pointQ = getTheMiddle(middle, lookupPosition[end].cartoRef).middle;
+                lookupMiddle[begin][end] = { pointP: pointP, pointQ: pointQ, middle: middle, opening: opening };
                 if (!lookupMiddle.hasOwnProperty(end)) {
                     lookupMiddle[end] = {};
                 }
-                lookupMiddle[end][begin] = { pointP: pointQ, pointQ: pointP, middle: middle.middle, opening: middle.opening };
+                lookupMiddle[end][begin] = { pointP: pointQ, pointQ: pointP, middle: middle, opening: opening };
             }
         } else {
-            let middle = getTheMiddle(lookupPosition[begin].cartoRef, lookupPosition[end].cartoRef);
-            let pointP = getTheMiddle(lookupPosition[begin].cartoRef, middle.middle, 1.1).middle;
-            let pointQ = getTheMiddle(middle.middle, lookupPosition[end].cartoRef, 1.1).middle;
+            let { middle, opening } = getTheMiddle(lookupPosition[begin].cartoRef, lookupPosition[end].cartoRef);
+            let pointP = getTheMiddle(lookupPosition[begin].cartoRef, middle).middle;
+            let pointQ = getTheMiddle(middle, lookupPosition[end].cartoRef).middle;
             lookupMiddle[begin] = {};
-            lookupMiddle[begin][end] = { pointP: pointP, pointQ: pointQ, middle: middle.middle, opening: middle.opening };
+            lookupMiddle[begin][end] = { pointP: pointP, pointQ: pointQ, middle: middle, opening: opening };
             if (!lookupMiddle.hasOwnProperty(end)) {
                 lookupMiddle[end] = {};
             }
-            lookupMiddle[end][begin] = { pointP: pointQ, pointQ: pointP, middle: middle.middle, opening: middle.opening };
+            lookupMiddle[end][begin] = { pointP: pointQ, pointQ: pointP, middle: middle, opening: opening };
         }
         let cached = lookupMiddle[begin][end];
         res.middle = cached.middle;
@@ -212,11 +224,13 @@ function toTownTransport(
         res.pointP = cached.pointP;
         return res;
     }
-    let processedCities: number[] = [];
+    let processedCities: { [begin: string]: { [end: string]: string[] } } = {};
     cities.forEach((city) => {
-        let cacheBearing: { [cityCode: string]: number } = {};
         let originCityCode = city.cityCode;
         let referential = lookupPosition[originCityCode];
+        if (!processedCities.hasOwnProperty(originCityCode)) {
+            processedCities[originCityCode] = {};
+        }
         if (referential instanceof NEDLocal) {
             let beginPoint: IEndTownLine = { cityCode: originCityCode, position: referential.cartoRef };
             let list: { [cityCodeEnd: string]: ILookupItemList } = {};
@@ -224,6 +238,7 @@ function toTownTransport(
             let destinations: ILookupDestination = {};
             let codeDestination: number;
             let edge: ITransportNetwork, min: number, max: number, bearing: number, elevation: number, elevationDegree: number;
+            let isTerrestrial: boolean;
             let transportName: string, transportMode: ISpeedPertransportPerYearItem;
             if (city.destinations.length === 0) {
                 city.destinations.push({ yearBegin: minYear, idDes: -Infinity, transportMode: roadCode });
@@ -232,19 +247,19 @@ function toTownTransport(
                 edge = city.destinations[i];
                 codeDestination = edge.idDes;
                 transportMode = speedPerTransportPerYear[edge.transportMode];
+                if (!processedCities.hasOwnProperty(codeDestination)) {
+                    processedCities[codeDestination] = {};
+                }
+                if (!processedCities[originCityCode].hasOwnProperty(codeDestination)) {
+                    processedCities[originCityCode][codeDestination] = [];
+                    processedCities[codeDestination][originCityCode] = [];
+                }
                 if (lookupPosition.hasOwnProperty(codeDestination)) {
                     min = Math.max(edge.yearBegin, minYear);
                     max = edge.yearEnd ? edge.yearEnd : maxYear;
-                    let { end, middle, opening, pointP, pointQ } = cachedGetTheMiddle(originCityCode, codeDestination);
-                    let lineToProcess = processedCities.indexOf(codeDestination) === -1;
-                    if (cacheBearing.hasOwnProperty(codeDestination)) {
-                        bearing = cacheBearing[codeDestination];
-                    } else {
-                        bearing = referential.getClock(end.position);
-                        cacheBearing[codeDestination] = bearing;
-                    }
                     if (transportMode !== undefined) {
                         transportName = transportMode.name;
+                        isTerrestrial = _transportName.cones.indexOf(transportName) !== -1;
                         if (!transports.hasOwnProperty(transportName)) {
                             transports[transportName] = {};
                         }
@@ -255,39 +270,44 @@ function toTownTransport(
                             destinations[codeDestination][transportName] = [];
                         }
                         let tab = transportMode.tabSpeed;
+                        let lineToProcess = processedCities[originCityCode][codeDestination].indexOf(transportName) === -1;
+                        processedCities[originCityCode][codeDestination].push(transportName);
+                        processedCities[codeDestination][originCityCode].push(transportName);
                         for (let year = min; year <= max; year++) {
-                            if (tab[year] !== undefined) {
-                                if (!transports[transportName].hasOwnProperty(year)) {
-                                    transports[transportName][year] = [];
-                                }
+                            if (isTerrestrial === true) {
                                 elevation = Math.atan(Math.sqrt(
                                     (speedMaxPerYear[year] / tab[year]) * (speedMaxPerYear[year] / tab[year]) - 1));
                                 if (elevation < 0) {
                                     elevation += CONFIGURATION.TWO_PI;
                                 }
                                 elevationDegree = elevation / CONFIGURATION.deg2rad;
-                                transports[transportName][year].push(
-                                    {
-                                        clock: bearing, elevation: elevation, speed: tab[year],
-                                        clockDegree: bearing / CONFIGURATION.deg2rad,
-                                        elevationDegree: elevationDegree,
-                                        destination: codeDestination,
-                                        transport: transportName,
-                                        year: year,
-                                    });
+                                transports[transportName][year] = {
+                                    clock: bearing, elevation: elevation, speed: tab[year],
+                                    clockDegree: bearing / CONFIGURATION.deg2rad,
+                                    elevationDegree: elevationDegree,
+                                    destination: codeDestination,
+                                    transport: transportName,
+                                    year: year,
+                                };
                                 destinations[codeDestination][transportName].push({ year: year, speed: tab[year] });
-                            }
-                            if (lineToProcess === true && transportName === maxTransportSpeedPerYear[year]) {
-                                if (!list.hasOwnProperty(codeDestination)) {
-                                    list[codeDestination] = <ILookupItemList>{};
-                                    list[codeDestination].end = end;
-                                    list[codeDestination].middle = middle;
-                                    list[codeDestination].pointP = pointP;
-                                    list[codeDestination].pointQ = pointQ;
-                                    list[codeDestination].opening = opening;
-                                    list[codeDestination].years = {};
+                            } else {
+                                if (lineToProcess === true) {
+                                    let { end, middle, opening, pointP, pointQ } = cachedGetTheMiddle(originCityCode, codeDestination);
+                                    let ratio = getRatio(opening, speedMaxPerYear[year], tab[year]);
+                                    if (!list.hasOwnProperty(codeDestination)) {
+                                        list[codeDestination] = <ILookupItemList>{};
+                                        list[codeDestination].end = end;
+                                        list[codeDestination].middle = middle;
+                                        list[codeDestination].pointP = pointP;
+                                        list[codeDestination].pointQ = pointQ;
+                                        list[codeDestination].opening = opening;
+                                        list[codeDestination].ratio = {};
+                                    }
+                                    if (!list[codeDestination].ratio.hasOwnProperty(transportName)) {
+                                        list[codeDestination].ratio[transportName] = {};
+                                    }
+                                    list[codeDestination].ratio[transportName][year] = ratio;
                                 }
-                                list[codeDestination].years[year] = transportName;
                             }
                         }
                     }
@@ -299,9 +319,6 @@ function toTownTransport(
                 let tab = speedPerTransportPerYear[roadCode].tabSpeed;
                 let maxSpeed: number;
                 for (let year = roadBegin; year <= maxYear; year++) {
-                    if (!transports['Road'].hasOwnProperty(year)) {
-                        transports['Road'][year] = [];
-                    }
                     maxSpeed = speedMaxPerYear[year] === undefined ? tab[year] : speedMaxPerYear[year];
                     elevation = Math.atan(Math.sqrt(
                         (maxSpeed / tab[year]) * (maxSpeed / tab[year]) - 1));
@@ -309,34 +326,23 @@ function toTownTransport(
                         elevation += CONFIGURATION.TWO_PI;
                     }
                     elevationDegree = elevation / CONFIGURATION.deg2rad;
-                    transports['Road'][year].push(
-                        {
-                            clock: 0, elevation: elevation, speed: tab[year],
-                            clockDegree: 0, elevationDegree: elevationDegree, transport: 'Road', year: year,
-                        });
+                    transports['Road'][year] = {
+                        clock: 0, elevation: elevation, speed: tab[year],
+                        clockDegree: 0, elevationDegree: elevationDegree, transport: 'Road', year: year,
+                    };
                 }
 
-                for (let transport in transports) {
-                    if (transports.hasOwnProperty(transport)) {
-                        for (let year in transports[transport]) {
-                            if (transports[transport].hasOwnProperty(year)) {
-                                transports[transport][year] = transports[transport][year].sort((a, b) => a.clock - b.clock);
-                            }
-                        }
-                    }
-                }
                 resultat[originCityCode] = {
                     referential: referential, transports: transports,
                     destinations: destinations, cityProperties: city,
                 };
-                processedCities.push(originCityCode);
                 if (Object.keys(list).length > 0) {
                     lineData[originCityCode] = { begin: beginPoint, list: list };
                 }
             }
         }
     });
-    return { lookupTownTransport: resultat, maxSpeedPerYear: maxTransportSpeedPerYear, lineData: lineData };
+    return { lookupTownTransport: resultat, lineData: lineData };
 }
 
 export class Merger {
@@ -358,7 +364,7 @@ export class Merger {
 
     public get minYear(): number { return _minYear; }
     public get maxYear(): number { return _maxYear; }
-    public get transportNames(): string[] { return _transportName; }
+    public get transportNames(): { lines: string[], cones: string[] } { return _transportName; }
 
     public clear(): void {
         this._cities = [];
@@ -388,9 +394,9 @@ export class Merger {
         }
         if (name !== undefined) {
             this[name] = [];
-            this[name].push(...getCSV(someString));
+            this[name].push(...getCSV(someString, name === '_transportModeCode'));
             if (name === '_transportModeCode' || name === '_transportNetwork') {
-                this[name].forEach((item) => {
+                this[name].forEach(item => {
                     if (item.yearEnd === undefined || item.yearEnd === '') {
                         delete item.yearEnd;
                     }

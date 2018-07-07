@@ -66,7 +66,7 @@ export interface IDirection {
 }
 
 export interface ILookupDirection {
-    [year: string]: IDirection[];
+    [year: string]: IDirection;
 }
 
 export interface ILookupTransportSpeed {
@@ -144,6 +144,7 @@ export interface ITransportModeCode {
     code: number;
     yearBegin: number;
     yearEnd?: number;
+    terrestrial: boolean;
     speeds: ITransportModeSpeed[];
 }
 
@@ -218,7 +219,6 @@ export type configurationCallback = (name: configurationObservableEvt, value: an
 export type ShaderTypes = 'fragment' | 'vertex';
 export interface ILookupAndMaxSpeedAndLine {
     lookupTownTransport: ILookupTownTransport;
-    maxSpeedPerYear: ILookupTransportPerYear;
     lineData: ILookupLine;
 }
 export interface ILookupTransportPerYear {
@@ -233,7 +233,7 @@ export interface ILookupItemList {
     pointP: Cartographic;
     pointQ: Cartographic;
     middle: Cartographic;
-    years: ILookupTransportPerYear;
+    ratio: { [transportName: string]: { [year: string]: number } };
     opening: number;
 }
 export interface ILookupLineItem {
