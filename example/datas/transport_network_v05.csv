@@ -1,0 +1,73 @@
+yearBegin,yearEnd,idOri,nameOri,idDes,nameDes,transportMode,length,notes
+1977,2004,20985,Paris,23083,New York-Newark,11,,Concorde
+1977,2004,22860,London,23083,New York-Newark,11,,Concorde
+1947,,20985,Paris,23083,New York-Newark,1,,air
+1947,,22860,London,23083,New York-Newark,1,,air
+1930,,204296,Berlin,22860,London,1,,air
+1930,,204296,Berlin,22860,London,1,,air
+1953,,23052,Los Angeles,23083,New York-Newark,1,,air https://en.wikipedia.org/wiki/Transcontinental_flight
+1958,,23013,Honolulu,23052,Los Angeles,1,,air Bartolomew 1958
+1958,,23013,Honolulu,23130,San Francisco-Oakland,1,,air Bartolomew 1958
+1958,,23013,Honolulu,23102,Portland,1,,air Bartolomew 1958
+1958,,23013,Honolulu,20404,Vancouver,1,,air Bartolomew 1958
+1958,,23052,Los Angeles,23130,San Francisco-Oakland,1,,air Bartolomew 1958
+1958,,23102,Portland,20404,Vancouver,1,,air Bartolomew 1958
+1958,,23102,Portland,23126,Salt Lake City,1,,air Bartolomew 1958
+1958,,23130,San Francisco-Oakland,23126,Salt Lake City,1,,air Bartolomew 1958
+1958,,20404,Vancouver,23126,Salt Lake City,1,,air Bartolomew 1958
+1958,,23052,Los Angeles,23126,Salt Lake City,1,,air Bartolomew 1958
+1958,,23052,Los Angeles,22966,Dallas-Fort Worth,1,,air Bartolomew 1958
+1958,,23126,Salt Lake City,22966,Dallas-Fort Worth,1,,air Bartolomew 1958
+1958,,23126,Salt Lake City,22956,Chicago,1,,air Bartolomew 1958
+1958,,22956,Chicago,23083,New York-Newark,1,,air	Bartolomew 1958
+1998,,22956,Chicago,21137,Hong Kong,1,,air https://en.wikipedia.org/wiki/Longest_flights#History
+1999,,23052,Los Angeles,206168,Melbourne,1,,air https://en.wikipedia.org/wiki/Longest_flights#History
+1983,,20972,Lyon,20985,Paris,3,,HST
+1990,,20998,Tours,20985,Paris,3,,HST
+1993,,20960,Douai-Lens,20985,Paris,3,,HST
+1993,,20960,Douai-Lens,20969,Lille,3,,HST
+2001,,20972,Lyon,20948,Avignon,3,,HST
+2001,,20973,Marseille-Aix-en-Provence,20948,Avignon,3,,HST
+2001,,20978,Montpellier,20948,Avignon,3,,HST
+2001,,20994,Strasbourg,20985,Paris,3,,HST
+2001,,20998,Tours,20952,Bordeaux,3,,HST
+2001,,20990,Rennes,20985,Paris,3,,HST
+1964,,206156,Shizuoka-Hamamatsu M.M.A.,21671,Tokyo,3,,HST
+1964,,206156,Shizuoka-Hamamatsu M.M.A.,204583,Chukyo M.M.A. (Nagoya),3,,HST
+1964,,206459,Kinki M.M.A. (Osaka),204583,Chukyo M.M.A. (Nagoya),3,,HST
+1975,,206459,Kinki M.M.A. (Osaka),21656,Okayama,3,,HST
+1975,,204585,Hiroshima,21656,Okayama,3,,HST
+1975,,204586,Kitakyushu-Fukuoka M.M.A.,204585,Hiroshima,3,,HST
+1982,,21675,Utsunomiya,21671,Tokyo,3,,HST
+1982,,21675,Utsunomiya,21651,Niigata,3,,HST
+1982,,21675,Utsunomiya,204582,Sendai,3,,HST
+2011,,204586,Kitakyushu-Fukuoka M.M.A.,21633,Kumamoto,3,,HST
+2011,,21633,Kumamoto,21626,Kagoshima,3,,HST
+2015,,21627,Kanazawa,21671,Tokyo,3,,HST
+1997,,20144,Bruxelles-Brussel,20969,Lille,3,,HST
+2002,,20144,Bruxelles-Brussel,20148,Liège,3,,HST
+2009,,20144,Bruxelles-Brussel,20142,Antwerpen,3,,HST
+2009,,21945,Rotterdam,20142,Antwerpen,3,,HST
+2009,,21945,Rotterdam,21930,Amsterdam,3,,HST
+1992,,22549,Madrid,22531,Cordoba,3,,HST
+1992,,22562,Sevilla,22531,Cordoba,3,,HST
+2007,,22550,Malaga,22531,Cordoba,3,,HST
+2007,,22568,Valladolid,22549,Madrid,3,,HST
+2008,,205149,Zaragoza,22549,Madrid,3,,HST
+2010,,22567,Valencia,22549,Madrid,3,,HST
+2013,,22525,Barcelona,205149,Zaragoza,3,,HST
+2013,,22520,Alicante,22549,Madrid,3,,HST
+2014,,22656,Ankara,22682,Eskisehir,3,,HST
+2014,,22648,Sakarya,22682,Eskisehir,3,,HST
+2014,,22648,Sakarya,22704,Izmit,3,,HST
+2014,,22704,Izmit,22684,Gebze,3,,HST
+2014,,22691,Istanbul,22684,Gebze,3,,HST
+2007,,22860,London,20969,Lille,3,,HST
+2004,,21758,Seoul,21739,Cheonan,3,,HST
+2004,,21731,Cheongju,21730,Cheonan,3,,HST
+2004,,21731,Cheongju,21764,Daejon,3,,HST
+2004,,21746,Gumi,21764,Daejon,3,,HST
+2004,,21746,Gumi,21763,Daegu,3,,HST
+2010,,21755,Pohang,21763,Daegu,3,,HST
+2010,,21755,Pohang,21766,Ulsan,3,,HST
+2010,,21757,Busan,21766,Ulsan,3,,HST

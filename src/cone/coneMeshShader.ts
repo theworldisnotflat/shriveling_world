@@ -26,7 +26,6 @@ let _tickCount = 0;
 let _ready = false;
 let _width: number;
 let _height: number;
-let _forbiddenTransportYear = <ILookupTransportPerYear>{};
 
 let _gpgpu: { [x: string]: GPUComputer } = {};
 
@@ -212,10 +211,9 @@ export class ConeMeshShader extends PseudoCone {
     private _directions: { [year: string]: number };
 
     public static generateCones(
-        lookup: ILookupTownTransport, forbiddenTransport: ILookupTransportPerYear, bboxes: IBBox[]): Promise<ConeMeshShader[]> {
+        lookup: ILookupTownTransport, bboxes: IBBox[]): Promise<ConeMeshShader[]> {
         _ready = false;
         _cones = [];
-        _forbiddenTransportYear = forbiddenTransport;
         fullCleanArrays();
         let promise = new Promise((resolve, reject) => {
             if (uuid === undefined) {
@@ -337,6 +335,7 @@ export class ConeMeshShader extends PseudoCone {
             updateWithLimits();
             computation(true);
             _ready = true;
+            console.log(_height, _width);
             return [..._cones];
         });
     }
@@ -399,8 +398,8 @@ export class ConeMeshShader extends PseudoCone {
         this.receiveShadow = true;
 
         for (let year in directions) {
-            if (directions.hasOwnProperty(year) && _forbiddenTransportYear[year] !== transportName) {
-                this._directions[year] = directions[year][0].elevation;
+            if (directions.hasOwnProperty(year)) {
+                this._directions[year] = directions[year].elevation;
             }
         }
     }

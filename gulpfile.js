@@ -19,7 +19,6 @@ let gulp = require('gulp'),
 
 let sources = {
   app: {
-    tsWorker: ['./src/webWorkers/**/*.ts'],
     shader: [
       './src/shaders/**/*.frag', './src/shaders/**/*.vert'
     ],
@@ -45,13 +44,13 @@ let destinations = {
   }
 };
 
-const rollupExternal = ['three', 'papaparse', 'poly2tri', 'twgl.js','dat.gui'];
+const rollupExternal = ['three', 'papaparse', 'poly2tri', 'twgl.js', 'dat.gui'];
 const rollupGlobal = {
   'three': 'THREE',
   'papaparse': 'Papa',
   'poly2tri': 'poly2tri',
   'twgl.js': 'twgl',
-  'dat.gui':'dat'
+  'dat.gui': 'dat'
 };
 const rollupPlugins = [
   typescript({useTsconfigDeclarationDir: true}),
@@ -65,8 +64,6 @@ let isProduction = argv.testing === true
 if (isProduction) {
   rollupPlugins.push(minify({ecma: 7}));
 }
-
-let workers = {};
 
 let shaders = {};
 
@@ -120,16 +117,12 @@ const cache = {};
 let externalLibraries = '';
 
 gulp.task('build', [
-  'shaders', 'libraries', 'workers', 'externals'
+  'shaders', 'libraries', 'externals'
 ], async (done) => {
   let {shadersString, librariesString} = {
     shadersString: JSON.stringify(shaders),
     librariesString: JSON.stringify(libraries)
   };
-  //préparation workers
-  for (let att in workers) {
-    workers[att] = workers[att].replace(/.__SHADERS_HERE__./, shadersString).replace(/.__LIBRARIES_HERE__./, librariesString);
-  }
   const bundle = await rollup.rollup({input: 'src/bigBoard/bigBoard.ts', cache: cache, plugins: rollupPlugins, external: rollupExternal});
   const outputOptions = {
     dir: 'dist/',
@@ -140,27 +133,8 @@ gulp.task('build', [
   }
   await bundle.write(outputOptions);
   let {code, map} = await bundle.generate(outputOptions);
-  code = externalLibraries + code.replace(/.__SHADERS_HERE__./, shadersString).replace(/.__LIBRARIES_HERE__./, librariesString)
-  .replace(/.'__WORKERS_HERE__'./g, JSON.stringify(workers));
+  code = externalLibraries + code.replace(/.__SHADERS_HERE__./, shadersString).replace(/.__LIBRARIES_HERE__./, librariesString);
   await fs.outputFile(__dirname + '/dist/shriveling.js', code);
-});
-
-gulp.task('workers', async (done) => {
-  const workersFiles = glob2Array(sources.app.tsWorker);
-  await Promise.all(workersFiles.map(async (file) => {
-    let bundle = await rollup.rollup({input: file, cache: cache, plugins: rollupPlugins, external: rollupExternal});
-    let last = file.split('/');
-    let name = last[last.length - 1].replace('.ts', '');
-    let outputOptions = {
-      dir: 'dist/',
-      file: 'dist/' + name + '.js',
-      format: rollupFormat,
-      name: name,
-      globals: rollupGlobal
-    }
-    let {code, map} = await bundle.generate(outputOptions);
-    workers[name] = code.replace(/twgl_js/g, 'twgl');;
-  }));
 });
 
 gulp.task('libraries', async (done) => {

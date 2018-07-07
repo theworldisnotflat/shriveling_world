@@ -2,7 +2,7 @@
 import { Point, SweepContext, IPointLike } from 'poly2tri';
 import {
     Vector2, Face3, Vector3, Mesh, InterleavedBuffer, InterleavedBufferAttribute, BufferGeometry,
-    BufferAttribute, Sphere,
+    BufferAttribute, Sphere, MeshMaterial,
 } from 'three';
 import { CONFIGURATION } from '../common/configuration';
 import { Cartographic } from '../common/utils';
@@ -274,7 +274,6 @@ function maxRectangle(n: number): number[] {
     } else {
         return [n, 1];
     }
-    console.log(primes);
     while (primes.length > 0 && width <= 8192) {
         width *= primes.shift();
         break;
@@ -403,7 +402,6 @@ export class CountryMeshShader extends Mesh {
                 }
                 [_width, _height] = maxRectangle(vertexArrayEntries.length / 3);
                 _vertexArrayEntries = new Float32Array(vertexArrayEntries);
-                console.log(_vertexArrayEntries.length, [_width, _height]);
                 computation();
             } else {
                 throw new Error('not a geoJson');
@@ -469,7 +467,7 @@ export class CountryMeshShader extends Mesh {
         bufferGeometry.setDrawRange(0, preGeometry.indexes.length);
         bufferGeometry.computeBoundingSphere();
         bufferGeometry.boundingSphere = new Sphere();
-        super(bufferGeometry, CONFIGURATION.COUNTRY_MATERIAL.clone());
+        super(bufferGeometry, <MeshMaterial>CONFIGURATION.COUNTRY_MATERIAL.clone());
         this.otherProperties = preMesh.properties;
         this._boundaryBox = { minLat: 1000, minLong: 1000, maxLat: -1000, maxLong: -1000, boundary: preGeometry.surfaceBoundary };
         for (let i = 0; i < this._boundaryBox.boundary.length; i++) {

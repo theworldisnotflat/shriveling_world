@@ -17,15 +17,26 @@ let _tickCount = 0;
 let _ready = false;
 let _width: number;
 let _height: number;
+let _coefficient: number = 1.1;
 
 let _gpgpu: { [x: string]: GPUComputer } = {};
 
 let _t: Float32Array;
+let _hauteurs: Float32Array;
 
 function fullCleanArrays(): void {
     _t = new Float32Array(0);
+    _hauteurs = new Float32Array(0);
 }
 fullCleanArrays();
+
+function getHeight(ratio: number, theta: number): number {
+    const semiTheta = theta / 2;
+    const sinSemiTheta = Math.sin(semiTheta);
+    const cosSemiTheta = Math.cos(semiTheta);
+    return (Math.sqrt(cosSemiTheta) + Math.sqrt(ratio * ratio - sinSemiTheta * sinSemiTheta) - 1) *
+        CONFIGURATION.earthRadiusMeters * _coefficient;
+}
 
 // quand on change step!!
 function regenerateStep(): void {
@@ -64,13 +75,18 @@ function computation(): void {
     uniforms.percentRepresentation = CONFIGURATION.percentProjection;
     uniforms.standardParallel1 = CONFIGURATION.standardParallel1;
     uniforms.standardParallel2 = CONFIGURATION.standardParallel2;
+    uniforms.coefficient = _coefficient;
     _gpgpu.positions.updateUniforms(uniforms);
+    let options = {
+        u_height: { src: _hauteurs, width: 1, height: _height },
+    };
+    _gpgpu.positions.updateTextures(options);
     let tempo = _gpgpu.positions.calculate(_width, _height);
     let allPositions = tempo[0];
-    let options = {
+    let options2 = {
         points: { src: allPositions, width: _width, height: _height },
     };
-    _gpgpu.boundingSphere.updateTextures(options);
+    _gpgpu.boundingSphere.updateTextures(options2);
     let temp = _gpgpu.boundingSphere.calculate(1, _height);
     let boundingBoxes = temp[0];
     let lastPosition = temp[1];
@@ -94,7 +110,9 @@ export class LineMeshShader extends Line {
     private begin: string | number;
     private end: string | number;
     private opening: number;
-    private years: ILookupTransportPerYear;
+    private _years: { [year: string]: number };
+    private _transportName: string;
+    private _ratio: number;
 
     public static generateCones(lookup: ILookupLine): Promise<LineMeshShader[]> {
         _ready = false;
@@ -110,6 +128,7 @@ export class LineMeshShader extends Line {
                             u_PControls1: 'RGB32F',
                             u_PControls2: 'RGB32F',
                             u_PControls3: 'RGB32F',
+                            u_height: 'R32F',
                         },
                         1).then(
                             (instance) => {
@@ -163,19 +182,31 @@ export class LineMeshShader extends Line {
                 if (lookup.hasOwnProperty(cityCodeBegin)) {
                     let begin = lookup[cityCodeBegin].begin;
                     let list = lookup[cityCodeBegin].list;
+                    let beginGLSL = begin.position.toThreeGLSL();
                     for (let cityCodeEnd in list) {
                         if (list.hasOwnProperty(cityCodeEnd)) {
                             let endPoint = list[cityCodeEnd];
-                            _lines.push(new LineMeshShader(begin.cityCode, endPoint.end.cityCode, endPoint.opening, endPoint.years));
-                            pControls0.push(...begin.position.toThreeGLSL());
-                            pControls1.push(...endPoint.pointP.toThreeGLSL());
-                            pControls2.push(...endPoint.pointQ.toThreeGLSL());
-                            pControls3.push(...endPoint.end.position.toThreeGLSL());
+                            let pointPGLSL = endPoint.pointP.toThreeGLSL();
+                            let pointQGLSL = endPoint.pointQ.toThreeGLSL();
+                            let endGLSL = endPoint.end.position.toThreeGLSL();
+
+                            for (let transportName in endPoint.ratio) {
+                                if (endPoint.ratio.hasOwnProperty(transportName)) {
+                                    let ratios = endPoint.ratio[transportName];
+                                    _lines.push(new LineMeshShader(
+                                        begin.cityCode, endPoint.end.cityCode, endPoint.opening, ratios, transportName));
+                                    pControls0.push(...beginGLSL);
+                                    pControls1.push(...pointPGLSL);
+                                    pControls2.push(...pointQGLSL);
+                                    pControls3.push(...endGLSL);
+                                }
+                            }
                         }
                     }
                 }
             }
             _height = _lines.length;
+            _hauteurs = new Float32Array(_height);
             let options = {
                 u_PControls0: { src: new Float32Array(pControls0), width: 1, height: _height },
                 u_PControls1: { src: new Float32Array(pControls1), width: 1, height: _height },
@@ -191,9 +222,24 @@ export class LineMeshShader extends Line {
         });
     }
 
+    public static get coefficient(): number {
+        return _coefficient;
+    }
+    public static set coefficient(value: number) {
+        _coefficient = value;
+        for (let i = 0; i < _height; i++) {
+            let line = _lines[i];
+            _hauteurs[i] = getHeight(line._ratio, line.opening);
+        }
+        computation();
+    }
     public dispose(): void {
         this.geometry.dispose();
         this.material.dispose();
+    }
+
+    public get transportName(): string {
+        return this._transportName;
     }
 
     public setGeometry(positions: Float32Array, boundingSphereData: Float32Array): void {
@@ -214,10 +260,19 @@ export class LineMeshShader extends Line {
     }
 
     public isAvailable(year: string | number): boolean {
-        return this.years[year] !== undefined;
+        let ratio = this._years[year];
+        let resultat = ratio !== undefined;
+        if (resultat === true) {
+            this._ratio = ratio;
+            let index = _lines.indexOf(this);
+            _hauteurs[index] = getHeight(this._ratio, this.opening);
+            console.log(ratio, this.transportName);
+        }
+        return resultat;
     }
 
-    private constructor(begin: string | number, end: string | number, opening: number, years: ILookupTransportPerYear) {
+    private constructor(
+        begin: string | number, end: string | number, opening: number, years: { [year: string]: number }, transportName: string) {
         const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(204 * 4), 4).setDynamic(true);
         const interleavedBufferAttributePosition = new InterleavedBufferAttribute(interleavedBufferPosition, 3, 0, false);
         const bufferGeometry = new BufferGeometry();
@@ -225,10 +280,12 @@ export class LineMeshShader extends Line {
         bufferGeometry.computeBoundingSphere();
         bufferGeometry.boundingSphere = new Sphere();
         super(bufferGeometry, CONFIGURATION.BASIC_LINE_MATERIAL.clone());
-        this.years = years;
+        this._years = years;
         this.opening = opening;
         this.end = end;
         this.begin = begin;
         this.visible = true;
+        this._transportName = transportName;
+        this._ratio = 0;
     }
 }

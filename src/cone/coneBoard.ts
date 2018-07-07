@@ -75,6 +75,7 @@ export class ConeBoard {
             this.coneMeshCollection.forEach(cone => (<Material>cone.material).opacity = value);
         }
     }
+
     public constructor(scene: Scene, camera: Camera, countries: CountryBoard, renderer: WebGLRenderer) {
         this._scene = scene;
         this._camera = camera;
@@ -95,7 +96,7 @@ export class ConeBoard {
         // lookup.lookupTownTransport = myConsistentLookup;
         let that = this;
         let bboxes = this._countries.countryMeshCollection.map((country) => country.bbox);
-        ConeMeshShader.generateCones(lookup.lookupTownTransport, lookup.maxSpeedPerYear, bboxes).then((cones) => {
+        ConeMeshShader.generateCones(lookup.lookupTownTransport, bboxes).then((cones) => {
             cones.forEach((cone) => {
                 updateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
                 that.coneMeshCollection.push(cone);

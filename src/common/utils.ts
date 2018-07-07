@@ -387,7 +387,9 @@ export function extrapolator<U>(
     normalizedBase: U[], xProperty: string, yProperty: string, strongLimit: boolean = false): (x: number) => number {
     let length = normalizedBase.length;
     let resultat = (x: number) => 0;
-    if (length > 0) {
+    if (length === 1) {
+        resultat = (x: number) => normalizedBase[0][yProperty];
+    } else {
         resultat = (x: number) => {
             let indMin = 0;
             let indMax = length - 1;
