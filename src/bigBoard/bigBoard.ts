@@ -2,8 +2,8 @@
 import { CONFIGURATION } from '../common/configuration';
 import {
     MeshBasicMaterial, DoubleSide, TextureLoader, MeshPhongMaterial, Color, Vector2, PerspectiveCamera, MeshStandardMaterial,
-    OrbitControls, Scene, WebGLRenderer, BackSide, CubeGeometry, SpotLight, Fog, AmbientLight, Mesh, LineBasicMaterial,
-    SphereBufferGeometry, PCFSoftShadowMap, SpotLightHelper, PlaneBufferGeometry,
+    OrbitControls, Scene, WebGLRenderer, BackSide, CubeGeometry, SpotLight, DirectionalLight, Fog, AmbientLight, Mesh, LineBasicMaterial,
+    SphereBufferGeometry, PCFSoftShadowMap, SpotLightHelper, PlaneBufferGeometry, DirectionalLightHelper,
 } from 'three';
 import { ConeBoard } from '../cone/coneBoard';
 import { CountryBoard } from '../country/countryBoard';
@@ -41,7 +41,7 @@ function prepareConfiguration(): void {
             // roughness: 0,
             // metalness: 0.5,
         });
-        (<MeshPhongMaterial>CONFIGURATION.BASIC_CONE_MATERIAL).map = new TextureLoader().load(CONFIGURATION.CONE_TEXTURE);
+        // (<MeshPhongMaterial>CONFIGURATION.BASIC_CONE_MATERIAL).map = new TextureLoader().load(CONFIGURATION.CONE_TEXTURE);
         CONFIGURATION.BASIC_LINE_MATERIAL = new LineBasicMaterial({
             color: 0x1000ff, linewidth: .5, side: DoubleSide, transparent: true, opacity: 0.3,
         });
@@ -49,12 +49,15 @@ function prepareConfiguration(): void {
 }
 
 let _filesData: IListFile[] = [];
-let _light = new SpotLight(0xffffff, 2, 800, Math.PI / 3, 0.1); // (0xffffff, 5, 1000, 2);
+let _light = new DirectionalLight(0xefefff, 2); // (0xffffff, 5, 1000, 2);
 _light.castShadow = true;
 _light.shadow.mapSize.width = 512;  // default
 _light.shadow.mapSize.height = 512; // default
 _light.shadow.camera.near = 0.5;       // default
 _light.shadow.camera.far = 800;    // default
+
+// let  _light = new DirectionalLight( 0xefefff, 1.5 );
+_light.position.set( 1, 1, 1 ).normalize();
 
 let _ambient = new AmbientLight(0xffffff);
 export default class BigBoard {
@@ -71,7 +74,7 @@ export default class BigBoard {
     private _windowHalfX: number = window.innerWidth / 2;
     private _windowHalfY: number = window.innerHeight / 2;
     private _merger: Merger;
-    private _helper: SpotLightHelper;
+    private _helper: DirectionalLightHelper;
 
     constructor() {
         this.updateConfiguration();
@@ -218,7 +221,7 @@ export default class BigBoard {
 
         _light.position.set(0, 0, 1);
         this._scene.add(_light);
-        this._helper = new SpotLightHelper(_light);
+        this._helper = new DirectionalLightHelper(_light);
         this._scene.add(this._helper);
 
         this._scene.add(_ambient);
@@ -306,9 +309,9 @@ export default class BigBoard {
             this._helper.color = color;
             this._helper.update();
         });
-        lightFolder.add(_light.position, 'x', -200, 200, 0.001).onChange(v => this._helper.update());
-        lightFolder.add(_light.position, 'y', -200, 200, 0.001).onChange(v => this._helper.update());
-        lightFolder.add(_light.position, 'z', -200, 200, 0.001).onChange(v => this._helper.update());
+        lightFolder.add(_light.position, 'x', -1, 1, 0.001).onChange(v => this._helper.update());
+        lightFolder.add(_light.position, 'y', -1, 1, 0.001).onChange(v => this._helper.update());
+        lightFolder.add(_light.position, 'z', -1, 1, 0.001).onChange(v => this._helper.update());
         lightFolder.add(_light.shadow.mapSize, 'width', 0, 1000).step(1);
         lightFolder.add(_light.shadow.mapSize, 'height', 0, 1000).step(1);
         lightFolder.add(_light.shadow.camera, 'near', 0, 1000).step(0.5);

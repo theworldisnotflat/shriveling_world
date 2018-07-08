@@ -102,7 +102,7 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
     resultat.longitude = posA.longitude + Math.atan2(by, cosPhi1 + bx);
     return { middle: resultat, opening: theta };
 }
-
+// ratio de la hauteur des arcs au dessus de la géodésique fonction du rapport des vitesses
 function getRatio(theta: number, speedMax: number, speed: number): number {
     return theta < thetaLimit ? speedMax / 4778.25 : speedMax * theta / (2 * speed);
 }

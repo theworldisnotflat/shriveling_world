@@ -395,7 +395,7 @@ export class ConeMeshShader extends PseudoCone {
         this.visible = true;
         this._transportName = transportName;
         this.castShadow = true;
-        this.receiveShadow = true;
+        // this.receiveShadow = true;
 
         for (let year in directions) {
             if (directions.hasOwnProperty(year)) {

@@ -17,7 +17,7 @@ let _tickCount = 0;
 let _ready = false;
 let _width: number;
 let _height: number;
-let _coefficient: number = 1.1;
+let _coefficient: number = 1.25; // hauteur du mid-point de controle bezier
 
 let _gpgpu: { [x: string]: GPUComputer } = {};
 
@@ -30,6 +30,7 @@ function fullCleanArrays(): void {
 }
 fullCleanArrays();
 
+/// formule de la hauteur des arcs fonction de theta
 function getHeight(ratio: number, theta: number): number {
     const semiTheta = theta / 2;
     const sinSemiTheta = Math.sin(semiTheta);
