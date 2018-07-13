@@ -174,11 +174,6 @@ function computation(withNormals: boolean): void {
     uniforms.standardParallel2 = CONFIGURATION.standardParallel2;
     _gpgpu.positions.updateUniforms(uniforms);
     let [begins, uvs, bases] = _gpgpu.positions.calculate(_width, _height);
-    // let options = {
-    //     points: { src: allPositions, width: _width, height: _height },
-    // };
-    // _gpgpu.boundingSphere.updateTextures(options);
-    // let [boundingBoxes, lastPosition] = _gpgpu.boundingSphere.calculate(1, _height);
 
     let finalPositions = new Float32Array((_width * 2) * _height * 4);
     let finalUV = new Float32Array((_width * 2) * _height * 4);
@@ -228,15 +223,6 @@ export class ConeMeshShader extends PseudoCone {
                         3).then(
                             (instance) => {
                                 _gpgpu.positions = instance;
-                                return instance;
-                            }),
-                    GPUComputer.GPUComputerFactory(
-                        Shaders.getShader('boundingSphere', 'fragment'), {
-                            points: 'RGBA32F',
-                        },
-                        2).then(
-                            (instance) => {
-                                _gpgpu.boundingSphere = instance;
                                 return instance;
                             }),
                 ]).then(() => {
@@ -376,7 +362,6 @@ export class ConeMeshShader extends PseudoCone {
         bufferGeometry.setIndex(new BufferAttribute(new Uint16Array(400 * 6 * 2), 1).setDynamic(true));
         bufferGeometry.setDrawRange(0, 0);
         bufferGeometry.computeBoundingSphere();
-        bufferGeometry.boundingSphere = new Sphere();
         super(bufferGeometry, CONFIGURATION.BASIC_CONE_MATERIAL.clone());
         this._cityCode = cityCode;
         this._position = position;
