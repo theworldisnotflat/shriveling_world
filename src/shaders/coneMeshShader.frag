@@ -23,14 +23,15 @@ uniform int representationInit;
 uniform int representationEnd;
 uniform float percentRepresentation;
 
-#pragma glslify: polar2Cartographic =require(./src/shaders/polar2Cartographic.glsl)
-#pragma glslify: displayConversions =require(./src/shaders/displayConversions.glsl)
+#pragma glslify: polar2Cartographic = require(./src/shaders/polar2Cartographic.glsl)
+#pragma glslify: displayConversions = require(./src/shaders/displayConversions.glsl)
 in vec2 pos;
 layout(location = 0) out vec4 myOutputColor;
 layout(location = 1) out vec4 uvs;
+layout(location = 2) out vec4 base;
 // pos.x => clock ; pos.y => town
 void main() {
-  ivec2 pos2=ivec2(pos);
+  ivec2 pos2 = ivec2(pos);
   ivec2 townPos = ivec2(0, pos2.y);
   float clock = texelFetch(u_clocks, ivec2(pos2.x, 0), 0).r;
   float elevation = texelFetch(u_elevations, townPos, 0).r;
@@ -43,20 +44,29 @@ void main() {
   int withLimits = texelFetch(u_withLimits, townPos, 0).r;
 
   vec3 cartoPosition;
+  float longueur = longueurMaxi;
+  float cosEl = cos(elevation);
+  float hauteurBase = longueur * sin(elevation);
   if (clock < 0.0) {
     cartoPosition = summit;
   } else {
-    float longueur = longueurMaxi;
-    float cosEl = cos(elevation);
-    if (withLimits > 0 && cosEl>0.0) {
+    if (withLimits > 0 && cosEl > 0.0) {
       longueur = min(longueurMaxi, boundaryLimit / cosEl);
     }
     cartoPosition = polar2Cartographic(clock, elevation, longueur, summit,
                                        ned2ECEF, earthRadius);
   }
   vec3 modelPosition = displayConversions(
-      cartoPosition, threeRadius, earthRadius, referenceEquiRectangular,standardParallel1,standardParallel2,
-      representationInit, representationEnd, percentRepresentation);
-  myOutputColor = vec4(modelPosition,0.0);
-  uvs = vec4(cartoPosition.x / PI + 0.5, cartoPosition.x / (2.0 * PI) + 0.5, 0.0, 0.0);
+      cartoPosition, threeRadius, earthRadius, referenceEquiRectangular,
+      standardParallel1, standardParallel2, representationInit,
+      representationEnd, percentRepresentation);
+  myOutputColor = vec4(modelPosition, 0.0);
+  uvs = vec4(cartoPosition.x / PI + 0.5, cartoPosition.x / (2.0 * PI) + 0.5,
+             0.0, 0.0);
+  cartoPosition.z = - hauteurBase;
+  modelPosition = displayConversions(
+      cartoPosition, threeRadius, earthRadius, referenceEquiRectangular,
+      standardParallel1, standardParallel2, representationInit,
+      representationEnd, percentRepresentation);
+  base = vec4(modelPosition, 0.0);
 }
