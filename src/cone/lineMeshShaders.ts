@@ -89,25 +89,8 @@ function computation(): void {
     _gpgpu.positions.updateTextures(options);
     let tempo = _gpgpu.positions.calculate(_width, _height);
     let allPositions = tempo[0];
-    let options2 = {
-        points: { src: allPositions, width: _width, height: _height },
-    };
-    _gpgpu.boundingSphere.updateTextures(options2);
-    let temp = _gpgpu.boundingSphere.calculate(1, _height);
-    let boundingBoxes = temp[0];
-    let lastPosition = temp[1];
-
-    let finalPositions = new Float32Array((_width + 1) * _height * 4);
-    let offset: number;
     for (let i = 0; i < _height; i++) {
-        offset = i * (_width + 1) * 4;
-        finalPositions.set(allPositions.subarray(i * _width * 4, (i + 1) * _width * 4), offset);
-        finalPositions.set(lastPosition.subarray(i * 4, (i + 1) * 4), offset + 4 * _width);
-    }
-    let boundingBox: Float32Array;
-    for (let i = 0; i < _height; i++) {
-        boundingBox = boundingBoxes.subarray(i * 4, (i + 1) * 4);
-        _lines[i].setGeometry(finalPositions.subarray(i * (_width + 1) * 4, (i + 1) * (_width + 1) * 4), boundingBox);
+        _lines[i].setGeometry(allPositions.subarray(i * _width * 4, (i + 1) * _width * 4));
     }
 }
 
@@ -139,15 +122,6 @@ export class LineMeshShader extends Line {
                         1).then(
                             (instance) => {
                                 _gpgpu.positions = instance;
-                                return instance;
-                            }),
-                    GPUComputer.GPUComputerFactory(
-                        Shaders.getShader('boundingSphere', 'fragment'), {
-                            points: 'RGBA32F',
-                        },
-                        2).then(
-                            (instance) => {
-                                _gpgpu.boundingSphere = instance;
                                 return instance;
                             }),
                 ]).then(() => {
@@ -248,17 +222,13 @@ export class LineMeshShader extends Line {
         return this._transportName;
     }
 
-    public setGeometry(positions: Float32Array, boundingSphereData: Float32Array): void {
+    public setGeometry(positions: Float32Array): void {
         let bufferedGeometry = <BufferGeometry>this.geometry;
         if (_linesWithoutDisplay.indexOf(this) === -1) {
             let interleavedBuffer = (<InterleavedBufferAttribute>bufferedGeometry.getAttribute('position')).data;
             interleavedBuffer.set(positions, 0);
             interleavedBuffer.needsUpdate = true;
-            let center = bufferedGeometry.boundingSphere.center;
-            center.setX(boundingSphereData[0]);
-            center.setY(boundingSphereData[1]);
-            center.setZ(boundingSphereData[2]);
-            bufferedGeometry.boundingSphere.radius = boundingSphereData[3];
+            bufferedGeometry.computeBoundingSphere();
             bufferedGeometry.setDrawRange(0, _width);
         } else {
             bufferedGeometry.setDrawRange(0, 0);
@@ -272,7 +242,6 @@ export class LineMeshShader extends Line {
             this._ratio = ratio;
             let index = _lines.indexOf(this);
             _hauteurs[index] = getHeight(this._ratio, this.opening);
-            console.log(ratio, this.transportName);
         }
         return resultat;
     }
@@ -284,7 +253,6 @@ export class LineMeshShader extends Line {
         const bufferGeometry = new BufferGeometry();
         bufferGeometry.addAttribute('position', interleavedBufferAttributePosition);
         bufferGeometry.computeBoundingSphere();
-        bufferGeometry.boundingSphere = new Sphere();
         super(bufferGeometry, CONFIGURATION.BASIC_LINE_MATERIAL.clone());
         this._years = years;
         this.opening = opening;

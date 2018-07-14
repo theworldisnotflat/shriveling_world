@@ -466,7 +466,6 @@ export class CountryMeshShader extends Mesh {
         bufferGeometry.setIndex(new BufferAttribute(preGeometry.indexes, 1));
         bufferGeometry.setDrawRange(0, preGeometry.indexes.length);
         bufferGeometry.computeBoundingSphere();
-        bufferGeometry.boundingSphere = new Sphere();
         super(bufferGeometry, <MeshMaterial>CONFIGURATION.COUNTRY_MATERIAL.clone());
         this.otherProperties = preMesh.properties;
         this._boundaryBox = { minLat: 1000, minLong: 1000, maxLat: -1000, maxLong: -1000, boundary: preGeometry.surfaceBoundary };
