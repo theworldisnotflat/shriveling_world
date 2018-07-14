@@ -30,12 +30,17 @@ function fullCleanArrays(): void {
 }
 fullCleanArrays();
 
-/// formule de la hauteur des arcs fonction de theta
+// formule de la hauteur des arcs fonction de theta
+// et du ratio des vitesses
 function getHeight(ratio: number, theta: number): number {
     const semiTheta = theta / 2;
     const sinSemiTheta = Math.sin(semiTheta);
     const cosSemiTheta = Math.cos(semiTheta);
-    return (Math.sqrt(cosSemiTheta) + Math.sqrt(ratio * ratio - sinSemiTheta * sinSemiTheta) - 1) *
+    const secondTerm =  Math.sqrt(ratio * ratio - sinSemiTheta * sinSemiTheta);
+    const thirdTerm = 0;
+    /* return (cosSemiTheta + Math.sqrt(ratio * ratio - sinSemiTheta * sinSemiTheta) - 1) *
+        CONFIGURATION.earthRadiusMeters * _coefficient; */
+    return (cosSemiTheta + secondTerm + thirdTerm ) *
         CONFIGURATION.earthRadiusMeters * _coefficient;
 }
 

@@ -239,7 +239,8 @@ export default class BigBoard {
         let plane = new Mesh(planeGeometry, planeMaterial);
         plane.position.z = -200;
         plane.receiveShadow = true;
-        this._scene.add(plane);
+        // plan vert
+        // this._scene.add(plane);
         this._container.appendChild(this._renderer.domElement);
         this._controls = new OrbitControls(this._camera, this._renderer.domElement);
 
@@ -265,7 +266,7 @@ export default class BigBoard {
 
         let skyGeometry = new CubeGeometry(10000, 10000, 10000);
         let skybox = new Mesh(skyGeometry, materialArray);
-        this._scene.add(skybox);
+        // this._scene.add(skybox);
     }
 
     private _animate(): void {
