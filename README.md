@@ -46,6 +46,7 @@ with XXX and value in the following range:
 
 
 ## install
+Does not work with old version of nodejs (with version 4 does not work, with version 8 does)
 ```
 npm i
 ```
@@ -63,8 +64,4 @@ and go to http://localhost:8080.
 
 
 # Road map
-- [X] create classes for the generation of cones
-- [X] create a board class to manage cones
-- [ ] create bigboard to manage all the application
-- [x] incorpore the parser of csv in order to provide some cones
-- [ ] draw edges
+https://github.com/theworldisnotflat/shriveling_world/wiki
