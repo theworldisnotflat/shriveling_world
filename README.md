@@ -62,9 +62,4 @@ and go to http://localhost:8080.
 
 
 
-# Road map
-- [X] create classes for the generation of cones
-- [X] create a board class to manage cones
-- [ ] create bigboard to manage all the application
-- [x] incorpore the parser of csv in order to provide some cones
-- [ ] draw edges
+# Road map : https://github.com/theworldisnotflat/shriveling_world/wiki
