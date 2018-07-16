@@ -49,7 +49,7 @@ function prepareConfiguration(): void {
 }
 
 let _filesData: IListFile[] = [];
-let _light = new DirectionalLight(0xefefff, 2); // (0xffffff, 5, 1000, 2);
+let _light = new DirectionalLight(0xefefff, 1.5); // (0xffffff, 5, 1000, 2);
 _light.castShadow = true;
 _light.shadow.mapSize.width = 512;  // default
 _light.shadow.mapSize.height = 512; // default
@@ -57,7 +57,9 @@ _light.shadow.camera.near = 0.5;       // default
 _light.shadow.camera.far = 800;    // default
 
 // let  _light = new DirectionalLight( 0xefefff, 1.5 );
-_light.position.set( 1, 1, 1 ).normalize();
+_light.position.set( -1, -0.197, 0.377 ).normalize();
+
+let _light2 = new DirectionalLight(0xffefef, 1.5);
 
 let _ambient = new AmbientLight(0xffffff);
 export default class BigBoard {
@@ -219,8 +221,11 @@ export default class BigBoard {
         this._camera.lookAt(this._scene.position);
         this._scene.fog = new Fog(0x000000, 1, 15000);
 
-        _light.position.set(0, 0, 1);
+        _light.position.set(1, 1, 1);
+        _light2.position.set(-1, -1, -1);
         this._scene.add(_light);
+        this._scene.add(_light2);
+
         this._helper = new DirectionalLightHelper(_light);
         this._scene.add(this._helper);
 
@@ -359,7 +364,7 @@ export default class BigBoard {
 
         // lignes
         let aerialFolder = gui.addFolder('Lignes');
-        aerialFolder.add(LineMeshShader, 'coefficient', 0, 10, .1);
+        aerialFolder.add(LineMeshShader, 'coefficient', 0, 10, 0);  // .1 en dernière position
         aerialFolder.add(CONFIGURATION, 'pointsPerLine', 0, 200).step(1).name('nombre de points');
         let aerialControllersList: dat.GUI[] = [];
 
