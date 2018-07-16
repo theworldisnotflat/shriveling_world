@@ -46,7 +46,7 @@ with XXX and value in the following range:
 
 
 ## install
-Does not work with old version of nodejs (version 4 does not work, version 8 does)
+Does not work with old version of nodejs (with version 4 does not work, with version 8 does)
 ```
 npm i
 ```
