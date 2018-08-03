@@ -2,7 +2,7 @@
 import { Point, SweepContext, IPointLike } from 'poly2tri';
 import {
     Vector2, Face3, Vector3, Mesh, InterleavedBuffer, InterleavedBufferAttribute, BufferGeometry,
-    BufferAttribute, Sphere, MeshMaterial,
+    BufferAttribute, Sphere, MeshMaterialType,
 } from 'three';
 import { CONFIGURATION } from '../common/configuration';
 import { Cartographic } from '../common/utils';
@@ -466,7 +466,7 @@ export class CountryMeshShader extends Mesh {
         bufferGeometry.setIndex(new BufferAttribute(preGeometry.indexes, 1));
         bufferGeometry.setDrawRange(0, preGeometry.indexes.length);
         bufferGeometry.computeBoundingSphere();
-        super(bufferGeometry, <MeshMaterial>CONFIGURATION.COUNTRY_MATERIAL.clone());
+        super(bufferGeometry, CONFIGURATION.COUNTRY_MATERIAL.clone());
         this.otherProperties = preMesh.properties;
         this._boundaryBox = { minLat: 1000, minLong: 1000, maxLat: -1000, maxLong: -1000, boundary: preGeometry.surfaceBoundary };
         for (let i = 0; i < this._boundaryBox.boundary.length; i++) {
