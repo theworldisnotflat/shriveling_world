@@ -18,7 +18,7 @@ import { PseudoCone } from '../cone/base';
 import { CountryMeshShader } from '../country/countryMeshShader';
 import { LineMeshShader } from '../cone/lineMeshShaders';
 import * as dat from 'dat.gui';
-declare var Stats: any;
+declare let Stats: any;
 
 function prepareConfiguration(): void {
     if (CONFIGURATION.COUNTRY_MATERIAL === undefined) {
@@ -58,54 +58,48 @@ _light.shadow.camera.near = 0.5;       // default
 _light.shadow.camera.far = 800;    // default
 
 // let  _light = new DirectionalLight( 0xefefff, 1.5 );
-_light.position.set( -1, -0.197, 0.377 ).normalize();
+_light.position.set(-1, -0.197, 0.377).normalize();
 
 let _light2 = new DirectionalLight(0xffefef, 1.5);
 
 let _ambient = new AmbientLight(0xffffff);
 
-var _gltfExporter = new GLTFExporter();
+// let _gltfExporter = new GLTFExporter();
 
 function exportGLTF(input: any): void {
-  // var _gltfExporter = new GLTFExporter();
-  var options = {
-    trs: true, // document.getElementById('option_trs').checked,
-    onlyVisible: true, // document.getElementById('option_visible').checked,
-    // truncateDrawRange: true, // document.getElementById('option_drawrange').checked,
-    // binary: true, // document.getElementById('option_binary').checked,
-    // forceIndices: false, // document.getElementById('option_forceindices').checked,
-    // forcePowerOfTwoTextures: false, // document.getElementById('option_forcepot').checked,
-  };
-  console.log( 'je suis passé là 1' );
-  _gltfExporter.parse(
-    input,
-    function( result ): any {
-      console.log( 'je suis passé là 2' );
-      if ( result instanceof ArrayBuffer ) {
-        saveArrayBuffer( result, 'scene.glb' );
-      } else {
-        var output = JSON.stringify( result, null, 2 );
-        console.log( output );
-        saveString( output, 'scene.gltf' );
-      }
-    },
-    options );
+    let _gltfExporter = new GLTFExporter();
+    let options = {
+        trs: true, // document.getElementById('option_trs').checked,
+        onlyVisible: true, // document.getElementById('option_visible').checked,
+        // truncateDrawRange: true, // document.getElementById('option_drawrange').checked,
+        // binary: true, // document.getElementById('option_binary').checked,
+        // forceIndices: false, // document.getElementById('option_forceindices').checked,
+        // forcePowerOfTwoTextures: false, // document.getElementById('option_forcepot').checked,
+    };
+    _gltfExporter.parse(
+        input, (result) => {
+            if (result instanceof ArrayBuffer) {
+                saveArrayBuffer(result, 'scene.glb');
+            } else {
+                let output = JSON.stringify(result, null, 2);
+                console.log(output);
+                saveString(output, 'scene.gltf');
+            }
+        },
+        options);
 }
 
-var link = document.createElement( 'a' );
-link.style.display = 'none';
-document.body.appendChild( link ); // firefox workaround, see #6594
-function save( blob: any, filename: any ): void {
-  link.href = URL.createObjectURL( blob );
-  link.download = filename;
-  link.click();
-  // uRL.revokeObjectURL( url ); breaks Firefox...
+let link = document.createElement('a');
+function save(blob: any, filename: string): void {
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
 }
-function saveString( text, filename ): void {
-  save( new Blob( [ text ], { type: 'text/plain' } ), filename );
+function saveString(text: string, filename: string): void {
+    save(new Blob([text], { type: 'text/plain' }), filename);
 }
-function saveArrayBuffer( buffer, filename ): void {
-  save( new Blob( [ buffer ], { type: 'application/octet-stream' } ), filename );
+function saveArrayBuffer(buffer: ArrayBuffer, filename: string): void {
+    save(new Blob([buffer], { type: 'application/octet-stream' }), filename);
 }
 
 export default class BigBoard {
@@ -125,7 +119,7 @@ export default class BigBoard {
     private _helper: DirectionalLightHelper;
 
     constructor() {
-        this.updateConfiguration();
+        prepareConfiguration();
         this._merger = new Merger();
         this._init();
         this._countries = new CountryBoard(this._scene, this._camera);
@@ -181,10 +175,6 @@ export default class BigBoard {
 
     get state(): IMergerState {
         return this._merger.state;
-    }
-
-    public updateConfiguration(): void {
-        prepareConfiguration();
     }
 
     public cleanCountries(): void {
@@ -319,6 +309,20 @@ export default class BigBoard {
         let skybox = new Mesh(skyGeometry, materialArray);
         // this._scene.add(skybox);
 
+        let saveButton = document.createElement('button');
+        saveButton.innerHTML = 'sauvegarde';
+        let style = saveButton.style;
+        style.zIndex = '1000';
+        style.position = 'fixed';
+        style.bottom = '0px';
+        style.left = '0px';
+        style.backgroundColor = 'red';
+        document.body.appendChild(saveButton);
+        saveButton.addEventListener('click', () => {
+
+            exportGLTF(this._scene);
+
+        });
     }
 
     private _animate(): void {
@@ -384,51 +388,6 @@ export default class BigBoard {
         }
         let refLong = referenceFolder.add(conf, 'longitude', -180, 180).step(0.01);
         refLong.onChange(changeReference);
-
-        // window.exportGLTF = exportGLTF;
-        // function exportGLTF(input: any): void {
-        //   var _gltfExporter = new GLTFExporter();
-        //   var options = {
-        //     trs: true, // document.getElementById('option_trs').checked,
-        //     onlyVisible: true, // document.getElementById('option_visible').checked,
-        //     // truncateDrawRange: true, // document.getElementById('option_drawrange').checked,
-        //     // binary: true, // document.getElementById('option_binary').checked,
-        //     // forceIndices: false, // document.getElementById('option_forceindices').checked,
-        //     // forcePowerOfTwoTextures: false, // document.getElementById('option_forcepot').checked,
-        //   };
-        //   console.log( 'je suis passé là 1' );
-        //   _gltfExporter.parse(
-        //     input,
-        //     function( result ): any {
-        //       console.log( 'je suis passé là 2' );
-        //       if ( result instanceof ArrayBuffer ) {
-        //         saveArrayBuffer( result, 'scene.glb' );
-        //       } else {
-        //         var output = JSON.stringify( result, null, 2 );
-        //         console.log( output );
-        //         saveString( output, 'scene.gltf' );
-        //       }
-        //     },
-        //     options );
-        // }
-        //
-        // var link = document.createElement( 'a' );
-        // link.style.display = 'none';
-        // document.body.appendChild( link ); // firefox workaround, see #6594
-        // function save( blob: any, filename: any ): void {
-        //   link.href = URL.createObjectURL( blob );
-        //   link.download = filename;
-        //   link.click();
-        //   // uRL.revokeObjectURL( url ); breaks Firefox...
-        // }
-        // function saveString( text, filename ): void {
-        //   save( new Blob( [ text ], { type: 'text/plain' } ), filename );
-        // }
-        // function saveArrayBuffer( buffer, filename ): void {
-        //   save( new Blob( [ buffer ], { type: 'application/octet-stream' } ), filename );
-        // }
-        // truc de sagouin
-        refLong.onChange(exportGLTF( this._scene ));
 
         let refLat = referenceFolder.add(conf, 'latitude', -89.99, 89.99).step(0.01);
         refLat.onChange(changeReference);
