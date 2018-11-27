@@ -2,14 +2,15 @@
     import { CONFIGURATION } from '../common/configuration';
 
     import {
-        MeshBasicMaterial, DoubleSide, MeshPhongMaterial, Color, Vector2, PerspectiveCamera, MeshStandardMaterial,
-        OrbitControls, Scene, WebGLRenderer, BackSide, CubeGeometry, SpotLight, DirectionalLight, Fog, AmbientLight, Mesh, LineBasicMaterial,
-        SphereBufferGeometry, PCFSoftShadowMap, SpotLightHelper, PlaneBufferGeometry, DirectionalLightHelper,Group,OrthographicCamera,
-        GLTFExporter,FontLoader, TextGeometry, Font, TextureLoader
-    } from 'three';
+        MeshBasicMaterial, DoubleSide, MeshPhongMaterial, PerspectiveCamera, MeshStandardMaterial,
+        OrbitControls, Scene, WebGLRenderer, BackSide, CubeGeometry, DirectionalLight, Fog,
+        AmbientLight, Mesh, LineBasicMaterial, PCFSoftShadowMap, PlaneBufferGeometry,
+        DirectionalLightHelper, Group, OrthographicCamera, GLTFExporter,
+        FontLoader, TextGeometry, TextureLoader, Font} from 'three';
+
     import saveAs from 'file-saver';
 
-    import {OBJExporter} from 'three-obj-exporter-t'
+    import {OBJExporter} from 'three-obj-exporter-t';
     import { ConeBoard } from '../cone/coneBoard';
     import { CountryBoard } from '../country/countryBoard';
     import { Merger } from './merger';
@@ -38,7 +39,7 @@
             // earthMaterial.normalMap = new TextureLoader().load(CONFIGURATION.COUNTRY_TEXTURES.normalMap);
             CONFIGURATION.COUNTRY_MATERIAL = earthMaterial;
             CONFIGURATION.BASIC_CONE_MATERIAL = new MeshPhongMaterial({
-                //transparent: false,
+                // transparent: false,
                 opacity: 0.8,
                 color: 0xebdede,
                 side: DoubleSide,
@@ -115,20 +116,24 @@
         private _stats: any;
         private _controls: OrbitControls;
 
-        //Is orthographic camera
+        // is orthographic camera
         private orthographique: boolean;
         private _cameraO: OrthographicCamera;
         private _cameraP: PerspectiveCamera;
         //
-        private _showCitiesName : boolean;
-        private _populations : number;
+        private _showCitiesName: boolean;
+        private _populations: number;
         private _scene: Scene;
         private _renderer: WebGLRenderer;
         private _windowHalfX: number = window.innerWidth / 2;
         private _windowHalfY: number = window.innerHeight / 2;
         private _merger: Merger;
         private _helper: DirectionalLightHelper;
-        
+
+        // noeud ajout nom Ville
+        private _geometryText: Group;
+        private loaderFont: FontLoader;
+
         constructor() {
             prepareConfiguration();
             this._merger = new Merger();
@@ -140,20 +145,19 @@
             this._cones = new ConeBoard(this._scene, this._cameraO, this._countries, this._renderer);
             CONFIGURATION.year = '2010';
             this._showCitiesName = true;
+            this.loaderFont = new FontLoader();
 
             this.initInteraction();
             this._animate();
         }
         public toggleShowCity(): void {
             console.log(this._showCitiesName);
-            
             this._showCitiesName = !this._showCitiesName;
         }
 
-        get getMergerI() : Merger {
+        get getMergerI(): Merger {
             return this._merger;
         }
-
 
         get scaleCountries(): number {
             return this._countries.scale;
@@ -265,6 +269,51 @@
         public extrude(criterias: ICriterias, value?: number): void {
             this._countries.extrude(criterias, value);
         }
+        public updateNameTown(): void {
+            var mesh;
+            var option;
+            this.loaderFont.load( 'font.json', function ( font: Font = null ): void {
+               option = {
+                   font: font,
+                   size: 4,
+                   height: 1,
+                   curveSegments: 3,
+                   bevelEnabled: false,
+                   bevelThickness: 0,
+                   bevelSize: 0,
+                   bevelSegments: 0,
+                };
+           });
+            for ( var i = this._geometryText.children.length - 1 ; i >= 0 ; i--) {
+                this._geometryText.remove(this._geometryText.children[i]);
+            }
+            for ( var j = 0 ; j < 10 ; j++ ) {
+                    var obj = JSON.parse(JSON.stringify(this.getMergerI.Cities[j]));
+                    var pop = JSON.parse(JSON.stringify(
+                                this._merger.mergedData.lookupTownTransport[this.getMergerI.Cities[j].cityCode]
+                                .cityProperties.populations));
+                    var population = pop.pop2020;
+                    if (population > this._populations) {
+
+                        var geometry = new TextGeometry(obj.urbanAgglomeration , option    );
+                        var textMaterial = new MeshPhongMaterial(
+                            { color: 0x111111, specular: 0xcc75e5,
+                            },
+                        );
+                        mesh = new Mesh( geometry, textMaterial );
+                        let cart = this._merger.mergedData.lookupTownTransport[this.getMergerI.Cities[j].cityCode].referential.cartoRef;
+                        let x =  - CONFIGURATION.THREE_EARTH_RADIUS  * Math.cos(cart.latitude) * Math.cos(cart.longitude);
+                        let y =  CONFIGURATION.THREE_EARTH_RADIUS  * Math.sin(cart.latitude);
+                        let z =  CONFIGURATION.THREE_EARTH_RADIUS  * Math.cos(cart.latitude) * Math.sin(cart.longitude);
+                        this._geometryText.add(mesh);
+                        mesh.position.set(x, y, z);
+                        // mesh.rotation.set(0,Math.cos(cart.latitude*CONFIGURATION.rad2deg),0);
+
+                    }
+
+                }
+
+        }
 
         private _init(): void {
             this._container = document.createElement('div');
@@ -275,7 +324,8 @@
             this._stats.domElement.style.zIndex = 100;
             this._container.appendChild(this._stats.domElement);
             this._cameraP = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 15000);
-            this._cameraO = new OrthographicCamera( -this._windowHalfX ,this._windowHalfX , this._windowHalfY, -this._windowHalfY, 1, 2000 );
+            this._cameraO = new OrthographicCamera( -this._windowHalfX ,
+                                                    this._windowHalfX , this._windowHalfY, -this._windowHalfY, 1, 2000 );
             this._cameraO.position.set(0, 0, 500);
             this._cameraP.position.set(0, 0, 500);
             this._populations = 0;
@@ -286,24 +336,7 @@
             this._cameraO.lookAt(this._scene.position);
             this._cameraP.lookAt(this._scene.position);
             this._scene.fog = new Fog(0x000000, 1, 15000);
-            var loaderFont = new FontLoader();
-
-
-            var mesh;
-            var option;
-            loaderFont.load( 'font.json', function ( font ) {
-               option = { 
-                   font: font,
-                   size: 4,
-                   height: 1,
-                   curveSegments: 3,
-                   bevelEnabled: false,
-                   bevelThickness: 0,
-                   bevelSize: 0,
-                   bevelSegments: 0
-               }
-           });
-    
+            this._geometryText = new Group();
 
             _light.position.set(1, 1, 1);
             _light2.position.set(-1, -1, -1);
@@ -314,6 +347,7 @@
             this._scene.add(this._helper);
 
             this._scene.add(_ambient);
+            this._scene.add(this._geometryText);
 
             this._renderer = new WebGLRenderer({ antialias: true });
             this._renderer.shadowMap.enabled = true;
@@ -340,13 +374,11 @@
 
                     this._cameraP.aspect = window.innerWidth / window.innerHeight;
                     this._cameraP.updateProjectionMatrix();
-                    //this.updateCamera();
+                    // this.updateCamera();
 
                     this._renderer.setSize(window.innerWidth, window.innerHeight);
                 },
                 false);
-                
-
             // skybox
             let loader = new TextureLoader();
             let materialArray = CONFIGURATION.SKYBOX_URLS.map((url) =>
@@ -369,11 +401,9 @@
             style.backgroundColor = 'red';
             document.body.appendChild(saveButton);
             saveButton.addEventListener('click', () => {
-                
-                //exportGLTF(this._scene);
-                console.log(this._merger.mergedData);
+                // exportGLTF(this._scene);
 
-                //  this.exporterOBJ();
+                this.exporterOBJ();
             });
 
             let showCitiesButton = document.createElement('button');
@@ -386,56 +416,31 @@
             style.backgroundColor = 'blue';
             document.body.appendChild(showCitiesButton);
             showCitiesButton.addEventListener('click', () => {
-                    
-                for(var i = 0 ; i < 10 ; i++)
-                {
-                    var obj = JSON.parse(JSON.stringify(this.getMergerI.Cities[i]));
-                    console.log(this._merger.mergedData.lookupTownTransport[this.getMergerI.Cities[i].cityCode].cityProperties.populations);    
-                    var population =this._merger.mergedData.lookupTownTransport[this.getMergerI.Cities[i].cityCode].cityProperties.populations[1];    
+                this.updateNameTown();
 
-                    //var nameCity = this._merger.mergedData.lookupTownTransport[this.getMergerI.Cities[i].cityCode].cityProperties.urbanagglomeration
-                    if(population>this._populations){
-
-                        var geometry = new TextGeometry(obj.urbanAgglomeration , option    );
-                        var textMaterial = new MeshPhongMaterial( 
-                            { color: 0x111111, specular: 0xcc75e5 }
-                        );
-                        
-                        mesh = new Mesh( geometry, textMaterial );
-                        let cart = this._merger.mergedData.lookupTownTransport[this.getMergerI.Cities[i].cityCode].referential.cartoRef
-                        let x =  - CONFIGURATION.THREE_EARTH_RADIUS  * Math.cos(cart.latitude)*Math.cos(cart.longitude);
-                        let y =  CONFIGURATION.THREE_EARTH_RADIUS  * Math.sin(cart.latitude);
-                        let z =  CONFIGURATION.THREE_EARTH_RADIUS  * Math.cos(cart.latitude)*Math.sin(cart.longitude);
-                        
-                        this._scene.add(mesh);
-                        mesh.position.set(x,y,z);
-                        mesh.rotation.set(0,Math.cos(cart.latitude*CONFIGURATION.rad2deg),0);
-                    }
-                }
             });
     }
 
-        private exporterOBJ() {
+        private exporterOBJ(): void {
             var exporter = new OBJExporter();
-            alert("Export begin...");
-            var result = "";
+            alert('Export begin...');
+            var result = '';
             var group = new Group();
             for (var i = 0; i < this._countries.countryMeshCollection.length; ++i) {
                 var cloned = this._countries.countryMeshCollection[i];
                 group.add(cloned);
             }
-            for (var i = 0; i < this._cones.coneMeshCollection.length - 636; ++i) {
-                var clonedCone = this._cones.coneMeshCollection[i];
+            for (var j = 0; j < this._cones.coneMeshCollection.length - 636; ++j) {
+                var clonedCone = this._cones.coneMeshCollection[j];
                 group.add(clonedCone);
             }
-            //exportGLTF(group);
-            var blob = new Blob([exporter.parse(group)], { type: "text/plain;charset=utf-8" });
-            saveAs(blob, "scene.obj");
+            var blob = new Blob([exporter.parse(group)], { type: 'text/plain;charset=utf-8' });
+            saveAs(blob, 'scene.obj');
             this._scene.add(group);
-            alert("Export end.");
+            alert('Export end.');
         }
 
-        private updateCamera() {
+        private updateCamera(): void {
             this._windowHalfX = window.innerWidth / 2;
             this._windowHalfY = window.innerHeight / 2;
             this._cameraO.left = -this._windowHalfX;
@@ -449,8 +454,8 @@
 
         private _animate(): void {
             let scene = this._scene;
-            let camera = (this.orthographique)?this._cameraO : this._cameraP; 
-            this._controls.object  = camera ; 
+            let camera = (this.orthographique) ? this._cameraO : this._cameraP;
+            this._controls.object  = camera ;
             requestAnimationFrame(() => this._animate());
             this._renderer.render(scene, camera);
             this._stats.update();
@@ -459,15 +464,14 @@
             CONFIGURATION.tick();
         }
 
-        
-            //Show/Unshown city Name
-
+        // show/Unshown city Name
         private initInteraction(): void {
             const gui = new dat.GUI();
             let conf = {
                 coneStep: CONFIGURATION.coneStep * CONFIGURATION.rad2deg,
                 year: parseInt(<string>CONFIGURATION.year, 10),
-                projection: { aucun: 0, equirectangulaire: 1, Mercator: 2, Winkel: 3, Eckert: 4, 'Van Der Grinten': 5, 'conic equidistant': 6 },
+                projection: { aucun: 0, equirectangulaire: 1, Mercator: 2, Winkel: 3, Eckert: 4,
+                    'Van Der Grinten': 5, 'conic equidistant': 6 },
                 'type de transport': '',
                 'couleur des cônes': '#' + (<any>CONFIGURATION.BASIC_CONE_MATERIAL).color.getHex().toString(16),
                 'transparence des cônes': CONFIGURATION.BASIC_CONE_MATERIAL.opacity,
@@ -529,21 +533,19 @@
             let annees = generalFolder.add(conf, 'year', 1930, 2030).step(1);
             annees.onChange(v => CONFIGURATION.year = v);
 
-            //Toggle Camera Orthograpgic/Perspectiv View
-            function changeCameraView():void{
+            // toggle Camera Orthograpgic/Perspectiv View
+            function changeCameraView(): void {
                 this.orthographique = !this.orthographique;
             }
             let swapView = projectionFolder.add(this, 'orthographique');
             swapView.onChange(changeCameraView);
-            function ShowCitiesName():void{
-                console.log(this._showCitiesName);
+            function ShowCitiesName(): void {
                 this._showCitiesName = !this._showCitiesName;
             }
 
-            let show_city  = generalFolder.add(this, '_showCitiesName').name("Show Cities name").onChange(ShowCitiesName);
-            let population = generalFolder.add(this, '_populations', 0,20000 ).name('Seuil population').step(10)
-                            .setValue(this._populations);
-        
+            generalFolder.add(this, '_showCitiesName').name('Show Cities name').onChange(ShowCitiesName);
+            let population = generalFolder.add(this, '_populations', 0, 20000 ).name('Seuil population').step(10)
+                            .setValue(this._populations).onFinishChange(this.updateNameTown());
 
             // cônes
             let coneFolder = gui.addFolder('Cones');
@@ -675,7 +677,7 @@
                                 flagTransportDone = false;
                                 annees.min(this._merger.minYear).max(this._merger.maxYear).updateDisplay();
                                 this._cones.add(this._merger.datas, CONFIGURATION.extrudedHeight);
-                                //this._merger.clear();
+                                // this._merger.clear();
                                 _filesData = [];
 
                             }
