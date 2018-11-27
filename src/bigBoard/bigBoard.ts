@@ -133,10 +133,12 @@
         // noeud ajout nom Ville
         private _geometryText: Group;
         private loaderFont: FontLoader;
+        private option?: any;
 
         constructor() {
             prepareConfiguration();
             this._merger = new Merger();
+            this.loaderFont = new FontLoader();
             this._init();
             this.orthographique = true;
 
@@ -145,7 +147,6 @@
             this._cones = new ConeBoard(this._scene, this._cameraO, this._countries, this._renderer);
             CONFIGURATION.year = '2010';
             this._showCitiesName = true;
-            this.loaderFont = new FontLoader();
 
             this.initInteraction();
             this._animate();
@@ -269,21 +270,12 @@
         public extrude(criterias: ICriterias, value?: number): void {
             this._countries.extrude(criterias, value);
         }
-        public updateNameTown(): void {
+        public updateNameTown(option?: any): void {
+
+            if (this._merger.state !== 'complete') {
+                return;
+            }
             var mesh;
-            var option;
-            this.loaderFont.load( 'font.json', function ( font: Font = null ): void {
-               option = {
-                   font: font,
-                   size: 4,
-                   height: 1,
-                   curveSegments: 3,
-                   bevelEnabled: false,
-                   bevelThickness: 0,
-                   bevelSize: 0,
-                   bevelSegments: 0,
-                };
-           });
             for ( var i = this._geometryText.children.length - 1 ; i >= 0 ; i--) {
                 this._geometryText.remove(this._geometryText.children[i]);
             }
@@ -294,8 +286,10 @@
                                 .cityProperties.populations));
                     var population = pop.pop2020;
                     if (population > this._populations) {
-
-                        var geometry = new TextGeometry(obj.urbanAgglomeration , option    );
+                        console.log('2020');
+                        console.log(pop);
+                        console.log(obj);
+                        var geometry = new TextGeometry(obj.urbanAgglomeration , option );
                         var textMaterial = new MeshPhongMaterial(
                             { color: 0x111111, specular: 0xcc75e5,
                             },
@@ -405,6 +399,20 @@
 
                 this.exporterOBJ();
             });
+            var option;
+            this.loaderFont.load( 'gentilis_regular.typeface.json', function ( font: Font ): void {
+               option = {
+                   font: font,
+                   size: 4,
+                   height: 1,
+                   curveSegments: 3,
+                   bevelEnabled: false,
+                   bevelThickness: 0,
+                   bevelSize: 0,
+                   bevelSegments: 0,
+                };
+           });
+            // this.option = option ;
 
             let showCitiesButton = document.createElement('button');
             showCitiesButton.innerHTML = 'show cities';
@@ -416,7 +424,7 @@
             style.backgroundColor = 'blue';
             document.body.appendChild(showCitiesButton);
             showCitiesButton.addEventListener('click', () => {
-                this.updateNameTown();
+                this.updateNameTown(option);
 
             });
     }
@@ -545,7 +553,8 @@
 
             generalFolder.add(this, '_showCitiesName').name('Show Cities name').onChange(ShowCitiesName);
             let population = generalFolder.add(this, '_populations', 0, 20000 ).name('Seuil population').step(10)
-                            .setValue(this._populations).onFinishChange(this.updateNameTown());
+                            .setValue(this._populations);
+                            // .onFinishChange(this.updateNameTown());
 
             // cônes
             let coneFolder = gui.addFolder('Cones');
