@@ -361,9 +361,8 @@ export class Merger {
         return this._mergedData;
     }
 
-
-    public get Cities():ICity[] {return this._cities;}
-    public CitiesByIndex(index): ICity {return this._cities[index];}
+    public get Cities(): ICity[] {return this._cities; }
+    public CitiesByIndex(index): ICity {return this._cities[index]; }
 
     public get datas(): ILookupAndMaxSpeedAndLine {
         return this._mergedData;
