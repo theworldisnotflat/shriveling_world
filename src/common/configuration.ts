@@ -1,5 +1,5 @@
 'use strict';
-import { MeshBasicMaterial, MeshStandardMaterial, LineBasicMaterial, MeshPhongMaterial, MeshMaterialType } from 'three';
+import { MeshBasicMaterial, LineBasicMaterial, Material } from 'three';
 import { generateUUID } from './utils';
 import {
     PROJECTION_ENUM, ICountryTextureURL, ICartographic, configurationObservableEvt, configurationCallback,
@@ -31,12 +31,12 @@ let _projectionEnd: PROJECTION_ENUM = PROJECTION_ENUM.none;
 let _projectionPercent: number = 0;
 let _year: string | number = 1980;
 let _highLitedMaterial: MeshBasicMaterial;
-let _COUNTRY_MATERIAL: MeshMaterialType;
-let _BASIC_CONE_MATERIAL: MeshMaterialType;
+let _COUNTRY_MATERIAL: Material;
+let _BASIC_CONE_MATERIAL: Material;
 let _BASIC_TEXT_MATERIAL: MeshBasicMaterial;
 let _BASIC_LINE_MATERIAL: LineBasicMaterial;
 let _pointsPerLine: number = 50;
-let _SIZE_TEXT: number ;
+let _SIZE_TEXT: number;
 
 let _extrudedHeight: number = 0;
 let _hatHeight: number = 0;
@@ -54,19 +54,19 @@ const _listeners: {
     tick: IEventListItem[],
     pointsPerLine: IEventListItem[],
 } = {
-        heightRatio: [],
-        intrudedHeightRatio: [],
-        coneStep: [],
-        TWEEN_TIMING: [],
-        referenceEquiRectangular: [],
-        THREE_EARTH_RADIUS: [],
-        projectionBegin: [],
-        projectionEnd: [],
-        projectionPercent: [],
-        year: [],
-        tick: [],
-        pointsPerLine: [],
-    };
+    heightRatio: [],
+    intrudedHeightRatio: [],
+    coneStep: [],
+    TWEEN_TIMING: [],
+    referenceEquiRectangular: [],
+    THREE_EARTH_RADIUS: [],
+    projectionBegin: [],
+    projectionEnd: [],
+    projectionPercent: [],
+    year: [],
+    tick: [],
+    pointsPerLine: [],
+};
 function fireEvents(attribute: configurationObservableEvt, value: any): void {
     if (_listeners.hasOwnProperty(attribute)) {
         let callBackList = _listeners[attribute];
@@ -126,11 +126,11 @@ export const CONFIGURATION = {
         normalMap: 'assets/earth_normalmap_flat4k.jpg',
     },
     CONE_TEXTURE: 'assets/coneTexture.png',
-    get COUNTRY_MATERIAL(): MeshMaterialType { return _COUNTRY_MATERIAL; },
-    get BASIC_CONE_MATERIAL(): MeshMaterialType { return _BASIC_CONE_MATERIAL; },
+    get COUNTRY_MATERIAL(): Material { return _COUNTRY_MATERIAL; },
+    get BASIC_CONE_MATERIAL(): Material { return _BASIC_CONE_MATERIAL; },
     get BASIC_TEXT_MATERIAL(): MeshBasicMaterial { return _BASIC_TEXT_MATERIAL; },
-    set COUNTRY_MATERIAL(value: MeshMaterialType) { _COUNTRY_MATERIAL = value; },
-    set BASIC_CONE_MATERIAL(value: MeshMaterialType) { _BASIC_CONE_MATERIAL = value; },
+    set COUNTRY_MATERIAL(value: Material) { _COUNTRY_MATERIAL = value; },
+    set BASIC_CONE_MATERIAL(value: Material) { _BASIC_CONE_MATERIAL = value; },
     set BASIC_TEXT_MATERIAL(value: MeshBasicMaterial) { _BASIC_TEXT_MATERIAL = value; },
     get BASIC_LINE_MATERIAL(): LineBasicMaterial { return _BASIC_LINE_MATERIAL; },
     set BASIC_LINE_MATERIAL(value: LineBasicMaterial) { _BASIC_LINE_MATERIAL = value; },
@@ -166,10 +166,10 @@ export const CONFIGURATION = {
         }
     },
     set standardParallel2(value: number) {
-      if (Math.abs(value) < Math.PI / 2 && Math.abs(value - _standardParallel1) > .00000001) {
-          _standardParallel2 = value;
-          fireEvents('referenceEquiRectangular', _referenceEquiRectangular);
-      }
+        if (Math.abs(value) < Math.PI / 2 && Math.abs(value - _standardParallel1) > .00000001) {
+            _standardParallel2 = value;
+            fireEvents('referenceEquiRectangular', _referenceEquiRectangular);
+        }
     },
 
     get THREE_EARTH_RADIUS(): number { return _THREE_EARTH_RADIUS; },
@@ -207,7 +207,6 @@ export const CONFIGURATION = {
     },
     removeEventListener(uuid: string): void {
         let list: IEventListItem[];
-        let i: number;
         for (let evName in _listeners) {
             if (_listeners.hasOwnProperty(evName)) {
                 list = _listeners[evName];
