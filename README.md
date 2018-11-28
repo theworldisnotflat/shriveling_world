@@ -6,6 +6,14 @@ The word "shriveling" was introduced by Waldo Tobler in his comments of L'Hostis
 
 # How to use
 
+## Requisites
+You need updated version of node.js and npm:
+https://stackoverflow.com/questions/6237295/how-can-i-update-nodejs-and-npm-to-the-next-versions
+You also need these packages:
+  npm i -g tslint
+  npm i file-saver
+  npm i three-obj-exporter-t
+
 ## Launching the server
 Go in the application folder and open a terminal:
 ```
