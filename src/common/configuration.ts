@@ -33,8 +33,10 @@ let _year: string | number = 1980;
 let _highLitedMaterial: MeshBasicMaterial;
 let _COUNTRY_MATERIAL: MeshMaterialType;
 let _BASIC_CONE_MATERIAL: MeshMaterialType;
+let _BASIC_TEXT_MATERIAL: MeshBasicMaterial;
 let _BASIC_LINE_MATERIAL: LineBasicMaterial;
 let _pointsPerLine: number = 50;
+let _SIZE_TEXT: number ;
 
 let _extrudedHeight: number = 0;
 let _hatHeight: number = 0;
@@ -126,10 +128,15 @@ export const CONFIGURATION = {
     CONE_TEXTURE: 'assets/coneTexture.png',
     get COUNTRY_MATERIAL(): MeshMaterialType { return _COUNTRY_MATERIAL; },
     get BASIC_CONE_MATERIAL(): MeshMaterialType { return _BASIC_CONE_MATERIAL; },
+    get BASIC_TEXT_MATERIAL(): MeshBasicMaterial { return _BASIC_TEXT_MATERIAL; },
     set COUNTRY_MATERIAL(value: MeshMaterialType) { _COUNTRY_MATERIAL = value; },
     set BASIC_CONE_MATERIAL(value: MeshMaterialType) { _BASIC_CONE_MATERIAL = value; },
+    set BASIC_TEXT_MATERIAL(value: MeshBasicMaterial) { _BASIC_TEXT_MATERIAL = value; },
     get BASIC_LINE_MATERIAL(): LineBasicMaterial { return _BASIC_LINE_MATERIAL; },
     set BASIC_LINE_MATERIAL(value: LineBasicMaterial) { _BASIC_LINE_MATERIAL = value; },
+    get SIZE_TEXT(): number { return _SIZE_TEXT; },
+    set SIZE_TEXT(value: number) { _SIZE_TEXT = value; },
+
     SKYBOX_URLS: <string[]>[
         'assets/px.jpg', 'assets/nx.jpg', 'assets/py.jpg', 'assets/ny.jpg', 'assets/pz.jpg', 'assets/nz.jpg',
     ],

@@ -1,15 +1,13 @@
     'use strict';
     import { CONFIGURATION } from '../common/configuration';
-
     import {
         MeshBasicMaterial, DoubleSide, MeshPhongMaterial, PerspectiveCamera, MeshStandardMaterial,
         OrbitControls, Scene, WebGLRenderer, BackSide, CubeGeometry, DirectionalLight, Fog,
         AmbientLight, Mesh, LineBasicMaterial, PCFSoftShadowMap, PlaneBufferGeometry,
         DirectionalLightHelper, Group, OrthographicCamera, GLTFExporter,
-        FontLoader, TextGeometry, TextureLoader, Font} from 'three';
-
+        FontLoader, TextGeometry, TextureLoader, Font, Vector3, ShaderMaterial, OutlinePass, EffectComposer,
+        Vector2, UniformsUtils, Color, RenderPass, AdditiveBlending, FrontSide, MultiplyBlending} from 'three';
     import saveAs from 'file-saver';
-
     import {OBJExporter} from 'three-obj-exporter-t';
     import { ConeBoard } from '../cone/coneBoard';
     import { CountryBoard } from '../country/countryBoard';
@@ -25,6 +23,7 @@
     import * as dat from 'dat.gui';
 
     declare let Stats: any;
+    let option: any;
 
     function prepareConfiguration(): void {
         if (CONFIGURATION.COUNTRY_MATERIAL === undefined) {
@@ -48,13 +47,23 @@
                 // roughness: 0,
                 // metalness: 0.5,
             });
+            CONFIGURATION.BASIC_TEXT_MATERIAL = new MeshPhongMaterial({
+                // transparent: false,
+                opacity: 1.0,
+                color: 0xebdede,
+                side: DoubleSide,
+                // shininess: 0,
+                // specularMap: 0,
+                // roughness: 0,
+                // metalness: 0.5,
+            });
             // (<MeshPhongMaterial>CONFIGURATION.BASIC_CONE_MATERIAL).map = new TextureLoader().load(CONFIGURATION.CONE_TEXTURE);
             CONFIGURATION.BASIC_LINE_MATERIAL = new LineBasicMaterial({
                 color: 0x1000ff, linewidth: .5, side: DoubleSide, transparent: true, opacity: 0.3,
             });
         }
-    }
 
+    }
     let _filesData: IListFile[] = [];
     let _light = new DirectionalLight(0xefefff, 1.5); // (0xffffff, 5, 1000, 2);
     _light.castShadow = true;
@@ -123,6 +132,7 @@
         //
         private _showCitiesName: boolean;
         private _populations: number;
+        private _sizetexte: number;
         private _scene: Scene;
         private _renderer: WebGLRenderer;
         private _windowHalfX: number = window.innerWidth / 2;
@@ -133,12 +143,24 @@
         // noeud ajout nom Ville
         private _geometryText: Group;
         private loaderFont: FontLoader;
-        private option?: any;
 
         constructor() {
+            this.loaderFont = new FontLoader();
+            this.loaderFont.load( 'gentilis_regular.typeface.json', function ( font: Font ): void {
+                option = {
+                    font: font,
+                    size: 0.3,
+                    height: 1,
+                    curveSegments: 3,
+                    bevelEnabled: false,
+                    bevelThickness: 0,
+                    bevelSize: 0,
+                    bevelSegments: 0,
+                 };
+
+            });
             prepareConfiguration();
             this._merger = new Merger();
-            this.loaderFont = new FontLoader();
             this._init();
             this.orthographique = true;
 
@@ -152,7 +174,6 @@
             this._animate();
         }
         public toggleShowCity(): void {
-            console.log(this._showCitiesName);
             this._showCitiesName = !this._showCitiesName;
         }
 
@@ -270,43 +291,52 @@
         public extrude(criterias: ICriterias, value?: number): void {
             this._countries.extrude(criterias, value);
         }
+        public showCitiesName(): void {
+            console.log(this._showCitiesName);
+            if ( this._showCitiesName === false ) {
+                for ( var i = this._geometryText.children.length - 1 ; i >= 0 ; i--) {
+                    this._geometryText.remove(this._geometryText.children[i]);
+                }
+            } else {
+                this.updateNameTown(option);
+            }
+        }
+        public rescaleText(): void {
+            console.log(this._sizetexte);
+            for ( var i = this._geometryText.children.length - 1 ; i >= 0 ; i--) {
+                this._geometryText.children[i].scale.set(this._sizetexte, this._sizetexte, this._sizetexte);
+            }
+        }
         public updateNameTown(option?: any): void {
-
             if (this._merger.state !== 'complete') {
                 return;
             }
             var mesh;
+
             for ( var i = this._geometryText.children.length - 1 ; i >= 0 ; i--) {
                 this._geometryText.remove(this._geometryText.children[i]);
             }
-            for ( var j = 0 ; j < 10 ; j++ ) {
+            for ( var j = 0 ; j < this.getMergerI.Cities.length ; j++ ) {
                     var obj = JSON.parse(JSON.stringify(this.getMergerI.Cities[j]));
                     var pop = JSON.parse(JSON.stringify(
                                 this._merger.mergedData.lookupTownTransport[this.getMergerI.Cities[j].cityCode]
                                 .cityProperties.populations));
                     var population = pop.pop2020;
                     if (population > this._populations) {
-                        console.log('2020');
-                        console.log(pop);
-                        console.log(obj);
                         var geometry = new TextGeometry(obj.urbanAgglomeration , option );
-                        var textMaterial = new MeshPhongMaterial(
-                            { color: 0x111111, specular: 0xcc75e5,
-                            },
-                        );
-                        mesh = new Mesh( geometry, textMaterial );
+                        mesh = new Mesh( geometry, CONFIGURATION.BASIC_TEXT_MATERIAL );
                         let cart = this._merger.mergedData.lookupTownTransport[this.getMergerI.Cities[j].cityCode].referential.cartoRef;
-                        let x =  - CONFIGURATION.THREE_EARTH_RADIUS  * Math.cos(cart.latitude) * Math.cos(cart.longitude);
-                        let y =  CONFIGURATION.THREE_EARTH_RADIUS  * Math.sin(cart.latitude);
-                        let z =  CONFIGURATION.THREE_EARTH_RADIUS  * Math.cos(cart.latitude) * Math.sin(cart.longitude);
+                        let x =  - CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.cos(cart.latitude * 0.95) * Math.cos(cart.longitude);
+                        let y =  CONFIGURATION.THREE_EARTH_RADIUS  * 1.1 *  Math.sin(cart.latitude * 0.95);
+                        let z =  CONFIGURATION.THREE_EARTH_RADIUS * 1.1  * Math.cos(cart.latitude * 0.95) * Math.sin(cart.longitude);
                         this._geometryText.add(mesh);
                         mesh.position.set(x, y, z);
+                        mesh.lookAt(new Vector3(x * 2, y * 2, z * 2));
+
                         // mesh.rotation.set(0,Math.cos(cart.latitude*CONFIGURATION.rad2deg),0);
-
                     }
-
                 }
-
+            this.rescaleText();
         }
 
         private _init(): void {
@@ -323,6 +353,7 @@
             this._cameraO.position.set(0, 0, 500);
             this._cameraP.position.set(0, 0, 500);
             this._populations = 0;
+            this._sizetexte = 1.0;
             this._scene = new Scene();
             this._scene.add(this._cameraO);
             this._scene.add(this._cameraP);
@@ -360,7 +391,6 @@
             // this._scene.add(plane);
             this._container.appendChild(this._renderer.domElement);
             this._controls = new OrbitControls(this._cameraO, this._renderer.domElement);
-
             window.addEventListener(
                 'resize', () => {
                     this._windowHalfX = window.innerWidth / 2;
@@ -399,34 +429,7 @@
 
                 this.exporterOBJ();
             });
-            var option;
-            this.loaderFont.load( 'gentilis_regular.typeface.json', function ( font: Font ): void {
-               option = {
-                   font: font,
-                   size: 4,
-                   height: 1,
-                   curveSegments: 3,
-                   bevelEnabled: false,
-                   bevelThickness: 0,
-                   bevelSize: 0,
-                   bevelSegments: 0,
-                };
-           });
-            // this.option = option ;
 
-            let showCitiesButton = document.createElement('button');
-            showCitiesButton.innerHTML = 'show cities';
-            style = showCitiesButton.style;
-            style.zIndex = '1000';
-            style.position = 'fixed';
-            style.bottom = '0px';
-            style.left = '100px';
-            style.backgroundColor = 'blue';
-            document.body.appendChild(showCitiesButton);
-            showCitiesButton.addEventListener('click', () => {
-                this.updateNameTown(option);
-
-            });
     }
 
         private exporterOBJ(): void {
@@ -434,10 +437,10 @@
             alert('Export begin...');
             var result = '';
             var group = new Group();
-            for (var i = 0; i < this._countries.countryMeshCollection.length; ++i) {
-                var cloned = this._countries.countryMeshCollection[i];
-                group.add(cloned);
-            }
+            // for (var i = 0; i < this._countries.countryMeshCollection.length; ++i) {
+            //     var cloned = this._countries.countryMeshCollection[i];
+            //     group.add(cloned);
+            // }
             for (var j = 0; j < this._cones.coneMeshCollection.length - 636; ++j) {
                 var clonedCone = this._cones.coneMeshCollection[j];
                 group.add(clonedCone);
@@ -474,6 +477,7 @@
 
         // show/Unshown city Name
         private initInteraction(): void {
+
             const gui = new dat.GUI();
             let conf = {
                 coneStep: CONFIGURATION.coneStep * CONFIGURATION.rad2deg,
@@ -484,6 +488,7 @@
                 'couleur des cônes': '#' + (<any>CONFIGURATION.BASIC_CONE_MATERIAL).color.getHex().toString(16),
                 'transparence des cônes': CONFIGURATION.BASIC_CONE_MATERIAL.opacity,
                 'couleur des lignes': '#' + CONFIGURATION.BASIC_LINE_MATERIAL.color.getHex().toString(16),
+                'couleur du texte': '#' + CONFIGURATION.BASIC_TEXT_MATERIAL.color.getHex().toString(16),
                 'transparence des lignes': CONFIGURATION.BASIC_LINE_MATERIAL.opacity,
                 'couleur lumière': '#' + _light.color.getHex().toString(16),
                 'longitude': CONFIGURATION.referenceEquiRectangular.longitude,
@@ -547,14 +552,7 @@
             }
             let swapView = projectionFolder.add(this, 'orthographique');
             swapView.onChange(changeCameraView);
-            function ShowCitiesName(): void {
-                this._showCitiesName = !this._showCitiesName;
-            }
-
-            generalFolder.add(this, '_showCitiesName').name('Show Cities name').onChange(ShowCitiesName);
-            let population = generalFolder.add(this, '_populations', 0, 20000 ).name('Seuil population').step(10)
-                            .setValue(this._populations);
-                            // .onFinishChange(this.updateNameTown());
+            generalFolder.add(this, '_showCitiesName').name('Show Cities name').onChange(this.showCitiesName.bind(this));
 
             // cônes
             let coneFolder = gui.addFolder('Cones');
@@ -687,6 +685,16 @@
                                 annees.min(this._merger.minYear).max(this._merger.maxYear).updateDisplay();
                                 this._cones.add(this._merger.datas, CONFIGURATION.extrudedHeight);
                                 // this._merger.clear();
+                                let sizeText = generalFolder.add(this, '_sizetexte', 0, 2).name('taille du texte').step(0.1);
+                                sizeText.onChange(this.rescaleText.bind(this));
+                                generalFolder.addColor(conf, 'couleur du texte').onChange(v => {
+                                    let color = parseInt(v.replace('#', ''), 16);
+                                    CONFIGURATION.BASIC_TEXT_MATERIAL.color.setHex(color);
+                                    this.updateNameTown.bind(this, option);
+                                });
+                                let population = generalFolder.add(this, '_populations', 0, 10000 ).name('Seuil population').step(10)
+                                .setValue(this._populations)
+                                .onChange(this.updateNameTown.bind(this, option));
                                 _filesData = [];
 
                             }
@@ -694,5 +702,4 @@
                 },
                 this);
         }
-
     }
