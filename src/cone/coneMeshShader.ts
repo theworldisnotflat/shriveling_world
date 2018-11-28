@@ -1,6 +1,6 @@
 'use strict';
 import {
-    BufferGeometry, InterleavedBufferAttribute, BufferAttribute, InterleavedBuffer, Sphere,
+    BufferGeometry, Geometry, InterleavedBufferAttribute, BufferAttribute, InterleavedBuffer, Sphere,
 } from 'three';
 import { CONFIGURATION } from '../common/configuration';
 import { PseudoCone } from './base';
@@ -327,12 +327,14 @@ export class ConeMeshShader extends PseudoCone {
     }
 
     public setGeometry(positions: Float32Array, uv: Float32Array): void {
+        let geometry = <Geometry>this.geometry;
+        geometry.computeFaceNormals();
         let bufferedGeometry = <BufferGeometry>this.geometry;
         if (_conesWithoutDisplay.indexOf(this) === -1) {
             let interleavedBuffer = (<InterleavedBufferAttribute>bufferedGeometry.getAttribute('position')).data;
             interleavedBuffer.set(positions, 0);
             interleavedBuffer.needsUpdate = true;
-            bufferedGeometry.computeVertexNormals();
+            // bufferedGeometry.computeVertexNormals();
             bufferedGeometry.computeBoundingSphere();
             interleavedBuffer = (<InterleavedBufferAttribute>bufferedGeometry.getAttribute('uv')).data;
             interleavedBuffer.set(uv, 0);

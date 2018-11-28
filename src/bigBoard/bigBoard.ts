@@ -131,6 +131,7 @@
         private _cameraP: PerspectiveCamera;
         //
         private _showCitiesName: boolean;
+        private _exportCountry: boolean;
         private _populations: number;
         private _sizetexte: number;
         private _scene: Scene;
@@ -316,7 +317,7 @@
             for ( var i = this._geometryText.children.length - 1 ; i >= 0 ; i--) {
                 this._geometryText.remove(this._geometryText.children[i]);
             }
-            for ( var j = 0 ; j < this.getMergerI.Cities.length ; j++ ) {
+            for ( var j = 0 ; j < this.getMergerI.Cities.length / 2  ; j++ ) {
                     var obj = JSON.parse(JSON.stringify(this.getMergerI.Cities[j]));
                     var pop = JSON.parse(JSON.stringify(
                                 this._merger.mergedData.lookupTownTransport[this.getMergerI.Cities[j].cityCode]
@@ -353,6 +354,7 @@
             this._cameraO.position.set(0, 0, 500);
             this._cameraP.position.set(0, 0, 500);
             this._populations = 0;
+            this._exportCountry = false;
             this._sizetexte = 1.0;
             this._scene = new Scene();
             this._scene.add(this._cameraO);
@@ -485,12 +487,14 @@
                 projection: { aucun: 0, equirectangulaire: 1, Mercator: 2, Winkel: 3, Eckert: 4,
                     'Van Der Grinten': 5, 'conic equidistant': 6 },
                 'type de transport': '',
-                'couleur des cônes': '#' + (<any>CONFIGURATION.BASIC_CONE_MATERIAL).color.getHex().toString(16),
+                'couleur cones': '#' + (<any>CONFIGURATION.BASIC_CONE_MATERIAL).color.getHex().toString(16),
                 'transparence des cônes': CONFIGURATION.BASIC_CONE_MATERIAL.opacity,
                 'couleur des lignes': '#' + CONFIGURATION.BASIC_LINE_MATERIAL.color.getHex().toString(16),
                 'couleur du texte': '#' + CONFIGURATION.BASIC_TEXT_MATERIAL.color.getHex().toString(16),
                 'transparence des lignes': CONFIGURATION.BASIC_LINE_MATERIAL.opacity,
                 'couleur lumière': '#' + _light.color.getHex().toString(16),
+                'intensity': _light.intensity,
+                'couleur ambient': '#' + _ambient.color.getHex().toString(16),
                 'longitude': CONFIGURATION.referenceEquiRectangular.longitude,
                 'latitude': CONFIGURATION.referenceEquiRectangular.latitude,
                 'hauteur': CONFIGURATION.referenceEquiRectangular.height,
@@ -509,6 +513,16 @@
                 this._helper.color = color;
                 this._helper.update();
             });
+            lightFolder.addColor(conf, 'couleur ambient').onChange(v => {
+                let color = parseInt(v.replace('#', ''), 16);
+                _ambient.color.setHex(color);
+            });
+            lightFolder.add(conf, 'intensity', 0, 5, 0.01).name('intensité lumière').onChange(v => {
+                _light.intensity = v;
+                this._helper.update();
+
+            });
+
             lightFolder.add(_light.position, 'x', -100, 100, 1).onChange(v => this._helper.update());
             lightFolder.add(_light.position, 'y', -100, 100, 1).onChange(v => this._helper.update());
             lightFolder.add(_light.position, 'z', -100, 100, 1).onChange(v => this._helper.update());
@@ -576,6 +590,10 @@
             countryFolder.add(this._countries, 'show');
             countryFolder.add(this._countries, 'opacity', 0, 1).step(0.01).name('opacité');
             countryFolder.add(this._countries, 'extruded', -100, 100).step(1);
+            function exportCountry(): void {
+                this.orthographique = !this.orthographique;
+            }
+            countryFolder.add(this, '_exportCountry').name('Export avec continent').onChange(exportCountry);
             let countryControllersList: dat.GUI[] = [];
             DragnDrop(
                 this._container, list => {
@@ -647,7 +665,7 @@
                                                 cone.withLimits = limits;
                                             });
                                     }
-                                    let coneColor = folder.addColor(conf, 'couleur des cônes').name('couleur');
+                                    let coneColor = folder.addColor(conf, 'couleur cones').name('couleur');
                                     coneColor.onChange(colorListener);
                                     let coneOpacity = folder.add(conf, 'transparence des cônes', 0, 1, .01).name('transparence');
                                     coneOpacity.onChange(colorListener);
