@@ -8,17 +8,22 @@ The word "shriveling" was introduced by Waldo Tobler in his comments of L'Hostis
 
 ## Requisites
 You need updated version of node.js and npm:
-https://stackoverflow.com/questions/6237295/how-can-i-update-nodejs-and-npm-to-the-next-versions
+- https://stackoverflow.com/questions/6237295/how-can-i-update-nodejs-and-npm-to-the-next-versions
+
+- ```nvm install node ```
+
 You also need these packages:
-  npm i -g tslint
-  npm i file-saver
-  npm i three-obj-exporter-t
+
+- ```npm i -g tslint```
+- ```npm i file-saver```
+- ```npm i three-obj-exporter-t```
+
 
 ## Launching the server
 Go in the application folder and open a terminal:
-```
-gulp server
-```
+
+```gulp server```
+
 then open in browser http://localhost:8080. 
 
 ## Introducing data in the application
