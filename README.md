@@ -30,7 +30,7 @@ Then open in browser this adress http://localhost:8080.
 ## Introducing data in the application
 
 
-Drag'n'drop the following geojson and csv files found in example/datas in the web app:
+Drag'n'drop (one by one in Ubuntu) the following geojson and csv files found in example/datas in the web app:
 - cities.csv
 - population.csv
 - transport_mode_code.csv
