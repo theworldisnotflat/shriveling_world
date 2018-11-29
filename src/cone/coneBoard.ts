@@ -3,10 +3,9 @@ import { Scene, Camera, WebGLRenderer, Raycaster, Mesh, Vector2, BufferGeometry,
 import { CONFIGURATION } from '../common/configuration';
 import { PseudoCone } from './base';
 import { ConeMeshShader } from './coneMeshShader';
-import { updateSumUpCriteria, Cartographic, searchCriterias } from '../common/utils';
+import { Cartographic, searchCriterias } from '../common/utils';
 import {
     ISumUpCriteria, ILookupAndMaxSpeedAndLine, ICriterias, ILookupTownTransport,
-    ILookupTransportPerYear, ILookupLine,
 } from '../definitions/project';
 import { CountryBoard } from '../country/countryBoard';
 import { LineMeshShader } from './lineMeshShaders';

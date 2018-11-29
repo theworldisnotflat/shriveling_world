@@ -1,5 +1,5 @@
 'use strict';
-import { Mesh, MeshMaterialType, Geometry, BufferGeometry } from 'three';
+import { Mesh, Material, Geometry, BufferGeometry } from 'three';
 import { Cartographic } from '../common/utils';
 export abstract class PseudoCone extends Mesh {
     public abstract otherProperties: any;
@@ -7,7 +7,7 @@ export abstract class PseudoCone extends Mesh {
     public abstract readonly cartographicPosition: Cartographic;
     public abstract readonly cityCode: string;
     public abstract readonly transportName: string;
-    constructor(geometry?: Geometry | BufferGeometry, material?: MeshMaterialType) {
+    constructor(geometry?: Geometry | BufferGeometry, material?: Material) {
         if (geometry instanceof Geometry) {
             super(geometry, material);
         } else {
@@ -16,6 +16,6 @@ export abstract class PseudoCone extends Mesh {
     }
     public dispose(): void {
         this.geometry.dispose();
-        (<MeshMaterialType>this.material).dispose();
+        (<Material>this.material).dispose();
     }
 }

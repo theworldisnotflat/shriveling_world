@@ -1,9 +1,8 @@
 'use strict';
 import { CONFIGURATION } from './configuration';
-import { Vector3 } from 'three';
 import { NEDLocal, Coordinate } from './referential';
 import {
-    ICartographic, IConverterLookup, ISumUpCriteria, IItemCriteria, ICriterias, IOrderAscendant, IBBox, IListFile,
+    ICartographic, ISumUpCriteria, IItemCriteria, ICriterias, IOrderAscendant, IBBox, IListFile,
 } from '../definitions/project';
 
 export class Cartographic implements ICartographic {
@@ -120,8 +119,8 @@ function updateSumupCriteriaByDateOrNumber(subObject: { max: Date | number, min:
 }
 
 export function updateSumUpCriteria(sumup: ISumUpCriteria, properties: any): ISumUpCriteria {
-    let temp: any, subObject: { max: Date | number, min: Date | number };
-    let comparMin: number, comparMax: number, typeofTemp: string;
+    let temp: any;
+    let typeofTemp: string;
     // attention si properties est un tableau
     for (let attribute in properties) {
         if (properties.hasOwnProperty(attribute)) {
@@ -386,9 +385,9 @@ export function DragnDrop(id: string | HTMLElement, callback: (list: IListFile[]
 export function extrapolator<U>(
     normalizedBase: U[], xProperty: string, yProperty: string, strongLimit: boolean = false): (x: number) => number {
     let length = normalizedBase.length;
-    let resultat = (x: number) => 0;
+    let resultat: (x?: number) => number = () => 0;
     if (length === 1) {
-        resultat = (x: number) => normalizedBase[0][yProperty];
+        resultat = () => normalizedBase[0][yProperty];
     } else {
         resultat = (x: number) => {
             let indMin = 0;

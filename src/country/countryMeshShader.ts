@@ -1,12 +1,9 @@
 'use strict';
 import { Point, SweepContext, IPointLike } from 'poly2tri';
-import {
-    Vector2, Face3, Vector3, Mesh, InterleavedBuffer, InterleavedBufferAttribute, BufferGeometry,
-    BufferAttribute, Sphere, MeshMaterialType,
-} from 'three';
+import { Mesh, InterleavedBuffer, InterleavedBufferAttribute, BufferGeometry, BufferAttribute } from 'three';
 import { CONFIGURATION } from '../common/configuration';
 import { Cartographic } from '../common/utils';
-import { IBBox, ITypeExtrusion, IMarkLimits } from '../definitions/project';
+import { IBBox, IMarkLimits } from '../definitions/project';
 import { GPUComputer } from '../common/gpuComputer';
 import { Shaders } from '../shaders';
 

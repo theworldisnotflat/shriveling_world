@@ -1,19 +1,16 @@
 'use strict';
 import {
-    BufferGeometry, InterleavedBufferAttribute, BufferAttribute, InterleavedBuffer, Sphere, Line, LineBasicMaterial, DoubleSide,
+    BufferGeometry, InterleavedBufferAttribute, InterleavedBuffer, Line, Material,
 } from 'three';
 import { CONFIGURATION } from '../common/configuration';
-import { Cartographic } from '../common/utils';
-import { NEDLocal, Coordinate } from '../common/referential';
 import { Shaders } from '../shaders';
 import { GPUComputer } from '../common/gpuComputer';
-import { IEndTownLine, ILookupTransportPerYear, ILookupLine } from '../definitions/project';
+import {  ILookupLine } from '../definitions/project';
 
 let _lines: LineMeshShader[];
 
 let _linesWithoutDisplay: LineMeshShader[] = [];
 let uuid: string = undefined;
-let _tickCount = 0;
 let _ready = false;
 let _width: number;
 let _height: number;
@@ -215,7 +212,7 @@ export class LineMeshShader extends Line {
     }
     public dispose(): void {
         this.geometry.dispose();
-        this.material.dispose();
+        (<Material>this.material).dispose();
     }
 
     public get transportName(): string {
