@@ -1,7 +1,7 @@
 shriveling the world
 =====================
 
-The  "shriveling_world" project aims at producing images of the global time-space, using the third dimension, as in time-space relief maps.
+The  "shriveling_world" project aims at producing images of the global geographical time-space, using the third dimension, as in time-space relief maps.
 The word "shriveling" was introduced by Waldo Tobler in his comments of L'Hostis-Mathis time-space relief image, in order to describe the complex contraction process suggested by the model.
 
 # How to use
@@ -12,19 +12,20 @@ You need updated version of node.js, npm and nvm:
 
 - ```nvm install node ```
 
-You also need these packages:
-
-- ```npm i -g tslint```
-- ```npm i file-saver```
-- ```npm i three-obj-exporter-t```
+Does not work with old version of nodejs (with version 4 does not work, with version 8 to 11 does)
 
 
-## Launching the server
-Go in the application folder and open a terminal:
+## Compiling sources and launching the server
+First you need to download sources from this github page. Copy the folder on your machine.
+Go inside the application folder and open a terminal, execute the following lines, one by one:
 
-```gulp server```
+```npm i```  (update nodejs)
 
-then open in browser http://localhost:8080. 
+```gulp```   (compile sources)
+
+```gulp server``` (launch server)
+
+Then open in browser this adress http://localhost:8080. 
 
 ## Introducing data in the application
 
@@ -38,10 +39,14 @@ Drag'n'drop the following geojson and csv files found in example/datas in the we
 - 110m_land_shrivel.geojson
 
 ## Instructions for use
-Instructions to the application are entered in the console (F12) of the browser
-```
-shriveling.configuration.XXX=value
-```
+Instructions for the application are provided in a lateral user interface.
+
+Export to obj file format is available (red button in the bottom)
+
+Instructions to the application can also be entered in the console (F12) of the browser
+
+```shriveling.configuration.XXX=value```
+
 with XXX and value in the following range:
 
 - heightRatio : for the heigth of cones
@@ -55,23 +60,6 @@ with XXX and value in the following range:
 - projectionPercent: transition value between projectionBegin and projectionEnd. Value included in the range 0 to 100 included.
 - year: base year of the representation (value in the networks files)
 - pointsPerLine=X where X is an integer between 1 and 199 included. This value influences the way curves are drawn.
-
-
-
-## install
-Does not work with old version of nodejs (with version 4 does not work, with version 8 does)
-```
-npm i
-```
-## build
-```
-gulp
-```
-## launch server
-```
-gulp server
-```
-and go to http://localhost:8080. 
 
 
 
