@@ -38,10 +38,8 @@ function getHeight(ratio: number, theta: number): number {
     const cosSemiTheta = Math.cos(semiTheta);
     const secondTerm =  Math.sqrt(ratio * ratio - sinSemiTheta * sinSemiTheta);
     const thirdTerm = 0;
-    /* return (cosSemiTheta + Math.sqrt(ratio * ratio - sinSemiTheta * sinSemiTheta) - 1) *
-        CONFIGURATION.earthRadiusMeters * _coefficient; */
-    return (cosSemiTheta + secondTerm + thirdTerm ) *
-        CONFIGURATION.earthRadiusMeters * _coefficient;
+    return  (cosSemiTheta  + secondTerm + thirdTerm ) *
+        CONFIGURATION.earthRadiusMeters ; // * _coefficient;
 }
 
 // quand on change step!!
@@ -81,7 +79,7 @@ function computation(): void {
     uniforms.percentRepresentation = CONFIGURATION.percentProjection;
     uniforms.standardParallel1 = CONFIGURATION.standardParallel1;
     uniforms.standardParallel2 = CONFIGURATION.standardParallel2;
-    uniforms.coefficient = _coefficient;
+    // uniforms.coefficient = _coefficient;
     _gpgpu.positions.updateUniforms(uniforms);
     let options = {
         u_height: { src: _hauteurs, width: 1, height: _height },
@@ -142,7 +140,8 @@ export class LineMeshShader extends Line {
                                         computation();
                                         break;
                                     default:
-                                        computation();
+                                    updateYear();
+                                    computation();
                                 }
                             }
                         });

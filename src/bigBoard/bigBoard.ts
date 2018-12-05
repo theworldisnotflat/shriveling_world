@@ -65,7 +65,7 @@
 
     }
     let _filesData: IListFile[] = [];
-    let _light = new DirectionalLight(0xefefff, 1.5); // (0xffffff, 5, 1000, 2);
+    let _light = new DirectionalLight(0x000fff, 15); // (0xffffff, 5, 1000, 2);
     _light.castShadow = true;
     _light.shadow.mapSize.width = 512;  // default
     _light.shadow.mapSize.height = 512; // default
@@ -132,6 +132,7 @@
         //
         private _showCitiesName: boolean;
         private _exportCountry: boolean;
+        private _exportLine: boolean;
         private _populations: number;
         private _sizetexte: number;
         private _scene: Scene;
@@ -355,6 +356,7 @@
             this._cameraP.position.set(0, 0, 500);
             this._populations = 0;
             this._exportCountry = false;
+            this._exportLine = true;
             this._sizetexte = 1.0;
             this._scene = new Scene();
             this._scene.add(this._cameraO);
@@ -366,9 +368,7 @@
             this._geometryText = new Group();
 
             _light.position.set(1, 1, 1);
-            _light2.position.set(-1, -1, -1);
             this._scene.add(_light);
-            this._scene.add(_light2);
 
             this._helper = new DirectionalLightHelper(_light);
             this._scene.add(this._helper);
@@ -439,14 +439,24 @@
             alert('Export begin...');
             var result = '';
             var group = new Group();
-            // for (var i = 0; i < this._countries.countryMeshCollection.length; ++i) {
-            //     var cloned = this._countries.countryMeshCollection[i];
-            //     group.add(cloned);
-            // }
+            var groupLine = new Group();
+            if (this._exportCountry) {
+                for (var i = 0; i < this._countries.countryMeshCollection.length; ++i) {
+                    var cloned = this._countries.countryMeshCollection[i];
+                    group.add(cloned);
+                }
+            }
+            if (this._exportLine) {
+                for (var k = 0; k < this._cones.lineCollection.length; ++k) {
+                    var clonedLine = this._cones.lineCollection[k];
+                    groupLine.add(clonedLine);
+                }
+            }
             for (var j = 0; j < this._cones.coneMeshCollection.length - 636; ++j) {
                 var clonedCone = this._cones.coneMeshCollection[j];
                 group.add(clonedCone);
             }
+            group.add(groupLine);
             var blob = new Blob([exporter.parse(group)], { type: 'text/plain;charset=utf-8' });
             saveAs(blob, 'scene.obj');
             this._scene.add(group);
@@ -519,6 +529,7 @@
             });
             lightFolder.add(conf, 'intensity', 0, 5, 0.01).name('intensité lumière').onChange(v => {
                 _light.intensity = v;
+                console.log(_light.intensity);
                 this._helper.update();
 
             });
@@ -581,8 +592,13 @@
 
             // lignes
             let aerialFolder = gui.addFolder('Lignes');
-            aerialFolder.add(LineMeshShader, 'coefficient', 0, 10, 0);  // .1 en dernière position
+            aerialFolder.add(LineMeshShader, 'coefficient', 0, 10, 0.1);  // .1 en dernière position
             aerialFolder.add(CONFIGURATION, 'pointsPerLine', 0, 200).step(1).name('nombre de points');
+            function exportLine(): void {
+                this.orthographique = !this.orthographique;
+            }
+            aerialFolder.add(this, '_exportLine').name('Export Lignes').onChange(exportLine);
+
             let aerialControllersList: dat.GUI[] = [];
 
             // pays /mise en exergue avec listen?
@@ -593,7 +609,7 @@
             function exportCountry(): void {
                 this.orthographique = !this.orthographique;
             }
-            countryFolder.add(this, '_exportCountry').name('Export avec continent').onChange(exportCountry);
+            countryFolder.add(this, '_exportCountry').name('Export Continent').onChange(exportCountry);
             let countryControllersList: dat.GUI[] = [];
             DragnDrop(
                 this._container, list => {
