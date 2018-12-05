@@ -36,7 +36,7 @@ function getHeight(ratio: number, theta: number): number {
     const semiTheta = theta / 2;
     const sinSemiTheta = Math.sin(semiTheta);
     const cosSemiTheta = Math.cos(semiTheta);
-    const secondTerm =  Math.sqrt(ratio * ratio - sinSemiTheta * sinSemiTheta);
+    const secondTerm =  Math.sqrt(Math.abs(ratio * ratio - sinSemiTheta * sinSemiTheta));
     const thirdTerm = 0;
     return  (cosSemiTheta  + secondTerm + thirdTerm ) *
         CONFIGURATION.earthRadiusMeters ; // * _coefficient;
