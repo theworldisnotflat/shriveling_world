@@ -3,8 +3,8 @@ import * as Papa from 'papaparse';
 import { NEDLocal } from '../common/referential';
 import { extrapolator, Cartographic, reviver } from '../common/utils';
 import {
-    ITransportModeCode, ICity, ITransportNetwork, ICriterias, ISumUpCriteria, ILookupTownTransport, ILookupTransport, IMergerState,
-    ILookupDestination, IPopulation, ITransportModeSpeed, ILookupTransportPerYear, ILookupAndMaxSpeedAndLine, ILookupLine, IEndTownLine,
+    ITransportModeCode, ICity, ITransportNetwork, ILookupTownTransport, ILookupTransport, IMergerState,
+    ILookupDestination, IPopulation, ITransportModeSpeed, ILookupAndMaxSpeedAndLine, ILookupLine, IEndTownLine,
     ILookupItemList,
 } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
@@ -60,7 +60,7 @@ const keyWords: { name: string, words: string[] }[] = [
     { name: '_populations', words: ['cityCode'] },
 ];
 
-const thetaLimit = 2000 / (CONFIGURATION.earthRadiusMeters / 1000 );
+const thetaLimit = 2000 / (CONFIGURATION.earthRadiusMeters / 1000);
 let _minYear: number = 1930;
 let _maxYear: number = 1932;
 let _transportName: { lines: string[], cones: string[] } = { lines: [], cones: [] };
@@ -88,8 +88,6 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
     : { middle: Cartographic, opening: number } {
     const theta = posA.distanceExacte(posB);
     const semiTheta = theta / 2;
-    const sinSemiTheta = Math.sin(semiTheta);
-    const cosSemiTheta = Math.cos(semiTheta);
     const deltaLambda = posB.longitude - posA.longitude;
     const cosPhi2 = Math.cos(posB.latitude);
     const sinPhi2 = Math.sin(posB.latitude);
@@ -106,7 +104,6 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
 function getRatio(theta: number, speedMax: number, speed: number): number {
     var speedTMP = speed > 750 ? 750 : theta * CONFIGURATION.earthRadiusMeters / 1000;
     return theta  < thetaLimit ? speedMax  / 4778.25 : speedMax * theta / (2 * speedTMP );
-
 }
 
 function toTownTransport(

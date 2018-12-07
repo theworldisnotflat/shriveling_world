@@ -1,19 +1,16 @@
 'use strict';
 import {
-    BufferGeometry, InterleavedBufferAttribute, BufferAttribute, InterleavedBuffer, Sphere, Line, LineBasicMaterial, DoubleSide,
+    BufferGeometry, InterleavedBufferAttribute, InterleavedBuffer, Line, Material,
 } from 'three';
 import { CONFIGURATION } from '../common/configuration';
-import { Cartographic } from '../common/utils';
-import { NEDLocal, Coordinate } from '../common/referential';
 import { Shaders } from '../shaders';
 import { GPUComputer } from '../common/gpuComputer';
-import { IEndTownLine, ILookupTransportPerYear, ILookupLine } from '../definitions/project';
+import {  ILookupLine } from '../definitions/project';
 
 let _lines: LineMeshShader[];
 
 let _linesWithoutDisplay: LineMeshShader[] = [];
 let uuid: string = undefined;
-let _tickCount = 0;
 let _ready = false;
 let _width: number;
 let _height: number;
@@ -38,8 +35,10 @@ function getHeight(ratio: number, theta: number): number {
     const cosSemiTheta = Math.cos(semiTheta);
     const secondTerm =  Math.sqrt(Math.abs(ratio * ratio - sinSemiTheta * sinSemiTheta));
     const thirdTerm = 0;
-    return  (cosSemiTheta  + secondTerm + thirdTerm ) *
-        CONFIGURATION.earthRadiusMeters ; // * _coefficient;
+    /* return (cosSemiTheta + Math.sqrt(ratio * ratio - sinSemiTheta * sinSemiTheta) - 1) *
+        CONFIGURATION.earthRadiusMeters * _coefficient; */
+    return (cosSemiTheta + secondTerm + thirdTerm ) *
+        CONFIGURATION.earthRadiusMeters ; //* _coefficient;
 }
 
 // quand on change step!!
@@ -79,7 +78,7 @@ function computation(): void {
     uniforms.percentRepresentation = CONFIGURATION.percentProjection;
     uniforms.standardParallel1 = CONFIGURATION.standardParallel1;
     uniforms.standardParallel2 = CONFIGURATION.standardParallel2;
-    // uniforms.coefficient = _coefficient;
+    uniforms.coefficient = _coefficient;
     _gpgpu.positions.updateUniforms(uniforms);
     let options = {
         u_height: { src: _hauteurs, width: 1, height: _height },
@@ -140,8 +139,7 @@ export class LineMeshShader extends Line {
                                         computation();
                                         break;
                                     default:
-                                    updateYear();
-                                    computation();
+                                        computation();
                                 }
                             }
                         });
@@ -214,7 +212,7 @@ export class LineMeshShader extends Line {
     }
     public dispose(): void {
         this.geometry.dispose();
-        this.material.dispose();
+        (<Material>this.material).dispose();
     }
 
     public get transportName(): string {

@@ -1,4 +1,4 @@
-import { updateSumUpCriteria, Cartographic } from '../common/utils';
+import { Cartographic } from '../common/utils';
 import { Vector3 } from 'three';
 import { NEDLocal } from '../common/referential';
 export interface ICountryTextureURL {

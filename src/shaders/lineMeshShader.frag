@@ -19,7 +19,7 @@ uniform int representationInit;
 uniform int representationEnd;
 uniform float percentRepresentation;
 
-// uniform float coefficient;
+uniform float coefficient;
 
 #pragma glslify: displayConversions =require(./src/shaders/displayConversions.glsl)
 in vec2 pos;

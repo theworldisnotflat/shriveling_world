@@ -1,11 +1,11 @@
 'use strict';
 import {
-    BufferGeometry, Geometry, InterleavedBufferAttribute, BufferAttribute, InterleavedBuffer, Sphere,
+    BufferGeometry, Geometry, InterleavedBufferAttribute, BufferAttribute, InterleavedBuffer,
 } from 'three';
 import { CONFIGURATION } from '../common/configuration';
 import { PseudoCone } from './base';
 import { Cartographic, extrapolator, matchingBBox } from '../common/utils';
-import { ISumUpCriteria, ILookupTownTransport, ICriterias, IBBox, ILookupDirection, ILookupTransportPerYear } from '../definitions/project';
+import {  ILookupTownTransport, IBBox, ILookupDirection } from '../definitions/project';
 import { NEDLocal, Coordinate } from '../common/referential';
 import { Shaders } from '../shaders';
 import { GPUComputer } from '../common/gpuComputer';
