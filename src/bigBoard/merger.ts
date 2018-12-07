@@ -60,7 +60,7 @@ const keyWords: { name: string, words: string[] }[] = [
     { name: '_populations', words: ['cityCode'] },
 ];
 
-const thetaLimit = 2000 / CONFIGURATION.earthRadiusMeters / 1000;
+const thetaLimit = 2000 / (CONFIGURATION.earthRadiusMeters / 1000);
 let _minYear: number = 1930;
 let _maxYear: number = 1932;
 let _transportName: { lines: string[], cones: string[] } = { lines: [], cones: [] };
@@ -102,7 +102,8 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
 }
 // ratio de la hauteur des arcs au dessus de la géodésique fonction du rapport des vitesses
 function getRatio(theta: number, speedMax: number, speed: number): number {
-    return theta < thetaLimit ? speedMax / 4778.25 : speedMax * theta / (2 * speed);
+    var speedTMP = speed > 750 ? 750 : theta * CONFIGURATION.earthRadiusMeters / 1000;
+    return theta  < thetaLimit ? speedMax  / 4778.25 : speedMax * theta / (2 * speedTMP );
 }
 
 function toTownTransport(
