@@ -102,8 +102,7 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
 }
 // ratio de la hauteur des arcs au dessus de la géodésique fonction du rapport des vitesses
 function getRatio(theta: number, speedMax: number, speed: number): number {
-    var speedTMP = speed > 750 ? 750 : theta * CONFIGURATION.earthRadiusMeters / 1000;
-    return theta  < thetaLimit ? speedMax  / 4778.25 : speedMax * theta / (2 * speedTMP );
+    return theta < thetaLimit ? speedMax / 4778.25 : speedMax * theta / (2 * speed);
 }
 
 function toTownTransport(
