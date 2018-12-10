@@ -60,7 +60,7 @@ const keyWords: { name: string, words: string[] }[] = [
     { name: '_populations', words: ['cityCode'] },
 ];
 
-const thetaLimit = 2000 / (CONFIGURATION.earthRadiusMeters / 1000);
+const thetaLimit = 2000 / ( CONFIGURATION.earthRadiusMeters / 1000);
 let _minYear: number = 1930;
 let _maxYear: number = 1932;
 let _transportName: { lines: string[], cones: string[] } = { lines: [], cones: [] };
