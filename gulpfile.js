@@ -13,7 +13,6 @@ let gulp = require('gulp'),
   del = require('del'),
   shell = require('gulp-shell'),
   connect = require('gulp-connect'),
-  typedoc = require('gulp-typedoc'),
   argv = require('yargs').argv,
   glsl = require('glslify');
 
@@ -198,7 +197,7 @@ const defaultTask = (done) => {
   done();
 };
 const buildRequirements = gulp.series(gulp.parallel(compileShaders, compileLibraries, combineExternals), build);
-const defaultRequirement = gulp.series(gulp.parallel(clean, tslint), build, defaultTask);
+const defaultRequirement = gulp.series(gulp.parallel(clean, tslint), buildRequirements, defaultTask);
 
 gulp.task('build', buildRequirements);
 
