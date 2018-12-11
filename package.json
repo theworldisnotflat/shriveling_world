@@ -21,7 +21,6 @@
     "gulp": "^4.0.0",
     "gulp-connect": "^5.6.1",
     "gulp-shell": "^0.6.5",
-    "gulp-typedoc": "^2.2.1",
     "papaparse": "^4.6.0",
     "poly2tri": "^1.5.0",
     "rollup": "^0.67.3",
@@ -34,7 +33,7 @@
     "tslint": "^5.11.0",
     "tween.js": "^16.6.0",
     "twgl.js": "^4.5.2",
-    "typedoc": "^0.13.0",
+    "typescript": "^3.2.2",
     "uglify-es": "^3.3.9",
     "yargs": "^12.0.5"
   },
