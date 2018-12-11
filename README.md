@@ -8,7 +8,7 @@ The word "shriveling" was introduced by Waldo Tobler in his comments of L'Hostis
 
 ## Requisites
 You need updated version of node.js, npm and nvm:
-- https://stackoverflow.com/questions/6237295/how-can-i-update-nodejs-and-npm-to-the-next-versions
+- https://github.com/nodesource/distributions/blob/master/README.md#deb
 
 - ```nvm install node ```
 
