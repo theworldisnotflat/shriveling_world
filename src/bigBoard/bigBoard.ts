@@ -33,28 +33,16 @@ function prepareConfiguration(): void {
         });
         earthMaterial.map = new TextureLoader().load(CONFIGURATION.COUNTRY_TEXTURES.map);
         earthMaterial.specularMap = new TextureLoader().load(CONFIGURATION.COUNTRY_TEXTURES.specularMap);
-        // earthMaterial.bumpMap = new TextureLoader().load(CONFIGURATION.COUNTRY_TEXTURES.bumpMap);
-        // earthMaterial.normalMap = new TextureLoader().load(CONFIGURATION.COUNTRY_TEXTURES.normalMap);
         CONFIGURATION.COUNTRY_MATERIAL = earthMaterial;
         CONFIGURATION.BASIC_CONE_MATERIAL = new MeshPhongMaterial({
-            // transparent: false,
             opacity: 0.8,
             color: 0xebdede,
             side: DoubleSide,
-            // shininess: 0,
-            // specularMap: 0,
-            // roughness: 0,
-            // metalness: 0.5,
         });
         CONFIGURATION.BASIC_TEXT_MATERIAL = new MeshPhongMaterial({
-            // transparent: false,
             opacity: 1.0,
             color: 0xebdede,
             side: DoubleSide,
-            // shininess: 0,
-            // specularMap: 0,
-            // roughness: 0,
-            // metalness: 0.5,
         });
         // (<MeshPhongMaterial>CONFIGURATION.BASIC_CONE_MATERIAL).map = new TextureLoader().load(CONFIGURATION.CONE_TEXTURE);
         CONFIGURATION.BASIC_LINE_MATERIAL = new LineBasicMaterial({
