@@ -401,12 +401,6 @@ export default class BigBoard {
                 this._renderer.setSize(window.innerWidth, window.innerHeight);
             },
             false);
-        // skybox
-        // let loader = new TextureLoader();
-
-        // let skyGeometry = new CubeGeometry(10000, 10000, 10000);
-        // let skybox = new Mesh(skyGeometry, materialArray);
-        // this._scene.add(skybox);
 
         let saveButton = document.createElement('button');
         saveButton.innerHTML = 'sauvegarde';
@@ -455,7 +449,7 @@ export default class BigBoard {
         CONFIGURATION.tick();
     }
 
-    // show/Unshown city Name
+    // show/hide city Name
     private initInteraction(): void {
 
         const gui = new dat.GUI();
@@ -485,7 +479,7 @@ export default class BigBoard {
         };
 
         let that = this;
-        // lumière
+        // light
         let lightFolder = gui.addFolder('lumière');
         lightFolder.add(_ambient, 'intensity', 0, 5, 0.01).name('intensité ambiante');
         lightFolder.addColor(conf, 'couleur lumière').onChange(v => {
@@ -512,7 +506,7 @@ export default class BigBoard {
         lightFolder.add(_light.shadow.camera, 'near', 0, 1000).step(0.5);
         lightFolder.add(_light.shadow.camera, 'far', 0, 1000).step(1);
 
-        // généralités
+        // generalities
         let generalFolder = gui.addFolder('Généralités');
         let projectionFolder = generalFolder.addFolder('projection');
         let referenceFolder = projectionFolder.addFolder('references');
@@ -546,7 +540,7 @@ export default class BigBoard {
         swapView.onChange(() => this.orthographique = !this.orthographique);
         generalFolder.add(this, '_showCitiesName').name('Show Cities name').onChange(this.showCitiesName.bind(this));
 
-        // cônes
+        // cones
         let coneFolder = gui.addFolder('Cones');
 
         coneFolder.add(conf, 'coneStep', 1, 360).step(1).
@@ -557,13 +551,14 @@ export default class BigBoard {
         let terrestrialControllersList: dat.GUI[] = [];
         let flagTransportDone = false;
 
-        // lignes
+        // lines
         let aerialFolder = gui.addFolder('Lignes');
         aerialFolder.add(LineMeshShader, 'coefficient', 0, 10, 0);  // .1 en dernière position
         aerialFolder.add(CONFIGURATION, 'pointsPerLine', 0, 200).step(1).name('nombre de points');
         let aerialControllersList: dat.GUI[] = [];
 
         // pays /mise en exergue avec listen?
+        // countries / highlight with listen?
         let countryFolder = gui.addFolder('pays');
         countryFolder.add(this._countries, 'show');
         countryFolder.add(this._countries, 'opacity', 0, 1).step(0.01).name('opacité');
