@@ -112,6 +112,7 @@ function toTownTransport(
     let resultat: ILookupTownTransport = {};
     let lineData: ILookupLine = {};
     // déterminer la fourchette de temps considéré OK
+    // determine the considered time-frame
     let actualYear = (new Date()).getFullYear();
     let minYear = actualYear, maxYear = 0;
     transportNetwork.forEach((item) => {
