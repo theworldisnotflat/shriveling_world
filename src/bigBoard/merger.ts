@@ -101,6 +101,8 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
     return { middle: resultat, opening: theta };
 }
 // ratio de la hauteur des arcs au dessus de la géodésique fonction du rapport des vitesses
+// retrieves the heigt of edges above the geodesic based on the ratio of max speed and current speed
+// in the case of air edges, two formulas apply, separed by a threshold (thetaLimit)
 function getRatio(theta: number, speedMax: number, speed: number): number {
     return theta < thetaLimit ? speedMax / 4778.25 : speedMax * theta / (2 * speed);
 }
@@ -110,6 +112,7 @@ function toTownTransport(
     let resultat: ILookupTownTransport = {};
     let lineData: ILookupLine = {};
     // déterminer la fourchette de temps considéré OK
+    // determine the considered time-frame
     let actualYear = (new Date()).getFullYear();
     let minYear = actualYear, maxYear = 0;
     transportNetwork.forEach((item) => {

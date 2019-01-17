@@ -41,7 +41,7 @@ Drag'n'drop (one by one in Ubuntu) the following geojson and csv files found in 
 ## Instructions for use
 Instructions for the application are provided in a lateral user interface.
 
-Export to obj file format is available (red button in the bottom)
+Export to gltf (.obj) file format is available (red button in the bottom). In order to import in blender the file produced from the app, a Blender plugin must be installed : https://github.com/ksons/gltf-blender-importer
 
 Instructions to the application can also be entered in the console (F12) of the browser
 
