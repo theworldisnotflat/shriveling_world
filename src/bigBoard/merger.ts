@@ -60,6 +60,9 @@ const keyWords: { name: string, words: string[] }[] = [
     { name: '_populations', words: ['cityCode'] },
 ];
 
+// the threshold of the modelled air services speed:
+// - beyond thetaLimit speed has the constant value 'speed'
+// - below thetaLimit speed decreases from value 'speed' to zero depending on the value of theta
 const thetaLimit = 2000 / ( CONFIGURATION.earthRadiusMeters / 1000);
 let _minYear: number = 1930;
 let _maxYear: number = 1932;
