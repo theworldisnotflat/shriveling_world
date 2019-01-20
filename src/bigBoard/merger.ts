@@ -60,7 +60,7 @@ const keyWords: { name: string, words: string[] }[] = [
     { name: '_populations', words: ['cityCode'] },
 ];
 
-// the threshold of the modelled air services speed:
+// thetaLimit = threshold angle of the modelled air services speed:
 // - beyond thetaLimit speed has the constant value 'speed'
 // - below thetaLimit speed decreases from value 'speed' to zero depending on the value of theta
 const thetaLimit = 2000 / ( CONFIGURATION.earthRadiusMeters / 1000);
@@ -103,9 +103,9 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
     resultat.longitude = posA.longitude + Math.atan2(by, cosPhi1 + bx);
     return { middle: resultat, opening: theta };
 }
-// ratio de la hauteur des arcs au dessus de la géodésique fonction du rapport des vitesses
-// retrieves the heigt of edges above the geodesic based on the ratio of max speed and current speed
-// in the case of air edges, two formulas apply, separed by a threshold (thetaLimit)
+// in the case of air edges, two equations are used to determine the heigt of aerial edges above the geodesic
+// below and beyond the threshold value "thetaLimit"  of "theta"
+// "ratio" is the part that differentiates the two equations
 function getRatio(theta: number, speedMax: number, speed: number): number {
     return theta < thetaLimit ? speedMax / 4778.25 : speedMax * theta / (2 * speed);
 }
@@ -298,6 +298,8 @@ function toTownTransport(
                                 if (lineToProcess === true) {
                                     let { end, middle, opening, pointP, pointQ } = cachedGetTheMiddle(originCityCode, codeDestination);
                                     let ratio = getRatio(opening, speedMaxPerYear[year], tab[year]);
+                                    // just a test
+                                    // ratio = ratio - ( CONFIGURATION.earthRadiusMeters / 1000);
                                     if (!list.hasOwnProperty(codeDestination)) {
                                         list[codeDestination] = <ILookupItemList>{};
                                         list[codeDestination].end = end;
@@ -306,6 +308,8 @@ function toTownTransport(
                                         list[codeDestination].pointQ = pointQ;
                                         list[codeDestination].opening = opening;
                                         list[codeDestination].ratio = {};
+                                        // for testing
+                                        console.log(ratio, opening, speedMaxPerYear[year], tab[year]);
                                     }
                                     if (!list[codeDestination].ratio.hasOwnProperty(transportName)) {
                                         list[codeDestination].ratio[transportName] = {};
