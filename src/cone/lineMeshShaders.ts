@@ -15,7 +15,7 @@ let _ready = false;
 let _width: number;
 let _height: number;
 // testing coefficient applied to all edges height (see getHeight function)
-let _coefficient: number = 1 // 1.25;
+let _coefficient: number = 1 ; // 1.25
 let _gpgpu: { [x: string]: GPUComputer } = {};
 
 let _t: Float32Array;
@@ -206,7 +206,7 @@ export class LineMeshShader extends Line {
         return _coefficient;
     }
     // update edges heigth when 'coefficient' changes
-    // (for testing purposes only)
+    // for testing purposes only
     public static set coefficient(value: number) {
         _coefficient = value;
         for (let i = 0; i < _height; i++) {
@@ -245,7 +245,7 @@ export class LineMeshShader extends Line {
             this._ratio = ratio;
             let index = _lines.indexOf(this);
             _hauteurs[index] = getHeight(this._ratio, this.opening);
-            console.log(_hauteurs[index], );
+            console.log(_hauteurs[index], this._ratio, this.opening);
         }
         return resultat;
     }
