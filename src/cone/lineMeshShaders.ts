@@ -14,7 +14,9 @@ let uuid: string = undefined;
 let _ready = false;
 let _width: number;
 let _height: number;
-let _coefficient: number = 1.25; // hauteur du mid-point de controle bezier
+// should be 1 (for testing purposes)
+// affects the value of the height of edges
+let _coefficient: number = 1;
 
 let _gpgpu: { [x: string]: GPUComputer } = {};
 
@@ -29,6 +31,7 @@ fullCleanArrays();
 
 // formule de la hauteur des arcs fonction de theta
 // et du ratio des vitesses
+//
 function getHeight(ratio: number, theta: number): number {
     const semiTheta = theta / 2;
     const sinSemiTheta = Math.sin(semiTheta);
@@ -37,11 +40,15 @@ function getHeight(ratio: number, theta: number): number {
     const thirdTerm = 0;
     /* return (cosSemiTheta + Math.sqrt(ratio * ratio - sinSemiTheta * sinSemiTheta) - 1) *
         CONFIGURATION.earthRadiusMeters * _coefficient; */
-    return (cosSemiTheta + secondTerm + thirdTerm ) *
-        CONFIGURATION.earthRadiusMeters * _coefficient;
+    // minus earth radius
+    return ((cosSemiTheta + secondTerm + thirdTerm ) *
+        CONFIGURATION.earthRadiusMeters * _coefficient)
+        - CONFIGURATION.earthRadiusMeters;
 }
 
 // quand on change step!!
+// step is the number of facets dof cones, default value is 15
+// higher values will consume processor load
 function regenerateStep(): void {
     const step = 1 / CONFIGURATION.pointsPerLine;
     let t: number[] = [];
@@ -57,6 +64,7 @@ function regenerateStep(): void {
     _gpgpu.positions.updateTextures(options);
 }
 
+// update edges (lines) height based on the reference year
 function updateYear(): void {
     let year = CONFIGURATION.year;
     _linesWithoutDisplay = [];
