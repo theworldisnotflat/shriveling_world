@@ -14,10 +14,15 @@ let uuid: string = undefined;
 let _ready = false;
 let _width: number;
 let _height: number;
+<<<<<<< HEAD
 // should be 1 (for testing purposes)
 // affects the value of the height of edges
 let _coefficient: number = 1;
 
+=======
+// testing coefficient applied to all edges height (see getHeight function)
+let _coefficient: number = 1 ; // 1.25
+>>>>>>> 3172966de4a2eed1e9d5335720e629a7cba958cd
 let _gpgpu: { [x: string]: GPUComputer } = {};
 
 let _t: Float32Array;
@@ -31,7 +36,13 @@ fullCleanArrays();
 
 // formule de la hauteur des arcs fonction de theta
 // et du ratio des vitesses
+<<<<<<< HEAD
 //
+=======
+// formules of the heigth of edges function of 'theta' and 'ratio'
+// 'ratio' is computed in function 'getRatio' in file bigBoard/merger.t
+// 'ratio' is computed with two formulas depending on 'theta' compared with 'thetaLimit'
+>>>>>>> 3172966de4a2eed1e9d5335720e629a7cba958cd
 function getHeight(ratio: number, theta: number): number {
     const semiTheta = theta / 2;
     const sinSemiTheta = Math.sin(semiTheta);
@@ -210,6 +221,8 @@ export class LineMeshShader extends Line {
     public static get coefficient(): number {
         return _coefficient;
     }
+    // update edges heigth when 'coefficient' changes
+    // for testing purposes only
     public static set coefficient(value: number) {
         _coefficient = value;
         for (let i = 0; i < _height; i++) {
@@ -240,6 +253,7 @@ export class LineMeshShader extends Line {
         }
     }
 
+    // sets the heigth of edges
     public isAvailable(year: string | number): boolean {
         let ratio = this._years[year];
         let resultat = ratio !== undefined;
@@ -247,6 +261,7 @@ export class LineMeshShader extends Line {
             this._ratio = ratio;
             let index = _lines.indexOf(this);
             _hauteurs[index] = getHeight(this._ratio, this.opening);
+            console.log(_hauteurs[index], this._ratio, this.opening);
         }
         return resultat;
     }
