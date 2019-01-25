@@ -407,6 +407,9 @@ export default class BigBoard {
 
     }
 
+    // export function in Wavefront OBJ format
+    // file can be imported in Blender
+    // with OBJ importer plugin
     private exporterOBJ(): void {
         let exporter = new OBJExporter();
         alert('Export begin...');
