@@ -9,3 +9,5 @@ example/javascript
 .rpt2_cache
 declarations
 package-lock.json
+.Rproj.user
+.Rhistory

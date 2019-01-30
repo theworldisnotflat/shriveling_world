@@ -44,6 +44,9 @@ library(mapview) # may need to install webshot::install_phantomjs()
 library(units)
 library(lwgeom)
 library(reshape2)
+library(here)
+set_here()
+
 ```
 
 # Load the data
@@ -56,11 +59,11 @@ Datasource is 2 CSV files:
 The csv files are loaded then 
 
 ```{r load_data_source}
-cities <- read_csv("cities.csv", col_types = cols(radius = col_number(), 
+cities <- read_csv(here("cities.csv"), col_types = cols(radius = col_number(), 
     yearHST = col_integer(), yearMotorway = col_integer()))
 head(cities)
 
-population <- read_csv("population.csv")
+population <- read_csv(here("population.csv"))
 ```
 
 The line 1371 is the only one to have a radius. Probably a typo.
@@ -90,7 +93,9 @@ This will allow to display a basemap so we can check if cities are correctly pla
 
 ```{r map_using_mapview, eval=TRUE}
 m <- mapview(cities_df, map.types="CartoDB.Positron")
-mapshot(m, file = paste0(getwd(), "figures/cities_example.png"))
+#mapshot(m, file = paste0(getwd(), "figures/cities_example.png"))
+
+#mapshot(m, file = paste0(here("example", "datas","figures","cities_example.png")))
 m
 ```
 
@@ -207,7 +212,7 @@ pairs_geom <-  pairs %>%
 head(pairs_geom)
 
 m <- mapview(pairs_geom, map.types="CartoDB.Positron")
-mapshot(m, file = paste0(getwd(), "figures/pairs_cities.png"))
+#mapshot(m, file = paste0(getwd(), "figures/pairs_cities.png"))
 m
 ```
 
