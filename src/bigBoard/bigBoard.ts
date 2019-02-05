@@ -5,7 +5,7 @@ import {
     OrbitControls, Scene, WebGLRenderer, DirectionalLight, Fog,
     AmbientLight, Mesh, LineBasicMaterial, PCFSoftShadowMap, PlaneBufferGeometry,
     DirectionalLightHelper, Group, OrthographicCamera,
-    FontLoader, TextGeometry, TextureLoader, Font, Vector3,
+    FontLoader, TextGeometry, TextureLoader, Font, Vector3, log,
 } from 'three';
 import { OBJExporter } from '../../node_modules/three-obj-exporter-t/OBJExporter';
 import { ConeBoard } from '../cone/coneBoard';
@@ -418,9 +418,11 @@ export default class BigBoard {
         //     var cloned = this._countries.countryMeshCollection[i];
         //     group.add(cloned);
         // }
-        for (let j = 0; j < this._cones.coneMeshCollection.length - 636; ++j) {
+        for (let j = 0; j < this._cones.coneMeshCollection.length ; ++j) {
             var clonedCone = this._cones.coneMeshCollection[j];
+            var clonedLine = this._cones.lineCollection[j];
             group.add(clonedCone);
+            group.add(clonedLine);
         }
         let blob = new Blob([exporter.parse(group)], { type: 'text/plain;charset=utf-8' });
         save(blob, 'scene.obj');
