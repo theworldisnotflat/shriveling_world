@@ -412,7 +412,7 @@ export default class BigBoard {
     // with OBJ importer plugin
     private exporterOBJ(): void {
         let exporter = new OBJExporter();
-        alert('Export begin...');
+        alert('Export begins...');
         let group = new Group();
         // for (var i = 0; i < this._countries.countryMeshCollection.length; ++i) {
         //     var cloned = this._countries.countryMeshCollection[i];
@@ -425,7 +425,7 @@ export default class BigBoard {
         let blob = new Blob([exporter.parse(group)], { type: 'text/plain;charset=utf-8' });
         save(blob, 'scene.obj');
         this._scene.add(group);
-        alert('Export end.');
+        alert('Export done');
     }
 
     private _animate(): void {
