@@ -103,6 +103,12 @@ function save(blob: any, filename: string): void {
 //     save(new Blob([buffer], { type: 'application/octet-stream' }), filename);
 // }
 
+/**
+ *
+ *
+ * @export
+ * @class BigBoard
+ */
 export default class BigBoard {
     public static configuration: any = CONFIGURATION;
     private _cones: ConeBoard;
@@ -118,7 +124,7 @@ export default class BigBoard {
     //
     private _showCitiesName: boolean;
     private _populations: number;
-    private _sizetexte: number;
+    private _sizetext: number;
     private _scene: Scene;
     private _renderer: WebGLRenderer;
     private _windowHalfX: number = window.innerWidth / 2;
@@ -159,39 +165,97 @@ export default class BigBoard {
         this.initInteraction();
         this._animate();
     }
-    public toggleShowCity(): void {
+    /**
+	 * Enable/Disable showCitiesName paramater in order to show/hide
+	 * cities name
+	 *
+	 * @memberof BigBoard
+	 */
+	public toggleShowCity(): void {
         this._showCitiesName = !this._showCitiesName;
     }
 
-    get getMergerI(): Merger {
+    /**
+	 * Getter : Get merger parameter
+	 *
+	 * @readonly
+	 * @type {Merger}
+	 * @memberof BigBoard
+	 */
+	get getMergerI(): Merger {
         return this._merger;
     }
 
-    get scaleCountries(): number {
+    /**
+	 * Getter : Get scale parameter of the contries parameter
+	 * 
+	 * @type {number}
+	 * @memberof BigBoard
+	 */
+	get scaleCountries(): number {
         return this._countries.scale;
     }
-    set scaleCountries(value: number) {
+    /**
+	 * Setter : Update the value of scale parameter
+	 * @param {number} value
+	 * @memberof BigBoard
+	 */
+	set scaleCountries(value: number) {
         this._countries.scale = value;
     }
 
-    get scaleCones(): number {
+    /**
+	 * Getter : Get scale parameter of the cones parameter
+	 *
+	 * @type {number}
+	 * @memberof BigBoard
+	 */
+	get scaleCones(): number {
         return this._cones.scale;
     }
-    set scaleCones(value: number) {
+
+    /**
+	 * Setter : Update the value of scale parameter
+	 * @param {number} value
+	 * @memberof BigBoard
+	 */
+	set scaleCones(value: number) {
         this._cones.scale = value;
     }
 
-    get showCountries(): boolean {
+    /**
+	 * Getter: Get show parameter of contries paramter 
+	 *
+	 * @type {boolean}
+	 * @memberof BigBoard
+	 */
+	get showCountries(): boolean {
         return this._countries.show;
     }
-    set showCountries(value: boolean) {
+    /**
+	 * Setter : Update the value of show paramater of contries parameter
+	 *
+	 * @memberof BigBoard
+	 */
+	set showCountries(value: boolean) {
         this._countries.show = value;
     }
 
-    get showCones(): boolean {
+    /**
+	 * Getter: Get show parameter of cone paramter 
+	 *
+	 * @type {boolean}
+	 * @memberof BigBoard
+	 */
+	get showCones(): boolean {
         return this._cones.show;
     }
-    set showCones(value: boolean) {
+    /**
+	 * Setter : Update the value of show paramater of cones paramater
+	 * @param {boolean} value 
+	 * @memberof BigBoard
+	 */
+	set showCones(value: boolean) {
         this._cones.show = value;
     }
 
@@ -203,62 +267,160 @@ export default class BigBoard {
         return this._cones.lookupCriterias;
     }
 
-    get withLimits(): boolean {
+    /**
+	 * Getter : Get if the boundaries of the cones is limited by the contries 
+	 *
+	 * @type {boolean}
+	 * @memberof BigBoard
+	 */
+	get withLimits(): boolean {
         return this._cones.withLimits;
     }
-    set withLimits(value: boolean) {
+    /**
+	 * Setter : update the withlimits paramater of the cones paramater
+	 * if true the boundaries of cones will be limited by the boundaries of contries  
+	 *
+	 * @memberof BigBoard
+	 */
+	set withLimits(value: boolean) {
         this._cones.withLimits = value;
     }
 
-    get state(): IMergerState {
+    /**
+	 * Getter : Get the current state of the merger 
+	 * @returns missing || ready || complete || pending
+	 *
+	 * @readonly
+	 * @type {IMergerState}
+	 * @memberof BigBoard
+	 */
+	get state(): IMergerState {
         return this._merger.state;
     }
 
-    public cleanCountries(): void {
+    /**
+	 * @see contryBoard  : cleanContries method
+	 * @memberof BigBoard
+	 */
+	public cleanCountries(): void {
         this._countries.clean();
     }
 
     public addCountries(geoJson: any): void {
         this._countries.add(geoJson);
     }
-
+    /**
+	 * @see coneBoard :  cleanCones method
+	 *
+	 * @memberof BigBoard
+	 */
     public cleanCones(): void {
         this._cones.clean();
     }
 
-    public addCones(lookup: ILookupAndMaxSpeedAndLine): void {
+    /**
+	 * Add cone to the coneMeshCollection
+	 *
+	 * @todo unused and irrelevant @see coneBoard.add
+	 * 
+	 * @param {ILookupAndMaxSpeedAndLine} lookup
+	 * @memberof BigBoard
+	 */
+	public addCones(lookup: ILookupAndMaxSpeedAndLine): void {
         this._cones.add(lookup, CONFIGURATION.extrudedHeight);
     }
 
-    public getCountryByMouse(event: MouseEvent, highLight: boolean = false): CountryMeshShader {
+    /**
+	 * Get the contry through the position of the mouse
+	 *
+ 	 * @todo unused and irrelevant @see coneBoard.getMeshByMouse
+	 * @param {MouseEvent} event
+	 * @param {boolean} [highLight=false]
+	 * @returns {CountryMeshShader}
+	 * @memberof BigBoard
+	 */
+	public getCountryByMouse(event: MouseEvent, highLight: boolean = false): CountryMeshShader {
         return this._countries.getMeshByMouse(event, highLight);
     }
 
-    public getConeByMouse(event: MouseEvent, highLight: boolean = false): PseudoCone {
+    /**
+	 * Get the cone through the position of the mouse
+ 	 * @todo unused and irrelevant @see contryBoard.getMeshByMouse
+	 * @param {MouseEvent} event
+	 * @param {boolean} [highLight=false]
+	 * @returns {PseudoCone}
+	 * @memberof BigBoard
+	 */
+	public getConeByMouse(event: MouseEvent, highLight: boolean = false): PseudoCone {
         return this._cones.getMeshByMouse(event, highLight);
     }
 
-    public highLightCountries(criterias: ICriterias, light: boolean = true): void {
+    /**
+	 * Highlith contries @see contryBoard.highLight
+ 	 * @todo unused and irrelevant @see contryBoard.highLight
+	 * @param {ICriterias} criterias
+	 * @param {boolean} [light=true]
+	 * @memberof BigBoard
+	 */
+	public highLightCountries(criterias: ICriterias, light: boolean = true): void {
         this._countries.highLight(criterias, light);
     }
 
-    public highLightCones(criterias: ICriterias, light: boolean = true): void {
+    /**
+	 * Highlight cones @see coneBoard.highLight
+ 	 * @todo unused and irrelevant @see coneBoard.highLight
+	 * @param {ICriterias} criterias
+	 * @param {boolean} [light=true]
+	 * @memberof BigBoard
+	 */
+	public highLightCones(criterias: ICriterias, light: boolean = true): void {
         this._cones.highLight(criterias, light);
     }
 
-    public setLimits(criterias: ICriterias, limit: boolean): void {
+    /**
+	 * Update the withlimit paramter value of all cones in the coneMeshCollection 
+	 *
+  	 * @todo unused and irrelevant @see coneBoard.setLimits
+	 * @param {ICriterias} criterias
+	 * @param {boolean} limit
+	 * @memberof BigBoard
+	 */
+	public setLimits(criterias: ICriterias, limit: boolean): void {
         this._cones.setLimits(criterias, limit);
     }
 
-    public showCountriesCriterias(criterias: ICriterias, state: boolean): void {
+    /**
+	 * Show/Hide a contryMeshCollection 
+	 * 
+  	 * @todo unused and irrelevant @see contryBoard.showCriterias
+	 * @param {ICriterias} criterias
+	 * @param {boolean} state
+	 * @memberof BigBoard
+	 */
+	public showCountriesCriterias(criterias: ICriterias, state: boolean): void {
         this._countries.showCriterias(criterias, state);
     }
 
-    public showConesCriterias(criterias: ICriterias, state: boolean): void {
+    /**
+	 * Show/Hide a coneMeshCollection 
+	 * 
+  	 * @todo unused and irrelevant @see contryBoard.showCriterias
+	 * @param {ICriterias} criterias
+	 * @param {boolean} state
+	 * @memberof BigBoard
+	 */
+	public showConesCriterias(criterias: ICriterias, state: boolean): void {
         this._cones.showCriterias(criterias, state);
     }
 
-    public getCountries(criterias: ICriterias): CountryMeshShader[] {
+    /**
+	 * Get a contryMeshCollection with all contries verifying 'criterias'  
+	 *
+	 * @param {ICriterias} criterias
+	 * @returns {CountryMeshShader[]}
+	 * @memberof BigBoard
+	 */
+	public getCountries(criterias: ICriterias): CountryMeshShader[] {
         let resultat: CountryMeshShader[] = [];
         if (this._countries.show === true) {
             resultat = this._countries.searchMesh(criterias);
@@ -266,7 +428,14 @@ export default class BigBoard {
         return resultat;
     }
 
-    public getCones(criterias: ICriterias): PseudoCone[] {
+    /**
+	 * Get a coneMeshCollection with all cones verifying 'criterias'
+	 *
+	 * @param {ICriterias} criterias
+	 * @returns {PseudoCone[]}
+	 * @memberof BigBoard
+	 */
+	public getCones(criterias: ICriterias): PseudoCone[] {
         let resultat: PseudoCone[] = [];
         if (this._cones.show === true) {
             resultat = this._cones.searchMesh(criterias);
@@ -274,11 +443,22 @@ export default class BigBoard {
         return resultat;
     }
 
-    public extrude(criterias: ICriterias, value?: number): void {
+    /**
+	 * Extrude contriesMeshCollection  with criterias by a factor value
+	 *
+	 * @param {ICriterias} criterias
+	 * @param {number} [value]
+	 * @memberof BigBoard
+	 */
+	public extrude(criterias: ICriterias, value?: number): void {
         this._countries.extrude(criterias, value);
     }
-    public showCitiesName(): void {
-        console.log(this._showCitiesName);
+    /**
+	 * Show Cities name
+	 *
+	 * @memberof BigBoard
+	 */
+	public showCitiesName(): void {
         if (this._showCitiesName === false) {
             for (var i = this._geometryText.children.length - 1; i >= 0; i--) {
                 this._geometryText.remove(this._geometryText.children[i]);
@@ -287,13 +467,26 @@ export default class BigBoard {
             this.updateNameTown(option);
         }
     }
-    public rescaleText(): void {
-        console.log(this._sizetexte);
+
+    /**
+	 * Rescale all text by the sizetexte p
+	 *
+	 * @memberof BigBoard
+	 */
+	public rescaleText(): void {
         for (var i = this._geometryText.children.length - 1; i >= 0; i--) {
-            this._geometryText.children[i].scale.set(this._sizetexte, this._sizetexte, this._sizetexte);
+            this._geometryText.children[i].scale.set(this._sizetext, this._sizetext, this._sizetext);
         }
     }
-    public updateNameTown(option?: any): void {
+
+    /**
+	 * Update all the town which will be displayed regarding the populuation threeshold paramater
+	 *
+	 * @param {*} [option]
+	 * @returns {void}
+	 * @memberof BigBoard
+	 */
+	public updateNameTown(option?: any): void {
         if (this._merger.state !== 'complete') {
             return;
         }
@@ -325,7 +518,13 @@ export default class BigBoard {
         this.rescaleText();
     }
 
-    private _init(): void {
+    /**
+	 * Initalize the scene
+	 *
+	 * @private
+	 * @memberof BigBoard
+	 */
+	private _init(): void {
         this._container = document.createElement('div');
         document.body.appendChild(this._container);
         this._stats = new Stats();
@@ -339,7 +538,7 @@ export default class BigBoard {
         this._cameraO.position.set(0, 0, 500);
         this._cameraP.position.set(0, 0, 500);
         this._populations = 0;
-        this._sizetexte = 1.0;
+        this._sizetext = 1.0;
         this._scene = new Scene();
         this._scene.add(this._cameraO);
         this._scene.add(this._cameraP);
@@ -407,10 +606,14 @@ export default class BigBoard {
 
     }
 
-    // export function in Wavefront OBJ format
-    // file can be imported in Blender
-    // with OBJ importer plugin
-    private exporterOBJ(): void {
+    /**
+	 * Export in Wavefront OBJ format.
+	 * Exported file can be imported in Blender.
+	 *
+	 * @private
+	 * @memberof BigBoard
+	 */
+	private exporterOBJ(): void {
         let exporter = new OBJExporter();
         alert('Export begins...');
         let group = new Group();
@@ -430,7 +633,13 @@ export default class BigBoard {
         alert('Export done');
     }
 
-    private _animate(): void {
+    /**
+	 * animate : Animating and displaying the scene every frame 
+	 *
+	 * @private
+	 * @memberof BigBoard
+	 */
+	private _animate(): void {
         let scene = this._scene;
         let camera = this.orthographique === true ? this._cameraO : this._cameraP;
         this._controls.object = camera;
@@ -442,9 +651,15 @@ export default class BigBoard {
         CONFIGURATION.tick();
     }
 
-    // show/hide city Name
-    private initInteraction(): void {
 
+	/**
+	 * initInteraction : Initialize GUI 
+	 *  
+	 *
+	 * @private
+	 * @memberof BigBoard
+	 */
+	private initInteraction(): void {
         const gui = new dat.GUI();
         let conf = {
             coneStep: CONFIGURATION.coneStep * CONFIGURATION.rad2deg,
@@ -546,7 +761,6 @@ export default class BigBoard {
 
         // lines
         let aerialFolder = gui.addFolder('Lignes');
-        aerialFolder.add(LineMeshShader, 'coefficient', 0, 10, 0);  // .1 en dernière position
         aerialFolder.add(CONFIGURATION, 'pointsPerLine', 0, 200).step(1).name('nombre de points');
         let aerialControllersList: dat.GUI[] = [];
 
@@ -666,7 +880,7 @@ export default class BigBoard {
                             annees.min(this._merger.minYear).max(this._merger.maxYear).updateDisplay();
                             this._cones.add(this._merger.datas, CONFIGURATION.extrudedHeight);
                             // this._merger.clear();
-                            let sizeText = generalFolder.add(this, '_sizetexte', 0, 2).name('taille du texte').step(0.1);
+                            let sizeText = generalFolder.add(this, '_sizetext', 0, 2).name('taille du texte').step(0.1);
                             sizeText.onChange(this.rescaleText.bind(this));
                             generalFolder.addColor(conf, 'couleur du texte').onChange(v => {
                                 let color = parseInt(v.replace('#', ''), 16);

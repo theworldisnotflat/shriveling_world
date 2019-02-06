@@ -74,6 +74,13 @@ const config: Papa.ParseConfig = {
     fastMode: true,
 };
 
+/**
+ *
+ *
+ * @param {string} text
+ * @param {boolean} [isTransportModeCode=false]
+ * @returns {*}
+ */
 function getCSV(text: string, isTransportModeCode: boolean = false): any {
     config['transform'] = undefined;
     if (isTransportModeCode === true) {
@@ -87,6 +94,15 @@ function getCSV(text: string, isTransportModeCode: boolean = false): any {
     return Papa.parse(text, config).data;
 }
 
+
+/**
+ * Get the middle between two Cartographic position :
+ * posA and posB
+ *
+ * @param {Cartographic} posA
+ * @param {Cartographic} posB
+ * @returns {{ middle: Cartographic, opening: number }}
+ */
 function getTheMiddle(posA: Cartographic, posB: Cartographic)
     : { middle: Cartographic, opening: number } {
     const theta = posA.distanceExacte(posB);
