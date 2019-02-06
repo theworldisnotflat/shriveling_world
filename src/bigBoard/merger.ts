@@ -94,7 +94,6 @@ function getCSV(text: string, isTransportModeCode: boolean = false): any {
     return Papa.parse(text, config).data;
 }
 
-
 /**
  * Get the middle between two Cartographic position :
  * posA and posB

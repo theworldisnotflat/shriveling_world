@@ -166,143 +166,133 @@ export default class BigBoard {
         this._animate();
     }
     /**
-	 * Enable/Disable showCitiesName paramater in order to show/hide
-	 * cities name
-	 *
-	 * @memberof BigBoard
-	 */
-	public toggleShowCity(): void {
+    * Enable/Disable showCitiesName paramater in order to show/hide
+    * cities name
+    *
+    * @memberof BigBoard
+    */
+     public toggleShowCity(): void {
         this._showCitiesName = !this._showCitiesName;
     }
 
     /**
-	 * Getter : Get merger parameter
-	 *
-	 * @readonly
-	 * @type {Merger}
-	 * @memberof BigBoard
-	 */
-	get getMergerI(): Merger {
+     * Getter : Get merger parameter
+     *
+     * @readonly
+     * @type {Merger}
+     * @memberof BigBoard
+     */
+    get getMergerI(): Merger {
         return this._merger;
     }
 
     /**
-	 * Getter : Get scale parameter of the contries parameter
-	 * 
-	 * @type {number}
-	 * @memberof BigBoard
-	 */
-	get scaleCountries(): number {
+     * Getter : Get scale parameter of the contries parameter
+     * @type {number}
+     * @memberof BigBoard
+     */
+    get scaleCountries(): number {
         return this._countries.scale;
     }
     /**
-	 * Setter : Update the value of scale parameter
-	 * @param {number} value
-	 * @memberof BigBoard
-	 */
-	set scaleCountries(value: number) {
+     * Setter : Update the value of scale parameter
+     * @param {number} value
+     * @memberof BigBoard
+     */
+    set scaleCountries(value: number) {
         this._countries.scale = value;
     }
 
     /**
-	 * Getter : Get scale parameter of the cones parameter
-	 *
-	 * @type {number}
-	 * @memberof BigBoard
-	 */
-	get scaleCones(): number {
+     * Getter : Get scale parameter of the cones parameter
+     * @type {number}
+     * @memberof BigBoard
+     */
+    get scaleCones(): number {
         return this._cones.scale;
     }
 
     /**
-	 * Setter : Update the value of scale parameter
-	 * @param {number} value
-	 * @memberof BigBoard
-	 */
-	set scaleCones(value: number) {
+     * Setter : Update the value of scale parameter
+     * @param {number} value
+     * @memberof BigBoard
+     */
+    set scaleCones(value: number) {
         this._cones.scale = value;
     }
 
     /**
-	 * Getter: Get show parameter of contries paramter 
-	 *
-	 * @type {boolean}
-	 * @memberof BigBoard
-	 */
-	get showCountries(): boolean {
+     * Getter: Get show parameter of contries paramter
+     * @type {boolean}
+     * @memberof BigBoard
+     */
+    get showCountries(): boolean {
         return this._countries.show;
     }
     /**
-	 * Setter : Update the value of show paramater of contries parameter
-	 *
-	 * @memberof BigBoard
-	 */
-	set showCountries(value: boolean) {
+     * Setter : Update the value of show paramater of contries parameter
+     * @memberof BigBoard
+     */
+    set showCountries(value: boolean) {
         this._countries.show = value;
     }
 
     /**
-	 * Getter: Get show parameter of cone paramter 
-	 *
-	 * @type {boolean}
-	 * @memberof BigBoard
-	 */
-	get showCones(): boolean {
+     * Getter: Get show parameter of cone paramter
+     * @type {boolean}
+     * @memberof BigBoard
+     */
+    get showCones(): boolean {
         return this._cones.show;
     }
     /**
-	 * Setter : Update the value of show paramater of cones paramater
-	 * @param {boolean} value 
-	 * @memberof BigBoard
-	 */
-	set showCones(value: boolean) {
+     * Setter : Update the value of show paramater of cones paramater
+     * @param {boolean} value
+     * @memberof BigBoard
+     */
+    set showCones(value: boolean) {
         this._cones.show = value;
     }
-
     get lookupCountries(): ISumUpCriteria {
         return this._countries.lookupCriterias;
     }
-
     get lookupCones(): ISumUpCriteria {
         return this._cones.lookupCriterias;
     }
 
     /**
-	 * Getter : Get if the boundaries of the cones is limited by the contries 
-	 *
-	 * @type {boolean}
-	 * @memberof BigBoard
-	 */
-	get withLimits(): boolean {
+     * Getter : Get if the boundaries of the cones is limited by the contries
+     * @type {boolean}
+     * @memberof BigBoard
+     */
+    get withLimits(): boolean {
         return this._cones.withLimits;
     }
     /**
-	 * Setter : update the withlimits paramater of the cones paramater
-	 * if true the boundaries of cones will be limited by the boundaries of contries  
-	 *
-	 * @memberof BigBoard
-	 */
-	set withLimits(value: boolean) {
+     * Setter : update the withlimits paramater of the cones paramater
+     * if true the boundaries of cones will be limited by the boundaries of contries
+     * @memberof BigBoard
+     */
+    set withLimits(value: boolean) {
         this._cones.withLimits = value;
     }
 
     /**
-	 * Getter : Get the current state of the merger 
-	 * @returns missing || ready || complete || pending
-	 *
-	 * @readonly
-	 * @type {IMergerState}
-	 * @memberof BigBoard
-	 */
-	get state(): IMergerState {
+     * Getter : Get the current state of the merger
+     * @returns missing || ready || complete || pending
+     * @readonly
+     * @type {IMergerState}
+     * @memberof BigBoard
+     */
+    get state(): IMergerState {
         return this._merger.state;
     }
 
     /**
-	 * @see contryBoard  : cleanContries method
-	 * @memberof BigBoard
-	 */
-	public cleanCountries(): void {
+     * @see contryBoard  : cleanContries method
+     * @memberof BigBoard
+     */
+    public cleanCountries(): void {
         this._countries.clean();
     }
 
@@ -310,117 +300,109 @@ export default class BigBoard {
         this._countries.add(geoJson);
     }
     /**
-	 * @see coneBoard :  cleanCones method
-	 *
-	 * @memberof BigBoard
-	 */
+     * @see coneBoard :  cleanCones method
+     * @memberof BigBoard
+     */
     public cleanCones(): void {
         this._cones.clean();
     }
 
     /**
-	 * Add cone to the coneMeshCollection
-	 *
-	 * @todo unused and irrelevant @see coneBoard.add
-	 * 
-	 * @param {ILookupAndMaxSpeedAndLine} lookup
-	 * @memberof BigBoard
-	 */
-	public addCones(lookup: ILookupAndMaxSpeedAndLine): void {
+     * Add cone to the coneMeshCollection
+     * @todo unused and irrelevant @see coneBoard.add
+     * @param {ILookupAndMaxSpeedAndLine} lookup
+     * @memberof BigBoard
+     */
+    public addCones(lookup: ILookupAndMaxSpeedAndLine): void {
         this._cones.add(lookup, CONFIGURATION.extrudedHeight);
     }
 
     /**
-	 * Get the contry through the position of the mouse
-	 *
- 	 * @todo unused and irrelevant @see coneBoard.getMeshByMouse
-	 * @param {MouseEvent} event
-	 * @param {boolean} [highLight=false]
-	 * @returns {CountryMeshShader}
-	 * @memberof BigBoard
-	 */
-	public getCountryByMouse(event: MouseEvent, highLight: boolean = false): CountryMeshShader {
+     * Get the contry through the position of the mouse
+     * @todo unused and irrelevant @see coneBoard.getMeshByMouse
+     * @param {MouseEvent} event
+     * @param {boolean} [highLight=false]
+     * @returns {CountryMeshShader}
+     * @memberof BigBoard
+     */
+    public getCountryByMouse(event: MouseEvent, highLight: boolean = false): CountryMeshShader {
         return this._countries.getMeshByMouse(event, highLight);
     }
 
     /**
-	 * Get the cone through the position of the mouse
- 	 * @todo unused and irrelevant @see contryBoard.getMeshByMouse
-	 * @param {MouseEvent} event
-	 * @param {boolean} [highLight=false]
-	 * @returns {PseudoCone}
-	 * @memberof BigBoard
-	 */
-	public getConeByMouse(event: MouseEvent, highLight: boolean = false): PseudoCone {
+     * Get the cone through the position of the mouse
+     * @todo unused and irrelevant @see contryBoard.getMeshByMouse
+     * @param {MouseEvent} event
+     * @param {boolean} [highLight=false]
+     * @returns {PseudoCone}
+     * @memberof BigBoard
+     */
+    public getConeByMouse(event: MouseEvent, highLight: boolean = false): PseudoCone {
         return this._cones.getMeshByMouse(event, highLight);
     }
 
     /**
-	 * Highlith contries @see contryBoard.highLight
- 	 * @todo unused and irrelevant @see contryBoard.highLight
-	 * @param {ICriterias} criterias
-	 * @param {boolean} [light=true]
-	 * @memberof BigBoard
-	 */
-	public highLightCountries(criterias: ICriterias, light: boolean = true): void {
+     * Highlith contries @see contryBoard.highLight
+     * @todo unused and irrelevant @see contryBoard.highLight
+     * @param {ICriterias} criterias
+     * @param {boolean} [light=true]
+     * @memberof BigBoard
+     */
+    public highLightCountries(criterias: ICriterias, light: boolean = true): void {
         this._countries.highLight(criterias, light);
     }
 
     /**
-	 * Highlight cones @see coneBoard.highLight
- 	 * @todo unused and irrelevant @see coneBoard.highLight
-	 * @param {ICriterias} criterias
-	 * @param {boolean} [light=true]
-	 * @memberof BigBoard
-	 */
-	public highLightCones(criterias: ICriterias, light: boolean = true): void {
+     * Highlight cones @see coneBoard.highLight
+     * @todo unused and irrelevant @see coneBoard.highLight
+     * @param {ICriterias} criterias
+     * @param {boolean} [light=true]
+     * @memberof BigBoard
+     */
+    public highLightCones(criterias: ICriterias, light: boolean = true): void {
         this._cones.highLight(criterias, light);
     }
 
     /**
-	 * Update the withlimit paramter value of all cones in the coneMeshCollection 
-	 *
-  	 * @todo unused and irrelevant @see coneBoard.setLimits
-	 * @param {ICriterias} criterias
-	 * @param {boolean} limit
-	 * @memberof BigBoard
-	 */
-	public setLimits(criterias: ICriterias, limit: boolean): void {
+     * Update the withlimit paramter value of all cones in the coneMeshCollection
+     * @todo unused and irrelevant @see coneBoard.setLimits
+     * @param {ICriterias} criterias
+     * @param {boolean} limit
+     * @memberof BigBoard
+     */
+    public setLimits(criterias: ICriterias, limit: boolean): void {
         this._cones.setLimits(criterias, limit);
     }
 
     /**
-	 * Show/Hide a contryMeshCollection 
-	 * 
-  	 * @todo unused and irrelevant @see contryBoard.showCriterias
-	 * @param {ICriterias} criterias
-	 * @param {boolean} state
-	 * @memberof BigBoard
-	 */
-	public showCountriesCriterias(criterias: ICriterias, state: boolean): void {
+     * Show/Hide a contryMeshCollection
+     * @todo unused and irrelevant @see contryBoard.showCriterias
+     * @param {ICriterias} criterias
+     * @param {boolean} state
+     * @memberof BigBoard
+     */
+    public showCountriesCriterias(criterias: ICriterias, state: boolean): void {
         this._countries.showCriterias(criterias, state);
     }
 
     /**
-	 * Show/Hide a coneMeshCollection 
-	 * 
-  	 * @todo unused and irrelevant @see contryBoard.showCriterias
-	 * @param {ICriterias} criterias
-	 * @param {boolean} state
-	 * @memberof BigBoard
-	 */
-	public showConesCriterias(criterias: ICriterias, state: boolean): void {
+     * Show/Hide a coneMeshCollection
+     * @todo unused and irrelevant @see contryBoard.showCriterias
+     * @param {ICriterias} criterias
+     * @param {boolean} state
+     * @memberof BigBoard
+     */
+    public showConesCriterias(criterias: ICriterias, state: boolean): void {
         this._cones.showCriterias(criterias, state);
     }
 
     /**
-	 * Get a contryMeshCollection with all contries verifying 'criterias'  
-	 *
+     * Get a contryMeshCollection with all contries verifying 'criterias'
 	 * @param {ICriterias} criterias
-	 * @returns {CountryMeshShader[]}
-	 * @memberof BigBoard
-	 */
-	public getCountries(criterias: ICriterias): CountryMeshShader[] {
+     * @returns {CountryMeshShader[]}
+     * @memberof BigBoard
+     */
+    public getCountries(criterias: ICriterias): CountryMeshShader[] {
         let resultat: CountryMeshShader[] = [];
         if (this._countries.show === true) {
             resultat = this._countries.searchMesh(criterias);
@@ -429,13 +411,12 @@ export default class BigBoard {
     }
 
     /**
-	 * Get a coneMeshCollection with all cones verifying 'criterias'
-	 *
-	 * @param {ICriterias} criterias
-	 * @returns {PseudoCone[]}
-	 * @memberof BigBoard
-	 */
-	public getCones(criterias: ICriterias): PseudoCone[] {
+     * Get a coneMeshCollection with all cones verifying 'criterias'
+     * @param {ICriterias} criterias
+     * @returns {PseudoCone[]}
+     * @memberof BigBoard
+     */
+    public getCones(criterias: ICriterias): PseudoCone[] {
         let resultat: PseudoCone[] = [];
         if (this._cones.show === true) {
             resultat = this._cones.searchMesh(criterias);
@@ -444,21 +425,19 @@ export default class BigBoard {
     }
 
     /**
-	 * Extrude contriesMeshCollection  with criterias by a factor value
-	 *
-	 * @param {ICriterias} criterias
-	 * @param {number} [value]
-	 * @memberof BigBoard
-	 */
-	public extrude(criterias: ICriterias, value?: number): void {
+     * Extrude contriesMeshCollection  with criterias by a factor value
+     * @param {ICriterias} criterias
+     * @param {number} [value]
+     * @memberof BigBoard
+     */
+    public extrude(criterias: ICriterias, value?: number): void {
         this._countries.extrude(criterias, value);
     }
     /**
-	 * Show Cities name
-	 *
-	 * @memberof BigBoard
-	 */
-	public showCitiesName(): void {
+     * Show Cities name
+     * @memberof BigBoard
+     */
+    public showCitiesName(): void {
         if (this._showCitiesName === false) {
             for (var i = this._geometryText.children.length - 1; i >= 0; i--) {
                 this._geometryText.remove(this._geometryText.children[i]);
@@ -469,29 +448,26 @@ export default class BigBoard {
     }
 
     /**
-	 * Rescale all text by the sizetexte p
-	 *
-	 * @memberof BigBoard
-	 */
-	public rescaleText(): void {
+     * Rescale all text by the sizetexte p
+     * @memberof BigBoard
+     */
+    public rescaleText(): void {
         for (var i = this._geometryText.children.length - 1; i >= 0; i--) {
             this._geometryText.children[i].scale.set(this._sizetext, this._sizetext, this._sizetext);
         }
     }
 
     /**
-	 * Update all the town which will be displayed regarding the populuation threeshold paramater
-	 *
-	 * @param {*} [option]
-	 * @returns {void}
-	 * @memberof BigBoard
-	 */
-	public updateNameTown(option?: any): void {
+     * Update all the town which will be displayed regarding the populuation threeshold paramater
+     * @param {*} [option]
+     * @returns {void}
+     * @memberof BigBoard
+     */
+    public updateNameTown(option?: any): void {
         if (this._merger.state !== 'complete') {
             return;
         }
         var mesh;
-
         for (var i = this._geometryText.children.length - 1; i >= 0; i--) {
             this._geometryText.remove(this._geometryText.children[i]);
         }
@@ -519,12 +495,11 @@ export default class BigBoard {
     }
 
     /**
-	 * Initalize the scene
-	 *
-	 * @private
-	 * @memberof BigBoard
-	 */
-	private _init(): void {
+     * Initalize the scene
+     * @private
+     * @memberof BigBoard
+     */
+    private _init(): void {
         this._container = document.createElement('div');
         document.body.appendChild(this._container);
         this._stats = new Stats();
@@ -607,13 +582,12 @@ export default class BigBoard {
     }
 
     /**
-	 * Export in Wavefront OBJ format.
-	 * Exported file can be imported in Blender.
-	 *
-	 * @private
-	 * @memberof BigBoard
-	 */
-	private exporterOBJ(): void {
+     * Export in Wavefront OBJ format.
+     * Exported file can be imported in Blender.
+     * @private
+     * @memberof BigBoard
+     */
+    private exporterOBJ(): void {
         let exporter = new OBJExporter();
         alert('Export begins...');
         let group = new Group();
@@ -634,12 +608,11 @@ export default class BigBoard {
     }
 
     /**
-	 * animate : Animating and displaying the scene every frame 
-	 *
-	 * @private
-	 * @memberof BigBoard
-	 */
-	private _animate(): void {
+     * animate : Animating and displaying the scene every frame
+     * @private
+     * @memberof BigBoard
+     */
+    private _animate(): void {
         let scene = this._scene;
         let camera = this.orthographique === true ? this._cameraO : this._cameraP;
         this._controls.object = camera;
@@ -650,16 +623,12 @@ export default class BigBoard {
         TWEEN.update();
         CONFIGURATION.tick();
     }
-
-
-	/**
-	 * initInteraction : Initialize GUI 
-	 *  
-	 *
-	 * @private
-	 * @memberof BigBoard
-	 */
-	private initInteraction(): void {
+     /**
+     * initInteraction : Initialize GUI
+     * @private
+     * @memberof BigBoard
+     */
+     private initInteraction(): void {
         const gui = new dat.GUI();
         let conf = {
             coneStep: CONFIGURATION.coneStep * CONFIGURATION.rad2deg,
