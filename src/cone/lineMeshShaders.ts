@@ -40,16 +40,14 @@ function getHeight(ratio: number, theta: number): number {
     const cosSemiTheta = Math.cos(semiTheta);
     const secondTerm =  Math.sqrt(ratio * ratio - sinSemiTheta * sinSemiTheta);
     const thirdTerm = 0;
-    /* return (cosSemiTheta + Math.sqrt(ratio * ratio - sinSemiTheta * sinSemiTheta) - 1) *
-        CONFIGURATION.earthRadiusMeters * _coefficient; */
-    // minus earth radius
-    return ((cosSemiTheta + secondTerm + thirdTerm ) *
-        CONFIGURATION.earthRadiusMeters * _coefficient)
-        - CONFIGURATION.earthRadiusMeters;
+    // the equation of length om'
+    const result = ((cosSemiTheta + secondTerm + thirdTerm ) *
+    CONFIGURATION.earthRadiusMeters * _coefficient);
+    // minus earth radius to compute cm'
+    return result - CONFIGURATION.earthRadiusMeters;
 }
 
-// quand on change step!!
-// step is the number of facets dof cones, default value is 15
+// step is the number of facets forming the cones, default value is 15
 // higher values will consume processor load
 function regenerateStep(): void {
     const step = 1 / CONFIGURATION.pointsPerLine;
