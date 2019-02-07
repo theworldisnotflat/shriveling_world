@@ -224,7 +224,8 @@ export const CONFIGURATION = {
     },
 };
 
-CONFIGURATION.coneStep = 15 * CONFIGURATION.deg2rad;
+// default value of coneStep : number of facets of cones
+CONFIGURATION.coneStep = 100 * CONFIGURATION.deg2rad;
 CONFIGURATION.heightRatio = 0.01;
 CONFIGURATION.intrudedHeightRatio = 0.6;
 CONFIGURATION.TWEEN_TIMING = 1000;
