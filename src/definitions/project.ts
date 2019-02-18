@@ -128,7 +128,7 @@ export interface ICity {
     urbanagglomeration: string;
     latitude: number;
     longitude: number;
-    radius: number;
+    radius: number; // for cases of cities in islands close to a continent
     populations?: IPopulation;
     destinations?: ITransportNetwork[];
 }
@@ -144,7 +144,7 @@ export interface ITransportModeCode {
     code: number;
     yearBegin: number;
     yearEnd?: number;
-    terrestrial: boolean;
+    terrestrial: boolean;  // if yes the transport mode speed can affect the slope of cones
     speeds: ITransportModeSpeed[];
 }
 

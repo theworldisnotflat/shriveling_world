@@ -313,8 +313,6 @@ function toTownTransport(
                                 if (lineToProcess === true) {
                                     let { end, middle, opening, pointP, pointQ } = cachedGetTheMiddle(originCityCode, codeDestination);
                                     let ratio = getRatio(opening, speedMaxPerYear[year], tab[year]);
-                                    // just a test
-                                    // ratio = ratio - ( CONFIGURATION.earthRadiusMeters / 1000);
                                     if (!list.hasOwnProperty(codeDestination)) {
                                         list[codeDestination] = <ILookupItemList>{};
                                         list[codeDestination].end = end;
@@ -324,7 +322,7 @@ function toTownTransport(
                                         list[codeDestination].opening = opening;
                                         list[codeDestination].ratio = {};
                                         // for testing
-                                        console.log(ratio, opening, speedMaxPerYear[year], tab[year]);
+                                        // console.log(ratio, opening, speedMaxPerYear[year], tab[year]);
                                     }
                                     if (!list[codeDestination].ratio.hasOwnProperty(transportName)) {
                                         list[codeDestination].ratio[transportName] = {};
