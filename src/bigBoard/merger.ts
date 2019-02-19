@@ -75,8 +75,9 @@ const config: Papa.ParseConfig = {
 };
 
 /**
- *
- *
+ * Gets the CSV file, parses it,
+ * and returns a table
+ * 
  * @param {string} text
  * @param {boolean} [isTransportModeCode=false]
  * @returns {*}
@@ -95,7 +96,7 @@ function getCSV(text: string, isTransportModeCode: boolean = false): any {
 }
 
 /**
- * Get the middle between two Cartographic position :
+ * Gets the middle between two Cartographic position :
  * posA and posB
  *
  * @param {Cartographic} posA
