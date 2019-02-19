@@ -173,15 +173,15 @@ const build = async (done) => {
   };
   const bundle = await rollup.rollup({input: 'src/bigBoard/bigBoard.ts', cache: cache, plugins: rollupPlugins, external: rollupExternal});
   const outputOptions = {
-    dir: 'dist/',
     file: 'dist/shriveling.js',
     format: rollupFormat,
     name: 'shriveling',
     globals: rollupGlobal
   }
   await bundle.write(outputOptions);
-  let {code, map} = await bundle.generate(outputOptions);
-  code = externalLibraries + code.replace(/.__SHADERS_HERE__./, shadersString).replace(/.__LIBRARIES_HERE__./, librariesString);
+  let code = await bundle.generate(outputOptions);
+  // console.log(code.output[0].code)
+  code = externalLibraries + code.output[0].code.replace(/.__SHADERS_HERE__./, shadersString).replace(/.__LIBRARIES_HERE__./, librariesString);
   await fs.outputFile(__dirname + '/dist/shriveling.js', code);
   done();
 };
