@@ -8,6 +8,7 @@ const nodeResolve = require('rollup-plugin-node-resolve');
 const glob = require("glob");
 const fs = require('fs-extra');
 const uglify = require("uglify-es");
+const typedoc = require("gulp-typedoc");
 
 let gulp = require('gulp'),
   del = require('del'),
@@ -53,7 +54,8 @@ let destinations = {
   js: {
     dist: 'dist/*.js',
     example: 'example/javascript'
-  }
+  },
+  doc:{html:'documentation/html',json:'documentation/json'}
 };
 
 const rollupExternal = ['three', 'papaparse', 'poly2tri', 'twgl.js', 'dat.gui'];
@@ -191,6 +193,20 @@ const build = async (done) => {
   done();
 };
 
+const doc=async(done)=>{
+  gulp.src(["src/**/*.ts"])
+        .pipe(typedoc({
+
+            out: destinations.doc.html,
+            json: destinations.doc.json,
+
+            name: "shriveling the world",
+            ignoreCompilerErrors: true,
+            hideGenerator: true,
+        }))
+    ;
+}
+
 const tslint = shell.task('tslint -c tslint.json -e src/webWorkers/**/*.ts src/**/**/*.ts src/*.ts');
 const clean = (done) => {
   del.sync(['dist', 'example/javascript/', 'src/**/*.js', 'declarations']);
@@ -202,7 +218,7 @@ const defaultTask = (done) => {
   done();
 };
 const buildRequirements = gulp.series(gulp.parallel(compileShaders, compileLibraries, combineExternals), build);
-const defaultRequirement = gulp.series(gulp.parallel(clean, tslint), buildRequirements, defaultTask);
+const defaultRequirement = gulp.series(gulp.parallel(clean, tslint,doc), buildRequirements, defaultTask);
 
 gulp.task('build', buildRequirements);
 
