@@ -129,6 +129,8 @@ function regenerateFromConeStep(): void {
     _gpgpu.positions.updateTextures(options);
 }
 
+// sets the elevation (fixing slopes) of cones according to year
+// and deals with cones that shouldnt be displayed
 function updateElevations(): void {
     let year = CONFIGURATION.year;
     _conesWithoutDisplay = [];

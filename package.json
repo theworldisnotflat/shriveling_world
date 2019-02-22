@@ -1,7 +1,7 @@
 {
   "name": "shriveling_world",
   "version": "0.0.1",
-  "description": "The  \"shriveling_world\" project aims at producing images of the global time-space, using the third dimension, as in time-space relief maps.",
+  "description": "The  \"shriveling_world\" project aims at producing images of geographical time-space, using the third dimension, as in time-space relief maps.",
   "main": "gulpfile.js",
   "dependencies": {},
   "devDependencies": {

@@ -8,6 +8,11 @@ import {
     ILookupItemList,
 } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
+// in merger are the functions used only once
+// which are CPU/GPU intensive functions
+// and which compute the geometry of cones and edges.
+// the functions that must run everytime a parameter is modified
+// are located in the respective files for cones and edges
 function merger<U, V>(
     mother: U[], girl: V[], motherProperty: string, girlProperty: string, newName: string, forceArray: boolean,
     girlPropertyToRemove: boolean, motherPropertyToRemove: boolean): void {
@@ -75,7 +80,8 @@ const config: Papa.ParseConfig = {
 };
 
 /**
- *
+ * Gets the CSV file, parses it,
+ * and returns a table
  *
  * @param {string} text
  * @param {boolean} [isTransportModeCode=false]
@@ -95,7 +101,7 @@ function getCSV(text: string, isTransportModeCode: boolean = false): any {
 }
 
 /**
- * Get the middle between two Cartographic position :
+ * Gets the middle between two Cartographic position :
  * posA and posB
  *
  * @param {Cartographic} posA
@@ -138,7 +144,8 @@ function toTownTransport(
             minYear = item.yearBegin;
         }
     });
-    // déterminer pour chaque type de transport la vitesse par an dans la fourchette + vitesse max par an de la fourchette OK
+    // déterminer pour chaque type de transport la vitesse par an 
+    // dans la fourchette + vitesse max par an de la fourchette OK
     interface ISpeedPerYear {
         [year: string]: number;
     }
