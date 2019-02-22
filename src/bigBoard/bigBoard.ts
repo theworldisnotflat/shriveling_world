@@ -5,7 +5,7 @@ import {
     OrbitControls, Scene, WebGLRenderer, DirectionalLight, Fog,
     AmbientLight, Mesh, LineBasicMaterial, PCFSoftShadowMap, PlaneBufferGeometry,
     DirectionalLightHelper, Group, OrthographicCamera,
-    FontLoader, TextGeometry, TextureLoader, Font, Vector3, log,
+    FontLoader, TextGeometry, TextureLoader, Font, Vector3,
 } from 'three';
 import { OBJExporter } from '../../node_modules/three-obj-exporter-t/OBJExporter';
 import { ConeBoard } from '../cone/coneBoard';
@@ -18,7 +18,6 @@ import {
 } from '../definitions/project';
 import { PseudoCone } from '../cone/base';
 import { CountryMeshShader } from '../country/countryMeshShader';
-import { LineMeshShader } from '../cone/lineMeshShaders';
 import * as dat from 'dat.gui';
 
 declare let Stats: any;
@@ -171,7 +170,7 @@ export default class BigBoard {
     *
     * @memberof BigBoard
     */
-     public toggleShowCity(): void {
+    public toggleShowCity(): void {
         this._showCitiesName = !this._showCitiesName;
     }
 
@@ -467,7 +466,7 @@ export default class BigBoard {
         if (this._merger.state !== 'complete') {
             return;
         }
-        var mesh;
+        let mesh: Mesh;
         for (var i = this._geometryText.children.length - 1; i >= 0; i--) {
             this._geometryText.remove(this._geometryText.children[i]);
         }
@@ -595,7 +594,7 @@ export default class BigBoard {
         //     var cloned = this._countries.countryMeshCollection[i];
         //     group.add(cloned);
         // }
-        for (let j = 0; j < this._cones.coneMeshCollection.length ; ++j) {
+        for (let j = 0; j < this._cones.coneMeshCollection.length; ++j) {
             var clonedCone = this._cones.coneMeshCollection[j];
             var clonedLine = this._cones.lineCollection[j];
             group.add(clonedCone);
@@ -623,12 +622,12 @@ export default class BigBoard {
         TWEEN.update();
         CONFIGURATION.tick();
     }
-     /**
-     * initInteraction : Initialize GUI
-     * @private
-     * @memberof BigBoard
-     */
-     private initInteraction(): void {
+    /**
+    * initInteraction : Initialize GUI
+    * @private
+    * @memberof BigBoard
+    */
+    private initInteraction(): void {
         const gui = new dat.GUI();
         let conf = {
             coneStep: CONFIGURATION.coneStep * CONFIGURATION.rad2deg,

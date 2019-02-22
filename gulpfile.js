@@ -1,7 +1,7 @@
 'use strict';
 
 const rollup = require('rollup');
-const minify = require('rollup-plugin-minify-es');
+const terser = require('rollup-plugin-terser').terser;
 const typescript = require('rollup-plugin-typescript2');
 const commonjs = require('rollup-plugin-commonjs');
 const nodeResolve = require('rollup-plugin-node-resolve');
@@ -24,8 +24,8 @@ let sources = {
     // This is where external libraries are declared
     // Each new library must also be declared in the package.json file
     // by the instruction 'npm i -D  XXX' where XXX is the name of the library
-    // Beware : the order of insertion is important, i.e. libraries using 
-    // three.js must be inserter AFTER the three.js line 
+    // Beware : the order of insertion is important, i.e. libraries using
+    // three.js must be inserter AFTER the three.js line
     appThirdParty: [
       'node_modules/twgl.js/dist/4.x/twgl.js',
       'node_modules/three/build/three.js',
@@ -74,7 +74,7 @@ let isProduction = argv.testing === true
   : true;
 
 if (isProduction) {
-  rollupPlugins.push(minify({ecma: 7}));
+  rollupPlugins.push(terser({ecma: 7}));
 }
 
 let shaders = {};
