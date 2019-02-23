@@ -131,6 +131,7 @@ function getRatio(theta: number, speedMax: number, speed: number): number {
   return theta < thetaLimit ? speedMax / 4778.25 : speedMax * theta / (2 * speed);
 }
 
+
 function toTownTransport(
   transportModeCode: ITransportModeCode[], cities: ICity[], transportNetwork: ITransportNetwork[]): ILookupAndMaxSpeedAndLine {
   let resultat: ILookupTownTransport = {};
@@ -299,6 +300,10 @@ function toTownTransport(
             let lineToProcess = processedCities[originCityCode][codeDestination].indexOf(transportName) === -1;
             processedCities[originCityCode][codeDestination].push(transportName);
             processedCities[codeDestination][originCityCode].push(transportName);
+            // the whole network is scanned
+            // - a terrestrial transport mode impacts cone slope
+            // - a non terrstrial transport mode will generate an edge whose geometry
+            //   will be determined by the ration of speed
             for (let year = min; year <= max; year++) {
               if (isTerrestrial === true) {
                 elevation = Math.atan(Math.sqrt(
