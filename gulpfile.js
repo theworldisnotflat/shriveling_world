@@ -193,23 +193,10 @@ const build = async (done) => {
   done();
 };
 
-const doc=async(done)=>{
-  gulp.src(["src/**/*.ts"])
-        .pipe(typedoc({
-
-            out: destinations.doc.html,
-            json: destinations.doc.json,
-
-            name: "shriveling the world",
-            ignoreCompilerErrors: true,
-            hideGenerator: true,
-        }))
-    ;
-}
-
+const doc= shell.task('typedoc --out documentation/html --json documentation/json.json --name "shriveling the world" --ignoreCompilerErrors --hideGenerator --target ES6 --excludeExternals  --umlLocation remote --umlFormat svg  src')
 const tslint = shell.task('tslint -c tslint.json -e src/webWorkers/**/*.ts src/**/**/*.ts src/*.ts');
 const clean = (done) => {
-  del.sync(['dist', 'example/javascript/', 'src/**/*.js', 'declarations']);
+  del.sync(['dist', 'example/javascript/', 'src/**/*.js', 'declarations', 'documentation']);
   done();
 }
 const server = () => connect.server({root: 'example', port: 8080, livereload: true, https: false});

@@ -24,6 +24,9 @@ declare let Stats: any;
 let option: any;
 /**
  * initialise les données de ThreeJS pour l'application (textures, couleurs...)
+ * <uml>
+ *     Bob->Alice : hello
+ * </uml>
  */
 function prepareConfiguration(): void {
   if (CONFIGURATION.COUNTRY_MATERIAL === undefined) {
@@ -112,6 +115,13 @@ function save(blob: any, filename: string): void {
 /**
  * C'est la classe qui contrôle toute l'application: la liste des cônes, pays et
  *  lignes ainsi que la scene THREE.JS + les commandes et le comportement...
+ *
+ *  * <uml>
+ *
+ * User -> (Start)
+ * User --> (Use the application) : A small label
+ * :Main Admin: ---> (Use the application) : This is\nyet another\nlabel
+ * </uml>
  */
 export default class BigBoard {
   /**

@@ -35,6 +35,7 @@
     "tween.js": "^16.6.0",
     "twgl.js": "^4.8.2",
     "typedoc": "^0.14.2",
+    "typedoc-plantuml": "git+https://git@github.com/0815fox/typedoc-plantuml.git",
     "typescript": "^3.3.3333",
     "uglify-es": "^3.3.9",
     "yargs": "^13.2.1"
