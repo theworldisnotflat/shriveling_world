@@ -1,13 +1,14 @@
 'use strict';
 
 const rollup = require('rollup');
-const minify = require('rollup-plugin-minify-es');
+const terser = require('rollup-plugin-terser').terser;
 const typescript = require('rollup-plugin-typescript2');
 const commonjs = require('rollup-plugin-commonjs');
 const nodeResolve = require('rollup-plugin-node-resolve');
 const glob = require("glob");
 const fs = require('fs-extra');
 const uglify = require("uglify-es");
+const typedoc = require("gulp-typedoc");
 
 let gulp = require('gulp'),
   del = require('del'),
@@ -24,8 +25,8 @@ let sources = {
     // This is where external libraries are declared
     // Each new library must also be declared in the package.json file
     // by the instruction 'npm i -D  XXX' where XXX is the name of the library
-    // Beware : the order of insertion is important, i.e. libraries using 
-    // three.js must be inserter AFTER the three.js line 
+    // Beware : the order of insertion is important, i.e. libraries using
+    // three.js must be inserter AFTER the three.js line
     appThirdParty: [
       'node_modules/twgl.js/dist/4.x/twgl.js',
       'node_modules/three/build/three.js',
@@ -53,7 +54,8 @@ let destinations = {
   js: {
     dist: 'dist/*.js',
     example: 'example/javascript'
-  }
+  },
+  doc:{html:'documentation/html',json:'documentation/json'}
 };
 
 const rollupExternal = ['three', 'papaparse', 'poly2tri', 'twgl.js', 'dat.gui'];
@@ -74,7 +76,7 @@ let isProduction = argv.testing === true
   : true;
 
 if (isProduction) {
-  rollupPlugins.push(minify({ecma: 7}));
+  rollupPlugins.push(terser({ecma: 7}));
 }
 
 let shaders = {};
@@ -178,18 +180,32 @@ const build = async (done) => {
   };
   const bundle = await rollup.rollup({input: 'src/bigBoard/bigBoard.ts', cache: cache, plugins: rollupPlugins, external: rollupExternal});
   const outputOptions = {
-    dir: 'dist/',
     file: 'dist/shriveling.js',
     format: rollupFormat,
     name: 'shriveling',
     globals: rollupGlobal
   }
   await bundle.write(outputOptions);
-  let {code, map} = await bundle.generate(outputOptions);
-  code = externalLibraries + code.replace(/.__SHADERS_HERE__./, shadersString).replace(/.__LIBRARIES_HERE__./, librariesString);
+  let code = await bundle.generate(outputOptions);
+  // console.log(code.output[0].code)
+  code = externalLibraries + code.output[0].code.replace(/.__SHADERS_HERE__./, shadersString).replace(/.__LIBRARIES_HERE__./, librariesString);
   await fs.outputFile(__dirname + '/dist/shriveling.js', code);
   done();
 };
+
+const doc=async(done)=>{
+  gulp.src(["src/**/*.ts"])
+        .pipe(typedoc({
+
+            out: destinations.doc.html,
+            json: destinations.doc.json,
+
+            name: "shriveling the world",
+            ignoreCompilerErrors: true,
+            hideGenerator: true,
+        }))
+    ;
+}
 
 const tslint = shell.task('tslint -c tslint.json -e src/webWorkers/**/*.ts src/**/**/*.ts src/*.ts');
 const clean = (done) => {
@@ -202,7 +218,7 @@ const defaultTask = (done) => {
   done();
 };
 const buildRequirements = gulp.series(gulp.parallel(compileShaders, compileLibraries, combineExternals), build);
-const defaultRequirement = gulp.series(gulp.parallel(clean, tslint), buildRequirements, defaultTask);
+const defaultRequirement = gulp.series(gulp.parallel(clean, tslint,doc), buildRequirements, defaultTask);
 
 gulp.task('build', buildRequirements);
 

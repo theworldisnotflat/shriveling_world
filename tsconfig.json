@@ -10,7 +10,8 @@
     "pretty": false,
     "outDir": "dist",
     "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "noImplicitAny": false
 
   },
   "exclude": [
