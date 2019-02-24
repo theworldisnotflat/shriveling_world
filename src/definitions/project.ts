@@ -41,7 +41,7 @@ export interface ICartographic {
     height?: number;
 }
 
-// to convert from  geographic lat/lon to
+// to convert from  geographic lat/lon tothe
 // three d coordinates and back
 export interface IConverter {
     converter: (pos: Cartographic, toPack: boolean) => Vector3 | number[];
