@@ -34,12 +34,15 @@ export interface INEDLocalGLSL {
     ned2ECEF2: number[];
     summit: number[];
 }
+// in geographic (lat, lon) coordinates
 export interface ICartographic {
     latitude?: number;
     longitude?: number;
     height?: number;
 }
 
+// to convert from  geographic lat/lon to 
+// three d coordinates and back
 export interface IConverter {
     converter: (pos: Cartographic, toPack: boolean) => Vector3 | number[];
     reverser: (pos: Vector3) => Cartographic;
