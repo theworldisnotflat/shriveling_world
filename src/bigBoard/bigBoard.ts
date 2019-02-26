@@ -24,6 +24,7 @@ declare let Stats: any;
 let option: any;
 /**
  * initialise les données de ThreeJS pour l'application (textures, couleurs...)
+ * initialising the threejs data of the application (textures, colors, ect.)
  */
 function prepareConfiguration(): void {
   if (CONFIGURATION.COUNTRY_MATERIAL === undefined) {
@@ -94,6 +95,7 @@ let _ambient = new AmbientLight(0xffffff);
 let link = document.createElement('a');
 /**
  * fonction de sauvegarde de données par le navigateur internet
+ * function to save the data through the browser
  * @param blob     tableau de données au format blob
  * @param filename le nom de sauvegarde du tableau de données (l'emplacement est à la main de l'utilisateur)
  */
@@ -112,18 +114,24 @@ function save(blob: any, filename: string): void {
 /**
  * C'est la classe qui contrôle toute l'application: la liste des cônes, pays et
  *  lignes ainsi que la scene THREE.JS + les commandes et le comportement...
+ * 
+ * This class controls all the application: the list of cones, countries, lines
+ * This is where the THREE.JS scene is defined with commands and behaviors
  */
 export default class BigBoard {
   /**
    * La configuration de l'application accessible en statique!
+   * the configuration oif the app, available in static
    */
   public static configuration: any = CONFIGURATION;
   /**
    * liste des cônes (un cône correspond à une ville et un type de transport)
+   * list of cones: a cone corresponds to a city and a type of terrestrial transport
    */
   private _cones: ConeBoard;
   /**
    * liste des pays générés depuis un fichier geojson
+   * List of countries generated from a geojson file
    */
   private _countries: CountryBoard;
   private _container: HTMLDivElement;
