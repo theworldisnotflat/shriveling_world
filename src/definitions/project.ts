@@ -1,3 +1,7 @@
+/**
+ * Project.ts is where all definitions are made 
+ * concerning data structuring in the project
+ */
 import { Cartographic } from '../common/utils';
 import { Vector3 } from 'three';
 import { NEDLocal } from '../common/referential';
@@ -34,15 +38,19 @@ export interface INEDLocalGLSL {
     ned2ECEF2: number[];
     summit: number[];
 }
-// in geographic (lat, lon) coordinates
+/**
+ * in geographic (lat, lon) coordinates
+ */
 export interface ICartographic {
     latitude?: number;
     longitude?: number;
     height?: number;
 }
 
-// to convert from  geographic lat/lon to 
-// three d coordinates and back
+/**
+ * to convert from  geographic lat/lon to
+ * the three d coordinates and back
+ */
 export interface IConverter {
     converter: (pos: Cartographic, toPack: boolean) => Vector3 | number[];
     reverser: (pos: Vector3) => Cartographic;

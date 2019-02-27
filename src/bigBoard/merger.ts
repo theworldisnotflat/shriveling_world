@@ -131,7 +131,6 @@ function getRatio(theta: number, speedMax: number, speed: number): number {
   return theta < thetaLimit ? speedMax / 4778.25 : speedMax * theta / (2 * speed);
 }
 
-
 function toTownTransport(
   transportModeCode: ITransportModeCode[], cities: ICity[], transportNetwork: ITransportNetwork[]): ILookupAndMaxSpeedAndLine {
   let resultat: ILookupTownTransport = {};
@@ -196,6 +195,8 @@ function toTownTransport(
     tempTransportCodeTab = tempTransportCodeTab.sort((a, b) => a.year - b.year);
     let extrapolation = extrapolator(tempTransportCodeTab, 'year', 'speed', true);
     let speed: number;
+    // or each year determines the fastest existing speed
+    // by exploring values contained in the file 'transport_mode_speed.csv'
     for (let year = minYearTransport; year <= maxYearTransport; year++) {
       speed = extrapolation(year);
       tabSpeed[year] = speed;
