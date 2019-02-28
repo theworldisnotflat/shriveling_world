@@ -1,6 +1,8 @@
 /**
  * Project.ts is where all definitions are made
  * concerning data structuring in the project
+ *
+ * the [data model can be seen here](https://github.com/theworldisnotflat/shriveling_world/blob/master/model/modeles.png)
  */
 import { Cartographic } from '../common/utils';
 import { Vector3 } from 'three';
