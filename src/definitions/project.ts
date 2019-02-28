@@ -39,7 +39,7 @@ export interface INEDLocalGLSL {
     summit: number[];
 }
 /**
- * in geographic (lat, lon) coordinates
+ * in geographic (lat, lon, height) coordinates
  */
 export interface ICartographic {
     latitude?: number;
@@ -48,7 +48,7 @@ export interface ICartographic {
 }
 
 /**
- * to convert from  geographic lat/lon to
+ * to convert from  geographic lat/lon/height to
  * the three d coordinates and back
  */
 export interface IConverter {
@@ -69,7 +69,7 @@ export interface IMapProjector {
  * IDirection cares for cones geometry parameters
  * clock: ???
  * elevation: as cone radius is fixed globally, elevation
- * is the key paramter for cones geometry
+ * is the key parameter for cones geometry
  *
  */
 export interface IDirection {

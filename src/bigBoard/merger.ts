@@ -142,9 +142,11 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
 /**
  * getRatio function computes the speed ratio
  * in the case of air edges, two equations are used to determine
- * the heigt of aerial edges above the geodesic
- * below and beyond the threshold value "thetaLimit"  of "theta"
+ * the [heigth of aerial edges above the geodesic](http://bit.ly/2H4FOKw)
+ * [below](http://bit.ly/2Xu3kGF) and [beyond](http://bit.ly/2EejFpW)
+ * the threshold value "thetaLimit"  of "theta"
  * "ratio" is the part that differentiates the two equations
+ * [More explanations here](https://timespace.hypotheses.org/121)
  *
  * @param theta
  * @param speedMax
