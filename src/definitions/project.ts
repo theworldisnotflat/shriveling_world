@@ -183,7 +183,7 @@ export interface ITransportModeCode {
 }
 
 /**
- * data of each link in the [[ITransportNetwork]]
+ * Here we have data of each link in the [[ITransportNetwork]]
  *
  * Each link has a [[yearBegin]] and a [[yearEnd]]
  * * an origin [[idOri]] and  destination [[idDes]]
