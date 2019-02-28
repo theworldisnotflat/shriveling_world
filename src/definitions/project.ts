@@ -1,6 +1,8 @@
 /**
- * Project.ts is where all definitions are made 
+ * Project.ts is where all definitions are made
  * concerning data structuring in the project
+ *
+ * the [data model can be seen here](https://github.com/theworldisnotflat/shriveling_world/blob/master/model/modeles.png)
  */
 import { Cartographic } from '../common/utils';
 import { Vector3 } from 'three';
@@ -39,7 +41,7 @@ export interface INEDLocalGLSL {
     summit: number[];
 }
 /**
- * in geographic (lat, lon) coordinates
+ * in geographic (lat, lon, height) coordinates
  */
 export interface ICartographic {
     latitude?: number;
@@ -48,7 +50,7 @@ export interface ICartographic {
 }
 
 /**
- * to convert from  geographic lat/lon to
+ * to convert from  geographic lat/lon/height to
  * the three d coordinates and back
  */
 export interface IConverter {
@@ -65,6 +67,13 @@ export interface IMapProjector {
     converter: (pos: Cartographic) => Vector3;
 }
 
+/**
+ * IDirection cares for cones geometry parameters
+ * * [[clock]]: ???
+ * * [[elevation]]: as cone radius is fixed globally, elevation
+ * is the key parameter for cones geometry
+ *
+ */
 export interface IDirection {
     clock: number;
     elevation: number;
@@ -132,6 +141,14 @@ export interface IPopulation {
     cityCode?: number;
 }
 
+/**
+ * City interface
+ *
+ * Parameters attached to each city:
+ * * [[urbanagglomeration]] is the name of the city
+ * * [[radius]]: number; // for cases of cities in islands close to a continent
+ * * [[destinations]] will be determined by scanning the TransportNetwork
+ */
 export interface ICity {
     countryCode: number;
     countryName: string;
@@ -144,12 +161,20 @@ export interface ICity {
     destinations?: ITransportNetwork[];
 }
 
+/**
+ * for a given [[year]] the speed of a
+ * transport mode [[speedKPH]] may be different
+ */
 export interface ITransportModeSpeed {
     year: number;
     transportModeCode?: number;
     speedKPH: number;
 }
 
+/**
+ * A transport mode has a [[code]]
+ * and a table of [[speeds]] that may change over years
+ */
 export interface ITransportModeCode {
     name: string;
     code: number;
@@ -159,6 +184,14 @@ export interface ITransportModeCode {
     speeds: ITransportModeSpeed[];
 }
 
+/**
+ * Here we have data of each link in the [[ITransportNetwork]]
+ *
+ * Each link has a [[yearBegin]] and a [[yearEnd]]
+ * * an origin [[idOri]] and  destination [[idDes]]
+ * * a transport mode [[transportMode]]
+ * * [[destination]]:??
+ */
 export interface ITransportNetwork {
     yearBegin: number;
     yearEnd?: number;
