@@ -1,5 +1,5 @@
 /**
- * Project.ts is where all definitions are made 
+ * Project.ts is where all definitions are made
  * concerning data structuring in the project
  */
 import { Cartographic } from '../common/utils';
@@ -65,6 +65,13 @@ export interface IMapProjector {
     converter: (pos: Cartographic) => Vector3;
 }
 
+/**
+ * IDirection cares for cones geometry parameters
+ * clock: ???
+ * elevation: as cone radius is fixed globally, elevation
+ * is the key paramter for cones geometry
+ *
+ */
 export interface IDirection {
     clock: number;
     elevation: number;
@@ -132,6 +139,13 @@ export interface IPopulation {
     cityCode?: number;
 }
 
+/**
+ * City interface
+ * parameters attached to each city
+ * urbanagglomeration is the name of the city
+ * radius: number; // for cases of cities in islands close to a continent
+ * destinations will be determined by scanning the TransportNetwork
+ */
 export interface ICity {
     countryCode: number;
     countryName: string;
@@ -144,12 +158,20 @@ export interface ICity {
     destinations?: ITransportNetwork[];
 }
 
+/**
+ * for a given year the speed of a
+ * transport mode may be different
+ */
 export interface ITransportModeSpeed {
     year: number;
     transportModeCode?: number;
     speedKPH: number;
 }
 
+/**
+ * A transport mode has a code
+ * and a speed that may change over years
+ */
 export interface ITransportModeCode {
     name: string;
     code: number;
@@ -159,6 +181,13 @@ export interface ITransportModeCode {
     speeds: ITransportModeSpeed[];
 }
 
+/**
+ * data of each link in the TransportNetwork
+ * each link has a yearBegin and a yearEnd
+ * an origin and  destination
+ * a transport mode
+ * destination:??
+ */
 export interface ITransportNetwork {
     yearBegin: number;
     yearEnd?: number;
