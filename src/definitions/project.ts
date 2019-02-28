@@ -67,8 +67,8 @@ export interface IMapProjector {
 
 /**
  * IDirection cares for cones geometry parameters
- * clock: ???
- * elevation: as cone radius is fixed globally, elevation
+ * * [[clock]]: ???
+ * * [[elevation]]: as cone radius is fixed globally, elevation
  * is the key parameter for cones geometry
  *
  */
@@ -141,10 +141,11 @@ export interface IPopulation {
 
 /**
  * City interface
- * parameters attached to each city
- * urbanagglomeration is the name of the city
- * radius: number; // for cases of cities in islands close to a continent
- * destinations will be determined by scanning the TransportNetwork
+ *
+ * Parameters attached to each city:
+ * * [[urbanagglomeration]] is the name of the city
+ * * [[radius]]: number; // for cases of cities in islands close to a continent
+ * * [[destinations]] will be determined by scanning the TransportNetwork
  */
 export interface ICity {
     countryCode: number;
@@ -159,8 +160,8 @@ export interface ICity {
 }
 
 /**
- * for a given year the speed of a
- * transport mode may be different
+ * for a given [[year]] the speed of a
+ * transport mode [[speedKPH]] may be different
  */
 export interface ITransportModeSpeed {
     year: number;
@@ -169,8 +170,8 @@ export interface ITransportModeSpeed {
 }
 
 /**
- * A transport mode has a code
- * and a speed that may change over years
+ * A transport mode has a [[code]]
+ * and a table of [[speeds]] that may change over years
  */
 export interface ITransportModeCode {
     name: string;
@@ -182,11 +183,12 @@ export interface ITransportModeCode {
 }
 
 /**
- * data of each link in the TransportNetwork
- * each link has a yearBegin and a yearEnd
- * an origin and  destination
- * a transport mode
- * destination:??
+ * data of each link in the [[ITransportNetwork]]
+ *
+ * Each link has a [[yearBegin]] and a [[yearEnd]]
+ * * an origin [[idOri]] and  destination [[idDes]]
+ * * a transport mode [[transportMode]]
+ * * [[destination]]:??
  */
 export interface ITransportNetwork {
     yearBegin: number;

@@ -116,7 +116,7 @@ function getCSV(text: string, isTransportModeCode: boolean = false): any {
 
 /**
  * Gets the middle between two Cartographic positions :
- * posA and posB
+ * [[posA]] and [[posB]]
  *
  * @param {Cartographic} posA
  * @param {Cartographic} posB
@@ -141,12 +141,16 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
 
 /**
  * getRatio function computes the speed ratio
- * in the case of air edges, two equations are used to determine
+ *
+ * In the case of air edges, two equations are used to determine
  * the [heigth of aerial edges above the geodesic](http://bit.ly/2H4FOKw)
- * [below](http://bit.ly/2Xu3kGF) and [beyond](http://bit.ly/2EejFpW)
+ * * [below](http://bit.ly/2Xu3kGF) and
+ * * [beyond](http://bit.ly/2EejFpW)
  * the threshold value "thetaLimit"  of "theta"
- * "ratio" is the part that differentiates the two equations
- * [More explanations here](https://timespace.hypotheses.org/121)
+ *
+ * * "ratio" is the part that differentiates the two equations
+ *
+ * [More detailed explanations here](https://timespace.hypotheses.org/121)
  *
  * @param theta
  * @param speedMax
@@ -157,8 +161,10 @@ function getRatio(theta: number, speedMax: number, speed: number): number {
 }
 
 /**
- * toCityTransport explores the network
+ * [[toCityTransport]] explores the [[transportNetwork]]
  * in order to determine the geometry of cones (cities)
+ *
+ * About the [geometry of cones see here](https://timespace.hypotheses.org/121)
  *
  * @param transportModeCode
  * @param cities
