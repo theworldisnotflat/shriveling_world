@@ -14,6 +14,9 @@ export interface ICountryTextureURL {
     normalMap: string;
 }
 
+/**
+ * list of available geographic porjections
+ */
 export enum PROJECTION_ENUM {
     none = 0,
     equirectangular = 1,
