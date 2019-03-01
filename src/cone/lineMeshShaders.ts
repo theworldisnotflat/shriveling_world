@@ -29,11 +29,18 @@ function fullCleanArrays(): void {
 }
 fullCleanArrays();
 
-// formule de la hauteur des arcs fonction de theta
-// et du ratio des vitesses
-// formules of the heigth of edges function of 'theta' and 'ratio'
-// 'ratio' is computed in function 'getRatio' in file bigBoard/merger.t
-// 'ratio' is computed with two formulas depending on 'theta' compared with 'thetaLimit'
+/**
+ * formule de la hauteur des arcs fonction de [[theta]]
+ * et du [[ratio]] des vitesses
+ *
+ * formules of the heigth of edges function of '[[theta]]' and '[[ratio]]'
+ * * '[[ratio]]' is computed in function '[[getRatio]]' in file [[bigBoard/merger.ts]]
+ * * '[[ratio]]' is computed with [two formulas](https://timespace.hypotheses.org/121)
+ * depending on '[[theta]]' compared with '[[thetaLimit]]'
+ *
+ * @param ratio
+ * @param theta
+ */
 function getHeight(ratio: number, theta: number): number {
     const semiTheta = theta / 2;
     const sinSemiTheta = Math.sin(semiTheta);
