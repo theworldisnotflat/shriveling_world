@@ -108,7 +108,7 @@ export interface ITownTransport {
     cityProperties: ICity;
 }
 
-export interface ILookupTownTransport {
+export interface ILookupCityTransport {
     [cityCode: string]: ITownTransport;
 }
 
@@ -162,8 +162,8 @@ export interface ICity {
 }
 
 /**
- * for a given [[year]] the speed of a
- * transport mode [[speedKPH]] may be different
+ * for a given [[year]], for a given [[transportModeCode]],
+ * the speed of a transport mode [[speedKPH]] may be different
  */
 export interface ITransportModeSpeed {
     year: number;
@@ -172,8 +172,9 @@ export interface ITransportModeSpeed {
 }
 
 /**
- * A transport mode has a [[code]]
- * and a table of [[speeds]] that may change over years
+ * A transport mode has a [[name]], a [[code]], a [[yearBegin]],
+ * a [[yearEnd]], can be [[terrestrial]] or not,
+ * and has a table of [[speeds]] that may change over years
  */
 export interface ITransportModeCode {
     name: string;
@@ -230,7 +231,7 @@ export interface ILookupTownPseudoGeometryPremises extends IEndTownLine {
 }
 
 export interface IDataConeGeneratorIn {
-    lookup: ILookupTownTransport;
+    lookup: ILookupCityTransport;
     bboxes: IBBox[];
     distance: number;
 }
@@ -262,7 +263,7 @@ export type configurationObservableEvt =
 export type configurationCallback = (name: configurationObservableEvt, value: any) => void;
 export type ShaderTypes = 'fragment' | 'vertex';
 export interface ILookupAndMaxSpeedAndLine {
-    lookupTownTransport: ILookupTownTransport;
+    lookupTownTransport: ILookupCityTransport;
     lineData: ILookupLine;
 }
 export interface ILookupTransportPerYear {

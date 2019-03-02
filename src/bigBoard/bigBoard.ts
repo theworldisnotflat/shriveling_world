@@ -24,6 +24,7 @@ declare let Stats: any;
 let option: any;
 /**
  * initialise les données de ThreeJS pour l'application (textures, couleurs...)
+ *
  * initialising the threejs data of the application (textures, colors, ect.)
  */
 function prepareConfiguration(): void {
@@ -114,19 +115,21 @@ function save(blob: any, filename: string): void {
 /**
  * C'est la classe qui contrôle toute l'application: la liste des cônes, pays et
  *  lignes ainsi que la scene THREE.JS + les commandes et le comportement...
- * 
- * This class controls all the application: the list of cones, countries, lines
+ *
+ * This class controls all the application: the list of [[_cones]], [[_countries]], lines
  * This is where the THREE.JS scene is defined with commands and behaviors
  */
 export default class BigBoard {
   /**
    * La configuration de l'application accessible en statique!
-   * the configuration oif the app, available in static
+   *
+   * the configuration of the app, available in static
    */
   public static configuration: any = CONFIGURATION;
   /**
    * liste des cônes (un cône correspond à une ville et un type de transport)
-   * list of cones: a cone corresponds to a city and a type of terrestrial transport
+   *
+   * list of cones: a [[_cone]] corresponds to a city and a type of terrestrial transport
    */
   private _cones: ConeBoard;
   /**
@@ -188,7 +191,7 @@ export default class BigBoard {
   }
   /**
   * Enable/Disable showCitiesName paramater in order to show/hide
-  * cities name
+  * cities names
   *
   * @memberof BigBoard
   */

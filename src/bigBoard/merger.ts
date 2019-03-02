@@ -11,7 +11,7 @@ import * as Papa from 'papaparse';
 import { NEDLocal } from '../common/referential';
 import { extrapolator, Cartographic, reviver } from '../common/utils';
 import {
-    ITransportModeCode, ICity, ITransportNetwork, ILookupTownTransport, ILookupTransport, IMergerState,
+    ITransportModeCode, ICity, ITransportNetwork, ILookupCityTransport, ILookupTransport, IMergerState,
     ILookupDestination, IPopulation, ITransportModeSpeed, ILookupAndMaxSpeedAndLine, ILookupLine, IEndTownLine,
     ILookupItemList,
 } from '../definitions/project';
@@ -124,7 +124,7 @@ function getCSV(text: string, isTransportModeCode: boolean = false): any {
  */
 function getTheMiddle(posA: Cartographic, posB: Cartographic)
     : { middle: Cartographic, opening: number } {
-    const theta = posA.distanceExacte(posB);
+    const theta = posA.exactDistance(posB);
     const semiTheta = theta / 2;
     const deltaLambda = posB.longitude - posA.longitude;
     const cosPhi2 = Math.cos(posB.latitude);
@@ -146,7 +146,7 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
  * the [heigth of aerial edges above the geodesic](http://bit.ly/2H4FOKw)
  * * [below](http://bit.ly/2Xu3kGF) and
  * * [beyond](http://bit.ly/2EejFpW)
- * the threshold value "thetaLimit"  of "theta"
+ * the threshold value "thetaLimit" of "theta"
  *
  * * "ratio" is the part that differentiates the two equations
  *
@@ -161,8 +161,8 @@ function getRatio(theta: number, speedMax: number, speed: number): number {
 }
 
 /**
- * [[toCityTransport]] explores the [[transportNetwork]]
- * in order to determine the geometry of cones (cities)
+ * function [[toCityTransport]] explores the [[transportNetwork]]
+ * in order to determine the geometry of cones ([[cities]])
  *
  * About the [geometry of cones see here](https://timespace.hypotheses.org/121)
  *
@@ -172,7 +172,7 @@ function getRatio(theta: number, speedMax: number, speed: number): number {
  */
 function toCityTransport(
     transportModeCode: ITransportModeCode[], cities: ICity[], transportNetwork: ITransportNetwork[]): ILookupAndMaxSpeedAndLine {
-    let resultat: ILookupTownTransport = {};
+    let resultat: ILookupCityTransport = {};
     let lineData: ILookupLine = {};
     // déterminer la fourchette de temps considéré OK
     // determine the considered time-frame
@@ -183,15 +183,25 @@ function toCityTransport(
             minYear = item.yearBegin;
         }
     });
-    // déterminer pour chaque type de transport la vitesse par an dans la fourchette + vitesse max par an de la fourchette OK
+    // déterminer pour chaque type de transport la vitesse par an
+    // dans la fourchette + vitesse max par an de la fourchette OK
+    /**
+     * [[ISpeedPerYear]] has a [[year]]
+     */
     interface ISpeedPerYear {
         [year: string]: number;
     }
     let speedMaxPerYear: ISpeedPerYear = {};
+    /**
+     * [[ITransportCodeItem]] has a [[speed]] and [[year]]
+     */
     interface ITransportCodeItem {
         speed: number;
         year: number;
     }
+    /**
+     * [[ISpeedPertransportPerYearItem]] has a [[tabSpeed]] and a [[name]]
+     */
     interface ISpeedPertransportPerYearItem {
         tabSpeed: { [year: string]: number };
         name: string;
