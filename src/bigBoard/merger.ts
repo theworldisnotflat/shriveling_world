@@ -353,6 +353,7 @@ function toCityTransport(
                             if (isTerrestrial === true) {
                                 // this is [equation 1](http://bit.ly/2tLfehC)
                                 // of the heigth of the cone
+                                // operates because transport mode [[isTerrestrial]]
                                 elevation = Math.atan(Math.sqrt(
                                     (speedMaxPerYear[year] / tab[year]) * (speedMaxPerYear[year] / tab[year]) - 1));
                                 if (elevation < 0) {
@@ -372,8 +373,6 @@ function toCityTransport(
                                 if (lineToProcess === true) {
                                     let { end, middle, opening, pointP, pointQ } = cachedGetTheMiddle(originCityCode, codeDestination);
                                     let ratio = getRatio(opening, speedMaxPerYear[year], tab[year]);
-                                    // just a test
-                                    // ratio = ratio - ( CONFIGURATION.earthRadiusMeters / 1000);
                                     if (!list.hasOwnProperty(codeDestination)) {
                                         list[codeDestination] = <ILookupItemList>{};
                                         list[codeDestination].end = end;
@@ -382,8 +381,6 @@ function toCityTransport(
                                         list[codeDestination].pointQ = pointQ;
                                         list[codeDestination].opening = opening;
                                         list[codeDestination].ratio = {};
-                                        // for testing
-                                        console.log(ratio, opening, speedMaxPerYear[year], tab[year]);
                                     }
                                     if (!list[codeDestination].ratio.hasOwnProperty(transportName)) {
                                         list[codeDestination].ratio[transportName] = {};
@@ -402,6 +399,8 @@ function toCityTransport(
                 let maxSpeed: number;
                 for (let year = roadBegin; year <= maxYear; year++) {
                     maxSpeed = speedMaxPerYear[year] === undefined ? tab[year] : speedMaxPerYear[year];
+                    // this is [equation 1](http://bit.ly/2tLfehC)
+                    // of the heigth of the cone
                     elevation = Math.atan(Math.sqrt(
                         (maxSpeed / tab[year]) * (maxSpeed / tab[year]) - 1));
                     if (elevation < 0) {
