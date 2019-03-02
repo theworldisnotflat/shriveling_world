@@ -164,6 +164,8 @@ function getRatio(theta: number, speedMax: number, speed: number): number {
  * function [[toCityTransport]] explores the [[transportNetwork]]
  * in order to determine the geometry of cones ([[cities]])
  *
+ * [equation 1](http://bit.ly/2tLfehC) is on line 354
+ *
  * About the [geometry of cones see here](https://timespace.hypotheses.org/121)
  *
  * @param transportModeCode
@@ -349,6 +351,8 @@ function toCityTransport(
                         processedCities[codeDestination][originCityCode].push(transportName);
                         for (let year = min; year <= max; year++) {
                             if (isTerrestrial === true) {
+                                // this is [equation 1](http://bit.ly/2tLfehC)
+                                // of the heigth of the cone
                                 elevation = Math.atan(Math.sqrt(
                                     (speedMaxPerYear[year] / tab[year]) * (speedMaxPerYear[year] / tab[year]) - 1));
                                 if (elevation < 0) {
