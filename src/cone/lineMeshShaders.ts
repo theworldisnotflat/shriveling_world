@@ -54,8 +54,10 @@ function getHeight(ratio: number, theta: number): number {
     return result - CONFIGURATION.earthRadiusMeters;
 }
 
-// step is the number of facets forming the cones, default value is 15
-// higher values will consume processor load
+/**
+ * step is the number of facets forming the cones, default value is 15
+ * higher values will consume processor load
+ */
 function regenerateStep(): void {
     const step = 1 / CONFIGURATION.pointsPerLine;
     let t: number[] = [];
@@ -71,7 +73,9 @@ function regenerateStep(): void {
     _gpgpu.positions.updateTextures(options);
 }
 
-// update edges (lines) height based on the reference year
+/**
+ * update edges (lines) height based on the reference year
+ */
 function updateYear(): void {
     let year = CONFIGURATION.year;
     _linesWithoutDisplay = [];
@@ -217,8 +221,10 @@ export class LineMeshShader extends Line {
     public static get coefficient(): number {
         return _coefficient;
     }
-    // update edges heigth when 'coefficient' changes
-    // for testing purposes only
+    /**
+     * update edges heigth when 'coefficient' changes
+     * for testing purposes only
+     */
     public static set coefficient(value: number) {
         _coefficient = value;
         for (let i = 0; i < _height; i++) {
