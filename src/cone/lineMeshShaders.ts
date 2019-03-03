@@ -56,6 +56,7 @@ function getHeight(ratio: number, theta: number): number {
 
 /**
  * step is the number of facets forming the cones, default value is 15
+ *
  * higher values will consume processor load
  */
 function regenerateStep(): void {
