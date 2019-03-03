@@ -101,7 +101,7 @@ export interface ILookupDestination {
     [cityCode: string]: ILookupTransportSpeed;
 }
 
-export interface ITownTransport {
+export interface ICityTransport {
     referential: NEDLocal;
     transports: ILookupTransport;
     destinations: ILookupDestination;
@@ -109,7 +109,7 @@ export interface ITownTransport {
 }
 
 export interface ILookupCityTransport {
-    [cityCode: string]: ITownTransport;
+    [cityCode: string]: ICityTransport;
 }
 
 export interface IItemCriteria {
@@ -225,7 +225,7 @@ export interface ILookupPseudoGeometryPremises {
     [year: string]: IPseudoGeometryPremises;
 }
 
-export interface ILookupTownPseudoGeometryPremises extends IEndTownLine {
+export interface ILookupCityPseudoGeometryPremises extends IEndCityLine {
     transports: { [transport: string]: ILookupPseudoGeometryPremises };
     otherProperties: any;
 }
@@ -238,7 +238,7 @@ export interface IDataConeGeneratorIn {
 
 export type MessageConeShaderType = 'init' | 'coneStep' | 'year' | 'limits' | 'projectionBegin' | 'other' | 'information';
 export interface IDataMessageConeShader {
-    towns?: { [cityCode: string]: NEDLocal };
+    cities?: { [cityCode: string]: NEDLocal };
     bboxes?: IBBox[];
     cones?: { cityCode: string, directions: ILookupDirection }[];
     conestep?: number;
@@ -263,18 +263,18 @@ export type configurationObservableEvt =
 export type configurationCallback = (name: configurationObservableEvt, value: any) => void;
 export type ShaderTypes = 'fragment' | 'vertex';
 export interface ILookupAndMaxSpeedAndLine {
-    lookupTownTransport: ILookupCityTransport;
+    lookupCityTransport: ILookupCityTransport;
     lineData: ILookupLine;
 }
 export interface ILookupTransportPerYear {
     [year: string]: string;
 }
-export interface IEndTownLine {
+export interface IEndCityLine {
     cityCode: string | number;
     position: Cartographic;
 }
 export interface ILookupItemList {
-    end: IEndTownLine;
+    end: IEndCityLine;
     pointP: Cartographic;
     pointQ: Cartographic;
     middle: Cartographic;
@@ -282,7 +282,7 @@ export interface ILookupItemList {
     opening: number;
 }
 export interface ILookupLineItem {
-    begin: IEndTownLine;
+    begin: IEndCityLine;
     list: { [cityCodeEnd: string]: ILookupItemList };
 }
 export interface ILookupLine {

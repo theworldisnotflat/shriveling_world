@@ -32,16 +32,16 @@ layout(location = 2) out vec4 base;
 // pos.x => clock ; pos.y => town
 void main() {
   ivec2 pos2 = ivec2(pos);
-  ivec2 townPos = ivec2(0, pos2.y);
+  ivec2 cityPos = ivec2(0, pos2.y);
   float clock = texelFetch(u_clocks, ivec2(pos2.x, 0), 0).r;
-  float elevation = texelFetch(u_elevations, townPos, 0).r;
+  float elevation = texelFetch(u_elevations, cityPos, 0).r;
   float boundaryLimit = texelFetch(u_boundaryLimits, pos2, 0).r;
-  vec3 summit = texelFetch(u_summits, townPos, 0).xyz;
+  vec3 summit = texelFetch(u_summits, cityPos, 0).xyz;
   mat3 ned2ECEF = mat3(0.0);
-  ned2ECEF[0] = texelFetch(u_ned2ECEF0s, townPos, 0).xyz;
-  ned2ECEF[1] = texelFetch(u_ned2ECEF1s, townPos, 0).xyz;
-  ned2ECEF[2] = texelFetch(u_ned2ECEF2s, townPos, 0).xyz;
-  int withLimits = texelFetch(u_withLimits, townPos, 0).r;
+  ned2ECEF[0] = texelFetch(u_ned2ECEF0s, cityPos, 0).xyz;
+  ned2ECEF[1] = texelFetch(u_ned2ECEF1s, cityPos, 0).xyz;
+  ned2ECEF[2] = texelFetch(u_ned2ECEF2s, cityPos, 0).xyz;
+  int withLimits = texelFetch(u_withLimits, cityPos, 0).r;
 
   vec3 cartoPosition;
   float longueur = longueurMaxi;

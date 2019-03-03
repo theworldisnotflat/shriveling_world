@@ -467,7 +467,7 @@ export default class BigBoard {
         this._geometryText.remove(this._geometryText.children[i]);
       }
     } else {
-      this.updateNameTown(option);
+      this.updateCityName(option);
     }
   }
 
@@ -482,12 +482,14 @@ export default class BigBoard {
   }
 
   /**
-   * Update all the town which will be displayed regarding the populuation threeshold paramater
+   * Update all the cities which will be displayed
+   * considering the populuation threeshold parameter
+   *
    * @param {*} [option]
    * @returns {void}
    * @memberof BigBoard
    */
-  public updateNameTown(option?: any): void {
+  public updateCityName(option?: any): void {
     if (this._merger.state !== 'complete') {
       return;
     }
@@ -498,13 +500,13 @@ export default class BigBoard {
     for (var j = 0; j < this.getMergerI.Cities.length / 2; j++) {
       var obj = JSON.parse(JSON.stringify(this.getMergerI.Cities[j]));
       var pop = JSON.parse(JSON.stringify(
-        this._merger.mergedData.lookupTownTransport[this.getMergerI.Cities[j].cityCode]
+        this._merger.mergedData.lookupCityTransport[this.getMergerI.Cities[j].cityCode]
           .cityProperties.populations));
       var population = pop.pop2020;
       if (population > this._populations) {
         var geometry = new TextGeometry(obj.urbanAgglomeration, option);
         mesh = new Mesh(geometry, CONFIGURATION.BASIC_TEXT_MATERIAL);
-        let cart = this._merger.mergedData.lookupTownTransport[this.getMergerI.Cities[j].cityCode].referential.cartoRef;
+        let cart = this._merger.mergedData.lookupCityTransport[this.getMergerI.Cities[j].cityCode].referential.cartoRef;
         let x = - CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.cos(cart.latitude * 0.95) * Math.cos(cart.longitude);
         let y = CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.sin(cart.latitude * 0.95);
         let z = CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.cos(cart.latitude * 0.95) * Math.sin(cart.longitude);
@@ -878,7 +880,7 @@ export default class BigBoard {
               generalFolder.addColor(conf, 'couleur du texte').onChange(v => {
                 let color = parseInt(v.replace('#', ''), 16);
                 CONFIGURATION.BASIC_TEXT_MATERIAL.color.setHex(color);
-                this.updateNameTown.bind(this, option);
+                this.updateCityName.bind(this, option);
               });
               _filesData = [];
 

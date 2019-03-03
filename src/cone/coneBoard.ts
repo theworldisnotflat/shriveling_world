@@ -86,16 +86,16 @@ export class ConeBoard {
     public add(lookup: ILookupAndMaxSpeedAndLine, distance: number): void {
         this.clean();
         let myConsistentLookup = <ILookupCityTransport>{};
-        for (let cityCode in lookup.lookupTownTransport) {
-            if (lookup.lookupTownTransport.hasOwnProperty(cityCode) &&
-                Object.keys(lookup.lookupTownTransport[cityCode].transports).length > 1) {
-                myConsistentLookup[cityCode] = lookup.lookupTownTransport[cityCode];
+        for (let cityCode in lookup.lookupCityTransport) {
+            if (lookup.lookupCityTransport.hasOwnProperty(cityCode) &&
+                Object.keys(lookup.lookupCityTransport[cityCode].transports).length > 1) {
+                myConsistentLookup[cityCode] = lookup.lookupCityTransport[cityCode];
             }
         }
-        // lookup.lookupTownTransport = myConsistentLookup;
+        // lookup.lookupCityTransport = myConsistentLookup;
         let that = this;
         let bboxes = this._countries.countryMeshCollection.map((country) => country.bbox);
-        ConeMeshShader.generateCones(lookup.lookupTownTransport, bboxes).then((cones) => {
+        ConeMeshShader.generateCones(lookup.lookupCityTransport, bboxes).then((cones) => {
             cones.forEach((cone) => {
                 // updateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
                 that.coneMeshCollection.push(cone);

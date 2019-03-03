@@ -280,15 +280,15 @@ export class ConeMeshShader extends PseudoCone {
             let ned2ECEF2: number[] = [];
             for (let cityCode in lookup) {
                 if (lookup.hasOwnProperty(cityCode)) {
-                    let townTransport = lookup[cityCode];
-                    let position = townTransport.referential.cartoRef;
-                    let referentialGLSL = townTransport.referential.ned2ECEFMatrix;
-                    let transports = townTransport.transports;
-                    _localLimitsLookup[cityCode] = localLimitsRaw(matchingBBox(position, bboxes), townTransport.referential);
+                    let cityTransport = lookup[cityCode];
+                    let position = cityTransport.referential.cartoRef;
+                    let referentialGLSL = cityTransport.referential.ned2ECEFMatrix;
+                    let transports = cityTransport.transports;
+                    _localLimitsLookup[cityCode] = localLimitsRaw(matchingBBox(position, bboxes), cityTransport.referential);
                     let commonProperties = {};
-                    for (let attribute in townTransport) {
-                        if (townTransport.hasOwnProperty(attribute) && forbiddenAttributes.indexOf(attribute) === -1) {
-                            commonProperties[attribute] = townTransport[attribute];
+                    for (let attribute in cityTransport) {
+                        if (cityTransport.hasOwnProperty(attribute) && forbiddenAttributes.indexOf(attribute) === -1) {
+                            commonProperties[attribute] = cityTransport[attribute];
                         }
                     }
                     for (let transportName in transports) {

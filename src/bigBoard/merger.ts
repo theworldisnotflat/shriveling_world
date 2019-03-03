@@ -12,7 +12,7 @@ import { NEDLocal } from '../common/referential';
 import { extrapolator, Cartographic, reviver } from '../common/utils';
 import {
     ITransportModeCode, ICity, ITransportNetwork, ILookupCityTransport, ILookupTransport, IMergerState,
-    ILookupDestination, IPopulation, ITransportModeSpeed, ILookupAndMaxSpeedAndLine, ILookupLine, IEndTownLine,
+    ILookupDestination, IPopulation, ITransportModeSpeed, ILookupAndMaxSpeedAndLine, ILookupLine, IEndCityLine,
     ILookupItemList,
 } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
@@ -209,7 +209,7 @@ function toCityTransport(
         name: string;
     }
     interface ILookupCache {
-        end?: IEndTownLine;
+        end?: IEndCityLine;
         pointP: Cartographic;
         pointQ: Cartographic;
         middle: Cartographic;
@@ -308,7 +308,7 @@ function toCityTransport(
             processedCities[originCityCode] = {};
         }
         if (referential instanceof NEDLocal) {
-            let beginPoint: IEndTownLine = { cityCode: originCityCode, position: referential.cartoRef };
+            let beginPoint: IEndCityLine = { cityCode: originCityCode, position: referential.cartoRef };
             let list: { [cityCodeEnd: string]: ILookupItemList } = {};
             let transports: ILookupTransport = {};
             let destinations: ILookupDestination = {};
@@ -423,7 +423,7 @@ function toCityTransport(
             }
         }
     });
-    return { lookupTownTransport: resultat, lineData: lineData };
+    return { lookupCityTransport: resultat, lineData: lineData };
 }
 
 export class Merger {
