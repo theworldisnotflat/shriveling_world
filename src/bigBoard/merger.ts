@@ -352,7 +352,7 @@ function toCityTransport(
                         for (let year = min; year <= max; year++) {
                             if (isTerrestrial === true) {
                                 // this is [equation 1](http://bit.ly/2tLfehC)
-                                // of the heigth of the cone
+                                // of the slope of the cone
                                 // executed because transport mode [[isTerrestrial]]
                                 alpha = Math.atan(Math.sqrt(
                                     (maxSpeedPerYear[year] / tabModeSpeed[year]) * (maxSpeedPerYear[year] / tabModeSpeed[year]) - 1));
@@ -400,7 +400,7 @@ function toCityTransport(
                 for (let year = roadBegin; year <= maxYear; year++) {
                     maxSpeed = maxSpeedPerYear[year] === undefined ? tabModeSpeed[year] : maxSpeedPerYear[year];
                     // this is [equation 1](http://bit.ly/2tLfehC)
-                    // of the heigth of the cone
+                    // of the slope of the cone
                     alpha = Math.atan(Math.sqrt(
                         (maxSpeed / tabModeSpeed[year]) * (maxSpeed / tabModeSpeed[year]) - 1));
                     if (alpha < 0) {

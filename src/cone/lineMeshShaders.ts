@@ -50,7 +50,7 @@ function getHeight(ratio: number, theta: number): number {
     // the equation of length om'
     const result = ((cosSemiTheta + secondTerm + thirdTerm ) *
     CONFIGURATION.earthRadiusMeters * _coefficient);
-    // minus earth radius to compute cm'
+    // minus earth radius to compute [cm'](https://timespace.hypotheses.org/121)
     return result - CONFIGURATION.earthRadiusMeters;
 }
 
