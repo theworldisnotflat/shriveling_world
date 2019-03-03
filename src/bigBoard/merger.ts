@@ -193,7 +193,7 @@ function toCityTransport(
     interface ISpeedPerYear {
         [year: string]: number;
     }
-    let speedMaxPerYear: ISpeedPerYear = {};
+    let maxSpeedPerYear: ISpeedPerYear = {};
     /**
      * [[ITransportCodeItem]] has a [[speed]] and [[year]]
      */
@@ -248,12 +248,12 @@ function toCityTransport(
         for (let year = minYearTransport; year <= maxYearTransport; year++) {
             speed = extrapolation(year);
             tabSpeed[year] = speed;
-            if (speedMaxPerYear.hasOwnProperty(year)) {
-                if (speedMaxPerYear[year] < speed) {
-                    speedMaxPerYear[year] = speed;
+            if (maxSpeedPerYear.hasOwnProperty(year)) {
+                if (maxSpeedPerYear[year] < speed) {
+                    maxSpeedPerYear[year] = speed;
                 }
             } else {
-                speedMaxPerYear[year] = speed;
+                maxSpeedPerYear[year] = speed;
             }
         }
         speedPerTransportPerYear[transportCode] = { tabSpeed: tabSpeed, name: transportName };
@@ -345,7 +345,7 @@ function toCityTransport(
                         if (!destinations[codeDestination].hasOwnProperty(transportName)) {
                             destinations[codeDestination][transportName] = [];
                         }
-                        let tab = transportMode.tabSpeed;
+                        let tabModeSpeed = transportMode.tabSpeed;
                         let lineToProcess = processedCities[originCityCode][codeDestination].indexOf(transportName) === -1;
                         processedCities[originCityCode][codeDestination].push(transportName);
                         processedCities[codeDestination][originCityCode].push(transportName);
@@ -355,24 +355,24 @@ function toCityTransport(
                                 // of the heigth of the cone
                                 // executed because transport mode [[isTerrestrial]]
                                 alpha = Math.atan(Math.sqrt(
-                                    (speedMaxPerYear[year] / tab[year]) * (speedMaxPerYear[year] / tab[year]) - 1));
+                                    (maxSpeedPerYear[year] / tabModeSpeed[year]) * (maxSpeedPerYear[year] / tabModeSpeed[year]) - 1));
                                 if (alpha < 0) {
                                     alpha += CONFIGURATION.TWO_PI;
                                 }
                                 alphaDegree = alpha / CONFIGURATION.deg2rad;
                                 transports[transportName][year] = {
-                                    clock: bearing, alpha: alpha, speed: tab[year],
+                                    clock: bearing, alpha: alpha, speed: tabModeSpeed[year],
                                     clockDegree: bearing / CONFIGURATION.deg2rad,
                                     alphaDegree: alphaDegree,
                                     destination: codeDestination,
                                     transport: transportName,
                                     year: year,
                                 };
-                                destinations[codeDestination][transportName].push({ year: year, speed: tab[year] });
+                                destinations[codeDestination][transportName].push({ year: year, speed: tabModeSpeed[year] });
                             } else {
                                 if (lineToProcess === true) {
                                     let { end, middle, opening, pointP, pointQ } = cachedGetTheMiddle(originCityCode, codeDestination);
-                                    let ratio = getRatio(opening, speedMaxPerYear[year], tab[year]);
+                                    let ratio = getRatio(opening, maxSpeedPerYear[year], tabModeSpeed[year]);
                                     if (!list.hasOwnProperty(codeDestination)) {
                                         list[codeDestination] = <ILookupItemList>{};
                                         list[codeDestination].end = end;
@@ -395,20 +395,20 @@ function toCityTransport(
                 if (!transports.hasOwnProperty('Road')) {
                     transports['Road'] = {};
                 }
-                let tab = speedPerTransportPerYear[roadCode].tabSpeed;
+                let tabModeSpeed = speedPerTransportPerYear[roadCode].tabSpeed;
                 let maxSpeed: number;
                 for (let year = roadBegin; year <= maxYear; year++) {
-                    maxSpeed = speedMaxPerYear[year] === undefined ? tab[year] : speedMaxPerYear[year];
+                    maxSpeed = maxSpeedPerYear[year] === undefined ? tabModeSpeed[year] : maxSpeedPerYear[year];
                     // this is [equation 1](http://bit.ly/2tLfehC)
                     // of the heigth of the cone
                     alpha = Math.atan(Math.sqrt(
-                        (maxSpeed / tab[year]) * (maxSpeed / tab[year]) - 1));
+                        (maxSpeed / tabModeSpeed[year]) * (maxSpeed / tabModeSpeed[year]) - 1));
                     if (alpha < 0) {
                         alpha += CONFIGURATION.TWO_PI;
                     }
                     alphaDegree = alpha / CONFIGURATION.deg2rad;
                     transports['Road'][year] = {
-                        clock: 0, alpha: alpha, speed: tab[year],
+                        clock: 0, alpha: alpha, speed: tabModeSpeed[year],
                         clockDegree: 0, alphaDegree: alphaDegree, transport: 'Road', year: year,
                     };
                 }
