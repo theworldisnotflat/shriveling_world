@@ -68,7 +68,7 @@ export interface IMapProjector {
 }
 
 /**
- * IDirection cares for cones geometry parameters
+ * IDirection cares for parameters of cones geometry
  * * [[clock]]: ???
  * * [[elevation]]: as cone radius is fixed globally, elevation
  * is the key parameter for cones geometry
