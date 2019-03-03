@@ -5,6 +5,7 @@ const terser = require('rollup-plugin-terser').terser;
 const typescript = require('rollup-plugin-typescript2');
 const commonjs = require('rollup-plugin-commonjs');
 const nodeResolve = require('rollup-plugin-node-resolve');
+const threeLegacyImport =require('rollup-plugin-threejs-legacy-import');
 const glob = require("glob");
 const fs = require('fs-extra');
 const uglify = require("uglify-es");
@@ -32,21 +33,18 @@ let sources = {
       'node_modules/three/build/three.js',
       'node_modules/three/examples/js/libs/stats.min.js',
       'node_modules/three/examples/js/controls/OrbitControls.js',
-      'node_modules/three/examples/js/postprocessing/EffectComposer.js',
-      'node_modules/three/examples/js/postprocessing/OutlinePass.js',
-      'node_modules/three/examples/js/postprocessing/ShaderPass.js',
-      'node_modules/three/examples/js/postprocessing/RenderPass.js',
-      'node_modules/three/examples/js/shaders/CopyShader.js',
-      'node_modules/three/examples/js/loaders/GLTFLoader.js',
-      'node_modules/three/examples/js/loaders/OBJLoader.js',
-      'node_modules/three/examples/js/exporters/GLTFExporter.js',
       'node_modules/three/examples/js/exporters/OBJExporter.js',
       'node_modules/tween.js/src/Tween.js',
       'node_modules/poly2tri/dist/poly2tri.js',
       'node_modules/papaparse/papaparse.js',
       'node_modules/dat.gui/build/dat.gui.js'
     ],
-    workerThirdParty: ['node_modules/twgl.js/dist/4.x/twgl.js']
+    workerThirdParty: ['node_modules/twgl.js/dist/4.x/twgl.js'],
+    // three.js comes with lots of little plugins in examples folder. In order
+    // to reuse these plugins, we need to explicit it here.
+    threeExplicitExports:{
+      'controls/OrbitControls':['OrbitControls'],
+      'exporters/OBJExporter':['OBJExporter']}
   }
 };
 
@@ -67,8 +65,9 @@ const rollupGlobal = {
   'dat.gui': 'dat'
 };
 const rollupPlugins = [
-  typescript({useTsconfigDeclarationDir: true}),
-  commonjs({include: /node_modules/, ignoreGlobal: false, sourceMap: false})
+  commonjs({include: /node_modules/, ignoreGlobal: false, sourceMap: false}),
+  threeLegacyImport({  explicitExports:sources.app.threeExplicitExports}),
+  typescript({useTsconfigDeclarationDir: true})
 ];
 const rollupFormat = 'iife';
 let isProduction = argv.testing === true
@@ -205,7 +204,7 @@ const defaultTask = (done) => {
   done();
 };
 const buildRequirements = gulp.series(gulp.parallel(compileShaders, compileLibraries, combineExternals), build);
-const defaultRequirement = gulp.series(gulp.parallel(clean, tslint,doc), buildRequirements, defaultTask);
+const defaultRequirement = gulp.series(gulp.parallel(clean, tslint/*,doc*/), buildRequirements, defaultTask);
 
 gulp.task('build', buildRequirements);
 

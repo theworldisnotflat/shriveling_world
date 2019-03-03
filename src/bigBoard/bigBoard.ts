@@ -2,12 +2,11 @@
 import { CONFIGURATION } from '../common/configuration';
 import {
   MeshBasicMaterial, DoubleSide, MeshPhongMaterial, PerspectiveCamera, MeshStandardMaterial,
-  OrbitControls, Scene, WebGLRenderer, DirectionalLight, Fog,
+  Scene, WebGLRenderer, DirectionalLight, Fog,
   AmbientLight, Mesh, LineBasicMaterial, PCFSoftShadowMap, PlaneBufferGeometry,
   DirectionalLightHelper, Group, OrthographicCamera,
-  FontLoader, TextGeometry, TextureLoader, Font, Vector3,
+  FontLoader, TextGeometry, TextureLoader, Font, Vector3, OrbitControls, OBJExporter,
 } from 'three';
-import { OBJExporter } from '../../node_modules/three-obj-exporter-t/OBJExporter';
 import { ConeBoard } from '../cone/coneBoard';
 import { CountryBoard } from '../country/countryBoard';
 import { Merger } from './merger';
@@ -19,6 +18,20 @@ import {
 import { PseudoCone } from '../cone/base';
 import { CountryMeshShader } from '../country/countryMeshShader';
 import * as dat from 'dat.gui';
+import * as kit from '@brunoimbrizi/controlkit';
+// import from '../definitions/controlKit';
+
+declare module 'three' {
+  export class OrbitControls {
+    public object: OrthographicCamera | PerspectiveCamera;
+    constructor(camera: OrthographicCamera | PerspectiveCamera, render: HTMLCanvasElement)
+    public update(): void;
+  }
+  export class OBJExporter {
+    constructor()
+    public parse(group: Group): any;
+  }
+}
 
 declare let Stats: any;
 let option: any;
@@ -69,30 +82,6 @@ _light.position.set(-1, -0.197, 0.377).normalize();
 let _light2 = new DirectionalLight(0xffefef, 1.5);
 
 let _ambient = new AmbientLight(0xffffff);
-
-// let _gltfExporter = new GLTFExporter();
-// function exportGLTF(input: any): void {
-//     let _gltfExporter = new GLTFExporter();
-//     let options = {
-//         trs: true, // document.getElementById('option_trs').checked,
-//         onlyVisible: true, // document.getElementById('option_visible').checked,
-//         // truncateDrawRange: true, // document.getElementById('option_drawrange').checked,
-//         // binary: true, // document.getElementById('option_binary').checked,
-//         // forceIndices: false, // document.getElementById('option_forceindices').checked,
-//         // forcePowerOfTwoTextures: false, // document.getElementById('option_forcepot').checked,
-//     };
-//     _gltfExporter.parse(
-//         input, (result) => {
-//             if (result instanceof ArrayBuffer) {
-//                 saveArrayBuffer(result, 'scene.glb');
-//             } else {
-//                 let output = JSON.stringify(result, null, 2);
-//                 console.log(output);
-//                 saveString(output, 'scene.gltf');
-//             }
-//         },
-//         options);
-// }
 
 let link = document.createElement('a');
 /**
