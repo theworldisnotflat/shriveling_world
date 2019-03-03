@@ -1,3 +1,10 @@
+/**
+ * This is where external libraries are declared
+ * Each new library must also be declared in the package.json file
+ * by the instruction 'npm i -D  XXX' where XXX is the name of the library
+ * Beware : the order of insertion is important, i.e. libraries using
+ * three.js must be inserter AFTER the three.js line
+ */
 'use strict';
 
 const rollup = require('rollup');
@@ -23,11 +30,6 @@ let sources = {
     shader: [
       './src/shaders/**/*.frag', './src/shaders/**/*.vert'
     ],
-    // This is where external libraries are declared
-    // Each new library must also be declared in the package.json file
-    // by the instruction 'npm i -D  XXX' where XXX is the name of the library
-    // Beware : the order of insertion is important, i.e. libraries using
-    // three.js must be inserter AFTER the three.js line
     appThirdParty: [
       'node_modules/twgl.js/dist/4.x/twgl.js',
       'node_modules/three/build/three.js',
