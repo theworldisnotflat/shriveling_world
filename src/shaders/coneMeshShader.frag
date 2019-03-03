@@ -4,7 +4,7 @@ precision lowp isampler2D;
 #define PI 3.1415926535897932384626433832795
 
 uniform sampler2D u_clocks;
-uniform sampler2D u_elevations;
+uniform sampler2D u_alphas;
 uniform sampler2D u_boundaryLimits;
 
 uniform float longueurMaxi;
@@ -34,7 +34,7 @@ void main() {
   ivec2 pos2 = ivec2(pos);
   ivec2 cityPos = ivec2(0, pos2.y);
   float clock = texelFetch(u_clocks, ivec2(pos2.x, 0), 0).r;
-  float elevation = texelFetch(u_elevations, cityPos, 0).r;
+  float alpha = texelFetch(u_alphas, cityPos, 0).r;
   float boundaryLimit = texelFetch(u_boundaryLimits, pos2, 0).r;
   vec3 summit = texelFetch(u_summits, cityPos, 0).xyz;
   mat3 ned2ECEF = mat3(0.0);
@@ -45,15 +45,15 @@ void main() {
 
   vec3 cartoPosition;
   float longueur = longueurMaxi;
-  float cosEl = cos(elevation);
-  float hauteurBase = longueur * sin(elevation);
+  float cosEl = cos(alpha);
+  float hauteurBase = longueur * sin(alpha);
   if (clock < 0.0) {
     cartoPosition = summit;
   } else {
     if (withLimits > 0 && cosEl > 0.0) {
       longueur = min(longueurMaxi, boundaryLimit / cosEl);
     }
-    cartoPosition = polar2Cartographic(clock, elevation, longueur, summit,
+    cartoPosition = polar2Cartographic(clock, alpha, longueur, summit,
                                        ned2ECEF, earthRadius);
   }
   vec3 modelPosition = displayConversions(

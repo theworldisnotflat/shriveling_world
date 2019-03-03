@@ -70,16 +70,17 @@ export interface IMapProjector {
 /**
  * IDirection cares for parameters of cones geometry
  * * [[clock]]: ???
- * * [[elevation]]: as cone radius is fixed globally, elevation
+ * * [[alpha]]: slope angle between earth surface and cone slope
+ * as cone radius is fixed globally, alpha
  * is the key parameter for cones geometry
  *
  */
 export interface IDirection {
     clock: number;
-    elevation: number;
+    alpha: number;
     speed?: number;
     clockDegree?: number;
-    elevationDegree?: number;
+    alphaDegree?: number;
     destination?: number;
     transport?: string;
     year?: number;

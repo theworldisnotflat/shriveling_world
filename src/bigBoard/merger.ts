@@ -1,8 +1,8 @@
 /**
- * in merger are the functions used only once
+ * in merger we put the functions used only once
  * which are CPU/GPU intensive functions
  * and which compute the geometry of cones and edges.
- * the functions that must run everytime a parameter is modified
+ * the functions that must run each time a parameter is modified
  * are located in the respective files for cones and edges
  *
  */
@@ -313,7 +313,7 @@ function toCityTransport(
             let transports: ILookupTransport = {};
             let destinations: ILookupDestination = {};
             let codeDestination: number;
-            let edge: ITransportNetwork, min: number, max: number, bearing: number, elevation: number, elevationDegree: number;
+            let edge: ITransportNetwork, min: number, max: number, bearing: number, alpha: number, alphaDegree: number;
             let isTerrestrial: boolean;
             let transportName: string, transportMode: ISpeedPertransportPerYearItem;
             if (city.destinations.length === 0) {
@@ -353,17 +353,17 @@ function toCityTransport(
                             if (isTerrestrial === true) {
                                 // this is [equation 1](http://bit.ly/2tLfehC)
                                 // of the heigth of the cone
-                                // operates because transport mode [[isTerrestrial]]
-                                elevation = Math.atan(Math.sqrt(
+                                // executed because transport mode [[isTerrestrial]]
+                                alpha = Math.atan(Math.sqrt(
                                     (speedMaxPerYear[year] / tab[year]) * (speedMaxPerYear[year] / tab[year]) - 1));
-                                if (elevation < 0) {
-                                    elevation += CONFIGURATION.TWO_PI;
+                                if (alpha < 0) {
+                                    alpha += CONFIGURATION.TWO_PI;
                                 }
-                                elevationDegree = elevation / CONFIGURATION.deg2rad;
+                                alphaDegree = alpha / CONFIGURATION.deg2rad;
                                 transports[transportName][year] = {
-                                    clock: bearing, elevation: elevation, speed: tab[year],
+                                    clock: bearing, alpha: alpha, speed: tab[year],
                                     clockDegree: bearing / CONFIGURATION.deg2rad,
-                                    elevationDegree: elevationDegree,
+                                    alphaDegree: alphaDegree,
                                     destination: codeDestination,
                                     transport: transportName,
                                     year: year,
@@ -401,15 +401,15 @@ function toCityTransport(
                     maxSpeed = speedMaxPerYear[year] === undefined ? tab[year] : speedMaxPerYear[year];
                     // this is [equation 1](http://bit.ly/2tLfehC)
                     // of the heigth of the cone
-                    elevation = Math.atan(Math.sqrt(
+                    alpha = Math.atan(Math.sqrt(
                         (maxSpeed / tab[year]) * (maxSpeed / tab[year]) - 1));
-                    if (elevation < 0) {
-                        elevation += CONFIGURATION.TWO_PI;
+                    if (alpha < 0) {
+                        alpha += CONFIGURATION.TWO_PI;
                     }
-                    elevationDegree = elevation / CONFIGURATION.deg2rad;
+                    alphaDegree = alpha / CONFIGURATION.deg2rad;
                     transports['Road'][year] = {
-                        clock: 0, elevation: elevation, speed: tab[year],
-                        clockDegree: 0, elevationDegree: elevationDegree, transport: 'Road', year: year,
+                        clock: 0, alpha: alpha, speed: tab[year],
+                        clockDegree: 0, alphaDegree: alphaDegree, transport: 'Road', year: year,
                     };
                 }
 

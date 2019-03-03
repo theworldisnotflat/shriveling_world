@@ -169,20 +169,20 @@ export class NEDLocal {
     }
 
     public direction2Position
-        (clock: number, elevation: number, result?: Coordinate): Coordinate {
+        (clock: number, alpha: number, result?: Coordinate): Coordinate {
         result = result instanceof Coordinate ? result : new Coordinate();
-        let cosEl = Math.cos(elevation);
-        let sinEl = Math.sin(elevation);
+        let cosEl = Math.cos(alpha);
+        let sinEl = Math.sin(alpha);
         let cosClock = Math.cos(clock);
         let sinClock = Math.sin(clock);
-        result.x = cosEl * cosClock; // cos elevation * cos clock
-        result.y = cosEl * sinClock; // cos elevation * sin clock
-        result.z = sinEl; // sin elevation
+        result.x = cosEl * cosClock; // cos alpha * cos clock
+        result.y = cosEl * sinClock; // cos alpha * sin clock
+        result.z = sinEl; // sin alpha
         return result;
     }
 
-    public project(clock: number, elevation: number, distance: number): Cartographic {
-        this.direction2Position(clock, elevation, scrapCoordinate2).scalar(distance, scrapCoordinate2);
+    public project(clock: number, alpha: number, distance: number): Cartographic {
+        this.direction2Position(clock, alpha, scrapCoordinate2).scalar(distance, scrapCoordinate2);
         return this.NED2Cartographic(scrapCoordinate2);
     }
 
