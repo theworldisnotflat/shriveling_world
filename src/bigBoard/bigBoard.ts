@@ -610,6 +610,9 @@ export default class BigBoard {
   /**
    * Export in Wavefront OBJ format.
    * Exported file can be imported in Blender.
+   * Two files a generated:
+   * * sceneCones.obj
+   * * sceneLines.obj
    * @private
    * @memberof BigBoard
    */
