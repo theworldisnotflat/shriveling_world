@@ -125,7 +125,6 @@ function getCSV(text: string, isTransportModeCode: boolean = false): any {
 function getTheMiddle(posA: Cartographic, posB: Cartographic)
     : { middle: Cartographic, opening: number } {
     const theta = posA.exactDistance(posB);
-    const semiTheta = theta / 2;
     const deltaLambda = posB.longitude - posA.longitude;
     const cosPhi2 = Math.cos(posB.latitude);
     const sinPhi2 = Math.sin(posB.latitude);
@@ -443,7 +442,7 @@ export class Merger {
     }
 
     public get Cities(): ICity[] {return this._cities; }
-    public CitiesByIndex(index): ICity {return this._cities[index]; }
+    public CitiesByIndex(index: string | number): ICity {return this._cities[index]; }
 
     public get datas(): ILookupAndMaxSpeedAndLine {
         return this._mergedData;
@@ -466,7 +465,7 @@ export class Merger {
     public add(someString: string): void {
         let rows = someString.split(/\r\n|\r|\n/);
         let headings = rows[0];
-        let name, temp, ok;
+        let name: string, temp: string[], ok: boolean;
         for (let i = 0; i < keyWords.length && name === undefined; i++) {
             temp = keyWords[i].words;
             ok = true;
@@ -483,7 +482,7 @@ export class Merger {
             this[name] = [];
             this[name].push(...getCSV(someString, name === '_transportModeCode'));
             if (name === '_transportModeCode' || name === '_transportNetwork') {
-                this[name].forEach(item => {
+                this[name].forEach((item: any) => {
                     if (item.yearEnd === undefined || item.yearEnd === '') {
                         delete item.yearEnd;
                     }

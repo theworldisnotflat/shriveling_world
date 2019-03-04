@@ -23,7 +23,6 @@ export class ConeBoard {
     private _show: boolean = true;
     private _withLimits: boolean = true;
     private _countries: CountryBoard;
-    private _year: string;
     private _sumUpProperties: ISumUpCriteria = {};
     private _renderer: WebGLRenderer;
     private _opacity: number = 1;
@@ -83,7 +82,7 @@ export class ConeBoard {
         this._renderer = renderer;
     }
 
-    public add(lookup: ILookupAndMaxSpeedAndLine, distance: number): void {
+    public add(lookup: ILookupAndMaxSpeedAndLine): void {
         this.clean();
         let myConsistentLookup = <ILookupCityTransport>{};
         for (let cityCode in lookup.lookupCityTransport) {
@@ -195,16 +194,16 @@ export class ConeBoard {
         });
     }
 
-    private _reHighLight(): void {
-        if (this._selectedMeshs.length > 0) {
-            let visible = false;
-            let temp = this._selectedMeshs[0];
-            if (!Array.isArray(temp.material)) {
-                visible = temp.material.visible;
-            }
-            let criterias = this._highlitedCriterias;
-            this._highlitedCriterias = undefined;
-            this.highLight(criterias, visible);
-        }
-    }
+    // private _reHighLight(): void {
+    //     if (this._selectedMeshs.length > 0) {
+    //         let visible = false;
+    //         let temp = this._selectedMeshs[0];
+    //         if (!Array.isArray(temp.material)) {
+    //             visible = temp.material.visible;
+    //         }
+    //         let criterias = this._highlitedCriterias;
+    //         this._highlitedCriterias = undefined;
+    //         this.highLight(criterias, visible);
+    //     }
+    // }
 }
