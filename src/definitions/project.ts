@@ -1,3 +1,9 @@
+/**
+ * Project.ts is where all definitions are made
+ * concerning data structuring in the project
+ *
+ * the [data model can be seen here](https://github.com/theworldisnotflat/shriveling_world/blob/master/model/modeles.png)
+ */
 import { Cartographic } from '../common/utils';
 import { Vector3 } from 'three';
 import { NEDLocal } from '../common/referential';
@@ -34,15 +40,19 @@ export interface INEDLocalGLSL {
     ned2ECEF2: number[];
     summit: number[];
 }
-// in geographic (lat, lon) coordinates
+/**
+ * in geographic (lat, lon, height) coordinates
+ */
 export interface ICartographic {
     latitude?: number;
     longitude?: number;
     height?: number;
 }
 
-// to convert from  geographic lat/lon tothe
-// three d coordinates and back
+/**
+ * to convert from  geographic lat/lon/height to
+ * the three d coordinates and back
+ */
 export interface IConverter {
     converter: (pos: Cartographic, toPack: boolean) => Vector3 | number[];
     reverser: (pos: Vector3) => Cartographic;
@@ -57,12 +67,20 @@ export interface IMapProjector {
     converter: (pos: Cartographic) => Vector3;
 }
 
+/**
+ * IDirection cares for parameters of cones geometry
+ * * [[clock]]: ???
+ * * [[alpha]]: slope angle between earth surface and cone slope
+ * as cone radius is fixed globally, alpha
+ * is the key parameter for cones geometry
+ *
+ */
 export interface IDirection {
     clock: number;
-    elevation: number;
+    alpha: number;
     speed?: number;
     clockDegree?: number;
-    elevationDegree?: number;
+    alphaDegree?: number;
     destination?: number;
     transport?: string;
     year?: number;
@@ -84,15 +102,15 @@ export interface ILookupDestination {
     [cityCode: string]: ILookupTransportSpeed;
 }
 
-export interface ITownTransport {
+export interface ICityTransport {
     referential: NEDLocal;
     transports: ILookupTransport;
     destinations: ILookupDestination;
     cityProperties: ICity;
 }
 
-export interface ILookupTownTransport {
-    [cityCode: string]: ITownTransport;
+export interface ILookupCityTransport {
+    [cityCode: string]: ICityTransport;
 }
 
 export interface IItemCriteria {
@@ -124,6 +142,14 @@ export interface IPopulation {
     cityCode?: number;
 }
 
+/**
+ * City interface
+ *
+ * Parameters attached to each city:
+ * * [[urbanagglomeration]] is the name of the city
+ * * [[radius]]: number; // for cases of cities in islands close to a continent
+ * * [[destinations]] will be determined by scanning the TransportNetwork
+ */
 export interface ICity {
     countryCode: number;
     countryName: string;
@@ -136,12 +162,21 @@ export interface ICity {
     destinations?: ITransportNetwork[];
 }
 
+/**
+ * for a given [[year]], for a given [[transportModeCode]],
+ * the speed of a transport mode [[speedKPH]] may be different
+ */
 export interface ITransportModeSpeed {
     year: number;
     transportModeCode?: number;
     speedKPH: number;
 }
 
+/**
+ * A transport mode has a [[name]], a [[code]], a [[yearBegin]],
+ * a [[yearEnd]], can be [[terrestrial]] or not,
+ * and has a table of [[speeds]] that may change over years
+ */
 export interface ITransportModeCode {
     name: string;
     code: number;
@@ -151,6 +186,14 @@ export interface ITransportModeCode {
     speeds: ITransportModeSpeed[];
 }
 
+/**
+ * Here we have data of each link in the [[ITransportNetwork]]
+ *
+ * Each link has a [[yearBegin]] and a [[yearEnd]]
+ * * an origin [[idOri]] and  destination [[idDes]]
+ * * a transport mode [[transportMode]]
+ * * [[destination]]:??
+ */
 export interface ITransportNetwork {
     yearBegin: number;
     yearEnd?: number;
@@ -183,20 +226,20 @@ export interface ILookupPseudoGeometryPremises {
     [year: string]: IPseudoGeometryPremises;
 }
 
-export interface ILookupTownPseudoGeometryPremises extends IEndTownLine {
+export interface ILookupCityPseudoGeometryPremises extends IEndCityLine {
     transports: { [transport: string]: ILookupPseudoGeometryPremises };
     otherProperties: any;
 }
 
 export interface IDataConeGeneratorIn {
-    lookup: ILookupTownTransport;
+    lookup: ILookupCityTransport;
     bboxes: IBBox[];
     distance: number;
 }
 
 export type MessageConeShaderType = 'init' | 'coneStep' | 'year' | 'limits' | 'projectionBegin' | 'other' | 'information';
 export interface IDataMessageConeShader {
-    towns?: { [cityCode: string]: NEDLocal };
+    cities?: { [cityCode: string]: NEDLocal };
     bboxes?: IBBox[];
     cones?: { cityCode: string, directions: ILookupDirection }[];
     conestep?: number;
@@ -221,18 +264,18 @@ export type configurationObservableEvt =
 export type configurationCallback = (name: configurationObservableEvt, value: any) => void;
 export type ShaderTypes = 'fragment' | 'vertex';
 export interface ILookupAndMaxSpeedAndLine {
-    lookupTownTransport: ILookupTownTransport;
+    lookupCityTransport: ILookupCityTransport;
     lineData: ILookupLine;
 }
 export interface ILookupTransportPerYear {
     [year: string]: string;
 }
-export interface IEndTownLine {
+export interface IEndCityLine {
     cityCode: string | number;
     position: Cartographic;
 }
 export interface ILookupItemList {
-    end: IEndTownLine;
+    end: IEndCityLine;
     pointP: Cartographic;
     pointQ: Cartographic;
     middle: Cartographic;
@@ -240,7 +283,7 @@ export interface ILookupItemList {
     opening: number;
 }
 export interface ILookupLineItem {
-    begin: IEndTownLine;
+    begin: IEndCityLine;
     list: { [cityCodeEnd: string]: ILookupItemList };
 }
 export interface ILookupLine {

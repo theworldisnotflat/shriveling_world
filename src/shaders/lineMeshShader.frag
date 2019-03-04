@@ -27,14 +27,14 @@ layout(location = 0) out vec4 myOutputColor;
 
 void main() {
   ivec2 pos2 = ivec2(pos);
-  ivec2 townPos = ivec2(0, pos2.y);
+  ivec2 cityPos = ivec2(0, pos2.y);
   float ta = texelFetch(u_tSample, ivec2(pos2.x, 0), 0).r;
   float minusT = 1.0 - ta;
-  vec3 p0 = texelFetch(u_PControls0, townPos, 0).xyz;
-  vec3 p1 = texelFetch(u_PControls1, townPos, 0).xyz;
-  vec3 p2 = texelFetch(u_PControls2, townPos, 0).xyz;
-  vec3 p3 = texelFetch(u_PControls3, townPos, 0).xyz;
-  p1.z = texelFetch(u_height, townPos, 0).x;
+  vec3 p0 = texelFetch(u_PControls0, cityPos, 0).xyz;
+  vec3 p1 = texelFetch(u_PControls1, cityPos, 0).xyz;
+  vec3 p2 = texelFetch(u_PControls2, cityPos, 0).xyz;
+  vec3 p3 = texelFetch(u_PControls3, cityPos, 0).xyz;
+  p1.z = texelFetch(u_height, cityPos, 0).x;
   p2.z = p1.z;
 
   vec3 cartoPosition = pow(minusT, 3.0) * p0 + 3.0 * pow(minusT, 2.0) * ta * p1 +

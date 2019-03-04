@@ -5,13 +5,13 @@ import {
 import { CONFIGURATION } from '../common/configuration';
 import { PseudoCone } from './base';
 import { Cartographic, extrapolator, matchingBBox } from '../common/utils';
-import {  ILookupTownTransport, IBBox, ILookupDirection } from '../definitions/project';
+import {  ILookupCityTransport, IBBox, ILookupDirection } from '../definitions/project';
 import { NEDLocal, Coordinate } from '../common/referential';
 import { Shaders } from '../shaders';
 import { GPUComputer } from '../common/gpuComputer';
 const forbiddenAttributes = ['referential', 'position', 'transports'];
 
-interface IShaderElevation {
+interface IShaderAlpha {
     [year: string]: Float32Array;
 }
 
@@ -30,13 +30,13 @@ let _height: number;
 let _gpgpu: { [x: string]: GPUComputer } = {};
 
 let _clocks: Float32Array;
-let _elevations: IShaderElevation;
+let _alphas: IShaderAlpha;
 
 function fullCleanArrays(): void {
     _localLimitsLookup = {};
     _cityCodeOrder = [];
     _clocks = new Float32Array(0);
-    _elevations = {};
+    _alphas = {};
     _indexesArr = new Uint16Array(0);
 }
 fullCleanArrays();
@@ -129,25 +129,25 @@ function regenerateFromConeStep(): void {
     _gpgpu.positions.updateTextures(options);
 }
 
-// sets the elevation (fixing slopes) of cones according to year
+// sets the alpha (fixing slopes) of cones according to year
 // and deals with cones that shouldnt be displayed
-function updateElevations(): void {
+function updateAlphas(): void {
     let year = CONFIGURATION.year;
     _conesWithoutDisplay = [];
-    if (!_elevations.hasOwnProperty(year)) {
+    if (!_alphas.hasOwnProperty(year)) {
         let temp = new Float32Array(_height);
         for (let i = 0; i < _height; i++) {
-            let elevation = _cones[i].getElevation(year);
-            if (elevation === undefined) {
+            let alpha = _cones[i].getAlpha(year);
+            if (alpha === undefined) {
                 _conesWithoutDisplay.push(_cones[i]);
-                elevation = Math.PI / 2 - 0.0000000001;
+                alpha = Math.PI / 2 - 0.0000000001;
             }
-            temp[i] = elevation;
+            temp[i] = alpha;
         }
-        _elevations[year] = temp;
+        _alphas[year] = temp;
     }
     let options = {
-        u_elevations: { src: _elevations[year], width: 1, height: _height },
+        u_alphas: { src: _alphas[year], width: 1, height: _height },
     };
     _gpgpu.positions.updateTextures(options);
 }
@@ -204,7 +204,7 @@ export class ConeMeshShader extends PseudoCone {
     private _directions: { [year: string]: number };
 
     public static generateCones(
-        lookup: ILookupTownTransport, bboxes: IBBox[]): Promise<ConeMeshShader[]> {
+        lookup: ILookupCityTransport, bboxes: IBBox[]): Promise<ConeMeshShader[]> {
         _ready = false;
         _cones = [];
         fullCleanArrays();
@@ -214,7 +214,7 @@ export class ConeMeshShader extends PseudoCone {
                     GPUComputer.GPUComputerFactory(
                         Shaders.getShader('coneMeshShader', 'fragment'), {
                             u_clocks: 'R32F',
-                            u_elevations: 'R32F',
+                            u_alphas: 'R32F',
                             u_boundaryLimits: 'R32F',
                             u_summits: 'RGB32F',
                             u_ned2ECEF0s: 'RGB32F',
@@ -236,15 +236,15 @@ export class ConeMeshShader extends PseudoCone {
                                 switch (name) {
                                     case 'coneStep':
                                         _clocks = new Float32Array(0);
-                                        _elevations = {};
+                                        _alphas = {};
                                         _indexesArr = new Uint16Array(0);
                                         regenerateFromConeStep();
-                                        updateElevations();
+                                        updateAlphas();
                                         updateWithLimits();
                                         computation(true);
                                         break;
                                     case 'year':
-                                        updateElevations();
+                                        updateAlphas();
                                         updateWithLimits();
                                         computation(true);
                                         break;
@@ -280,15 +280,15 @@ export class ConeMeshShader extends PseudoCone {
             let ned2ECEF2: number[] = [];
             for (let cityCode in lookup) {
                 if (lookup.hasOwnProperty(cityCode)) {
-                    let townTransport = lookup[cityCode];
-                    let position = townTransport.referential.cartoRef;
-                    let referentialGLSL = townTransport.referential.ned2ECEFMatrix;
-                    let transports = townTransport.transports;
-                    _localLimitsLookup[cityCode] = localLimitsRaw(matchingBBox(position, bboxes), townTransport.referential);
+                    let cityTransport = lookup[cityCode];
+                    let position = cityTransport.referential.cartoRef;
+                    let referentialGLSL = cityTransport.referential.ned2ECEFMatrix;
+                    let transports = cityTransport.transports;
+                    _localLimitsLookup[cityCode] = localLimitsRaw(matchingBBox(position, bboxes), cityTransport.referential);
                     let commonProperties = {};
-                    for (let attribute in townTransport) {
-                        if (townTransport.hasOwnProperty(attribute) && forbiddenAttributes.indexOf(attribute) === -1) {
-                            commonProperties[attribute] = townTransport[attribute];
+                    for (let attribute in cityTransport) {
+                        if (cityTransport.hasOwnProperty(attribute) && forbiddenAttributes.indexOf(attribute) === -1) {
+                            commonProperties[attribute] = cityTransport[attribute];
                         }
                     }
                     for (let transportName in transports) {
@@ -315,7 +315,7 @@ export class ConeMeshShader extends PseudoCone {
             };
             _gpgpu.positions.updateTextures(options);
             regenerateFromConeStep();
-            updateElevations();
+            updateAlphas();
             updateWithLimits();
             computation(true);
             _ready = true;
@@ -351,7 +351,7 @@ export class ConeMeshShader extends PseudoCone {
         }
     }
 
-    public getElevation(year: string | number): number {
+    public getAlpha(year: string | number): number {
         return this._directions[year];
     }
 
@@ -379,7 +379,7 @@ export class ConeMeshShader extends PseudoCone {
 
         for (let year in directions) {
             if (directions.hasOwnProperty(year)) {
-                this._directions[year] = directions[year].elevation;
+                this._directions[year] = directions[year].alpha;
             }
         }
     }

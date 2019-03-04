@@ -5,7 +5,7 @@ import { PseudoCone } from './base';
 import { ConeMeshShader } from './coneMeshShader';
 import { Cartographic, searchCriterias } from '../common/utils';
 import {
-    ISumUpCriteria, ILookupAndMaxSpeedAndLine, ICriterias, ILookupTownTransport,
+    ISumUpCriteria, ILookupAndMaxSpeedAndLine, ICriterias, ILookupCityTransport,
 } from '../definitions/project';
 import { CountryBoard } from '../country/countryBoard';
 import { LineMeshShader } from './lineMeshShaders';
@@ -85,17 +85,17 @@ export class ConeBoard {
 
     public add(lookup: ILookupAndMaxSpeedAndLine, distance: number): void {
         this.clean();
-        let myConsistentLookup = <ILookupTownTransport>{};
-        for (let cityCode in lookup.lookupTownTransport) {
-            if (lookup.lookupTownTransport.hasOwnProperty(cityCode) &&
-                Object.keys(lookup.lookupTownTransport[cityCode].transports).length > 1) {
-                myConsistentLookup[cityCode] = lookup.lookupTownTransport[cityCode];
+        let myConsistentLookup = <ILookupCityTransport>{};
+        for (let cityCode in lookup.lookupCityTransport) {
+            if (lookup.lookupCityTransport.hasOwnProperty(cityCode) &&
+                Object.keys(lookup.lookupCityTransport[cityCode].transports).length > 1) {
+                myConsistentLookup[cityCode] = lookup.lookupCityTransport[cityCode];
             }
         }
-        // lookup.lookupTownTransport = myConsistentLookup;
+        // lookup.lookupCityTransport = myConsistentLookup;
         let that = this;
         let bboxes = this._countries.countryMeshCollection.map((country) => country.bbox);
-        ConeMeshShader.generateCones(lookup.lookupTownTransport, bboxes).then((cones) => {
+        ConeMeshShader.generateCones(lookup.lookupCityTransport, bboxes).then((cones) => {
             cones.forEach((cone) => {
                 // updateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
                 that.coneMeshCollection.push(cone);
@@ -181,7 +181,7 @@ export class ConeBoard {
     public searchMesh(criterias: ICriterias | Cartographic, path: string = ''): PseudoCone[] {
         let resultat: PseudoCone[];
         if (criterias instanceof Cartographic) {
-            resultat = this.coneMeshCollection.filter((cone) => cone.cartographicPosition.distanceApproximee(criterias) < 1e-13);
+            resultat = this.coneMeshCollection.filter((cone) => cone.cartographicPosition.approximateDistance(criterias) < 1e-13);
         } else {
             resultat = searchCriterias(this.coneMeshCollection, criterias, forbiddenAttributes, 'otherProperties.' + path);
         }

@@ -10,13 +10,13 @@ export class Cartographic implements ICartographic {
     public longitude: number;
     public height: number;
 
-    public static distanceApproximee(pos1: Cartographic, pos2: Cartographic): number {
+    public static approximateDistance(pos1: Cartographic, pos2: Cartographic): number {
         let x = (pos1.longitude - pos2.longitude) * Math.cos((pos1.latitude + pos2.latitude) / 2);
         let y = pos1.latitude - pos2.latitude;
         return Math.sqrt(x * x + y * y);
     }
 
-    public static distanceExacte(pos1: Cartographic, pos2: Cartographic): number {
+    public static exactDistance(pos1: Cartographic, pos2: Cartographic): number {
         let resultat = Math.sin(pos1.latitude) * Math.sin(pos2.latitude);
         resultat += Math.cos(pos1.latitude) * Math.cos(pos2.latitude) * Math.cos(pos2.longitude - pos1.longitude);
         return Math.acos(resultat);
@@ -40,7 +40,7 @@ export class Cartographic implements ICartographic {
     }
 
     public static lerp(pos1: Cartographic, pos2: Cartographic, fractions: number[] = []): Cartographic[] {
-        let distance = Cartographic.distanceExacte(pos1, pos2);
+        let distance = Cartographic.exactDistance(pos1, pos2);
         let resultat: Cartographic[] = [];
         if (distance > 0) {
             fractions.forEach((fraction) => {
@@ -78,12 +78,12 @@ export class Cartographic implements ICartographic {
         return new Cartographic(this.longitude, this.latitude, this.height);
     }
 
-    public distanceApproximee(pos2: Cartographic): number {
-        return Cartographic.distanceApproximee(this, pos2);
+    public approximateDistance(pos2: Cartographic): number {
+        return Cartographic.approximateDistance(this, pos2);
     }
 
-    public distanceExacte(pos2: Cartographic): number {
-        return Cartographic.distanceExacte(this, pos2);
+    public exactDistance(pos2: Cartographic): number {
+        return Cartographic.exactDistance(this, pos2);
     }
 
     public lerp(pos2: Cartographic, fractions: number[] = []): Cartographic[] {

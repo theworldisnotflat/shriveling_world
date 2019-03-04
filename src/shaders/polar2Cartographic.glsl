@@ -1,12 +1,12 @@
-vec3 project(in float clock, in float elevation, in float longeur,
+vec3 project(in float clock, in float alpha, in float longeur,
              in vec3 summit, in mat3 ned2ECEF, in float earthRadius) {
   float radius = earthRadius + summit.z;
   vec3 ecefSummit =
       vec3(cos(summit.x) * radius * cos(summit.y),
            sin(summit.x) * radius * cos(summit.y), sin(summit.y) * radius);
 
-  float cosEl = cos(elevation);
-  float sinEl = sin(elevation);
+  float cosEl = cos(alpha);
+  float sinEl = sin(alpha);
   float cosClock = cos(clock);
   float sinClock = sin(clock);
   vec3 nedProjection =

@@ -29,11 +29,18 @@ function fullCleanArrays(): void {
 }
 fullCleanArrays();
 
-// formule de la hauteur des arcs fonction de theta
-// et du ratio des vitesses
-// formules of the heigth of edges function of 'theta' and 'ratio'
-// 'ratio' is computed in function 'getRatio' in file bigBoard/merger.t
-// 'ratio' is computed with two formulas depending on 'theta' compared with 'thetaLimit'
+/**
+ * formule de la hauteur des arcs fonction de [[theta]]
+ * et du [[ratio]] des vitesses
+ *
+ * formules of the heigth of edges function of '[[theta]]' and '[[ratio]]'
+ * * '[[ratio]]' is computed in function '[[getRatio]]' in file [[bigBoard/merger.ts]]
+ * * '[[ratio]]' is computed with [two formulas](https://timespace.hypotheses.org/121)
+ * depending on '[[theta]]' compared with '[[thetaLimit]]'
+ *
+ * @param ratio
+ * @param theta
+ */
 function getHeight(ratio: number, theta: number): number {
     const semiTheta = theta / 2;
     const sinSemiTheta = Math.sin(semiTheta);
@@ -43,12 +50,15 @@ function getHeight(ratio: number, theta: number): number {
     // the equation of length om'
     const result = ((cosSemiTheta + secondTerm + thirdTerm ) *
     CONFIGURATION.earthRadiusMeters * _coefficient);
-    // minus earth radius to compute cm'
+    // minus earth radius to compute [cm'](https://timespace.hypotheses.org/121)
     return result - CONFIGURATION.earthRadiusMeters;
 }
 
-// step is the number of facets forming the cones, default value is 15
-// higher values will consume processor load
+/**
+ * step is the number of facets forming the cones, default value is 15
+ *
+ * higher values will consume processor load
+ */
 function regenerateStep(): void {
     const step = 1 / CONFIGURATION.pointsPerLine;
     let t: number[] = [];
@@ -64,7 +74,9 @@ function regenerateStep(): void {
     _gpgpu.positions.updateTextures(options);
 }
 
-// update edges (lines) height based on the reference year
+/**
+ * update edges (lines) height based on the reference year
+ */
 function updateYear(): void {
     let year = CONFIGURATION.year;
     _linesWithoutDisplay = [];
@@ -210,8 +222,10 @@ export class LineMeshShader extends Line {
     public static get coefficient(): number {
         return _coefficient;
     }
-    // update edges heigth when 'coefficient' changes
-    // for testing purposes only
+    /**
+     * update edges heigth when 'coefficient' changes
+     * for testing purposes only
+     */
     public static set coefficient(value: number) {
         _coefficient = value;
         for (let i = 0; i < _height; i++) {
