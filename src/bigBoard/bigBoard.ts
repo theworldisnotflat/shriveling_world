@@ -630,8 +630,8 @@ export default class BigBoard {
     }
     let blobCone = new Blob([exporter.parse(clonedCone)], { type: 'text/plain;charset=utf-8' });
     save(blobCone, 'sceneCones.obj');
-	let blobLine = new Blob([exporter.parse(groupLine)], { type: 'text/plain;charset=utf-8' });
-    save(blobLine, 'sceneCones.obj');
+    let blobLine = new Blob([exporter.parse(groupLine)], { type: 'text/plain;charset=utf-8' });
+    save(blobLine, 'sceneLines.obj');
     this._scene.add(clonedCone);
     this._scene.add(groupLine);
     alert('Export done');
