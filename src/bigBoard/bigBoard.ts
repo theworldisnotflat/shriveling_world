@@ -445,7 +445,7 @@ export default class BigBoard {
         this._geometryText.remove(this._geometryText.children[i]);
       }
     } else {
-      this.updateNameTown();
+      this.updateCityName();
     }
   }
 
@@ -463,7 +463,7 @@ export default class BigBoard {
    * Update all the town which will be displayed regarding the populuation threeshold paramater
    * @param option [description]
    */
-  public updateNameTown(): void {
+  public updateCityName(): void {
     if (this._merger.state !== 'complete') {
       return;
     }
@@ -474,13 +474,13 @@ export default class BigBoard {
     for (var j = 0; j < this.getMergerI.Cities.length / 2; j++) {
       var obj = JSON.parse(JSON.stringify(this.getMergerI.Cities[j]));
       var pop = JSON.parse(JSON.stringify(
-        this._merger.mergedData.lookupTownTransport[this.getMergerI.Cities[j].cityCode]
+        this._merger.mergedData.lookupCityTransport[this.getMergerI.Cities[j].cityCode]
           .cityProperties.populations));
       var population = pop.pop2020;
       if (population > this._populations) {
         var geometry = new TextGeometry(obj.urbanAgglomeration, CONFIGURATION.TEXTGEOMETRYOPTIONS);
         mesh = new Mesh(geometry, CONFIGURATION.BASIC_TEXT_MATERIAL);
-        let cart = this._merger.mergedData.lookupTownTransport[this.getMergerI.Cities[j].cityCode].referential.cartoRef;
+        let cart = this._merger.mergedData.lookupCityTransport[this.getMergerI.Cities[j].cityCode].referential.cartoRef;
         let x = - CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.cos(cart.latitude * 0.95) * Math.cos(cart.longitude);
         let y = CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.sin(cart.latitude * 0.95);
         let z = CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.cos(cart.latitude * 0.95) * Math.sin(cart.longitude);
@@ -585,7 +585,8 @@ export default class BigBoard {
   private exporterOBJ(): void {
     let exporter = new OBJExporter();
     alert('Export begins...');
-    let group = new Group();
+    let groupCone = new Group();
+    let groupLine = new Group();
     // for (var i = 0; i < this._countries.countryMeshCollection.length; ++i) {
     //     var cloned = this._countries.countryMeshCollection[i];
     //     group.add(cloned);
@@ -593,12 +594,15 @@ export default class BigBoard {
     for (let j = 0; j < this._cones.coneMeshCollection.length; ++j) {
       var clonedCone = this._cones.coneMeshCollection[j];
       var clonedLine = this._cones.lineCollection[j];
-      group.add(clonedCone);
-      group.add(clonedLine);
+      groupCone.add(clonedCone);
+      groupLine.add(clonedLine);
     }
-    let blob = new Blob([exporter.parse(group)], { type: 'text/plain;charset=utf-8' });
-    save(blob, 'scene.obj');
-    this._scene.add(group);
+    let blobCone = new Blob([exporter.parse(clonedCone)], { type: 'text/plain;charset=utf-8' });
+    save(blobCone, 'sceneCones.obj');
+    let blobLine = new Blob([exporter.parse(groupLine)], { type: 'text/plain;charset=utf-8' });
+    save(blobLine, 'sceneLines.obj');
+    this._scene.add(clonedCone);
+    this._scene.add(groupLine);
     alert('Export done');
   }
 
@@ -849,7 +853,7 @@ export default class BigBoard {
               generalFolder.addColor(conf, 'couleur du texte').onChange((v: string) => {
                 let color = parseInt(v.replace('#', ''), 16);
                 CONFIGURATION.BASIC_TEXT_MATERIAL.color.setHex(color);
-                that.updateNameTown.bind(that);
+                that.updateCityName.bind(that);
               });
               _filesData = [];
 
