@@ -616,7 +616,8 @@ export default class BigBoard {
   private exporterOBJ(): void {
     let exporter = new OBJExporter();
     alert('Export begins...');
-    let group = new Group();
+    let groupCone = new Group();
+    let groupLine = new Group();
     // for (var i = 0; i < this._countries.countryMeshCollection.length; ++i) {
     //     var cloned = this._countries.countryMeshCollection[i];
     //     group.add(cloned);
@@ -624,12 +625,15 @@ export default class BigBoard {
     for (let j = 0; j < this._cones.coneMeshCollection.length; ++j) {
       var clonedCone = this._cones.coneMeshCollection[j];
       var clonedLine = this._cones.lineCollection[j];
-      group.add(clonedCone);
-      group.add(clonedLine);
+      groupCone.add(clonedCone);
+      groupLine.add(clonedLine);
     }
-    let blob = new Blob([exporter.parse(group)], { type: 'text/plain;charset=utf-8' });
-    save(blob, 'scene.obj');
-    this._scene.add(group);
+    let blobCone = new Blob([exporter.parse(clonedCone)], { type: 'text/plain;charset=utf-8' });
+    save(blobCone, 'sceneCones.obj');
+	let blobLine = new Blob([exporter.parse(groupLine)], { type: 'text/plain;charset=utf-8' });
+    save(blobLine, 'sceneCones.obj');
+    this._scene.add(clonedCone);
+    this._scene.add(groupLine);
     alert('Export done');
   }
 
