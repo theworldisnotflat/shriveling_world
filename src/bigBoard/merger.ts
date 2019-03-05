@@ -204,9 +204,9 @@ function toCityTransport(
         year: number;
     }
     /**
-     * [[ISpeedPertransportPerYearItem]] has a [[tabSpeed]] and a [[name]]
+     * [[ISpeedPerTransportPerYearItem]] has a [[tabSpeed]] and a [[name]]
      */
-    interface ISpeedPertransportPerYearItem {
+    interface ISpeedPerTransportPerYearItem {
         tabSpeed: { [year: string]: number };
         name: string;
     }
@@ -219,7 +219,7 @@ function toCityTransport(
     }
     let roadCode: number, roadBegin: number;
     _transportName = { lines: [], cones: [] };
-    let speedPerTransportPerYear: { [transportCode: string]: ISpeedPertransportPerYearItem } = {};
+    let speedPerTransportPerYear: { [transportCode: string]: ISpeedPerTransportPerYearItem } = {};
     transportModeCode.forEach((transportMode) => {
         let transportCode = transportMode.code;
         let transportName = transportMode.name;
@@ -317,7 +317,7 @@ function toCityTransport(
             let destinationCityCode: number;
             let edge: ITransportNetwork, min: number, max: number, alpha: number;
             let isTerrestrial: boolean;
-            let transportName: string, transportMode: ISpeedPertransportPerYearItem;
+            let transportName: string, transportMode: ISpeedPerTransportPerYearItem;
             if (city.destinations.length === 0) {
                 city.destinations.push({ yearBegin: minYear, idDes: -Infinity, transportMode: roadCode });
             }

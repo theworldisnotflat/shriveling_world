@@ -231,7 +231,7 @@ export type MessageConeShaderType = 'init' | 'coneStep' | 'year' | 'limits' | 'p
 export interface IDataMessageConeShader {
   cities?: { [cityCode: string]: NEDLocal };
   bboxes?: IBBox[];
-  cones?: { cityCode: string, directions: ILookupAlpha }[];
+  cones?: { cityCode: string, alphas: ILookupAlpha }[];
   conestep?: number;
   year?: string;
   limits?: ArrayBuffer;
