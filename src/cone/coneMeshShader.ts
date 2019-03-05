@@ -379,7 +379,7 @@ export class ConeMeshShader extends PseudoCone {
 
         for (let year in directions) {
             if (directions.hasOwnProperty(year)) {
-                this._directions[year] = directions[year].alpha;
+                this._directions[year] = directions[year];
             }
         }
     }
