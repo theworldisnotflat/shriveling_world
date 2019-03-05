@@ -312,7 +312,7 @@ function toCityTransport(
             let transports: ILookupTransport = {};
             let destinations: ILookupDestination = {};
             let codeDestination: number;
-            let edge: ITransportNetwork, min: number, max: number, bearing: number, alpha: number, alphaDegree: number;
+            let edge: ITransportNetwork, min: number, max: number, alpha: number;
             let isTerrestrial: boolean;
             let transportName: string, transportMode: ISpeedPertransportPerYearItem;
             if (city.destinations.length === 0) {
@@ -358,15 +358,7 @@ function toCityTransport(
                                 if (alpha < 0) {
                                     alpha += CONFIGURATION.TWO_PI;
                                 }
-                                alphaDegree = alpha / CONFIGURATION.deg2rad;
-                                transports[transportName][year] = {
-                                    clock: bearing, alpha: alpha, speed: tabModeSpeed[year],
-                                    clockDegree: bearing / CONFIGURATION.deg2rad,
-                                    alphaDegree: alphaDegree,
-                                    destination: codeDestination,
-                                    transport: transportName,
-                                    year: year,
-                                };
+                                transports[transportName][year] = alpha;
                                 destinations[codeDestination][transportName].push({ year: year, speed: tabModeSpeed[year] });
                             } else {
                                 if (lineToProcess === true) {
@@ -405,11 +397,7 @@ function toCityTransport(
                     if (alpha < 0) {
                         alpha += CONFIGURATION.TWO_PI;
                     }
-                    alphaDegree = alpha / CONFIGURATION.deg2rad;
-                    transports['Road'][year] = {
-                        clock: 0, alpha: alpha, speed: tabModeSpeed[year],
-                        clockDegree: 0, alphaDegree: alphaDegree, transport: 'Road', year: year,
-                    };
+                    transports['Road'][year] = alpha;
                 }
 
                 resultat[originCityCode] = {

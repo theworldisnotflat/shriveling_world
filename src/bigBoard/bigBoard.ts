@@ -591,17 +591,13 @@ export default class BigBoard {
     //     var cloned = this._countries.countryMeshCollection[i];
     //     group.add(cloned);
     // }
-    for (let j = 0; j < this._cones.coneMeshCollection.length; ++j) {
-      var clonedCone = this._cones.coneMeshCollection[j];
-      var clonedLine = this._cones.lineCollection[j];
-      groupCone.add(clonedCone);
-      groupLine.add(clonedLine);
-    }
-    let blobCone = new Blob([exporter.parse(clonedCone)], { type: 'text/plain;charset=utf-8' });
+    this._cones.coneMeshCollection.forEach(cone => groupCone.add(cone));
+    this._cones.lineCollection.forEach(line => groupLine.add(line));
+    let blobCone = new Blob([exporter.parse(groupCone)], { type: 'text/plain;charset=utf-8' });
     save(blobCone, 'sceneCones.obj');
     let blobLine = new Blob([exporter.parse(groupLine)], { type: 'text/plain;charset=utf-8' });
     save(blobLine, 'sceneLines.obj');
-    this._scene.add(clonedCone);
+    this._scene.add(groupCone);
     this._scene.add(groupLine);
     alert('Export done');
   }
