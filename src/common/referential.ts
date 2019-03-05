@@ -1,5 +1,5 @@
 'use strict';
-import { Cartographic, Generic_toJSON, Generic_fromJSON, ZERO_CARTOGRAPHIC } from './utils';
+import { Cartographic, ZERO_CARTOGRAPHIC } from './utils';
 import { CONFIGURATION } from './configuration';
 import { INEDLocalGLSL } from '../definitions/project';
 function Cartographic2ECEF(pos: Cartographic): Coordinate {
@@ -32,10 +32,6 @@ export class Coordinate {
     public x: number;
     public y: number;
     public z: number;
-
-    public static fromJSON(value: any): any {
-        return Generic_fromJSON(Coordinate, value.data);
-    }
 
     public static dot(vec1: Coordinate, vec2: Coordinate): number {
         return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z;
@@ -87,7 +83,7 @@ export class Coordinate {
         return this;
     }
 
-    public dot(vec2): number {
+    public dot(vec2: Coordinate): number {
         return Coordinate.dot(this, vec2);
     }
 
@@ -105,9 +101,6 @@ export class Coordinate {
     public distance(vec2: Coordinate): number {
         return Coordinate.distance(this, vec2);
     }
-    public toJSON(): { ctor: string, data: any } {
-        return Generic_toJSON('Coordinate', this);
-    }
 }
 
 var scrapCoordinate = new Coordinate();
@@ -119,10 +112,6 @@ export class NEDLocal {
     private _matECEF2NED: Coordinate[];
     private _matNED2ECEF: Coordinate[];
     private _glslData: INEDLocalGLSL;
-
-    public static fromJSON(value: any): any {
-        return Generic_fromJSON(NEDLocal, value.data);
-    }
 
     public constructor(summit: Cartographic = ZERO_CARTOGRAPHIC) {
         let sinLong = Math.sin(summit.longitude);
@@ -184,10 +173,6 @@ export class NEDLocal {
     public project(clock: number, alpha: number, distance: number): Cartographic {
         this.direction2Position(clock, alpha, scrapCoordinate2).scalar(distance, scrapCoordinate2);
         return this.NED2Cartographic(scrapCoordinate2);
-    }
-
-    public toJSON(): { ctor: string, data: any } {
-        return Generic_toJSON('NEDLocal', this);
     }
 
     get ned2ECEFMatrix(): INEDLocalGLSL {

@@ -206,7 +206,7 @@ const defaultTask = (done) => {
   done();
 };
 const buildRequirements = gulp.series(gulp.parallel(compileShaders, compileLibraries, combineExternals), build);
-const defaultRequirement = gulp.series(gulp.parallel(clean, tslint/*,doc*/), buildRequirements, defaultTask);
+const defaultRequirement = gulp.series(gulp.parallel(clean, tslint), buildRequirements, defaultTask);
 
 gulp.task('build', buildRequirements);
 
@@ -221,5 +221,7 @@ gulp.task('tslint', tslint);
 gulp.task('clean', clean);
 
 gulp.task('server', server);
+
+gulp.task('doc', doc);
 
 gulp.task('default', defaultRequirement);
