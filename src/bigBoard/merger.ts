@@ -162,10 +162,13 @@ function getRatio(theta: number, speedMax: number, speed: number): number {
 /**
  * function [[toCityTransport]] explores the [[transportNetwork]]
  * in order to determine the geometry of cones ([[cities]])
+ * and to draw lines
  *
- * [equation 1](http://bit.ly/2tLfehC) is on lines 354 and 404
+ * ![equation 1](http://bit.ly/2tLfehC) is on lines 354 and 404
  *
- * About the [geometry of cones see here](https://timespace.hypotheses.org/121)
+ * ![figure 1](http://bit.ly/2HhgxNg)
+ *
+ * More about the [geometry of cones](https://timespace.hypotheses.org/121)
  *
  * @param transportModeCode
  * @param cities
