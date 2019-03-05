@@ -25,6 +25,8 @@ Go inside the application folder and open a terminal, execute the following line
 
 ```gulp server``` (launch server)
 
+```gulp doc``` (compile documentation)
+
 Then open in browser this adress http://localhost:8080. 
 
 ## Introducing data in the application
