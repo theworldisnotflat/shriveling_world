@@ -96,9 +96,16 @@ let _ambient = new AmbientLight(0xffffff);
 
 let link = document.createElement('a');
 /**
- * fonction de sauvegarde de données par le navigateur internet
- * @param blob     tableau de données au format blob
- * @param filename le nom de sauvegarde du tableau de données (l'emplacement est à la main de l'utilisateur)
+ * Export in Wavefront OBJ format.
+ * Exported file can be imported in Blender.
+ *
+ * Two files a generated:
+ * * sceneCones.obj
+ * * sceneLines.obj
+ *
+ * @param blob     data table in blob format
+ * @param filename filename of data table (location to user choice)
+ *
  */
 function save(blob: any, filename: string): void {
   link.href = URL.createObjectURL(blob);
@@ -190,6 +197,7 @@ export default class BigBoard {
 
   /**
    * Getter : Get scale parameter of the contries parameter
+   *
    * @type {number}
    * @memberof BigBoard
    */
@@ -240,7 +248,7 @@ export default class BigBoard {
   }
 
   /**
-   * Getter: Get show parameter of cone paramter
+   * Getter: Get show parameter of cone parameter
    * @type {boolean}
    * @memberof BigBoard
    */
@@ -271,8 +279,8 @@ export default class BigBoard {
     return this._cones.withLimits;
   }
   /**
-   * Setter : update the withlimits paramater of the cones paramater
-   * if true the boundaries of cones will be limited by the boundaries of contries
+   * Setter : update the withlimits paramater of the cones paramaters
+   * if true the boundaries of cones will be limited by the boundaries of countries
    * @memberof BigBoard
    */
   set withLimits(value: boolean) {
@@ -291,7 +299,7 @@ export default class BigBoard {
   }
 
   /**
-   * @see contryBoard  : cleanContries method
+   * @see contryBoard  : cleanCountries method
    * @memberof BigBoard
    */
   public cleanCountries(): void {
@@ -344,7 +352,7 @@ export default class BigBoard {
   }
 
   /**
-   * Highlith contries @see contryBoard.highLight
+   * Highlith countries @see contryBoard.highLight
    * @todo unused and irrelevant @see contryBoard.highLight
    * @param {ICriterias} criterias
    * @param {boolean} [light=true]
@@ -366,7 +374,7 @@ export default class BigBoard {
   }
 
   /**
-   * Update the withlimit paramter value of all cones in the coneMeshCollection
+   * Update the withlimit parameter value of all cones in the [[coneMeshCollection]]
    * @todo unused and irrelevant @see coneBoard.setLimits
    * @param {ICriterias} criterias
    * @param {boolean} limit
@@ -377,7 +385,7 @@ export default class BigBoard {
   }
 
   /**
-   * Show/Hide a contryMeshCollection
+   * Show/Hide a countryMeshCollection
    * @todo unused and irrelevant @see contryBoard.showCriterias
    * @param {ICriterias} criterias
    * @param {boolean} state
@@ -399,7 +407,7 @@ export default class BigBoard {
   }
 
   /**
-   * Get a contryMeshCollection with all contries verifying 'criterias'
+   * Get a countryMeshCollection with all countries verifying 'criterias'
  * @param {ICriterias} criterias
    * @returns {CountryMeshShader[]}
    * @memberof BigBoard
@@ -460,7 +468,7 @@ export default class BigBoard {
   }
 
   /**
-   * Update all the town which will be displayed regarding the populuation threeshold paramater
+   * Update all the cities which will be displayed regarding the population threeshold paramater
    * @param option [description]
    */
   public updateCityName(): void {
@@ -579,6 +587,7 @@ export default class BigBoard {
   /**
    * Export in Wavefront OBJ format.
    * Exported file can be imported in Blender.
+   *
    * Two files a generated:
    * * sceneCones.obj
    * * sceneLines.obj

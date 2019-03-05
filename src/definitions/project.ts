@@ -71,7 +71,7 @@ export interface IMapProjector {
 }
 
 /**
- * it's a lookup mapping for a given year the slope angme between eath surface
+ * it's a lookup mapping for a given year the slope angle between earth surface
  * and cone slope as cone radius is fixed, it's the key parameter for cone geometries.
  */
 export interface ILookupDirection {
@@ -136,7 +136,7 @@ export interface IPopulation {
  * Parameters attached to each city:
  * * [[urbanagglomeration]] is the name of the city
  * * [[radius]]: number; // for cases of cities in islands close to a continent
- * * [[destinations]] will be determined by scanning the TransportNetwork
+ * * [[destinations]] will be determined by scanning the [[ITransportNetwork]]
  */
 export interface ICity {
   countryCode: number;

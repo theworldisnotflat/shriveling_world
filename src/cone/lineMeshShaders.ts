@@ -38,6 +38,10 @@ fullCleanArrays();
  * * '[[ratio]]' is computed with [two formulas](https://timespace.hypotheses.org/121)
  * depending on '[[theta]]' compared with '[[thetaLimit]]'
  *
+ * * below [[thetaLimit]]: ![below](http://bit.ly/2Xu3kGF)
+ * * beyond [[thetaLimit]]: ![beyond](http://bit.ly/2EejFpW)
+ * * the figure: ![2](http://bit.ly/2H4FOKw)
+ *
  * @param ratio
  * @param theta
  */
