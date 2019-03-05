@@ -1,8 +1,8 @@
 /**
- * in merger are the functions used only once
+ * in merger we put the functions used only once
  * which are CPU/GPU intensive functions
  * and which compute the geometry of cones and edges.
- * the functions that must run everytime a parameter is modified
+ * the functions that must run each time a parameter is modified
  * are located in the respective files for cones and edges
  *
  */
@@ -11,8 +11,8 @@ import * as Papa from 'papaparse';
 import { NEDLocal } from '../common/referential';
 import { extrapolator, Cartographic, reviver } from '../common/utils';
 import {
-    ITransportModeCode, ICity, ITransportNetwork, ILookupTownTransport, ILookupTransport, IMergerState,
-    ILookupDestination, IPopulation, ITransportModeSpeed, ILookupAndMaxSpeedAndLine, ILookupLine, IEndTownLine,
+    ITransportModeCode, ICity, ITransportNetwork, ILookupCityTransport, ILookupTransport, IMergerState,
+    ILookupDestination, IPopulation, ITransportModeSpeed, ILookupAndMaxSpeedAndLine, ILookupLine, IEndCityLine,
     ILookupItemList,
 } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
@@ -124,8 +124,7 @@ function getCSV(text: string, isTransportModeCode: boolean = false): any {
  */
 function getTheMiddle(posA: Cartographic, posB: Cartographic)
     : { middle: Cartographic, opening: number } {
-    const theta = posA.distanceExacte(posB);
-    const semiTheta = theta / 2;
+    const theta = posA.exactDistance(posB);
     const deltaLambda = posB.longitude - posA.longitude;
     const cosPhi2 = Math.cos(posB.latitude);
     const sinPhi2 = Math.sin(posB.latitude);
@@ -146,7 +145,7 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
  * the [heigth of aerial edges above the geodesic](http://bit.ly/2H4FOKw)
  * * [below](http://bit.ly/2Xu3kGF) and
  * * [beyond](http://bit.ly/2EejFpW)
- * the threshold value "thetaLimit"  of "theta"
+ * the threshold value "thetaLimit" of "theta"
  *
  * * "ratio" is the part that differentiates the two equations
  *
@@ -161,8 +160,10 @@ function getRatio(theta: number, speedMax: number, speed: number): number {
 }
 
 /**
- * [[toCityTransport]] explores the [[transportNetwork]]
- * in order to determine the geometry of cones (cities)
+ * function [[toCityTransport]] explores the [[transportNetwork]]
+ * in order to determine the geometry of cones ([[cities]])
+ *
+ * [equation 1](http://bit.ly/2tLfehC) is on lines 354 and 404
  *
  * About the [geometry of cones see here](https://timespace.hypotheses.org/121)
  *
@@ -172,7 +173,7 @@ function getRatio(theta: number, speedMax: number, speed: number): number {
  */
 function toCityTransport(
     transportModeCode: ITransportModeCode[], cities: ICity[], transportNetwork: ITransportNetwork[]): ILookupAndMaxSpeedAndLine {
-    let resultat: ILookupTownTransport = {};
+    let resultat: ILookupCityTransport = {};
     let lineData: ILookupLine = {};
     // déterminer la fourchette de temps considéré OK
     // determine the considered time-frame
@@ -183,21 +184,31 @@ function toCityTransport(
             minYear = item.yearBegin;
         }
     });
-    // déterminer pour chaque type de transport la vitesse par an dans la fourchette + vitesse max par an de la fourchette OK
+    // déterminer pour chaque type de transport la vitesse par an
+    // dans la fourchette + vitesse max par an de la fourchette OK
+    /**
+     * [[ISpeedPerYear]] has a [[year]]
+     */
     interface ISpeedPerYear {
         [year: string]: number;
     }
-    let speedMaxPerYear: ISpeedPerYear = {};
+    let maxSpeedPerYear: ISpeedPerYear = {};
+    /**
+     * [[ITransportCodeItem]] has a [[speed]] and [[year]]
+     */
     interface ITransportCodeItem {
         speed: number;
         year: number;
     }
+    /**
+     * [[ISpeedPertransportPerYearItem]] has a [[tabSpeed]] and a [[name]]
+     */
     interface ISpeedPertransportPerYearItem {
         tabSpeed: { [year: string]: number };
         name: string;
     }
     interface ILookupCache {
-        end?: IEndTownLine;
+        end?: IEndCityLine;
         pointP: Cartographic;
         pointQ: Cartographic;
         middle: Cartographic;
@@ -236,12 +247,12 @@ function toCityTransport(
         for (let year = minYearTransport; year <= maxYearTransport; year++) {
             speed = extrapolation(year);
             tabSpeed[year] = speed;
-            if (speedMaxPerYear.hasOwnProperty(year)) {
-                if (speedMaxPerYear[year] < speed) {
-                    speedMaxPerYear[year] = speed;
+            if (maxSpeedPerYear.hasOwnProperty(year)) {
+                if (maxSpeedPerYear[year] < speed) {
+                    maxSpeedPerYear[year] = speed;
                 }
             } else {
-                speedMaxPerYear[year] = speed;
+                maxSpeedPerYear[year] = speed;
             }
         }
         speedPerTransportPerYear[transportCode] = { tabSpeed: tabSpeed, name: transportName };
@@ -296,12 +307,12 @@ function toCityTransport(
             processedCities[originCityCode] = {};
         }
         if (referential instanceof NEDLocal) {
-            let beginPoint: IEndTownLine = { cityCode: originCityCode, position: referential.cartoRef };
+            let beginPoint: IEndCityLine = { cityCode: originCityCode, position: referential.cartoRef };
             let list: { [cityCodeEnd: string]: ILookupItemList } = {};
             let transports: ILookupTransport = {};
             let destinations: ILookupDestination = {};
             let codeDestination: number;
-            let edge: ITransportNetwork, min: number, max: number, bearing: number, elevation: number, elevationDegree: number;
+            let edge: ITransportNetwork, min: number, max: number, alpha: number;
             let isTerrestrial: boolean;
             let transportName: string, transportMode: ISpeedPertransportPerYearItem;
             if (city.destinations.length === 0) {
@@ -333,33 +344,26 @@ function toCityTransport(
                         if (!destinations[codeDestination].hasOwnProperty(transportName)) {
                             destinations[codeDestination][transportName] = [];
                         }
-                        let tab = transportMode.tabSpeed;
+                        let tabModeSpeed = transportMode.tabSpeed;
                         let lineToProcess = processedCities[originCityCode][codeDestination].indexOf(transportName) === -1;
                         processedCities[originCityCode][codeDestination].push(transportName);
                         processedCities[codeDestination][originCityCode].push(transportName);
                         for (let year = min; year <= max; year++) {
                             if (isTerrestrial === true) {
-                                elevation = Math.atan(Math.sqrt(
-                                    (speedMaxPerYear[year] / tab[year]) * (speedMaxPerYear[year] / tab[year]) - 1));
-                                if (elevation < 0) {
-                                    elevation += CONFIGURATION.TWO_PI;
+                                // this is [equation 1](http://bit.ly/2tLfehC)
+                                // of the slope of the cone
+                                // executed because transport mode [[isTerrestrial]]
+                                alpha = Math.atan(Math.sqrt(
+                                    (maxSpeedPerYear[year] / tabModeSpeed[year]) * (maxSpeedPerYear[year] / tabModeSpeed[year]) - 1));
+                                if (alpha < 0) {
+                                    alpha += CONFIGURATION.TWO_PI;
                                 }
-                                elevationDegree = elevation / CONFIGURATION.deg2rad;
-                                transports[transportName][year] = {
-                                    clock: bearing, elevation: elevation, speed: tab[year],
-                                    clockDegree: bearing / CONFIGURATION.deg2rad,
-                                    elevationDegree: elevationDegree,
-                                    destination: codeDestination,
-                                    transport: transportName,
-                                    year: year,
-                                };
-                                destinations[codeDestination][transportName].push({ year: year, speed: tab[year] });
+                                transports[transportName][year] = alpha;
+                                destinations[codeDestination][transportName].push({ year: year, speed: tabModeSpeed[year] });
                             } else {
                                 if (lineToProcess === true) {
                                     let { end, middle, opening, pointP, pointQ } = cachedGetTheMiddle(originCityCode, codeDestination);
-                                    let ratio = getRatio(opening, speedMaxPerYear[year], tab[year]);
-                                    // just a test
-                                    // ratio = ratio - ( CONFIGURATION.earthRadiusMeters / 1000);
+                                    let ratio = getRatio(opening, maxSpeedPerYear[year], tabModeSpeed[year]);
                                     if (!list.hasOwnProperty(codeDestination)) {
                                         list[codeDestination] = <ILookupItemList>{};
                                         list[codeDestination].end = end;
@@ -368,8 +372,6 @@ function toCityTransport(
                                         list[codeDestination].pointQ = pointQ;
                                         list[codeDestination].opening = opening;
                                         list[codeDestination].ratio = {};
-                                        // for testing
-                                        console.log(ratio, opening, speedMaxPerYear[year], tab[year]);
                                     }
                                     if (!list[codeDestination].ratio.hasOwnProperty(transportName)) {
                                         list[codeDestination].ratio[transportName] = {};
@@ -384,20 +386,18 @@ function toCityTransport(
                 if (!transports.hasOwnProperty('Road')) {
                     transports['Road'] = {};
                 }
-                let tab = speedPerTransportPerYear[roadCode].tabSpeed;
+                let tabModeSpeed = speedPerTransportPerYear[roadCode].tabSpeed;
                 let maxSpeed: number;
                 for (let year = roadBegin; year <= maxYear; year++) {
-                    maxSpeed = speedMaxPerYear[year] === undefined ? tab[year] : speedMaxPerYear[year];
-                    elevation = Math.atan(Math.sqrt(
-                        (maxSpeed / tab[year]) * (maxSpeed / tab[year]) - 1));
-                    if (elevation < 0) {
-                        elevation += CONFIGURATION.TWO_PI;
+                    maxSpeed = maxSpeedPerYear[year] === undefined ? tabModeSpeed[year] : maxSpeedPerYear[year];
+                    // this is [equation 1](http://bit.ly/2tLfehC)
+                    // of the slope of the cone
+                    alpha = Math.atan(Math.sqrt(
+                        (maxSpeed / tabModeSpeed[year]) * (maxSpeed / tabModeSpeed[year]) - 1));
+                    if (alpha < 0) {
+                        alpha += CONFIGURATION.TWO_PI;
                     }
-                    elevationDegree = elevation / CONFIGURATION.deg2rad;
-                    transports['Road'][year] = {
-                        clock: 0, elevation: elevation, speed: tab[year],
-                        clockDegree: 0, elevationDegree: elevationDegree, transport: 'Road', year: year,
-                    };
+                    transports['Road'][year] = alpha;
                 }
 
                 resultat[originCityCode] = {
@@ -410,7 +410,7 @@ function toCityTransport(
             }
         }
     });
-    return { lookupTownTransport: resultat, lineData: lineData };
+    return { lookupCityTransport: resultat, lineData: lineData };
 }
 
 export class Merger {
@@ -430,7 +430,7 @@ export class Merger {
     }
 
     public get Cities(): ICity[] {return this._cities; }
-    public CitiesByIndex(index): ICity {return this._cities[index]; }
+    public CitiesByIndex(index: string | number): ICity {return this._cities[index]; }
 
     public get datas(): ILookupAndMaxSpeedAndLine {
         return this._mergedData;
@@ -453,7 +453,7 @@ export class Merger {
     public add(someString: string): void {
         let rows = someString.split(/\r\n|\r|\n/);
         let headings = rows[0];
-        let name, temp, ok;
+        let name: string, temp: string[], ok: boolean;
         for (let i = 0; i < keyWords.length && name === undefined; i++) {
             temp = keyWords[i].words;
             ok = true;
@@ -470,7 +470,7 @@ export class Merger {
             this[name] = [];
             this[name].push(...getCSV(someString, name === '_transportModeCode'));
             if (name === '_transportModeCode' || name === '_transportNetwork') {
-                this[name].forEach(item => {
+                this[name].forEach((item: any) => {
                     if (item.yearEnd === undefined || item.yearEnd === '') {
                         delete item.yearEnd;
                     }

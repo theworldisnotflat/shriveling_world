@@ -4,7 +4,7 @@ precision lowp isampler2D;
 #define PI 3.1415926535897932384626433832795
 
 uniform sampler2D u_clocks;
-uniform sampler2D u_elevations;
+uniform sampler2D u_alphas;
 uniform sampler2D u_boundaryLimits;
 
 uniform float longueurMaxi;
@@ -32,28 +32,28 @@ layout(location = 2) out vec4 base;
 // pos.x => clock ; pos.y => town
 void main() {
   ivec2 pos2 = ivec2(pos);
-  ivec2 townPos = ivec2(0, pos2.y);
+  ivec2 cityPos = ivec2(0, pos2.y);
   float clock = texelFetch(u_clocks, ivec2(pos2.x, 0), 0).r;
-  float elevation = texelFetch(u_elevations, townPos, 0).r;
+  float alpha = texelFetch(u_alphas, cityPos, 0).r;
   float boundaryLimit = texelFetch(u_boundaryLimits, pos2, 0).r;
-  vec3 summit = texelFetch(u_summits, townPos, 0).xyz;
+  vec3 summit = texelFetch(u_summits, cityPos, 0).xyz;
   mat3 ned2ECEF = mat3(0.0);
-  ned2ECEF[0] = texelFetch(u_ned2ECEF0s, townPos, 0).xyz;
-  ned2ECEF[1] = texelFetch(u_ned2ECEF1s, townPos, 0).xyz;
-  ned2ECEF[2] = texelFetch(u_ned2ECEF2s, townPos, 0).xyz;
-  int withLimits = texelFetch(u_withLimits, townPos, 0).r;
+  ned2ECEF[0] = texelFetch(u_ned2ECEF0s, cityPos, 0).xyz;
+  ned2ECEF[1] = texelFetch(u_ned2ECEF1s, cityPos, 0).xyz;
+  ned2ECEF[2] = texelFetch(u_ned2ECEF2s, cityPos, 0).xyz;
+  int withLimits = texelFetch(u_withLimits, cityPos, 0).r;
 
   vec3 cartoPosition;
   float longueur = longueurMaxi;
-  float cosEl = cos(elevation);
-  float hauteurBase = longueur * sin(elevation);
+  float cosEl = cos(alpha);
+  float hauteurBase = longueur * sin(alpha);
   if (clock < 0.0) {
     cartoPosition = summit;
   } else {
     if (withLimits > 0 && cosEl > 0.0) {
       longueur = min(longueurMaxi, boundaryLimit / cosEl);
     }
-    cartoPosition = polar2Cartographic(clock, elevation, longueur, summit,
+    cartoPosition = polar2Cartographic(clock, alpha, longueur, summit,
                                        ned2ECEF, earthRadius);
   }
   vec3 modelPosition = displayConversions(
