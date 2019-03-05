@@ -311,7 +311,7 @@ function toCityTransport(
             let list: { [cityCodeEnd: string]: ILookupItemList } = {};
             let transports: ILookupTransport = {};
             let destinations: ILookupDestination = {};
-            let codeDestination: number;
+            let destinationCityCode: number;
             let edge: ITransportNetwork, min: number, max: number, alpha: number;
             let isTerrestrial: boolean;
             let transportName: string, transportMode: ISpeedPertransportPerYearItem;
@@ -320,16 +320,16 @@ function toCityTransport(
             }
             for (let i = 0; i < city.destinations.length; i++) {
                 edge = city.destinations[i];
-                codeDestination = edge.idDes;
+                destinationCityCode = edge.idDes;
                 transportMode = speedPerTransportPerYear[edge.transportMode];
-                if (!processedCities.hasOwnProperty(codeDestination)) {
-                    processedCities[codeDestination] = {};
+                if (!processedCities.hasOwnProperty(destinationCityCode)) {
+                    processedCities[destinationCityCode] = {};
                 }
-                if (!processedCities[originCityCode].hasOwnProperty(codeDestination)) {
-                    processedCities[originCityCode][codeDestination] = [];
-                    processedCities[codeDestination][originCityCode] = [];
+                if (!processedCities[originCityCode].hasOwnProperty(destinationCityCode)) {
+                    processedCities[originCityCode][destinationCityCode] = [];
+                    processedCities[destinationCityCode][originCityCode] = [];
                 }
-                if (lookupPosition.hasOwnProperty(codeDestination)) {
+                if (lookupPosition.hasOwnProperty(destinationCityCode)) {
                     min = Math.max(edge.yearBegin, minYear);
                     max = edge.yearEnd ? edge.yearEnd : maxYear;
                     if (transportMode !== undefined) {
@@ -338,16 +338,16 @@ function toCityTransport(
                         if (!transports.hasOwnProperty(transportName)) {
                             transports[transportName] = {};
                         }
-                        if (!destinations.hasOwnProperty(codeDestination)) {
-                            destinations[codeDestination] = {};
+                        if (!destinations.hasOwnProperty(destinationCityCode)) {
+                            destinations[destinationCityCode] = {};
                         }
-                        if (!destinations[codeDestination].hasOwnProperty(transportName)) {
-                            destinations[codeDestination][transportName] = [];
+                        if (!destinations[destinationCityCode].hasOwnProperty(transportName)) {
+                            destinations[destinationCityCode][transportName] = [];
                         }
                         let tabModeSpeed = transportMode.tabSpeed;
-                        let lineToProcess = processedCities[originCityCode][codeDestination].indexOf(transportName) === -1;
-                        processedCities[originCityCode][codeDestination].push(transportName);
-                        processedCities[codeDestination][originCityCode].push(transportName);
+                        let lineToProcess = processedCities[originCityCode][destinationCityCode].indexOf(transportName) === -1;
+                        processedCities[originCityCode][destinationCityCode].push(transportName);
+                        processedCities[destinationCityCode][originCityCode].push(transportName);
                         for (let year = min; year <= max; year++) {
                             if (isTerrestrial === true) {
                                 // this is [equation 1](http://bit.ly/2tLfehC)
@@ -359,24 +359,24 @@ function toCityTransport(
                                     alpha += CONFIGURATION.TWO_PI;
                                 }
                                 transports[transportName][year] = alpha;
-                                destinations[codeDestination][transportName].push({ year: year, speed: tabModeSpeed[year] });
+                                destinations[destinationCityCode][transportName].push({ year: year, speed: tabModeSpeed[year] });
                             } else {
                                 if (lineToProcess === true) {
-                                    let { end, middle, opening, pointP, pointQ } = cachedGetTheMiddle(originCityCode, codeDestination);
+                                    let { end, middle, opening, pointP, pointQ } = cachedGetTheMiddle(originCityCode, destinationCityCode);
                                     let ratio = getRatio(opening, maxSpeedPerYear[year], tabModeSpeed[year]);
-                                    if (!list.hasOwnProperty(codeDestination)) {
-                                        list[codeDestination] = <ILookupItemList>{};
-                                        list[codeDestination].end = end;
-                                        list[codeDestination].middle = middle;
-                                        list[codeDestination].pointP = pointP;
-                                        list[codeDestination].pointQ = pointQ;
-                                        list[codeDestination].opening = opening;
-                                        list[codeDestination].ratio = {};
+                                    if (!list.hasOwnProperty(destinationCityCode)) {
+                                        list[destinationCityCode] = <ILookupItemList>{};
+                                        list[destinationCityCode].end = end;
+                                        list[destinationCityCode].middle = middle;
+                                        list[destinationCityCode].pointP = pointP;
+                                        list[destinationCityCode].pointQ = pointQ;
+                                        list[destinationCityCode].opening = opening;
+                                        list[destinationCityCode].ratio = {};
                                     }
-                                    if (!list[codeDestination].ratio.hasOwnProperty(transportName)) {
-                                        list[codeDestination].ratio[transportName] = {};
+                                    if (!list[destinationCityCode].ratio.hasOwnProperty(transportName)) {
+                                        list[destinationCityCode].ratio[transportName] = {};
                                     }
-                                    list[codeDestination].ratio[transportName][year] = ratio;
+                                    list[destinationCityCode].ratio[transportName][year] = ratio;
                                 }
                             }
                         }
