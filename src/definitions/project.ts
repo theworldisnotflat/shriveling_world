@@ -72,9 +72,11 @@ export interface IMapProjector {
 
 /**
  * it's a lookup mapping for a given year the slope angle between earth surface
- * and cone slope as cone radius is fixed, it's the key parameter for cone geometries.
+ * and cone slope.
+ *
+ * Alpha is on figure 1: ![figure 1](http://bit.ly/2HhgxNg)
  */
-export interface ILookupDirection {
+export interface ILookupAlpha {
   [year: string]: number;
 }
 
@@ -83,7 +85,7 @@ export interface ILookupTransportSpeed {
 }
 
 export interface ILookupTransport {
-  [transport: string]: ILookupDirection;
+  [transport: string]: ILookupAlpha;
 }
 
 export interface ILookupDestination {
@@ -229,7 +231,7 @@ export type MessageConeShaderType = 'init' | 'coneStep' | 'year' | 'limits' | 'p
 export interface IDataMessageConeShader {
   cities?: { [cityCode: string]: NEDLocal };
   bboxes?: IBBox[];
-  cones?: { cityCode: string, directions: ILookupDirection }[];
+  cones?: { cityCode: string, directions: ILookupAlpha }[];
   conestep?: number;
   year?: string;
   limits?: ArrayBuffer;

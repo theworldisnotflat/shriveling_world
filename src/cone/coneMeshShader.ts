@@ -5,7 +5,7 @@ import {
 import { CONFIGURATION } from '../common/configuration';
 import { PseudoCone } from './base';
 import { Cartographic, extrapolator, matchingBBox } from '../common/utils';
-import { ILookupCityTransport, IBBox, ILookupDirection } from '../definitions/project';
+import { ILookupCityTransport, IBBox, ILookupAlpha } from '../definitions/project';
 import { NEDLocal, Coordinate } from '../common/referential';
 import { Shaders } from '../shaders';
 import { GPUComputer } from '../common/gpuComputer';
@@ -353,7 +353,7 @@ export class ConeMeshShader extends PseudoCone {
     return this._directions[year];
   }
 
-  private constructor(cityCode: string, position: Cartographic, directions: ILookupDirection, properties: any, transportName: string) {
+  private constructor(cityCode: string, position: Cartographic, directions: ILookupAlpha, properties: any, transportName: string) {
     const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(400 * 4 * 2), 4).setDynamic(true);
     const interleavedBufferAttributePosition = new InterleavedBufferAttribute(interleavedBufferPosition, 3, 0, false);
     const interleavedBufferUV = new InterleavedBuffer(new Float32Array(400 * 4 * 2), 4).setDynamic(true);
