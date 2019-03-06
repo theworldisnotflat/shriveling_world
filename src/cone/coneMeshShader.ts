@@ -5,7 +5,7 @@ import {
 import { CONFIGURATION } from '../common/configuration';
 import { PseudoCone } from './base';
 import { Cartographic, extrapolator, matchingBBox } from '../common/utils';
-import { ILookupCityTransport, IBBox, ILookupDirection } from '../definitions/project';
+import { ILookupCityTransport, IBBox, ILookupAlpha } from '../definitions/project';
 import { NEDLocal, Coordinate } from '../common/referential';
 import { Shaders } from '../shaders';
 import { GPUComputer } from '../common/gpuComputer';
@@ -199,7 +199,7 @@ export class ConeMeshShader extends PseudoCone {
   private _cityCode: string;
   private _transportName: string;
   private _position: Cartographic;
-  private _directions: { [year: string]: number };
+  private _alphas: { [year: string]: number };
 
   public static async generateCones(
     lookup: ILookupCityTransport, bboxes: IBBox[]): Promise<ConeMeshShader[]> {
@@ -291,9 +291,9 @@ export class ConeMeshShader extends PseudoCone {
         }
         for (let transportName in transports) {
           if (transports.hasOwnProperty(transportName)) {
-            let directions = transports[transportName];
-            let specificProperties = Object.assign({}, commonProperties, { directions: directions, transport: transportName });
-            _cones.push(new ConeMeshShader(cityCode, position, directions, specificProperties, transportName));
+            let alphas = transports[transportName];
+            let specificProperties = Object.assign({}, commonProperties, { alphas: alphas, transport: transportName });
+            _cones.push(new ConeMeshShader(cityCode, position, alphas, specificProperties, transportName));
             _cityCodeOrder.push(cityCode);
             summits.push(...referentialGLSL.summit);
             ned2ECEF0.push(...referentialGLSL.ned2ECEF0);
@@ -348,10 +348,10 @@ export class ConeMeshShader extends PseudoCone {
   }
 
   public getAlpha(year: string | number): number {
-    return this._directions[year];
+    return this._alphas[year];
   }
 
-  private constructor(cityCode: string, position: Cartographic, directions: ILookupDirection, properties: any, transportName: string) {
+  private constructor(cityCode: string, position: Cartographic, alphas: ILookupAlpha, properties: any, transportName: string) {
     const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(400 * 4 * 2), 4).setDynamic(true);
     const interleavedBufferAttributePosition = new InterleavedBufferAttribute(interleavedBufferPosition, 3, 0, false);
     const interleavedBufferUV = new InterleavedBuffer(new Float32Array(400 * 4 * 2), 4).setDynamic(true);
@@ -366,16 +366,16 @@ export class ConeMeshShader extends PseudoCone {
     this._cityCode = cityCode;
     this._position = position;
     this.otherProperties = properties;
-    this._directions = {};
+    this._alphas = {};
     this._withLimits = true;
     this.visible = true;
     this._transportName = transportName;
     this.castShadow = true;
     // this.receiveShadow = true;
 
-    for (let year in directions) {
-      if (directions.hasOwnProperty(year)) {
-        this._directions[year] = directions[year];
+    for (let year in alphas) {
+      if (alphas.hasOwnProperty(year)) {
+        this._alphas[year] = alphas[year];
       }
     }
   }

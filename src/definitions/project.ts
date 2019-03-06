@@ -13,6 +13,9 @@ export interface ICountryTextureURL {
   normalMap: string;
 }
 
+/**
+ * list of available geographic porjections
+ */
 export enum PROJECTION_ENUM {
   none = 0,
   equirectangular = 1,
@@ -48,7 +51,7 @@ export interface ICartographic {
  * it's a lookup mapping for a given year the slope angme between eath surface
  * and cone slope as cone radius is fixed, it's the key parameter for cone geometries.
  */
-export interface ILookupDirection {
+export interface ILookupAlpha {
   [year: string]: number;
 }
 
@@ -57,7 +60,7 @@ export interface ILookupTransportSpeed {
 }
 
 export interface ILookupTransport {
-  [transport: string]: ILookupDirection;
+  [transport: string]: ILookupAlpha;
 }
 
 export interface ILookupDestination {
@@ -110,7 +113,7 @@ export interface IPopulation {
  * Parameters attached to each city:
  * * [[urbanagglomeration]] is the name of the city
  * * [[radius]]: number; // for cases of cities in islands close to a continent
- * * [[destinations]] will be determined by scanning the TransportNetwork
+ * * [[destinations]] will be determined by scanning the [[ITransportNetwork]]
  */
 export interface ICity {
   countryCode: number;

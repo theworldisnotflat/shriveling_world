@@ -139,13 +139,13 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
 }
 
 /**
- * getRatio function computes the speed ratio
+ * getRatio function computes the speed ratio.
  *
  * In the case of air edges, two equations are used to determine
- * the [heigth of aerial edges above the geodesic](http://bit.ly/2H4FOKw)
- * * [below](http://bit.ly/2Xu3kGF) and
- * * [beyond](http://bit.ly/2EejFpW)
- * the threshold value "thetaLimit" of "theta"
+ * the [heigth of aerial edges above the geodesic](http://bit.ly/2H4FOKw):
+ * * below the threshold limit:![below](http://bit.ly/2Xu3kGF)
+ * * beyond the threshold limit: ![beyond](http://bit.ly/2EejFpW)
+ * * the figure: ![2](http://bit.ly/2H4FOKw)
  *
  * * "ratio" is the part that differentiates the two equations
  *
@@ -162,10 +162,13 @@ function getRatio(theta: number, speedMax: number, speed: number): number {
 /**
  * function [[toCityTransport]] explores the [[transportNetwork]]
  * in order to determine the geometry of cones ([[cities]])
+ * and to draw lines
  *
- * [equation 1](http://bit.ly/2tLfehC) is on lines 354 and 404
+ * ![equation 1](http://bit.ly/2tLfehC) equation 1 is on lines 354 and 404
  *
- * About the [geometry of cones see here](https://timespace.hypotheses.org/121)
+ * ![figure 1](http://bit.ly/2HhgxNg)
+ *
+ * More about the [geometry of cones](https://timespace.hypotheses.org/121)
  *
  * @param transportModeCode
  * @param cities
