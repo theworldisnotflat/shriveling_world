@@ -5,7 +5,6 @@
  * the [data model can be seen here](https://github.com/theworldisnotflat/shriveling_world/blob/master/model/modeles.png)
  */
 import { Cartographic } from '../common/utils';
-import { Vector3 } from 'three';
 import { NEDLocal } from '../common/referential';
 export interface ICountryTextureURL {
   map: string;
@@ -33,10 +32,6 @@ export type internalFormatType =
   'RGB8' | 'RGB32F' | 'RGB16UI' | 'RGB16I' | 'RGB32UI' | 'RGB32I' |
   'RGBA8' | 'RGBA32F' | 'RGBA16UI' | 'RGBA16I' | 'RGBA32UI' | 'RGBA32I';
 
-export interface IDimension {
-  width: number;
-  height: number;
-}
 export interface INEDLocalGLSL {
   ned2ECEF0: number[];
   ned2ECEF1: number[];
@@ -53,28 +48,8 @@ export interface ICartographic {
 }
 
 /**
- * to convert from  geographic lat/lon/height to
- * the three d coordinates and back
- */
-export interface IConverter {
-  converter: (pos: Cartographic, toPack: boolean) => Vector3 | number[];
-  reverser: (pos: Vector3) => Cartographic;
-}
-
-export interface IConverterLookup {
-  [name: string]: IConverter;
-}
-
-export interface IMapProjector {
-  name: string;
-  converter: (pos: Cartographic) => Vector3;
-}
-
-/**
- * it's a lookup mapping for a given year the slope angle between earth surface
- * and cone slope.
- *
- * Alpha is on figure 1: ![figure 1](http://bit.ly/2HhgxNg)
+ * it's a lookup mapping for a given year the slope angme between eath surface
+ * and cone slope as cone radius is fixed, it's the key parameter for cone geometries.
  */
 export interface ILookupAlpha {
   [year: string]: number;
@@ -207,44 +182,6 @@ export interface IPseudoGeometry {
   vertices: { [projectionName: string]: ArrayBuffer };
 }
 
-export interface IPseudoGeometryPremises {
-  withLimits: IPseudoGeometry;
-  withoutLimits: IPseudoGeometry;
-}
-
-export interface ILookupPseudoGeometryPremises {
-  [year: string]: IPseudoGeometryPremises;
-}
-
-export interface ILookupCityPseudoGeometryPremises extends IEndCityLine {
-  transports: { [transport: string]: ILookupPseudoGeometryPremises };
-  otherProperties: any;
-}
-
-export interface IDataConeGeneratorIn {
-  lookup: ILookupCityTransport;
-  bboxes: IBBox[];
-  distance: number;
-}
-
-export type MessageConeShaderType = 'init' | 'coneStep' | 'year' | 'limits' | 'projectionBegin' | 'other' | 'information';
-export interface IDataMessageConeShader {
-  cities?: { [cityCode: string]: NEDLocal };
-  bboxes?: IBBox[];
-  cones?: { cityCode: string, alphas: ILookupAlpha }[];
-  conestep?: number;
-  year?: string;
-  limits?: ArrayBuffer;
-  uniforms?: { [x: string]: number | ArrayBufferView };
-}
-export interface IMessageConeShader {
-  action: MessageConeShaderType;
-  data: IDataMessageConeShader;
-}
-export interface ITypeExtrusion {
-  none: number;
-  extruded: number;
-}
 export type IMergerState = 'missing' | 'ready' | 'pending' | 'complete';
 
 export type configurationObservableEvt =
@@ -256,9 +193,6 @@ export type ShaderTypes = 'fragment' | 'vertex';
 export interface ILookupAndMaxSpeedAndLine {
   lookupCityTransport: ILookupCityTransport;
   lineData: ILookupLine;
-}
-export interface ILookupTransportPerYear {
-  [year: string]: string;
 }
 export interface IEndCityLine {
   cityCode: string | number;

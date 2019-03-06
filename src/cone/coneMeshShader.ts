@@ -85,10 +85,8 @@ function regenerateFromConeStep(): void {
   const step = CONFIGURATION.coneStep;
   let clocks: number[] = [];
   let index: number[] = [];
-  let x: number, y: number, ia: number, ib: number, iab: number, ibb: number;
+  let ia: number, ib: number, iab: number, ibb: number;
   for (let i = 0; i < CONFIGURATION.TWO_PI; i += step) {
-    x = Math.cos(i);
-    y = Math.sin(i);
     clocks.push(i);
   }
   clocks.push(-1);
