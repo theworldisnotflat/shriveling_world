@@ -447,11 +447,6 @@ export var reviver: any = <U>(_key: string, value: any): U | any => {
   return resultat;
 };
 
-reviver.constructors = {};
-reviver.constructors.Cartographic = Cartographic;
-reviver.constructors.Coordinate = Coordinate;
-reviver.constructors.NEDLocal = NEDLocal;
-
 export function matchingBBox(pos: Cartographic, bboxes: IBBox[]): Cartographic[][] {
   return bboxes.filter((bboxe) => pos.latitude >= bboxe.minLat && pos.latitude <= bboxe.maxLat &&
     pos.longitude >= bboxe.minLong && pos.longitude <= bboxe.maxLong && Cartographic.isInside(pos, bboxe.boundary))

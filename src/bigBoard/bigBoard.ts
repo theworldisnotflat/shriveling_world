@@ -1,20 +1,16 @@
 'use strict';
 import { CONFIGURATION } from '../common/configuration';
 import {
-  MeshBasicMaterial, DoubleSide, MeshPhongMaterial, PerspectiveCamera, MeshStandardMaterial,
-  Scene, WebGLRenderer, DirectionalLight, Fog,
-  AmbientLight, Mesh, LineBasicMaterial, PCFSoftShadowMap, PlaneBufferGeometry,
-  DirectionalLightHelper, Group, OrthographicCamera,
-  FontLoader, TextGeometry, TextureLoader, Vector3, OrbitControls, OBJExporter,
+  MeshBasicMaterial, DoubleSide, MeshPhongMaterial, PerspectiveCamera, Scene,
+  WebGLRenderer, DirectionalLight, Fog, AmbientLight, Mesh, LineBasicMaterial, PCFSoftShadowMap,
+  DirectionalLightHelper, Group, OrthographicCamera, FontLoader, TextGeometry, TextureLoader, Vector3,
+  OrbitControls, OBJExporter,
 } from 'three';
 import { ConeBoard } from '../cone/coneBoard';
 import { CountryBoard } from '../country/countryBoard';
 import { Merger } from './merger';
 import { DragnDrop } from '../common/utils';
-import {
-  IMergerState, ISumUpCriteria, ILookupAndMaxSpeedAndLine, ICriterias,
-  IListFile,
-} from '../definitions/project';
+import { IMergerState, ISumUpCriteria, ILookupAndMaxSpeedAndLine, ICriterias, IListFile } from '../definitions/project';
 import { PseudoCone } from '../cone/base';
 import { CountryMeshShader } from '../country/countryMeshShader';
 import * as dat from 'dat.gui';
@@ -24,11 +20,11 @@ import * as kit from '@brunoimbrizi/controlkit';
 declare module 'three' {
   export class OrbitControls {
     public object: OrthographicCamera | PerspectiveCamera;
-    constructor(camera: OrthographicCamera | PerspectiveCamera, render: HTMLCanvasElement)
+    constructor(camera: OrthographicCamera | PerspectiveCamera, render: HTMLCanvasElement);
     public update(): void;
   }
   export class OBJExporter {
-    constructor()
+    constructor();
     public parse(group: Group): any;
   }
 }
@@ -41,10 +37,18 @@ declare let Stats: any;
  */
 function prepareConfiguration(): void {
   if (CONFIGURATION.COUNTRY_MATERIAL === undefined) {
-    CONFIGURATION.highLitedMaterial = new MeshBasicMaterial(
-      { color: 0xffff00, transparent: true, opacity: 0.5, side: DoubleSide });
+    CONFIGURATION.highLitedMaterial = new MeshBasicMaterial({
+      color: 0xffff00,
+      transparent: true,
+      opacity: 0.5,
+      side: DoubleSide,
+    });
     let earthMaterial = new MeshBasicMaterial({
-      opacity: 0.8, depthTest: true, depthWrite: true, side: DoubleSide, transparent: true,
+      opacity: 0.8,
+      depthTest: true,
+      depthWrite: true,
+      side: DoubleSide,
+      transparent: true,
     });
     earthMaterial.map = new TextureLoader().load(CONFIGURATION.COUNTRY_TEXTURES.map);
     earthMaterial.specularMap = new TextureLoader().load(CONFIGURATION.COUNTRY_TEXTURES.specularMap);
@@ -61,11 +65,15 @@ function prepareConfiguration(): void {
     });
     // (<MeshPhongMaterial>CONFIGURATION.BASIC_CONE_MATERIAL).map = new TextureLoader().load(CONFIGURATION.CONE_TEXTURE);
     CONFIGURATION.BASIC_LINE_MATERIAL = new LineBasicMaterial({
-      color: 0x1000ff, linewidth: .5, side: DoubleSide, transparent: true, opacity: 0.3,
+      color: 0x1000ff,
+      linewidth: 0.5,
+      side: DoubleSide,
+      transparent: true,
+      opacity: 0.3,
     });
     let loaderFont = new FontLoader();
     loaderFont.load('gentilis_regular.typeface.json', font => {
-      CONFIGURATION.TEXTGEOMETRYOPTIONS = {
+      CONFIGURATION.TEXT_GEOMETRY_OPTIONS = {
         font: font,
         size: 0.3,
         height: 1,
@@ -77,22 +85,8 @@ function prepareConfiguration(): void {
       };
     });
   }
-
 }
 let _filesData: IListFile[] = [];
-let _light = new DirectionalLight(0xefefff, 1.5); // (0xffffff, 5, 1000, 2);
-_light.castShadow = true;
-_light.shadow.mapSize.width = 512;  // default
-_light.shadow.mapSize.height = 512; // default
-_light.shadow.camera.near = 0.5;       // default
-_light.shadow.camera.far = 800;    // default
-
-// let  _light = new DirectionalLight( 0xefefff, 1.5 );
-_light.position.set(-1, -0.197, 0.377).normalize();
-
-let _light2 = new DirectionalLight(0xffefef, 1.5);
-
-let _ambient = new AmbientLight(0xffffff);
 
 let link = document.createElement('a');
 /**
@@ -125,17 +119,20 @@ export default class BigBoard {
    *
    * list of cones: a [[_cone]] corresponds to a city and a type of terrestrial transport
    */
-  private _cones: ConeBoard;
+  public helper: DirectionalLightHelper;
+  public light: DirectionalLight;
+  public ambient: AmbientLight;
+  public coneBoard: ConeBoard;
   /**
    * liste des pays générés depuis un fichier geojson
    */
-  private _countries: CountryBoard;
+  public countryBoard: CountryBoard;
+  // is orthographic camera
+  public orthographique: boolean;
   private _container: HTMLDivElement;
   private _stats: any;
   private _controls: OrbitControls;
 
-  // is orthographic camera
-  private orthographique: boolean;
   private _cameraO: OrthographicCamera;
   private _cameraP: PerspectiveCamera;
   //
@@ -147,7 +144,6 @@ export default class BigBoard {
   private _windowHalfX: number = window.innerWidth / 2;
   private _windowHalfY: number = window.innerHeight / 2;
   private _merger: Merger;
-  private _helper: DirectionalLightHelper;
 
   // noeud ajout nom Ville
   private _geometryText: Group;
@@ -158,9 +154,9 @@ export default class BigBoard {
     this._init();
     this.orthographique = true;
 
-    this._countries = new CountryBoard(this._scene, this._cameraO);
-    this._countries.show = true;
-    this._cones = new ConeBoard(this._scene, this._cameraO, this._countries, this._renderer);
+    this.countryBoard = new CountryBoard(this._scene, this._cameraO);
+    this.countryBoard.show = true;
+    this.coneBoard = new ConeBoard(this._scene, this._cameraO, this.countryBoard, this._renderer);
     CONFIGURATION.year = '2010';
     this._showCitiesName = true;
 
@@ -168,11 +164,11 @@ export default class BigBoard {
     this._animate();
   }
   /**
-  * Enable/Disable showCitiesName paramater in order to show/hide
-  * cities names
-  *
-  * @memberof BigBoard
-  */
+   * Enable/Disable showCitiesName paramater in order to show/hide
+   * cities names
+   *
+   * @memberof BigBoard
+   */
   public toggleShowCity(): void {
     this._showCitiesName = !this._showCitiesName;
   }
@@ -194,7 +190,7 @@ export default class BigBoard {
    * @memberof BigBoard
    */
   get scaleCountries(): number {
-    return this._countries.scale;
+    return this.countryBoard.scale;
   }
   /**
    * Setter : Update the value of scale parameter
@@ -202,7 +198,7 @@ export default class BigBoard {
    * @memberof BigBoard
    */
   set scaleCountries(value: number) {
-    this._countries.scale = value;
+    this.countryBoard.scale = value;
   }
 
   /**
@@ -211,7 +207,7 @@ export default class BigBoard {
    * @memberof BigBoard
    */
   get scaleCones(): number {
-    return this._cones.scale;
+    return this.coneBoard.scale;
   }
 
   /**
@@ -220,7 +216,7 @@ export default class BigBoard {
    * @memberof BigBoard
    */
   set scaleCones(value: number) {
-    this._cones.scale = value;
+    this.coneBoard.scale = value;
   }
 
   /**
@@ -229,14 +225,14 @@ export default class BigBoard {
    * @memberof BigBoard
    */
   get showCountries(): boolean {
-    return this._countries.show;
+    return this.countryBoard.show;
   }
   /**
    * Setter : Update the value of show paramater of contries parameter
    * @memberof BigBoard
    */
   set showCountries(value: boolean) {
-    this._countries.show = value;
+    this.countryBoard.show = value;
   }
 
   /**
@@ -245,7 +241,7 @@ export default class BigBoard {
    * @memberof BigBoard
    */
   get showCones(): boolean {
-    return this._cones.show;
+    return this.coneBoard.show;
   }
   /**
    * Setter : Update the value of show paramater of cones paramater
@@ -253,13 +249,13 @@ export default class BigBoard {
    * @memberof BigBoard
    */
   set showCones(value: boolean) {
-    this._cones.show = value;
+    this.coneBoard.show = value;
   }
   get lookupCountries(): ISumUpCriteria {
-    return this._countries.lookupCriterias;
+    return this.countryBoard.lookupCriterias;
   }
   get lookupCones(): ISumUpCriteria {
-    return this._cones.lookupCriterias;
+    return this.coneBoard.lookupCriterias;
   }
 
   /**
@@ -268,7 +264,7 @@ export default class BigBoard {
    * @memberof BigBoard
    */
   get withLimits(): boolean {
-    return this._cones.withLimits;
+    return this.coneBoard.withLimits;
   }
   /**
    * Setter : update the withlimits paramater of the cones paramater
@@ -276,16 +272,16 @@ export default class BigBoard {
    * @memberof BigBoard
    */
   set withLimits(value: boolean) {
-    this._cones.withLimits = value;
+    this.coneBoard.withLimits = value;
   }
 
   /**
-   * Getter : Get the current state of the merger
-   * @returns missing || ready || complete || pending
-   * @readonly
-   * @type {IMergerState}
-   * @memberof BigBoard
-   */
+    * Getter : Get the current state of the merger
+    * @returns missing || ready || complete || pending
+    * @readonly
+    * @type {IMergerState}
+    * @memberof BigBoard
+    */
   get state(): IMergerState {
     return this._merger.state;
   }
@@ -295,18 +291,18 @@ export default class BigBoard {
    * @memberof BigBoard
    */
   public cleanCountries(): void {
-    this._countries.clean();
+    this.countryBoard.clean();
   }
 
   public addCountries(geoJson: any): void {
-    this._countries.add(geoJson);
+    this.countryBoard.add(geoJson);
   }
   /**
    * @see coneBoard :  cleanCones method
    * @memberof BigBoard
    */
   public cleanCones(): void {
-    this._cones.clean();
+    this.coneBoard.clean();
   }
 
   /**
@@ -316,7 +312,7 @@ export default class BigBoard {
    * @memberof BigBoard
    */
   public addCones(lookup: ILookupAndMaxSpeedAndLine): void {
-    this._cones.add(lookup);
+    this.coneBoard.add(lookup);
   }
 
   /**
@@ -328,7 +324,7 @@ export default class BigBoard {
    * @memberof BigBoard
    */
   public getCountryByMouse(event: MouseEvent, highLight: boolean = false): CountryMeshShader {
-    return this._countries.getMeshByMouse(event, highLight);
+    return this.countryBoard.getMeshByMouse(event, highLight);
   }
 
   /**
@@ -340,7 +336,7 @@ export default class BigBoard {
    * @memberof BigBoard
    */
   public getConeByMouse(event: MouseEvent, highLight: boolean = false): PseudoCone {
-    return this._cones.getMeshByMouse(event, highLight);
+    return this.coneBoard.getMeshByMouse(event, highLight);
   }
 
   /**
@@ -351,7 +347,7 @@ export default class BigBoard {
    * @memberof BigBoard
    */
   public highLightCountries(criterias: ICriterias, light: boolean = true): void {
-    this._countries.highLight(criterias, light);
+    this.countryBoard.highLight(criterias, light);
   }
 
   /**
@@ -362,7 +358,7 @@ export default class BigBoard {
    * @memberof BigBoard
    */
   public highLightCones(criterias: ICriterias, light: boolean = true): void {
-    this._cones.highLight(criterias, light);
+    this.coneBoard.highLight(criterias, light);
   }
 
   /**
@@ -373,7 +369,7 @@ export default class BigBoard {
    * @memberof BigBoard
    */
   public setLimits(criterias: ICriterias, limit: boolean): void {
-    this._cones.setLimits(criterias, limit);
+    this.coneBoard.setLimits(criterias, limit);
   }
 
   /**
@@ -384,7 +380,7 @@ export default class BigBoard {
    * @memberof BigBoard
    */
   public showCountriesCriterias(criterias: ICriterias, state: boolean): void {
-    this._countries.showCriterias(criterias, state);
+    this.countryBoard.showCriterias(criterias, state);
   }
 
   /**
@@ -395,19 +391,19 @@ export default class BigBoard {
    * @memberof BigBoard
    */
   public showConesCriterias(criterias: ICriterias, state: boolean): void {
-    this._cones.showCriterias(criterias, state);
+    this.coneBoard.showCriterias(criterias, state);
   }
 
   /**
    * Get a contryMeshCollection with all contries verifying 'criterias'
- * @param {ICriterias} criterias
+   * @param {ICriterias} criterias
    * @returns {CountryMeshShader[]}
    * @memberof BigBoard
    */
   public getCountries(criterias: ICriterias): CountryMeshShader[] {
     let resultat: CountryMeshShader[] = [];
-    if (this._countries.show === true) {
-      resultat = this._countries.searchMesh(criterias);
+    if (this.countryBoard.show === true) {
+      resultat = this.countryBoard.searchMesh(criterias);
     }
     return resultat;
   }
@@ -420,8 +416,8 @@ export default class BigBoard {
    */
   public getCones(criterias: ICriterias): PseudoCone[] {
     let resultat: PseudoCone[] = [];
-    if (this._cones.show === true) {
-      resultat = this._cones.searchMesh(criterias);
+    if (this.coneBoard.show === true) {
+      resultat = this.coneBoard.searchMesh(criterias);
     }
     return resultat;
   }
@@ -433,7 +429,7 @@ export default class BigBoard {
    * @memberof BigBoard
    */
   public extrude(criterias: ICriterias, value?: number): void {
-    this._countries.extrude(criterias, value);
+    this.countryBoard.extrude(criterias, value);
   }
   /**
    * Show Cities name
@@ -460,9 +456,8 @@ export default class BigBoard {
   }
 
   /**
-   * Update all the town which will be displayed regarding the populuation threeshold paramater
-   * @param option [description]
-   */
+    * Update all the town which will be displayed regarding the populuation threeshold paramater
+    */
   public updateCityName(): void {
     if (this._merger.state !== 'complete') {
       return;
@@ -473,17 +468,21 @@ export default class BigBoard {
     }
     for (var j = 0; j < this.getMergerI.Cities.length / 2; j++) {
       var obj = JSON.parse(JSON.stringify(this.getMergerI.Cities[j]));
-      var pop = JSON.parse(JSON.stringify(
-        this._merger.mergedData.lookupCityTransport[this.getMergerI.Cities[j].cityCode]
-          .cityProperties.populations));
+      var pop = JSON.parse(
+        JSON.stringify(
+          this._merger.mergedData.lookupCityTransport[this.getMergerI.Cities[j].cityCode].cityProperties
+            .populations));
       var population = pop.pop2020;
       if (population > this._populations) {
-        var geometry = new TextGeometry(obj.urbanAgglomeration, CONFIGURATION.TEXTGEOMETRYOPTIONS);
+        var geometry = new TextGeometry(obj.urbanAgglomeration, CONFIGURATION.TEXT_GEOMETRY_OPTIONS);
         mesh = new Mesh(geometry, CONFIGURATION.BASIC_TEXT_MATERIAL);
-        let cart = this._merger.mergedData.lookupCityTransport[this.getMergerI.Cities[j].cityCode].referential.cartoRef;
-        let x = - CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.cos(cart.latitude * 0.95) * Math.cos(cart.longitude);
+        let cart = this._merger.mergedData.lookupCityTransport[this.getMergerI.Cities[j].cityCode].referential
+          .cartoRef;
+        let x =
+          -CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.cos(cart.latitude * 0.95) * Math.cos(cart.longitude);
         let y = CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.sin(cart.latitude * 0.95);
-        let z = CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.cos(cart.latitude * 0.95) * Math.sin(cart.longitude);
+        let z =
+          CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.cos(cart.latitude * 0.95) * Math.sin(cart.longitude);
         this._geometryText.add(mesh);
         mesh.position.set(x, y, z);
         mesh.lookAt(new Vector3(x * 2, y * 2, z * 2));
@@ -495,10 +494,10 @@ export default class BigBoard {
   }
 
   /**
-   * Initalize the scene
-   * @private
-   * @memberof BigBoard
-   */
+    * Initalize the scene
+    * @private
+    * @memberof BigBoard
+    */
   private _init(): void {
     this._container = document.createElement('div');
     document.body.appendChild(this._container);
@@ -509,7 +508,12 @@ export default class BigBoard {
     this._container.appendChild(this._stats.domElement);
     this._cameraP = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 15000);
     this._cameraO = new OrthographicCamera(
-      -this._windowHalfX, this._windowHalfX, this._windowHalfY, -this._windowHalfY, 1, 2000);
+      -this._windowHalfX,
+      this._windowHalfX,
+      this._windowHalfY,
+      -this._windowHalfY,
+      1,
+      2000);
     this._cameraO.position.set(0, 0, 500);
     this._cameraP.position.set(0, 0, 500);
     this._populations = 0;
@@ -523,15 +527,27 @@ export default class BigBoard {
     this._scene.fog = new Fog(0x000000, 1, 15000);
     this._geometryText = new Group();
 
-    _light.position.set(1, 1, 1);
-    _light2.position.set(-1, -1, -1);
-    this._scene.add(_light);
-    this._scene.add(_light2);
+    this.light = new DirectionalLight(0xefefff, 1.5); // (0xffffff, 5, 1000, 2);
+    this.light.castShadow = true;
+    this.light.shadow.mapSize.width = 512; // default
+    this.light.shadow.mapSize.height = 512; // default
+    this.light.shadow.camera.near = 0.5; // default
+    this.light.shadow.camera.far = 800; // default
 
-    this._helper = new DirectionalLightHelper(_light);
-    this._scene.add(this._helper);
+    // let  that.light = new DirectionalLight( 0xefefff, 1.5 );
+    this.light.position.set(-1, -0.197, 0.377).normalize();
 
-    this._scene.add(_ambient);
+    this.ambient = new AmbientLight(0xffffff);
+    this.light.position.set(1, 1, 1);
+    const directionalLight = new DirectionalLight(0xffefef, 1.5);
+    directionalLight.position.set(-1, -1, -1);
+    this._scene.add(this.light);
+    this._scene.add(directionalLight);
+
+    this.helper = new DirectionalLightHelper(this.light);
+    this._scene.add(this.helper);
+
+    this._scene.add(this.ambient);
     this._scene.add(this._geometryText);
 
     this._renderer = new WebGLRenderer({ antialias: true });
@@ -542,17 +558,18 @@ export default class BigBoard {
     this._renderer.setPixelRatio(window.devicePixelRatio);
     this._renderer.setSize(window.innerWidth, window.innerHeight);
     // this._renderer.sortObjects = false;
-    let planeGeometry = new PlaneBufferGeometry(1000, 1000, 32, 32);
-    let planeMaterial = new MeshStandardMaterial({ color: 0x00ff00 });
-    let plane = new Mesh(planeGeometry, planeMaterial);
-    plane.position.z = -200;
-    plane.receiveShadow = true;
+    // let planeGeometry = new PlaneBufferGeometry(1000, 1000, 32, 32);
+    // let planeMaterial = new MeshStandardMaterial({ color: 0x00ff00 });
+    // let plane = new Mesh(planeGeometry, planeMaterial);
+    // plane.position.z = -200;
+    // plane.receiveShadow = true;
     // plan vert
     // this._scene.add(plane);
     this._container.appendChild(this._renderer.domElement);
     this._controls = new OrbitControls(this._cameraO, this._renderer.domElement);
     window.addEventListener(
-      'resize', () => {
+      'resize',
+      () => {
         this._windowHalfX = window.innerWidth / 2;
         this._windowHalfY = window.innerHeight / 2;
 
@@ -594,8 +611,8 @@ export default class BigBoard {
     //     var cloned = this._countries.countryMeshCollection[i];
     //     group.add(cloned);
     // }
-    this._cones.coneMeshCollection.forEach(cone => groupCone.add(cone));
-    this._cones.lineCollection.forEach(line => groupLine.add(line));
+    this.coneBoard.coneMeshCollection.forEach(cone => groupCone.add(cone));
+    this.coneBoard.lineCollection.forEach(line => groupLine.add(line));
     let blobCone = new Blob([exporter.parse(groupCone)], { type: 'text/plain;charset=utf-8' });
     save(blobCone, 'sceneCones.obj');
     let blobLine = new Blob([exporter.parse(groupLine)], { type: 'text/plain;charset=utf-8' });
@@ -622,18 +639,25 @@ export default class BigBoard {
     CONFIGURATION.tick();
   }
   /**
-  * initInteraction : Initialize GUI
-  * @private
-  * @memberof BigBoard
-  */
+   * initInteraction : Initialize GUI
+   * @private
+   * @memberof BigBoard
+   */
   private initInteraction(): void {
+    // container, merger
     const gui = new dat.GUI();
+    const that = this;
     let conf = {
       coneStep: CONFIGURATION.coneStep * CONFIGURATION.rad2deg,
       year: parseInt(<string>CONFIGURATION.year, 10),
       projection: {
-        aucun: 0, equirectangulaire: 1, Mercator: 2, Winkel: 3, Eckert: 4,
-        'Van Der Grinten': 5, 'conic equidistant': 6,
+        aucun: 0,
+        equirectangulaire: 1,
+        Mercator: 2,
+        Winkel: 3,
+        Eckert: 4,
+        'Van Der Grinten': 5,
+        'conic equidistant': 6,
       },
       'type de transport': '',
       'couleur cones': '#' + (<any>CONFIGURATION.BASIC_CONE_MATERIAL).color.getHex().toString(16),
@@ -641,45 +665,46 @@ export default class BigBoard {
       'couleur des lignes': '#' + CONFIGURATION.BASIC_LINE_MATERIAL.color.getHex().toString(16),
       'couleur du texte': '#' + CONFIGURATION.BASIC_TEXT_MATERIAL.color.getHex().toString(16),
       'transparence des lignes': CONFIGURATION.BASIC_LINE_MATERIAL.opacity,
-      'couleur lumière': '#' + _light.color.getHex().toString(16), // _light to parameter
-      'intensity': _light.intensity, // _light to parameter
-      'couleur ambient': '#' + _ambient.color.getHex().toString(16),  // _ambient to parameter
-      'longitude': CONFIGURATION.referenceEquiRectangular.longitude,
-      'latitude': CONFIGURATION.referenceEquiRectangular.latitude,
-      'hauteur': CONFIGURATION.referenceEquiRectangular.height,
+      'couleur lumière': '#' + that.light.color.getHex().toString(16),
+      intensity: that.light.intensity,
+      'couleur ambient': '#' + that.ambient.color.getHex().toString(16),
+      longitude: CONFIGURATION.referenceEquiRectangular.longitude,
+      latitude: CONFIGURATION.referenceEquiRectangular.latitude,
+      hauteur: CONFIGURATION.referenceEquiRectangular.height,
       'parallèle standard 1': CONFIGURATION.standardParallel1 * CONFIGURATION.rad2deg,
       'parallèle standard 2': CONFIGURATION.standardParallel2 * CONFIGURATION.rad2deg,
       'with limits': true,
-      'exportCountry': this.orthographique,
+      exportCountry: that.orthographique,
     };
 
-    let that = this;
     // light
     let lightFolder = gui.addFolder('lumière');
-    lightFolder.add(_ambient, 'intensity', 0, 5, 0.01).name('intensité ambiante');
+    lightFolder.add(that.ambient, 'intensity', 0, 5, 0.01).name('intensité ambiante');
     lightFolder.addColor(conf, 'couleur lumière').onChange((v: string) => {
       let color = parseInt(v.replace('#', ''), 16);
-      _light.color.setHex(color);
-      that._helper.color = color; // _helper to parameter
-      that._helper.update();
+      that.light.color.setHex(color);
+      that.helper.color = color;
+      that.helper.update();
     });
     lightFolder.addColor(conf, 'couleur ambient').onChange((v: string) => {
       let color = parseInt(v.replace('#', ''), 16);
-      _ambient.color.setHex(color);
+      that.ambient.color.setHex(color);
     });
-    lightFolder.add(conf, 'intensity', 0, 5, 0.01).name('intensité lumière').onChange((v: number) => {
-      _light.intensity = v;
-      that._helper.update();
+    lightFolder
+      .add(conf, 'intensity', 0, 5, 0.01)
+      .name('intensité lumière')
+      .onChange((v: number) => {
+        that.light.intensity = v;
+        that.helper.update();
+      });
 
-    });
-
-    lightFolder.add(_light.position, 'x', -100, 100, 1).onChange(() => that._helper.update());
-    lightFolder.add(_light.position, 'y', -100, 100, 1).onChange(() => that._helper.update());
-    lightFolder.add(_light.position, 'z', -100, 100, 1).onChange(() => that._helper.update());
-    lightFolder.add(_light.shadow.mapSize, 'width', 0, 1000).step(1);
-    lightFolder.add(_light.shadow.mapSize, 'height', 0, 1000).step(1);
-    lightFolder.add(_light.shadow.camera, 'near', 0, 1000).step(0.5);
-    lightFolder.add(_light.shadow.camera, 'far', 0, 1000).step(1);
+    lightFolder.add(that.light.position, 'x', -100, 100, 1).onChange(() => that.helper.update());
+    lightFolder.add(that.light.position, 'y', -100, 100, 1).onChange(() => that.helper.update());
+    lightFolder.add(that.light.position, 'z', -100, 100, 1).onChange(() => that.helper.update());
+    lightFolder.add(that.light.shadow.mapSize, 'width', 0, 1000).step(1);
+    lightFolder.add(that.light.shadow.mapSize, 'height', 0, 1000).step(1);
+    lightFolder.add(that.light.shadow.camera, 'near', 0, 1000).step(0.5);
+    lightFolder.add(that.light.shadow.camera, 'far', 0, 1000).step(1);
 
     // generalities
     let generalFolder = gui.addFolder('Généralités');
@@ -700,49 +725,73 @@ export default class BigBoard {
     refLat.onChange(changeReference);
     let refHeight = referenceFolder.add(conf, 'hauteur', -radius + 10, radius + 10).step(1000);
     refHeight.onChange(changeReference);
-    referenceFolder.add(conf, 'parallèle standard 1', -90, 90, 0.1)
-      .onChange((v: number) => CONFIGURATION.standardParallel1 = v * CONFIGURATION.deg2rad);
-    referenceFolder.add(conf, 'parallèle standard 2', -90, 90, 0.1)
-      .onChange((v: number) => CONFIGURATION.standardParallel2 = v * CONFIGURATION.deg2rad);
+    referenceFolder
+      .add(conf, 'parallèle standard 1', -90, 90, 0.1)
+      .onChange((v: number) => (CONFIGURATION.standardParallel1 = v * CONFIGURATION.deg2rad));
+    referenceFolder
+      .add(conf, 'parallèle standard 2', -90, 90, 0.1)
+      .onChange((v: number) => (CONFIGURATION.standardParallel2 = v * CONFIGURATION.deg2rad));
     projectionFolder.add(CONFIGURATION, 'projectionInit', conf.projection).name('projection initiale');
     projectionFolder.add(CONFIGURATION, 'projectionEnd', conf.projection).name('projection finale');
-    projectionFolder.add(CONFIGURATION, 'percentProjection', 0, 100).step(1).name('transition projection');
+    projectionFolder
+      .add(CONFIGURATION, 'percentProjection', 0, 100)
+      .step(1)
+      .name('transition projection');
     let annees = generalFolder.add(conf, 'year', 1930, 2030).step(1);
-    annees.onChange((v: string | number) => CONFIGURATION.year = v);
+    annees.onChange((v: string | number) => (CONFIGURATION.year = v));
 
     // toggle Camera Orthograpgic/Perspectiv View
     let swapView = projectionFolder.add(that, 'orthographique');
-    swapView.onChange(() => that.orthographique = !that.orthographique);
-    generalFolder.add(that, '_showCitiesName').name('Show Cities name').onChange(that.showCitiesName.bind(that)); // bigboard to parameter
+    swapView.onChange(() => (that.orthographique = !that.orthographique));
+    generalFolder
+      .add(that, '_showCitiesName')
+      .name('Show Cities name')
+      .onChange(() => that.showCitiesName()); // bigboard to parameter
 
     // cones
     let coneFolder = gui.addFolder('Cones');
 
-    coneFolder.add(conf, 'coneStep', 1, 360).step(1).
-      onChange((value: number) => CONFIGURATION.coneStep = value * CONFIGURATION.deg2rad);
-    coneFolder.add(that, 'withLimits').onChange((value: boolean) => conf['with limits'] = value);
-    coneFolder.add(that._cones, 'opacity', 0, 1).step(0.01).name('opacité'); // _cones en protected
+    coneFolder
+      .add(conf, 'coneStep', 1, 360)
+      .step(1)
+      .onChange((value: number) => (CONFIGURATION.coneStep = value * CONFIGURATION.deg2rad));
+    coneFolder.add(that, 'withLimits').onChange((value: boolean) => (conf['with limits'] = value));
+    coneFolder
+      .add(that.coneBoard, 'opacity', 0, 1)
+      .step(0.01)
+      .name('opacité');
     let terresterialFolder = coneFolder.addFolder('configurations spécifiques');
     let terrestrialControllersList: dat.GUI[] = [];
     let flagTransportDone = false;
 
     // lines
     let aerialFolder = gui.addFolder('Lignes');
-    aerialFolder.add(CONFIGURATION, 'pointsPerLine', 0, 200).step(1).name('nombre de points');
+    aerialFolder
+      .add(CONFIGURATION, 'pointsPerLine', 0, 200)
+      .step(1)
+      .name('nombre de points');
     let aerialControllersList: dat.GUI[] = [];
 
     // pays /mise en exergue avec listen?
     // countries / highlight with listen?
     let countryFolder = gui.addFolder('pays');
-    countryFolder.add(that._countries, 'show');
-    countryFolder.add(that._countries, 'opacity', 0, 1).step(0.01).name('opacité');
-    countryFolder.add(that._countries, 'extruded', -100, 100).step(1);
-    countryFolder.add(conf, 'exportCountry').name('Export avec continent').onChange(() => that.orthographique = !that.orthographique);
+    countryFolder.add(that.countryBoard, 'show');
+    countryFolder
+      .add(that.countryBoard, 'opacity', 0, 1)
+      .step(0.01)
+      .name('opacité');
+    countryFolder.add(that.countryBoard, 'extruded', -100, 100).step(1);
+    countryFolder
+      .add(conf, 'exportCountry')
+      .name('Export avec continent')
+      .onChange(() => (that.orthographique = !that.orthographique));
     let countryControllersList: dat.GUI[] = [];
     DragnDrop(
-      that._container, list => { // container en paramètre
+      that._container,
+      list => {
+        // container en paramètre
         if (_filesData.length === 0) {
-          that._countries.ready = false;
+          that.countryBoard.ready = false;
         }
         _filesData.push(...list);
         let json: string;
@@ -751,7 +800,7 @@ export default class BigBoard {
           if (name.endsWith('.geojson')) {
             json = item.text;
           } else if (name.endsWith('.csv')) {
-            that._merger.add(item.text); // merger en paramètre
+            that._merger.add(item.text);
             if (that.state === 'ready') {
               that._merger.merge();
             }
@@ -759,14 +808,15 @@ export default class BigBoard {
         });
         Promise.all([
           new Promise(resolve => {
-            if (that._countries.ready === false && json !== undefined) {
-              that._countries.add(JSON.parse(json)).then(() => {
+            if (that.countryBoard.ready === false && json !== undefined) {
+              that.countryBoard.add(JSON.parse(json)).then(() => {
                 while (countryControllersList.length > 0) {
                   let subGui = countryControllersList.pop();
                   countryFolder.removeFolder(subGui);
                 }
                 let synonymes: string[] = [];
-                that._countries.countryMeshCollection.sort((a, b) => a.mainName.localeCompare(b.mainName))
+                that.countryBoard.countryMeshCollection
+                  .sort((a, b) => a.mainName.localeCompare(b.mainName))
                   .forEach(country => {
                     let countryName = country.mainName;
                     let i = -1;
@@ -776,9 +826,15 @@ export default class BigBoard {
                     }
                     synonymes.push(countryName);
                     let folder = countryFolder.addFolder(countryName);
-                    folder.add(country, 'extruded', -100, 100).step(1).listen();
+                    folder
+                      .add(country, 'extruded', -100, 100)
+                      .step(1)
+                      .listen();
                     folder.add(country, 'visible').listen();
-                    folder.add(country.material, 'opacity', 0, 1).step(0.01).listen();
+                    folder
+                      .add(country.material, 'opacity', 0, 1)
+                      .step(0.01)
+                      .listen();
                     countryControllersList.push(folder);
                   });
                 resolve();
@@ -801,9 +857,10 @@ export default class BigBoard {
                   let opacity = <number>coneOpacity.getValue();
                   let color = parseInt(coneColor.getValue().replace('#', ''), 16);
                   let limits = <boolean>coneLimits.getValue();
-                  that._cones.coneMeshCollection.filter((cone) => transportName === cone.transportName)
-                    .forEach((cone) => {
-                      let material = (<MeshPhongMaterial>cone.material);
+                  that.coneBoard.coneMeshCollection
+                    .filter(cone => transportName === cone.transportName)
+                    .forEach(cone => {
+                      let material = <MeshPhongMaterial>cone.material;
                       material.color.setHex(color);
                       material.opacity = opacity;
                       cone.withLimits = limits;
@@ -811,7 +868,9 @@ export default class BigBoard {
                 }
                 let coneColor = folder.addColor(conf, 'couleur cones').name('couleur');
                 coneColor.onChange(colorListener);
-                let coneOpacity = folder.add(conf, 'transparence des cônes', 0, 1, .01).name('transparence');
+                let coneOpacity = folder
+                  .add(conf, 'transparence des cônes', 0, 1, 0.01)
+                  .name('transparence');
                 coneOpacity.onChange(colorListener);
                 let coneLimits = folder.add(conf, 'with limits').listen();
                 coneLimits.onChange(colorListener);
@@ -827,37 +886,46 @@ export default class BigBoard {
                 function lineListener(): void {
                   let opacity = <number>lineOpacity.getValue();
                   let color = parseInt(lineColor.getValue().replace('#', ''), 16);
-                  that._cones.lineCollection.filter((line) => transportName === line.transportName)
-                    .forEach((line) => {
-                      let material = (<LineBasicMaterial>line.material);
+                  that.coneBoard.lineCollection
+                    .filter(line => transportName === line.transportName)
+                    .forEach(line => {
+                      let material = <LineBasicMaterial>line.material;
                       material.color.setHex(color);
                       material.opacity = opacity;
                     });
                 }
                 let lineColor = folder.addColor(conf, 'couleur des lignes').name('couleur');
                 lineColor.onChange(lineListener);
-                let lineOpacity = folder.add(conf, 'transparence des lignes', 0, 1, .01).name('transparence');
+                let lineOpacity = folder
+                  .add(conf, 'transparence des lignes', 0, 1, 0.01)
+                  .name('transparence');
                 lineOpacity.onChange(lineListener);
               });
             }
             resolve();
-          })]).then(() => {
-            if (that._countries.ready === true && that.state === 'complete') {
-              flagTransportDone = false;
-              annees.min(that._merger.minYear).max(that._merger.maxYear).updateDisplay();
-              that._cones.add(that._merger.datas);
-              // this._merger.clear();
-              let sizeText = generalFolder.add(that, '_sizetext', 0, 2).name('taille du texte').step(0.1);
-              sizeText.onChange(that.rescaleText.bind(that));
-              generalFolder.addColor(conf, 'couleur du texte').onChange((v: string) => {
-                let color = parseInt(v.replace('#', ''), 16);
-                CONFIGURATION.BASIC_TEXT_MATERIAL.color.setHex(color);
-                that.updateCityName.bind(that);
-              });
-              _filesData = [];
-
-            }
-          });
+          }),
+        ]).then(() => {
+          if (that.countryBoard.ready === true && that.state === 'complete') {
+            flagTransportDone = false;
+            annees
+              .min(that._merger.minYear)
+              .max(that._merger.maxYear)
+              .updateDisplay();
+            that.coneBoard.add(that._merger.datas);
+            // this._merger.clear();
+            let sizeText = generalFolder
+              .add(that, '_sizetext', 0, 2)
+              .name('taille du texte')
+              .step(0.1);
+            sizeText.onChange(() => that.rescaleText());
+            generalFolder.addColor(conf, 'couleur du texte').onChange((v: string) => {
+              let color = parseInt(v.replace('#', ''), 16);
+              CONFIGURATION.BASIC_TEXT_MATERIAL.color.setHex(color);
+              that.updateCityName();
+            });
+            _filesData = [];
+          }
+        });
       },
       that);
   }

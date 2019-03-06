@@ -37,7 +37,7 @@ let _BASIC_TEXT_MATERIAL: MeshBasicMaterial;
 let _BASIC_LINE_MATERIAL: LineBasicMaterial;
 let _pointsPerLine: number = 0;
 let _SIZE_TEXT: number;
-let _TEXTGEOMETRYOPTIONS: TextGeometryParameters;
+let _TEXT_GEOMETRY_OPTIONS: TextGeometryParameters;
 
 let _extrudedHeight: number = 0;
 let _hatHeight: number = 0;
@@ -92,8 +92,8 @@ export const CONFIGURATION = {
   get OVER_TWO_PI(): number { return _OVER_TWO_PI; },
   get highLitedMaterial(): MeshBasicMaterial { return _highLitedMaterial; },
   set highLitedMaterial(value: MeshBasicMaterial) { _highLitedMaterial = value; },
-  get TEXTGEOMETRYOPTIONS(): TextGeometryParameters { return _TEXTGEOMETRYOPTIONS; },
-  set TEXTGEOMETRYOPTIONS(value: TextGeometryParameters) { _TEXTGEOMETRYOPTIONS = value; },
+  get TEXT_GEOMETRY_OPTIONS(): TextGeometryParameters { return _TEXT_GEOMETRY_OPTIONS; },
+  set TEXT_GEOMETRY_OPTIONS(value: TextGeometryParameters) { _TEXT_GEOMETRY_OPTIONS = value; },
   get heightRatio(): number { return _heightRatio; },
   set heightRatio(value: number) {
     _heightRatio = value;
