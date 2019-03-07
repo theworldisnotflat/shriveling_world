@@ -243,6 +243,10 @@ export class LineMeshShader extends Line {
         return this._transportName;
     }
 
+    public get getOpening(): number {
+        return this.opening;
+    }
+
     public setGeometry(positions: Float32Array): void {
         let bufferedGeometry = <BufferGeometry>this.geometry;
         if (_linesWithoutDisplay.indexOf(this) === -1) {

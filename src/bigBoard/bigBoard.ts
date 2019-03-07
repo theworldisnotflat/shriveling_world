@@ -613,29 +613,31 @@ export default class BigBoard {
    * @private
    * @memberof BigBoard
    */
-  private exporterOBJ(): void {
+ private exporterOBJ(): void {
     let exporter = new OBJExporter();
     alert('Export begins...');
     let groupCone = new Group();
-    let groupLine = new Group();
-    // for (var i = 0; i < this._countries.countryMeshCollection.length; ++i) {
-    //     var cloned = this._countries.countryMeshCollection[i];
-    //     group.add(cloned);
-    // }
-    for (let j = 0; j < this._cones.coneMeshCollection.length; ++j) {
-      var clonedCone = this._cones.coneMeshCollection[j];
-      var clonedLine = this._cones.lineCollection[j];
-      groupCone.add(clonedCone);
-      groupLine.add(clonedLine);
-    }
-    let blobCone = new Blob([exporter.parse(clonedCone)], { type: 'text/plain;charset=utf-8' });
+    let groupLineCourt = new Group();
+    let groupLineLong = new Group();
+    this._cones.coneMeshCollection.forEach(cone => groupCone.add(cone));
+    this._cones.lineCollection.forEach(line => {
+       if (line.getOpening <  2000 / ( CONFIGURATION.earthRadiusMeters / 1000)) {
+            groupLineCourt.add(line);
+       } else {
+            groupLineLong.add(line);
+       }
+    });
+    let blobCone = new Blob([exporter.parse(groupCone)], { type: 'text/plain;charset=utf-8' });
     save(blobCone, 'sceneCones.obj');
-    let blobLine = new Blob([exporter.parse(groupLine)], { type: 'text/plain;charset=utf-8' });
-    save(blobLine, 'sceneLines.obj');
-    this._scene.add(clonedCone);
-    this._scene.add(groupLine);
+    let blobLineCourt = new Blob([exporter.parse(groupLineCourt)], { type: 'text/plain;charset=utf-8' });
+    save(blobLineCourt, 'sceneLinesCourt.obj');
+    let blobLineLong = new Blob([exporter.parse(groupLineLong)], { type: 'text/plain;charset=utf-8' });
+    save(blobLineLong, 'sceneLinesLong.obj');
+    this._scene.add(groupCone);
+    this._scene.add(groupLineCourt);
+    this._scene.add(groupLineLong);
     alert('Export done');
-  }
+ }
 
   /**
    * animate : Animating and displaying the scene every frame
