@@ -238,28 +238,9 @@ export class LineMeshShader extends Line {
     (<Material>this.material).dispose();
   }
 
-<<<<<<< HEAD
-    public get getOpening(): number {
-        return this.opening;
-    }
-
-    public setGeometry(positions: Float32Array): void {
-        let bufferedGeometry = <BufferGeometry>this.geometry;
-        if (_linesWithoutDisplay.indexOf(this) === -1) {
-            let interleavedBuffer = (<InterleavedBufferAttribute>bufferedGeometry.getAttribute('position')).data;
-            interleavedBuffer.set(positions, 0);
-            interleavedBuffer.needsUpdate = true;
-            bufferedGeometry.computeBoundingSphere();
-            bufferedGeometry.setDrawRange(0, _width);
-        } else {
-            bufferedGeometry.setDrawRange(0, 0);
-        }
-    }
-=======
   public get transportName(): string {
     return this._transportName;
   }
->>>>>>> d609d5133265fc6f5d2b2380579395b989ffda9a
 
   public setGeometry(positions: Float32Array): void {
     let bufferedGeometry = <BufferGeometry>this.geometry;

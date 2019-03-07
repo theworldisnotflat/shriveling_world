@@ -35,7 +35,7 @@ let _COUNTRY_MATERIAL: Material;
 let _BASIC_CONE_MATERIAL: Material;
 let _BASIC_TEXT_MATERIAL: MeshBasicMaterial;
 let _BASIC_LINE_MATERIAL: LineBasicMaterial;
-let _pointsPerLine: number = 50;
+let _pointsPerLine: number = 0;
 let _SIZE_TEXT: number;
 let _TEXT_GEOMETRY_OPTIONS: TextGeometryParameters;
 
