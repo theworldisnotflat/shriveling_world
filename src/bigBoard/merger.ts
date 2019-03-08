@@ -5,6 +5,11 @@
  * the functions that must run each time a parameter is modified
  * are located in the respective files for cones and edges
  *
+ * The general achitecture of the project is:
+ * * merger with computing intensive functions used once
+ * * shaders with functionsfast to execute in interaction with the user
+ * * display conversions where final computation occurs, including geographical projections
+ *
  */
 'use strict';
 import * as Papa from 'papaparse';
