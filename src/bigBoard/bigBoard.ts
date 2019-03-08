@@ -9,13 +9,10 @@ import {
 import { ConeBoard } from '../cone/coneBoard';
 import { CountryBoard } from '../country/countryBoard';
 import { Merger } from './merger';
-import { DragnDrop } from '../common/utils';
-import { IMergerState, ISumUpCriteria, ILookupAndMaxSpeedAndLine, ICriterias, IListFile } from '../definitions/project';
+import { IMergerState, ISumUpCriteria, ILookupAndMaxSpeedAndLine, ICriterias } from '../definitions/project';
 import { PseudoCone } from '../cone/base';
 import { CountryMeshShader } from '../country/countryMeshShader';
-import * as dat from 'dat.gui';
-import * as kit from '@brunoimbrizi/controlkit';
-// import from '../definitions/controlKit';
+import { GUI } from './guiDAT';
 
 declare module 'three' {
   export class OrbitControls {
@@ -86,7 +83,6 @@ function prepareConfiguration(): void {
     });
   }
 }
-let _filesData: IListFile[] = [];
 
 let link = document.createElement('a');
 /**
@@ -136,13 +132,11 @@ export default class BigBoard {
   public countryBoard: CountryBoard;
   // is orthographic camera
   public orthographique: boolean;
-  private _container: HTMLDivElement;
   private _stats: any;
   private _controls: OrbitControls;
 
   private _cameraO: OrthographicCamera;
   private _cameraP: PerspectiveCamera;
-  //
   private _showCitiesName: boolean;
   private _populations: number;
   private _sizetext: number;
@@ -158,7 +152,7 @@ export default class BigBoard {
   constructor() {
     prepareConfiguration();
     this._merger = new Merger();
-    this._init();
+    let container = this._init();
     this.orthographique = true;
 
     this.countryBoard = new CountryBoard(this._scene, this._cameraO);
@@ -167,7 +161,8 @@ export default class BigBoard {
     CONFIGURATION.year = '2010';
     this._showCitiesName = true;
 
-    this.initInteraction();
+    // tslint:disable-next-line
+    new GUI(this, container, this._merger);
     this._animate();
   }
   /**
@@ -506,14 +501,14 @@ export default class BigBoard {
     * @private
     * @memberof BigBoard
     */
-  private _init(): void {
-    this._container = document.createElement('div');
-    document.body.appendChild(this._container);
+  private _init(): HTMLDivElement {
+    let container = document.createElement('div');
+    document.body.appendChild(container);
     this._stats = new Stats();
     this._stats.domElement.style.position = 'absolute';
     this._stats.domElement.style.bottom = '0px';
     this._stats.domElement.style.zIndex = 100;
-    this._container.appendChild(this._stats.domElement);
+    container.appendChild(this._stats.domElement);
     this._cameraP = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 15000);
     this._cameraO = new OrthographicCamera(
       -this._windowHalfX,
@@ -573,7 +568,7 @@ export default class BigBoard {
     // plane.receiveShadow = true;
     // plan vert
     // this._scene.add(plane);
-    this._container.appendChild(this._renderer.domElement);
+    container.appendChild(this._renderer.domElement);
     this._controls = new OrbitControls(this._cameraO, this._renderer.domElement);
     window.addEventListener(
       'resize',
@@ -599,6 +594,7 @@ export default class BigBoard {
     style.backgroundColor = 'red';
     document.body.appendChild(saveButton);
     saveButton.addEventListener('click', () => this.exporterOBJ());
+    return container;
   }
 
   /**
@@ -615,11 +611,10 @@ export default class BigBoard {
     let exporter = new OBJExporter();
     alert('Export begins...');
     let groupCone = new Group();
-<<<<<<< HEAD
     let groupLineCourt = new Group();
     let groupLineLong = new Group();
-    this._cones.coneMeshCollection.forEach(cone => groupCone.add(cone));
-    this._cones.lineCollection.forEach(line => {
+    this.coneBoard.coneMeshCollection.forEach(cone => groupCone.add(cone));
+    this.coneBoard.lineCollection.forEach(line => {
        if (line.getOpening <  2000 / ( CONFIGURATION.earthRadiusMeters / 1000)) {
             groupLineCourt.add(line);
        } else {
@@ -653,296 +648,5 @@ export default class BigBoard {
     this._controls.update();
     TWEEN.update();
     CONFIGURATION.tick();
-  }
-  /**
-   * initInteraction : Initialize GUI
-   * @private
-   * @memberof BigBoard
-   */
-  private initInteraction(): void {
-    // container, merger
-    const gui = new dat.GUI();
-    const that = this;
-    let conf = {
-      coneStep: CONFIGURATION.coneStep * CONFIGURATION.rad2deg,
-      year: parseInt(<string>CONFIGURATION.year, 10),
-      projection: {
-        aucun: 0,
-        equirectangulaire: 1,
-        Mercator: 2,
-        Winkel: 3,
-        Eckert: 4,
-        'Van Der Grinten': 5,
-        'conic equidistant': 6,
-      },
-      'type de transport': '',
-      'couleur cones': '#' + (<any>CONFIGURATION.BASIC_CONE_MATERIAL).color.getHex().toString(16),
-      'transparence des cônes': CONFIGURATION.BASIC_CONE_MATERIAL.opacity,
-      'couleur des lignes': '#' + CONFIGURATION.BASIC_LINE_MATERIAL.color.getHex().toString(16),
-      'couleur du texte': '#' + CONFIGURATION.BASIC_TEXT_MATERIAL.color.getHex().toString(16),
-      'transparence des lignes': CONFIGURATION.BASIC_LINE_MATERIAL.opacity,
-      'couleur lumière': '#' + that.light.color.getHex().toString(16),
-      intensity: that.light.intensity,
-      'couleur ambient': '#' + that.ambient.color.getHex().toString(16),
-      longitude: CONFIGURATION.referenceEquiRectangular.longitude,
-      latitude: CONFIGURATION.referenceEquiRectangular.latitude,
-      hauteur: CONFIGURATION.referenceEquiRectangular.height,
-      'parallèle standard 1': CONFIGURATION.standardParallel1 * CONFIGURATION.rad2deg,
-      'parallèle standard 2': CONFIGURATION.standardParallel2 * CONFIGURATION.rad2deg,
-      'with limits': true,
-      exportCountry: that.orthographique,
-    };
-
-    // light
-    let lightFolder = gui.addFolder('lumière');
-    lightFolder.add(that.ambient, 'intensity', 0, 5, 0.01).name('intensité ambiante');
-    lightFolder.addColor(conf, 'couleur lumière').onChange((v: string) => {
-      let color = parseInt(v.replace('#', ''), 16);
-      that.light.color.setHex(color);
-      that.helper.color = color;
-      that.helper.update();
-    });
-    lightFolder.addColor(conf, 'couleur ambient').onChange((v: string) => {
-      let color = parseInt(v.replace('#', ''), 16);
-      that.ambient.color.setHex(color);
-    });
-    lightFolder
-      .add(conf, 'intensity', 0, 5, 0.01)
-      .name('intensité lumière')
-      .onChange((v: number) => {
-        that.light.intensity = v;
-        that.helper.update();
-      });
-
-    lightFolder.add(that.light.position, 'x', -100, 100, 1).onChange(() => that.helper.update());
-    lightFolder.add(that.light.position, 'y', -100, 100, 1).onChange(() => that.helper.update());
-    lightFolder.add(that.light.position, 'z', -100, 100, 1).onChange(() => that.helper.update());
-    lightFolder.add(that.light.shadow.mapSize, 'width', 0, 1000).step(1);
-    lightFolder.add(that.light.shadow.mapSize, 'height', 0, 1000).step(1);
-    lightFolder.add(that.light.shadow.camera, 'near', 0, 1000).step(0.5);
-    lightFolder.add(that.light.shadow.camera, 'far', 0, 1000).step(1);
-
-    // generalities
-    let generalFolder = gui.addFolder('Généralités');
-    let projectionFolder = generalFolder.addFolder('projection');
-    let referenceFolder = projectionFolder.addFolder('references');
-    const radius = CONFIGURATION.earthRadiusMeters;
-    function changeReference(): void {
-      CONFIGURATION.referenceEquiRectangular = {
-        longitude: refLong.getValue() * CONFIGURATION.deg2rad,
-        latitude: refLat.getValue() * CONFIGURATION.deg2rad,
-        height: refHeight.getValue(),
-      };
-    }
-    let refLong = referenceFolder.add(conf, 'longitude', -180, 180).step(0.01);
-    refLong.onChange(changeReference);
-
-    let refLat = referenceFolder.add(conf, 'latitude', -89.99, 89.99).step(0.01);
-    refLat.onChange(changeReference);
-    let refHeight = referenceFolder.add(conf, 'hauteur', -radius + 10, radius + 10).step(1000);
-    refHeight.onChange(changeReference);
-    referenceFolder
-      .add(conf, 'parallèle standard 1', -90, 90, 0.1)
-      .onChange((v: number) => (CONFIGURATION.standardParallel1 = v * CONFIGURATION.deg2rad));
-    referenceFolder
-      .add(conf, 'parallèle standard 2', -90, 90, 0.1)
-      .onChange((v: number) => (CONFIGURATION.standardParallel2 = v * CONFIGURATION.deg2rad));
-    projectionFolder.add(CONFIGURATION, 'projectionInit', conf.projection).name('projection initiale');
-    projectionFolder.add(CONFIGURATION, 'projectionEnd', conf.projection).name('projection finale');
-    projectionFolder
-      .add(CONFIGURATION, 'percentProjection', 0, 100)
-      .step(1)
-      .name('transition projection');
-    let annees = generalFolder.add(conf, 'year', 1930, 2030).step(1);
-    annees.onChange((v: string | number) => (CONFIGURATION.year = v));
-
-    // toggle Camera Orthograpgic/Perspectiv View
-    let swapView = projectionFolder.add(that, 'orthographique');
-    swapView.onChange(() => (that.orthographique = !that.orthographique));
-    generalFolder
-      .add(that, '_showCitiesName')
-      .name('Show Cities name')
-      .onChange(() => that.showCitiesName()); // bigboard to parameter
-
-    // cones
-    let coneFolder = gui.addFolder('Cones');
-
-    coneFolder
-      .add(conf, 'coneStep', 1, 360)
-      .step(1)
-      .onChange((value: number) => (CONFIGURATION.coneStep = value * CONFIGURATION.deg2rad));
-    coneFolder.add(that, 'withLimits').onChange((value: boolean) => (conf['with limits'] = value));
-    coneFolder
-      .add(that.coneBoard, 'opacity', 0, 1)
-      .step(0.01)
-      .name('opacité');
-    let terresterialFolder = coneFolder.addFolder('configurations spécifiques');
-    let terrestrialControllersList: dat.GUI[] = [];
-    let flagTransportDone = false;
-
-    // lines
-    let aerialFolder = gui.addFolder('Lignes');
-    aerialFolder
-      .add(CONFIGURATION, 'pointsPerLine', 0, 200)
-      .step(1)
-      .name('nombre de points');
-    let aerialControllersList: dat.GUI[] = [];
-
-    // pays /mise en exergue avec listen?
-    // countries / highlight with listen?
-    let countryFolder = gui.addFolder('pays');
-    countryFolder.add(that.countryBoard, 'show');
-    countryFolder
-      .add(that.countryBoard, 'opacity', 0, 1)
-      .step(0.01)
-      .name('opacité');
-    countryFolder.add(that.countryBoard, 'extruded', -100, 100).step(1);
-    countryFolder
-      .add(conf, 'exportCountry')
-      .name('Export avec continent')
-      .onChange(() => (that.orthographique = !that.orthographique));
-    let countryControllersList: dat.GUI[] = [];
-    DragnDrop(
-      that._container,
-      list => {
-        // container en paramètre
-        if (_filesData.length === 0) {
-          that.countryBoard.ready = false;
-        }
-        _filesData.push(...list);
-        let json: string;
-        _filesData.forEach(item => {
-          let name = item.name.toLowerCase();
-          if (name.endsWith('.geojson')) {
-            json = item.text;
-          } else if (name.endsWith('.csv')) {
-            that._merger.add(item.text);
-            if (that.state === 'ready') {
-              that._merger.merge();
-            }
-          }
-        });
-        Promise.all([
-          new Promise(resolve => {
-            if (that.countryBoard.ready === false && json !== undefined) {
-              that.countryBoard.add(JSON.parse(json)).then(() => {
-                while (countryControllersList.length > 0) {
-                  let subGui = countryControllersList.pop();
-                  countryFolder.removeFolder(subGui);
-                }
-                let synonymes: string[] = [];
-                that.countryBoard.countryMeshCollection
-                  .sort((a, b) => a.mainName.localeCompare(b.mainName))
-                  .forEach(country => {
-                    let countryName = country.mainName;
-                    let i = -1;
-                    while (synonymes.indexOf(countryName) > -1) {
-                      i++;
-                      countryName = country.mainName + i;
-                    }
-                    synonymes.push(countryName);
-                    let folder = countryFolder.addFolder(countryName);
-                    folder
-                      .add(country, 'extruded', -100, 100)
-                      .step(1)
-                      .listen();
-                    folder.add(country, 'visible').listen();
-                    folder
-                      .add(country.material, 'opacity', 0, 1)
-                      .step(0.01)
-                      .listen();
-                    countryControllersList.push(folder);
-                  });
-                resolve();
-              });
-            } else {
-              resolve();
-            }
-          }),
-          new Promise(resolve => {
-            if (that.state === 'complete' && flagTransportDone === false) {
-              flagTransportDone = true;
-              while (terrestrialControllersList.length > 0) {
-                let subGui = terrestrialControllersList.pop();
-                terresterialFolder.removeFolder(subGui);
-              }
-              that._merger.transportNames.cones.forEach(transportName => {
-                let folder = terresterialFolder.addFolder(transportName);
-                terrestrialControllersList.push(folder);
-                function colorListener(): void {
-                  let opacity = <number>coneOpacity.getValue();
-                  let color = parseInt(coneColor.getValue().replace('#', ''), 16);
-                  let limits = <boolean>coneLimits.getValue();
-                  that.coneBoard.coneMeshCollection
-                    .filter(cone => transportName === cone.transportName)
-                    .forEach(cone => {
-                      let material = <MeshPhongMaterial>cone.material;
-                      material.color.setHex(color);
-                      material.opacity = opacity;
-                      cone.withLimits = limits;
-                    });
-                }
-                let coneColor = folder.addColor(conf, 'couleur cones').name('couleur');
-                coneColor.onChange(colorListener);
-                let coneOpacity = folder
-                  .add(conf, 'transparence des cônes', 0, 1, 0.01)
-                  .name('transparence');
-                coneOpacity.onChange(colorListener);
-                let coneLimits = folder.add(conf, 'with limits').listen();
-                coneLimits.onChange(colorListener);
-              });
-
-              while (aerialControllersList.length > 0) {
-                let subGui = aerialControllersList.pop();
-                aerialFolder.removeFolder(subGui);
-              }
-              that._merger.transportNames.lines.forEach(transportName => {
-                let folder = aerialFolder.addFolder(transportName);
-                aerialControllersList.push(folder);
-                function lineListener(): void {
-                  let opacity = <number>lineOpacity.getValue();
-                  let color = parseInt(lineColor.getValue().replace('#', ''), 16);
-                  that.coneBoard.lineCollection
-                    .filter(line => transportName === line.transportName)
-                    .forEach(line => {
-                      let material = <LineBasicMaterial>line.material;
-                      material.color.setHex(color);
-                      material.opacity = opacity;
-                    });
-                }
-                let lineColor = folder.addColor(conf, 'couleur des lignes').name('couleur');
-                lineColor.onChange(lineListener);
-                let lineOpacity = folder
-                  .add(conf, 'transparence des lignes', 0, 1, 0.01)
-                  .name('transparence');
-                lineOpacity.onChange(lineListener);
-              });
-            }
-            resolve();
-          }),
-        ]).then(() => {
-          if (that.countryBoard.ready === true && that.state === 'complete') {
-            flagTransportDone = false;
-            annees
-              .min(that._merger.minYear)
-              .max(that._merger.maxYear)
-              .updateDisplay();
-            that.coneBoard.add(that._merger.datas);
-            // this._merger.clear();
-            let sizeText = generalFolder
-              .add(that, '_sizetext', 0, 2)
-              .name('taille du texte')
-              .step(0.1);
-            sizeText.onChange(() => that.rescaleText());
-            generalFolder.addColor(conf, 'couleur du texte').onChange((v: string) => {
-              let color = parseInt(v.replace('#', ''), 16);
-              CONFIGURATION.BASIC_TEXT_MATERIAL.color.setHex(color);
-              that.updateCityName();
-            });
-            _filesData = [];
-          }
-        });
-      },
-      that);
   }
 }
