@@ -599,11 +599,12 @@ export default class BigBoard {
 
   /**
    * Export in Wavefront OBJ format.
-   * Exported file can be imported in Blender.
+   * Exported files can be imported in Blender.
    *
-   * Two files a generated:
+   * Three files a generated:
    * * sceneCones.obj
-   * * sceneLines.obj
+   * * sceneLinesLongHaul.obj fo short distance flights above the geodesic
+   * * sceneLinesShortHaul.obj for long distance geodesic flights
    * @private
    * @memberof BigBoard
    */
@@ -611,25 +612,25 @@ export default class BigBoard {
     let exporter = new OBJExporter();
     alert('Export begins...');
     let groupCone = new Group();
-    let groupLineCourt = new Group();
-    let groupLineLong = new Group();
+    let groupLineShortHaul = new Group();
+    let groupLineLongHaul = new Group();
     this.coneBoard.coneMeshCollection.forEach(cone => groupCone.add(cone));
     this.coneBoard.lineCollection.forEach(line => {
        if (line.getOpening <  2000 / ( CONFIGURATION.earthRadiusMeters / 1000)) {
-            groupLineCourt.add(line);
+            groupLineShortHaul.add(line);
        } else {
-            groupLineLong.add(line);
+            groupLineLongHaul.add(line);
        }
     });
     let blobCone = new Blob([exporter.parse(groupCone)], { type: 'text/plain;charset=utf-8' });
     save(blobCone, 'sceneCones.obj');
-    let blobLineCourt = new Blob([exporter.parse(groupLineCourt)], { type: 'text/plain;charset=utf-8' });
-    save(blobLineCourt, 'sceneLinesCourt.obj');
-    let blobLineLong = new Blob([exporter.parse(groupLineLong)], { type: 'text/plain;charset=utf-8' });
-    save(blobLineLong, 'sceneLinesLong.obj');
+    let blobLineShort = new Blob([exporter.parse(groupLineShortHaul)], { type: 'text/plain;charset=utf-8' });
+    save(blobLineShort, 'sceneLinesShortHaul.obj');
+    let blobLineLong = new Blob([exporter.parse(groupLineLongHaul)], { type: 'text/plain;charset=utf-8' });
+    save(blobLineLong, 'sceneLinesLongHaul.obj');
     this._scene.add(groupCone);
-    this._scene.add(groupLineCourt);
-    this._scene.add(groupLineLong);
+    this._scene.add(groupLineShortHaul);
+    this._scene.add(groupLineLongHaul);
     alert('Export done');
  }
 
