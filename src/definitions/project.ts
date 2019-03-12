@@ -184,6 +184,10 @@ export interface IPseudoGeometry {
 
 export type IMergerState = 'missing' | 'ready' | 'pending' | 'complete';
 
+/**
+ * * [['intrudedHeightRatio']] heigth of the cone expressed in proportion to the earth radius
+ * * coneStep is the value in degree of the facet of the cone; low value means high definition of the geometry of cones
+ */
 export type configurationObservableEvt =
   'heightRatio' | 'intrudedHeightRatio' | 'coneStep' | 'TWEEN_TIMING' | 'referenceEquiRectangular' | 'pointsPerLine' |
   'THREE_EARTH_RADIUS' | 'projectionBegin' | 'projectionEnd' | 'projectionPercent' | 'year' | 'tick';
