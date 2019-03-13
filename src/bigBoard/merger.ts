@@ -169,6 +169,10 @@ function getRatio(theta: number, speedMax: number, speed: number): number {
  * in order to determine the geometry of cones ([[cities]])
  * and to draw lines
  *
+ * First part of the funcction is putting in cache all the computations needed from each city, and especially  the [[referential]]
+ *
+ * Second part of the function explores the network from each city
+ *
  * ![equation 1](http://bit.ly/2tLfehC) equation 1 is on lines 354 and 404
  *
  * ![figure 1](http://bit.ly/2HhgxNg)
