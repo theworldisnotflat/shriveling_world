@@ -1,5 +1,5 @@
 /**
- * Project.ts is where all definitions are made
+ * Project.ts is where all definitions are enunciated
  * concerning data structuring in the project
  *
  * the [data model can be seen here](https://github.com/theworldisnotflat/shriveling_world/blob/master/model/modeles.png)
@@ -75,21 +75,28 @@ export interface ILookupDestination {
 }
 
 /**
- * A city has
+ * A city and the incident edges of the netork:
  * * a refential of coordinates
  * * a table of transport modes and their alphas
  * * a list of destinations
  * * a group of [[cityProperties]]
  */
-export interface ICityTransport {
+export interface ICityNetwork {
   referential: NEDLocal;
   transportsAlpha: ILookupTransportAlpha;
   destinations: ILookupDestination;
   cityProperties: ICity;
 }
-
+/**
+ * a [[ILookupCityTransport]] associates
+ * * a [[cityCode]]
+ * * and a piece of network: [[ICityTransport]]
+ * <uml>
+ * [[ILookupCityTransport]]<-[[ICityTransport]]
+ * </uml>
+ */
 export interface ILookupCityTransport {
-  [cityCode: string]: ICityTransport;
+  [cityCode: string]: ICityNetwork;
 }
 
 export interface IItemCriteria {
@@ -208,20 +215,26 @@ export type configurationObservableEvt =
 
 export type configurationCallback = (name: configurationObservableEvt, value: any) => void;
 export type ShaderTypes = 'fragment' | 'vertex';
+/**
+ *
+ */
 export interface ILookupAndMaxSpeedAndLine {
   lookupCityTransport: ILookupCityTransport;
   lineData: ILookupLine;
 }
+/**
+ * defines the city at the other extremity of and edge
+ */
 export interface IEndCityLine {
   cityCode: string | number;
   position: Cartographic;
 }
 /**
- * data associate to and edge
+ * data associated to an edge from a given city
  *
- * P an Q are control points for Bezier curves
+ * [[pointP]] and [[pointQ]] are control points for Bezier curves
  *
- * Theta is the angle between cities
+ * [[theta]] is the angle between cities
  */
 export interface ILookupEdgeList {
   end: IEndCityLine;
@@ -231,10 +244,19 @@ export interface ILookupEdgeList {
   ratio: { [transportName: string]: { [year: string]: number } };
   theta: number;
 }
+/**
+ * Line (or edge) items include: ????????
+ * je suis perplexe devant la ligne: 'begin: IEndCityLine' ???????????????????????
+ */
 export interface ILookupLineItem {
   begin: IEndCityLine;
   list: { [cityCodeEnd: string]: ILookupEdgeList };
 }
+/**
+ * a line (or edge) has a [[cityCodeBegin]]
+ *
+ * other parameters of this line derive from the [[ILookupLineItem]]
+ */
 export interface ILookupLine {
   [cityCodeBegin: number]: ILookupLineItem;
 }
