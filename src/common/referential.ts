@@ -106,6 +106,13 @@ export class Coordinate {
 var scrapCoordinate = new Coordinate();
 var scrapCoordinate2 = new Coordinate();
 
+/**
+ * General model for the orientation of geometric elements
+ *
+ * As cones are drawn below the earth surface, we chose the North East Down orientation that is the most adapted to our model.
+ *
+ * North East Down generates 'navigation' like orientations for angles on the sphere and on a projected plane
+ */
 export class NEDLocal {
     public cartoRef: Cartographic;
     private _ECEFRef: Coordinate;

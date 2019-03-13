@@ -616,7 +616,7 @@ export default class BigBoard {
     let groupLineLongHaul = new Group();
     this.coneBoard.coneMeshCollection.forEach(cone => groupCone.add(cone));
     this.coneBoard.lineCollection.forEach(line => {
-       if (line.getOpening <  2000 / ( CONFIGURATION.earthRadiusMeters / 1000)) {
+       if (line.getTheta <  2000 / ( CONFIGURATION.earthRadiusMeters / 1000)) {
             groupLineShortHaul.add(line);
        } else {
             groupLineLongHaul.add(line);

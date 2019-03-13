@@ -55,21 +55,35 @@ export interface ILookupAlpha {
   [year: string]: number;
 }
 
+/**
+ * A transport mode has a given speed for a given year
+ */
 export interface ILookupTransportSpeed {
-  [transport: string]: { year: number, speed: number }[];
+  [transportCode: string]: { year: number, speed: number }[];
 }
 
-export interface ILookupTransport {
-  [transport: string]: ILookupAlpha;
+/**
+ * A given transport mode is associated to a given cone slope (alpha)
+ * for a given year
+ */
+export interface ILookupTransportAlpha {
+  [transportCode: string]: ILookupAlpha;
 }
 
 export interface ILookupDestination {
   [cityCode: string]: ILookupTransportSpeed;
 }
 
+/**
+ * A city has
+ * * a refential of coordinates
+ * * a table of transport modes and their alphas
+ * * a list of destinations
+ * * a group of [[cityProperties]]
+ */
 export interface ICityTransport {
   referential: NEDLocal;
-  transports: ILookupTransport;
+  transportsAlpha: ILookupTransportAlpha;
   destinations: ILookupDestination;
   cityProperties: ICity;
 }
@@ -113,7 +127,7 @@ export interface IPopulation {
  * Parameters attached to each city:
  * * [[urbanagglomeration]] is the name of the city
  * * [[radius]]: number; // for cases of cities in islands close to a continent
- * * [[destinations]] will be determined by scanning the [[ITransportNetwork]]
+ * * [[destinations]] is a table will be determined by scanning the [[ITransportNetwork]]
  */
 export interface ICity {
   countryCode: number;
@@ -124,7 +138,7 @@ export interface ICity {
   longitude: number;
   radius: number; // for cases of cities in islands close to a continent
   populations?: IPopulation;
-  destinations?: ITransportNetwork[];
+  edges?: ITransportNetwork[];
 }
 
 /**
@@ -165,7 +179,7 @@ export interface ITransportNetwork {
   idOri?: number;
   idDes: number;
   transportMode: number;
-  destination?: number;
+  // destination?: number;
 }
 
 export interface IBBox {
@@ -184,6 +198,10 @@ export interface IPseudoGeometry {
 
 export type IMergerState = 'missing' | 'ready' | 'pending' | 'complete';
 
+/**
+ * * 'intrudedHeightRatio' heigth of the cone expressed in proportion to the earth radius
+ * * 'coneStep' is the value in degree of the facet of the cone; low value means high definition of the geometry of cones
+ */
 export type configurationObservableEvt =
   'heightRatio' | 'intrudedHeightRatio' | 'coneStep' | 'TWEEN_TIMING' | 'referenceEquiRectangular' | 'pointsPerLine' |
   'THREE_EARTH_RADIUS' | 'projectionBegin' | 'projectionEnd' | 'projectionPercent' | 'year' | 'tick';
@@ -198,17 +216,24 @@ export interface IEndCityLine {
   cityCode: string | number;
   position: Cartographic;
 }
-export interface ILookupItemList {
+/**
+ * data associate to and edge
+ *
+ * P an Q are control points for Bezier curves
+ *
+ * Theta is the angle between cities
+ */
+export interface ILookupEdgeList {
   end: IEndCityLine;
   pointP: Cartographic;
   pointQ: Cartographic;
   middle: Cartographic;
   ratio: { [transportName: string]: { [year: string]: number } };
-  opening: number;
+  theta: number;
 }
 export interface ILookupLineItem {
   begin: IEndCityLine;
-  list: { [cityCodeEnd: string]: ILookupItemList };
+  list: { [cityCodeEnd: string]: ILookupEdgeList };
 }
 export interface ILookupLine {
   [cityCodeBegin: number]: ILookupLineItem;
