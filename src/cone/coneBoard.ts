@@ -5,7 +5,7 @@ import { PseudoCone } from './base';
 import { ConeMeshShader } from './coneMeshShader';
 import { Cartographic, searchCriterias } from '../common/utils';
 import {
-    ISumUpCriteria, ILookupAndMaxSpeedAndLine, ICriterias, ILookupCityTransport,
+    ISumUpCriteria, ILookupAndMaxSpeedAndLine, ICriterias, ILookupCityNetwork,
 } from '../definitions/project';
 import { CountryBoard } from '../country/countryBoard';
 import { LineMeshShader } from './lineMeshShaders';
@@ -84,7 +84,7 @@ export class ConeBoard {
 
     public add(lookup: ILookupAndMaxSpeedAndLine): void {
         this.clean();
-        let myConsistentLookup = <ILookupCityTransport>{};
+        let myConsistentLookup = <ILookupCityNetwork>{};
         for (let cityCode in lookup.lookupCityTransport) {
             if (lookup.lookupCityTransport.hasOwnProperty(cityCode) &&
                 Object.keys(lookup.lookupCityTransport[cityCode].transpModesAlpha).length > 1) {

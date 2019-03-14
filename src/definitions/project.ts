@@ -83,11 +83,11 @@ export interface ILookupDestAndModes {
 }
 
 /**
- * A city and the incident edges of the netork:
- * * a refential of coordinates
+ * A city and its incident edges in the network:
+ * * a [[referential]] of coordinates in [[NEDLocal]]
  * * a table of transport modes and their alphas
- * * a list of destinations
- * * a group of [[cityProperties]]
+ * * a list of destinations and associated transport modes
+ * * a table of [[origCityProperties]]
  */
 export interface ICityNetwork {
   referential: NEDLocal;
@@ -96,14 +96,15 @@ export interface ICityNetwork {
   origCityProperties: ICity;
 }
 /**
- * a [[ILookupCityTransport]] associates
- * * a [[cityCode]]
- * * and a piece of network: [[ICityTransport]]
+ * a [[ILookupCityNetwork]] searches
+ * * a cityCode
+ * * and retrieves a piece of network [[ICityNetwork]] made of incident edges of cityCode in the transport network
  * <uml>
- * [[ILookupCityTransport]]<-[[ICityTransport]]
- * </uml>
+ * ILookupCityNetwork<-ICityNetwork : will search in
+ * [[ILookupCityNetwork]]<-[[ICityNetwork]]
+* </uml>
  */
-export interface ILookupCityTransport {
+export interface ILookupCityNetwork {
   [cityCode: string]: ICityNetwork;
 }
 
@@ -227,7 +228,7 @@ export type ShaderTypes = 'fragment' | 'vertex';
  *
  */
 export interface ILookupAndMaxSpeedAndLine {
-  lookupCityTransport: ILookupCityTransport;
+  lookupCityTransport: ILookupCityNetwork;
   lineData: ILookupEdge;
 }
 /**
