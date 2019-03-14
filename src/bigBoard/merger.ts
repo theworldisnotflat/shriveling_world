@@ -230,6 +230,11 @@ function networkFromCities(
     tabYearSpeed: { [year: string]: number };
     name: string;
   }
+  /**
+   * ILookupCache concerns an edge with an end
+   * middle, pointP at 1/4 anf pointQ at 3/4
+   * and finally theta the angle between the two cities
+   */
   interface ILookupCache {
     end?: ICityExtremityOfEdge;
     pointP: Cartographic;
@@ -290,6 +295,13 @@ function networkFromCities(
     lookupPosition[city.cityCode] = new NEDLocal(position);
   });
 
+  /**
+   * from the begin and end of an edge this function retrives the middle and
+   * pointP and pointQ at 1/4 and 3/4 of the segment begin-end
+   *
+   * @param begin
+   * @param end
+   */
   function cachedGetTheMiddle(begin: number, end: number): ILookupCache {
     let res = <ILookupCache>{};
     res.end = { cityCode: end, position: lookupPosition[end].cartoRef };
@@ -529,7 +541,7 @@ export class Merger {
  * * introduce the data into [[_cities]], [[_populations]],
  * [[_transportModeSpeed]], [[_transportModeCode]],
  * [[_transportNetwork]], [[_state]] and [[_mergedData]]
- * * execute the main process [[networkFromCities]]
+ * * execute the main process i.e. [[networkFromCities]]
  */
   public merge(): void {
     if (this._state === 'ready') {

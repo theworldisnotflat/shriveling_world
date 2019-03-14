@@ -99,9 +99,9 @@ export interface ICityNetwork {
  * a [[ILookupCityNetwork]] searches
  * * a cityCode
  * * and retrieves a piece of network [[ICityNetwork]] made of incident edges of cityCode in the transport network
+ *
  * <uml>
- * ILookupCityNetwork<-ICityNetwork : will search in
- * [[ILookupCityNetwork]]<-[[ICityNetwork]]
+ *     ILookupCityNetwork<-ICityNetwork
  * </uml>
  */
 export interface ILookupCityNetwork {
