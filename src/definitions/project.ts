@@ -14,7 +14,7 @@ export interface ICountryTextureURL {
 }
 
 /**
- * list of available geographic porjections
+ * list of available geographic projections
  */
 export enum PROJECTION_ENUM {
   none = 0,
@@ -48,8 +48,10 @@ export interface ICartographic {
 }
 
 /**
- * it's a lookup mapping for a given year the slope angme between eath surface
- * and cone slope as cone radius is fixed, it's the key parameter for cone geometries.
+ * it's a lookup mapping for a given year the slope angle between earth surface
+ * and cone slope as cone radius is determined, it's the key parameter for cone geometries.
+ *
+ * This slope (alpha) is determined by ![equation 1](http://bit.ly/2tLfehC)
  */
 export interface ILookupAlpha {
   [year: string]: number;
@@ -57,21 +59,27 @@ export interface ILookupAlpha {
 
 /**
  * A transport mode has a given speed for a given year
+ *
+ * Table of couples year-speed for each transport mode
  */
-export interface ILookupTransportSpeed {
-  [transportCode: string]: { year: number, speed: number }[];
+export interface ILookupTranspModeSpeed {
+  [transpModeCode: string]: { year: number, speed: number }[];
 }
 
 /**
- * A given transport mode is associated to a given cone slope (alpha)
+ * A transport mode is associated to a cone slope (alpha)
  * for a given year
  */
-export interface ILookupTransportAlpha {
-  [transportCode: string]: ILookupAlpha;
+export interface ILookupTransportModeAlpha {
+  [transpModeCode: string]: ILookupAlpha;
 }
 
-export interface ILookupDestination {
-  [cityCode: string]: ILookupTransportSpeed;
+/**
+ * a table of destination cities and the associated
+ * transport modes and their respective speed
+ */
+export interface ILookupDestAndModes {
+  [cityCode: string]: ILookupTranspModeSpeed;
 }
 
 /**
@@ -83,9 +91,9 @@ export interface ILookupDestination {
  */
 export interface ICityNetwork {
   referential: NEDLocal;
-  transportsAlpha: ILookupTransportAlpha;
-  destinations: ILookupDestination;
-  cityProperties: ICity;
+  transpModesAlpha: ILookupTransportModeAlpha;
+  destAndModes: ILookupDestAndModes;
+  origCityProperties: ICity;
 }
 /**
  * a [[ILookupCityTransport]] associates
@@ -220,12 +228,12 @@ export type ShaderTypes = 'fragment' | 'vertex';
  */
 export interface ILookupAndMaxSpeedAndLine {
   lookupCityTransport: ILookupCityTransport;
-  lineData: ILookupLine;
+  lineData: ILookupEdge;
 }
 /**
  * defines the city at the other extremity of and edge
  */
-export interface IEndCityLine {
+export interface ICityExtremityOfEdge {
   cityCode: string | number;
   position: Cartographic;
 }
@@ -237,7 +245,7 @@ export interface IEndCityLine {
  * [[theta]] is the angle between cities
  */
 export interface ILookupEdgeList {
-  end: IEndCityLine;
+  end: ICityExtremityOfEdge;
   pointP: Cartographic;
   pointQ: Cartographic;
   middle: Cartographic;
@@ -249,15 +257,15 @@ export interface ILookupEdgeList {
  * je suis perplexe devant la ligne: 'begin: IEndCityLine' ???????????????????????
  */
 export interface ILookupLineItem {
-  begin: IEndCityLine;
+  begin: ICityExtremityOfEdge;
   list: { [cityCodeEnd: string]: ILookupEdgeList };
 }
 /**
- * a line (or edge) has a [[cityCodeBegin]]
+ * a line and its associated graph edge has a [[cityCodeBegin]]
  *
  * other parameters of this line derive from the [[ILookupLineItem]]
  */
-export interface ILookupLine {
+export interface ILookupEdge {
   [cityCodeBegin: number]: ILookupLineItem;
 }
 export interface IMarkLimits {

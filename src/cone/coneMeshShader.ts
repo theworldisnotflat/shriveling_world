@@ -281,7 +281,7 @@ export class ConeMeshShader extends PseudoCone {
         let cityTransport = lookup[cityCode];
         let position = cityTransport.referential.cartoRef;
         let referentialGLSL = cityTransport.referential.ned2ECEFMatrix;
-        let transports = cityTransport.transportsAlpha;
+        let transports = cityTransport.transpModesAlpha;
         _localLimitsLookup[cityCode] = localLimitsRaw(matchingBBox(position, bboxes), cityTransport.referential);
         let commonProperties = {};
         for (let attribute in cityTransport) {
