@@ -1,3 +1,7 @@
+/**
+ * In configuration.ts are defined all the constants and
+ * key variables of the project
+ */
 'use strict';
 import { MeshBasicMaterial, LineBasicMaterial, Material, TextGeometryParameters } from 'three';
 import { generateUUID } from './utils';
@@ -117,6 +121,11 @@ export const CONFIGURATION = {
       fireEvents('coneStep', value);
     }
   },
+  /**
+   * Graph edges are drawn as lines with intermediate points.
+   *
+   * high value of [[pointsPerLine]] gives better definition of curves (bézier curves)
+   */
   get pointsPerLine(): number { return _pointsPerLine; },
   set pointsPerLine(value: number) {
     if (value >= 1 && value <= 200) {
@@ -124,6 +133,12 @@ export const CONFIGURATION = {
       fireEvents('pointsPerLine', value);
     }
   },
+  /**
+   * continents shapefile is used to 'cut' cones in order to
+   * produce a more readable image/map
+   *
+   * the main paramter of this operation is [[extrudedHeight]]
+   */
   get extrudedHeight(): number { return _extrudedHeight; },
   get hatHeight(): number { return _hatHeight; },
   COUNTRY_TEXTURES: <ICountryTextureURL>{
@@ -178,7 +193,9 @@ export const CONFIGURATION = {
       fireEvents('referenceEquiRectangular', _referenceEquiRectangular);
     }
   },
-
+  /**
+   * Constant of earth radius
+   */
   get THREE_EARTH_RADIUS(): number { return _THREE_EARTH_RADIUS; },
   set THREE_EARTH_RADIUS(value: number) { _THREE_EARTH_RADIUS = value; fireEvents('THREE_EARTH_RADIUS', value); },
   get TWEEN_TIMING(): number { return _TWEEN_TIMING; },
@@ -186,16 +203,27 @@ export const CONFIGURATION = {
   get year(): string | number { return _year; },
   set year(value: string | number) { _year = value; fireEvents('year', value); },
 
+  /**
+   * initial projection
+   */
   get projectionInit(): PROJECTION_ENUM { return _projectionInit; },
   set projectionInit(value: PROJECTION_ENUM) {
     _projectionInit = value;
     fireEvents('projectionBegin', _projectionInit);
   },
+  /**
+   * final projection after transformation of [[projectionInit]]
+   * by steps defined by [[percentProjection]]
+   */
   get projectionEnd(): PROJECTION_ENUM { return _projectionEnd; },
   set projectionEnd(value: PROJECTION_ENUM) {
     _projectionEnd = value;
     fireEvents('projectionEnd', _projectionEnd);
   },
+  /**
+   * move from [[projectionInit]] to [[projectionEnd]]
+   * with steps in [[percentProjection]]
+   */
   get percentProjection(): number { return _projectionPercent; },
   set percentProjection(value: number) {
     if (value >= 0 && value <= 100) {
