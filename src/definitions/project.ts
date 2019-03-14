@@ -102,7 +102,7 @@ export interface ICityNetwork {
  * <uml>
  * ILookupCityNetwork<-ICityNetwork : will search in
  * [[ILookupCityNetwork]]<-[[ICityNetwork]]
-* </uml>
+ * </uml>
  */
 export interface ILookupCityNetwork {
   [cityCode: string]: ICityNetwork;
@@ -172,7 +172,7 @@ export interface ITransportModeSpeed {
  * a [[yearEnd]], can be [[terrestrial]] or not,
  * and has a table of [[speeds]] that may change over years
  */
-export interface ITransportModeCode {
+export interface ITranspMode {
   name: string;
   code: number;
   yearBegin: number;
@@ -187,7 +187,6 @@ export interface ITransportModeCode {
  * Each link has a [[yearBegin]] and a [[yearEnd]]
  * * an origin [[idOri]] and  destination [[idDes]]
  * * a transport mode [[transportMode]]
- * * [[destination]]:??
  */
 export interface ITransportNetwork {
   yearBegin: number;
@@ -195,7 +194,6 @@ export interface ITransportNetwork {
   idOri?: number;
   idDes: number;
   transportMode: number;
-  // destination?: number;
 }
 
 export interface IBBox {
@@ -225,14 +223,18 @@ export type configurationObservableEvt =
 export type configurationCallback = (name: configurationObservableEvt, value: any) => void;
 export type ShaderTypes = 'fragment' | 'vertex';
 /**
+ * [[ILookupEdgesAndTranspModes]] contains
+ * * [[lookupCityNetwork]] network data (graph data) with modes and speed parameters
+ * * [[edgesData]] edges data for geometric processes
  *
+ * (some duplication but the purposes are different)
  */
-export interface ILookupAndMaxSpeedAndLine {
-  lookupCityTransport: ILookupCityNetwork;
-  lineData: ILookupEdge;
+export interface ILookupEdgesAndTranspModes {
+  lookupCityNetwork: ILookupCityNetwork;
+  edgesData: ILookupEdges;
 }
 /**
- * defines the city at the other extremity of and edge
+ * defines the city at the other extremity of an edge
  */
 export interface ICityExtremityOfEdge {
   cityCode: string | number;
@@ -254,10 +256,9 @@ export interface ILookupEdgeList {
   theta: number;
 }
 /**
- * Line (or edge) items include: ????????
- * je suis perplexe devant la ligne: 'begin: IEndCityLine' ???????????????????????
+ * Lines (or edges) from a city
  */
-export interface ILookupLineItem {
+export interface ILookupEdgesFromCity {
   begin: ICityExtremityOfEdge;
   list: { [cityCodeEnd: string]: ILookupEdgeList };
 }
@@ -266,8 +267,8 @@ export interface ILookupLineItem {
  *
  * other parameters of this line derive from the [[ILookupLineItem]]
  */
-export interface ILookupEdge {
-  [cityCodeBegin: number]: ILookupLineItem;
+export interface ILookupEdges {
+  [cityCodeBegin: number]: ILookupEdgesFromCity;
 }
 export interface IMarkLimits {
   begin: number; // inclusif

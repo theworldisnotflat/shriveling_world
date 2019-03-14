@@ -106,6 +106,10 @@ export const CONFIGURATION = {
     _extrudedHeight = _earthRadiusMeters * _intrudedHeightRatio;
     fireEvents('intrudedHeightRatio', value);
   },
+  /**
+  * default value of coneStep : cone facet width in degrees
+  * values from 1 to 360 / high value produce unexpected results
+  */
   get coneStep(): number { return _coneStep; },
   set coneStep(value: number) {
     if (value >= _deg2rad && value < _TWO_PI) {
@@ -227,9 +231,6 @@ export const CONFIGURATION = {
   },
 };
 
-// default value of coneStep : cone facet width in degrees
-// values from 1 to 360 / high value produce unexpected results
-//
 CONFIGURATION.coneStep = 5 * CONFIGURATION.deg2rad;
 CONFIGURATION.heightRatio = 0.01;
 CONFIGURATION.intrudedHeightRatio = 0.6;
