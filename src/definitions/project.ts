@@ -141,9 +141,13 @@ export interface IPopulation {
  * City interface
  *
  * Parameters attached to each city:
+ * * [[countryCode]]
+ * * [[countryName]]
+ * * [[cityCode]]
  * * [[urbanagglomeration]] is the name of the city
  * * [[radius]]: number; // for cases of cities in islands close to a continent
- * * [[destinations]] is a table will be determined by scanning the [[ITransportNetwork]]
+ * * [[populations]] for several years as provided in csv file 'population.csv'
+ * * [[edges]] is a table will be determined by scanning the [[ITransportNetwork]]
  */
 export interface ICity {
   countryCode: number;
@@ -158,8 +162,8 @@ export interface ICity {
 }
 
 /**
- * for a given [[year]], for a given [[transportModeCode]],
- * the speed of a transport mode [[speedKPH]] may be different
+ * the [[speedKPH]] of a transport mode may be different
+ * depending on [[year]]
  */
 export interface ITransportModeSpeed {
   year: number;
@@ -168,9 +172,13 @@ export interface ITransportModeSpeed {
 }
 
 /**
- * A transport mode has a [[name]], a [[code]], a [[yearBegin]],
- * a [[yearEnd]], can be [[terrestrial]] or not,
- * and has a table of [[speeds]] that may change over years
+ * A transport mode has
+ * * a [[name]],
+ * * a [[code]],
+ * * a [[yearBegin]],
+ * * a [[yearEnd]],
+ * * can be [[terrestrial]] or not,
+ * * and has a table of [[speeds]] that may change over years
  */
 export interface ITranspMode {
   name: string;
@@ -182,10 +190,13 @@ export interface ITranspMode {
 }
 
 /**
- * Here we have data of each link in the [[ITransportNetwork]]
+ * Here we find data of each link/edge in the [[ITransportNetwork]]
  *
- * Each link has a [[yearBegin]] and a [[yearEnd]]
- * * an origin [[idOri]] and  destination [[idDes]]
+ * Each link/edge has
+ * * a [[yearBegin]] and
+ * * a [[yearEnd]]
+ * * an origin [[idOri]]
+ * * and  destination [[idDes]]
  * * a transport mode [[transportMode]]
  */
 export interface ITransportNetwork {
