@@ -20,7 +20,7 @@ import {
   ILookupCityNetwork, ILookupTranspModeSpeed, IMergerState,
   ILookupDestAndModes, IPopulation, ITransportModeSpeed, ILookupEdgesAndTranspModes,
   ILookupEdges, ICityExtremityOfEdge, ILookupEdgeList,
-  ILookupTransportModeAlpha as ILookupTranspModeAlpha,
+  ILookupConeAlpha,
 } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
 /**
@@ -350,7 +350,7 @@ function networkFromCities(
       let startPoint: ICityExtremityOfEdge = { cityCode: origCityCode, position: referential.cartoRef };
       // list of edges from the considered city (described by their destination cities)
       let listOfEdges: { [cityCodeEnd: string]: ILookupEdgeList } = {};
-      let coneAlpha: ILookupTranspModeAlpha = {};
+      let coneAlpha: ILookupConeAlpha = {};
       let destinationsAndModes: ILookupDestAndModes = {};
       let destCityCode: number;
       let edge: ITranspNetwork, minYear: number, maxYear: number, alpha: number;
