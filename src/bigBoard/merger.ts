@@ -16,7 +16,7 @@ import * as Papa from 'papaparse';
 import { NEDLocal } from '../common/referential';
 import { extrapolator, Cartographic, reviver } from '../common/utils';
 import {
-  ITransportModeCode, ICity, ITransportNetwork, ILookupCityTransport, ILookupTransportSpeed, IMergerState,
+  ITransportModeCode, ICity, ITransportNetwork, ILookupCityTransport, IMergerState,
   ILookupDestination, IPopulation, ITransportModeSpeed, ILookupAndMaxSpeedAndLine, ILookupLine, IEndCityLine,
   ILookupEdgeList, ILookupTransportAlpha,
 } from '../definitions/project';
@@ -205,6 +205,9 @@ function toCityTransport(
   interface ISpeedPerYear {
     [year: string]: number;
   }
+  /**
+   * tableau associatif retournant pour une année donnée, la vitesse du transport le plus rapide
+   */
   let maximumSpeed: ISpeedPerYear = {};
   /**
    * [[ITransportCodeItem]] has a [[speed]] and [[year]]
@@ -214,7 +217,9 @@ function toCityTransport(
     year: number;
   }
   /**
-   * [[ITabSpeedPertransportPerYearItem]] has a [[tabSpeed]] and a [[name]]
+   * Interface ayant pour attributs le nom du transport considéré et son tableau
+   * de vitesses. Ce tableau associe à une année la vitesse (dans la limite de
+   * la fenêtre temporelle décrite dans le fichier csv initial) du mode de transport.
    */
   interface ITabSpeedPertransportPerYearItem {
     tabSpeed: { [year: string]: number };
@@ -229,7 +234,20 @@ function toCityTransport(
   }
   let roadCode: number, roadBegin: number;
   _transportName = { lines: [], cones: [] };
+  /**
+   * Tableau associatif liant un mode de transport à un un objet de type [[ITabSpeedPertransportPerYearItem]]
+   */
   let speedPerTransportPerYear: { [transportCode: string]: ITabSpeedPertransportPerYearItem } = {};
+  /**
+   * pour chaque mode de transport:
+   *  - on détermine si c'est de type terrestrev(cône) ou aérien (lignes)
+   *  - la fenêtre temporelle du mode de transport
+   *  - le tableau de vitesse du mode de transport considéré.
+   *    La formule d'interpolation utilisées pour constituée ce tableau retourne
+   *    pour chaque année de la fenêtre temporelle précédemment calculée
+   *    une vitesse interpolée linéairement entre deux dates où la vitesse était connue.
+   *  À la sortie de cette boucle, [[speedPerTransportPerYear]]  et [[maximumSpeed]] sont renseignés
+   */
   transportModeCode.forEach((transportMode) => {
     let transportCode = transportMode.code;
     let transportName = transportMode.name;
@@ -270,6 +288,7 @@ function toCityTransport(
     }
     speedPerTransportPerYear[transportCode] = { tabSpeed: tabSpeed, name: transportName };
   });
+
   _minYear = minYear;
   _maxYear = maxYear;
   // faire lookup des cartographic/referential par citycode. OK
@@ -279,7 +298,13 @@ function toCityTransport(
     let position = new Cartographic(city.longitude, city.latitude, 0, false);
     lookupPosition[city.cityCode] = new NEDLocal(position);
   });
-
+  /**
+   * fonction mettant en cache les calculs d'ouverture angulaire entre deux villes (l'ordre des villes n'a pas d'importance)
+   * @param  begin code de la ville de début
+   * @param  end   code de la ville de fin
+   * @return       retourne le résultat des calculs prenant en compte les deux villes
+   * en entrée (ouverture angulaire, points P et Q et point milieu)
+   */
   function cachedGetTheMiddle(begin: number, end: number): ILookupCache {
     let res = <ILookupCache>{};
     res.end = { cityCode: end, position: lookupPosition[end].cartoRef };
@@ -312,6 +337,7 @@ function toCityTransport(
     res.pointP = cached.pointP;
     return res;
   }
+
   let processedCities: { [begin: string]: { [end: string]: string[] } } = {};
   // second part of the function
   cities.forEach((city) => {
