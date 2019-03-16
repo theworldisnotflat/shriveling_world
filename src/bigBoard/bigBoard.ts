@@ -9,7 +9,7 @@ import {
 import { ConeBoard } from '../cone/coneBoard';
 import { CountryBoard } from '../country/countryBoard';
 import { Merger } from './merger';
-import { IMergerState, ISumUpCriteria, ILookupAndMaxSpeedAndLine, ICriterias } from '../definitions/project';
+import { IMergerState, ISumUpCriteria, ILookupEdgesAndTranspModes, ICriterias } from '../definitions/project';
 import { PseudoCone } from '../cone/base';
 import { CountryMeshShader } from '../country/countryMeshShader';
 import { GUI } from './guiDAT';
@@ -117,14 +117,14 @@ export default class BigBoard {
    * the configuration of the app, available in static
    */
   public static configuration: any = CONFIGURATION;
-  /**
-   * liste des cônes (un cône correspond à une ville et un type de transport)
-   *
-   * list of cones: a [[_cone]] corresponds to a city and a type of terrestrial transport
-   */
   public helper: DirectionalLightHelper;
   public light: DirectionalLight;
   public ambient: AmbientLight;
+  /**
+   * ensemble des cônes (un cône correspond à une ville et un mode de transport)
+   *
+   * set of cones: a [[_cone]] corresponds to a city and a mode of terrestrial transport
+   */
   public coneBoard: ConeBoard;
   /**
    * liste des pays générés depuis un fichier geojson
@@ -149,6 +149,11 @@ export default class BigBoard {
   // noeud ajout nom Ville
   private _geometryText: Group;
 
+  /**
+   * creates an instance of bigBoard
+   *
+   * GUI is linked to bigBoard (but not contained in)
+   */
   constructor() {
     prepareConfiguration();
     this._merger = new Merger();
@@ -311,10 +316,10 @@ export default class BigBoard {
   /**
    * Add cone to the coneMeshCollection
    * @todo unused and irrelevant @see coneBoard.add
-   * @param {ILookupAndMaxSpeedAndLine} lookup
+   * @param {ILookupEdgesAndTranspModes} lookup
    * @memberof BigBoard
    */
-  public addCones(lookup: ILookupAndMaxSpeedAndLine): void {
+  public addCones(lookup: ILookupEdgesAndTranspModes): void {
     this.coneBoard.add(lookup);
   }
 
@@ -459,7 +464,7 @@ export default class BigBoard {
   }
 
   /**
-    * Update all the town which will be displayed regarding the populuation threeshold paramater
+    * Update all the city which will be displayed regarding the population threshold paramater
     */
   public updateCityName(): void {
     if (this._merger.state !== 'complete') {
@@ -473,13 +478,13 @@ export default class BigBoard {
       var obj = JSON.parse(JSON.stringify(this.getMergerI.Cities[j]));
       var pop = JSON.parse(
         JSON.stringify(
-          this._merger.mergedData.lookupCityTransport[this.getMergerI.Cities[j].cityCode].cityProperties
+          this._merger.edgesAndTranspModes.lookupCityNetwork[this.getMergerI.Cities[j].cityCode].origCityProperties
             .populations));
       var population = pop.pop2020;
       if (population > this._populations) {
         var geometry = new TextGeometry(obj.urbanAgglomeration, CONFIGURATION.TEXT_GEOMETRY_OPTIONS);
         mesh = new Mesh(geometry, CONFIGURATION.BASIC_TEXT_MATERIAL);
-        let cart = this._merger.mergedData.lookupCityTransport[this.getMergerI.Cities[j].cityCode].referential
+        let cart = this._merger.edgesAndTranspModes.lookupCityNetwork[this.getMergerI.Cities[j].cityCode].referential
           .cartoRef;
         let x =
           -CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.cos(cart.latitude * 0.95) * Math.cos(cart.longitude);

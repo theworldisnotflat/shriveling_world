@@ -1,5 +1,5 @@
 /**
- * Project.ts is where all definitions are made
+ * Project.ts is where all definitions are enunciated
  * concerning data structuring in the project
  *
  * the [data model can be seen here](https://github.com/theworldisnotflat/shriveling_world/blob/master/model/modeles.png)
@@ -14,7 +14,7 @@ export interface ICountryTextureURL {
 }
 
 /**
- * list of available geographic porjections
+ * list of available geographic projections
  */
 export enum PROJECTION_ENUM {
   none = 0,
@@ -48,8 +48,10 @@ export interface ICartographic {
 }
 
 /**
- * it's a lookup mapping for a given year the slope angme between eath surface
- * and cone slope as cone radius is fixed, it's the key parameter for cone geometries.
+ * it's a lookup mapping for a given year the slope angle between earth surface
+ * and cone slope as cone radius is determined, it's the key parameter for cone geometries.
+ *
+ * This slope (alpha) is determined by ![equation 1](http://bit.ly/2tLfehC)
  */
 export interface ILookupAlpha {
   [year: string]: number;
@@ -57,39 +59,53 @@ export interface ILookupAlpha {
 
 /**
  * A transport mode has a given speed for a given year
+ *
+ * Table of couples year-speed for each transport mode
  */
-export interface ILookupTransportSpeed {
-  [transportCode: string]: { year: number, speed: number }[];
+export interface ILookupTranspModeSpeed {
+  [transpModeCode: string]: { year: number, speed: number }[];
 }
 
 /**
- * A given transport mode is associated to a given cone slope (alpha)
+ * A transport mode is associated to a cone slope (alpha)
  * for a given year
  */
-export interface ILookupTransportAlpha {
-  [transportCode: string]: ILookupAlpha;
-}
-
-export interface ILookupDestination {
-  [cityCode: string]: ILookupTransportSpeed;
+export interface ILookupConeAlpha {
+  [transpModeCode: string]: ILookupAlpha;
 }
 
 /**
- * A city has
- * * a refential of coordinates
- * * a table of transport modes and their alphas
- * * a list of destinations
- * * a group of [[cityProperties]]
+ * a table of destination cities and the associated
+ * transport modes and their respective speed
  */
-export interface ICityTransport {
-  referential: NEDLocal;
-  transportsAlpha: ILookupTransportAlpha;
-  destinations: ILookupDestination;
-  cityProperties: ICity;
+export interface ILookupDestAndModes {
+  [cityCode: string]: ILookupTranspModeSpeed;
 }
 
-export interface ILookupCityTransport {
-  [cityCode: string]: ICityTransport;
+/**
+ * A city and its incident edges in the network:
+ * * a [[referential]] of coordinates in [[NEDLocal]]
+ * * a table of transport modes and their alphas
+ * * a list of destinations and associated transport modes
+ * * a table of [[origCityProperties]]
+ */
+export interface ICityNetwork {
+  referential: NEDLocal;
+  coneAlpha: ILookupConeAlpha;
+  destAndModes: ILookupDestAndModes;
+  origCityProperties: ICity;
+}
+/**
+ * a [[ILookupCityNetwork]] searches
+ * * a cityCode
+ * * and retrieves a piece of network [[ICityNetwork]] made of incident edges of cityCode in the transport network
+ *
+ * <uml>
+ *     ILookupCityNetwork<-ICityNetwork
+ * </uml>
+ */
+export interface ILookupCityNetwork {
+  [cityCode: string]: ICityNetwork;
 }
 
 export interface IItemCriteria {
@@ -125,9 +141,13 @@ export interface IPopulation {
  * City interface
  *
  * Parameters attached to each city:
+ * * [[countryCode]]
+ * * [[countryName]]
+ * * [[cityCode]]
  * * [[urbanagglomeration]] is the name of the city
  * * [[radius]]: number; // for cases of cities in islands close to a continent
- * * [[destinations]] is a table will be determined by scanning the [[ITransportNetwork]]
+ * * [[populations]] for several years as provided in csv file 'population.csv'
+ * * [[edges]] is a table will be determined by scanning the [[ITransportNetwork]]
  */
 export interface ICity {
   countryCode: number;
@@ -142,8 +162,8 @@ export interface ICity {
 }
 
 /**
- * for a given [[year]], for a given [[transportModeCode]],
- * the speed of a transport mode [[speedKPH]] may be different
+ * the [[speedKPH]] of a transport mode may be different
+ * depending on [[year]]
  */
 export interface ITransportModeSpeed {
   year: number;
@@ -152,11 +172,15 @@ export interface ITransportModeSpeed {
 }
 
 /**
- * A transport mode has a [[name]], a [[code]], a [[yearBegin]],
- * a [[yearEnd]], can be [[terrestrial]] or not,
- * and has a table of [[speeds]] that may change over years
+ * A transport mode has
+ * * a [[name]],
+ * * a [[code]],
+ * * a [[yearBegin]],
+ * * a [[yearEnd]],
+ * * can be [[terrestrial]] or not,
+ * * and has a table of [[speeds]] that may change over years
  */
-export interface ITransportModeCode {
+export interface ITranspMode {
   name: string;
   code: number;
   yearBegin: number;
@@ -166,12 +190,14 @@ export interface ITransportModeCode {
 }
 
 /**
- * Here we have data of each link in the [[ITransportNetwork]]
+ * Here we find data of each link/edge in the [[ITransportNetwork]]
  *
- * Each link has a [[yearBegin]] and a [[yearEnd]]
- * * an origin [[idOri]] and  destination [[idDes]]
+ * Each link/edge has
+ * * a [[yearBegin]] and
+ * * a [[yearEnd]]
+ * * an origin [[idOri]]
+ * * and  destination [[idDes]]
  * * a transport mode [[transportMode]]
- * * [[destination]]:??
  */
 export interface ITransportNetwork {
   yearBegin: number;
@@ -179,7 +205,6 @@ export interface ITransportNetwork {
   idOri?: number;
   idDes: number;
   transportMode: number;
-  // destination?: number;
 }
 
 export interface IBBox {
@@ -208,35 +233,53 @@ export type configurationObservableEvt =
 
 export type configurationCallback = (name: configurationObservableEvt, value: any) => void;
 export type ShaderTypes = 'fragment' | 'vertex';
-export interface ILookupAndMaxSpeedAndLine {
-  lookupCityTransport: ILookupCityTransport;
-  lineData: ILookupLine;
+/**
+ * [[ILookupEdgesAndTranspModes]] contains
+ * * [[lookupCityNetwork]] network data (graph data) with modes and speed parameters
+ * * [[edgesData]] edges data for geometric processes
+ *
+ * (some duplication but the purposes are different)
+ */
+export interface ILookupEdgesAndTranspModes {
+  lookupCityNetwork: ILookupCityNetwork;
+  edgesData: ILookupEdges;
 }
-export interface IEndCityLine {
+/**
+ * defines the city at the other extremity of an edge
+ */
+export interface ICityExtremityOfEdge {
   cityCode: string | number;
   position: Cartographic;
 }
 /**
- * data associate to and edge
+ * data associated to an edge from a given city
  *
- * P an Q are control points for Bezier curves
+ * [[pointP]] and [[pointQ]] are control points for Bezier curves
  *
- * Theta is the angle between cities
+ * [[theta]] is the angle between cities
  */
 export interface ILookupEdgeList {
-  end: IEndCityLine;
+  end: ICityExtremityOfEdge;
   pointP: Cartographic;
   pointQ: Cartographic;
   middle: Cartographic;
   ratio: { [transportName: string]: { [year: string]: number } };
   theta: number;
 }
-export interface ILookupLineItem {
-  begin: IEndCityLine;
+/**
+ * Lines (or edges) from a city
+ */
+export interface ILookupEdgesFromCity {
+  begin: ICityExtremityOfEdge;
   list: { [cityCodeEnd: string]: ILookupEdgeList };
 }
-export interface ILookupLine {
-  [cityCodeBegin: number]: ILookupLineItem;
+/**
+ * a line and its associated graph edge has a [[cityCodeBegin]]
+ *
+ * other parameters of this line derive from the [[ILookupLineItem]]
+ */
+export interface ILookupEdges {
+  [cityCodeBegin: number]: ILookupEdgesFromCity;
 }
 export interface IMarkLimits {
   begin: number; // inclusif

@@ -180,6 +180,7 @@ export class GUI {
           } else if (name.endsWith('.csv')) {
             this._merger.add(item.text);
             if (bigBoard.state === 'ready') {
+              // this is when all processes are launched
               this._merger.merge();
             }
           }

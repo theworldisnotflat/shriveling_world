@@ -5,7 +5,7 @@ import { PseudoCone } from './base';
 import { ConeMeshShader } from './coneMeshShader';
 import { Cartographic, searchCriterias } from '../common/utils';
 import {
-    ISumUpCriteria, ILookupAndMaxSpeedAndLine, ICriterias, ILookupCityTransport,
+    ISumUpCriteria, ILookupEdgesAndTranspModes, ICriterias, ILookupCityNetwork,
 } from '../definitions/project';
 import { CountryBoard } from '../country/countryBoard';
 import { LineMeshShader } from './lineMeshShaders';
@@ -82,19 +82,23 @@ export class ConeBoard {
         this._renderer = renderer;
     }
 
-    public add(lookup: ILookupAndMaxSpeedAndLine): void {
+    /**
+     *
+     * @param lookup
+     */
+    public add(lookup: ILookupEdgesAndTranspModes): void {
         this.clean();
-        let myConsistentLookup = <ILookupCityTransport>{};
-        for (let cityCode in lookup.lookupCityTransport) {
-            if (lookup.lookupCityTransport.hasOwnProperty(cityCode) &&
-                Object.keys(lookup.lookupCityTransport[cityCode].transportsAlpha).length > 1) {
-                myConsistentLookup[cityCode] = lookup.lookupCityTransport[cityCode];
+        let myConsistentLookup = <ILookupCityNetwork>{};
+        for (let cityCode in lookup.lookupCityNetwork) {
+            if (lookup.lookupCityNetwork.hasOwnProperty(cityCode) &&
+                Object.keys(lookup.lookupCityNetwork[cityCode].coneAlpha).length > 1) {
+                myConsistentLookup[cityCode] = lookup.lookupCityNetwork[cityCode];
             }
         }
         // lookup.lookupCityTransport = myConsistentLookup;
         let that = this;
         let bboxes = this._countries.countryMeshCollection.map((country) => country.bbox);
-        ConeMeshShader.generateCones(lookup.lookupCityTransport, bboxes).then((cones) => {
+        ConeMeshShader.generateCones(lookup.lookupCityNetwork, bboxes).then((cones) => {
             cones.forEach((cone) => {
                 // updateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
                 that.coneMeshCollection.push(cone);
@@ -104,7 +108,7 @@ export class ConeBoard {
                 that._renderer.render(that._scene, that._camera);
             });
         });
-        LineMeshShader.generateCones(lookup.lineData).then((lines) => {
+        LineMeshShader.generateCones(lookup.edgesData).then((lines) => {
             lines.forEach((line) => {
                 that.lineCollection.push(line);
                 line.visible = that._show;
