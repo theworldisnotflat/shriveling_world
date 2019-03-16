@@ -24,17 +24,17 @@ import {
 } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
 /**
- * [[merger]] creates interfaces, for instance
- * between cities and populations, etc.
+ * assure le croisement de deux tableaux d'objet sur un attribut. La clé de croisement
+ * est renommée. À la fin de la procédure, le tableau receptacle est enrichi.
  *
- * @param mother
- * @param girl
- * @param motherProperty
- * @param girlProperty
- * @param newName
- * @param forceArray
- * @param girlPropertyToRemove
- * @param motherPropertyToRemove
+ * @param mother le tableau d'objet receptacle du croisement
+ * @param girl le tableau qui complète le tableau précédent
+ * @param motherProperty l'attribut du tableau mother sur lequel le croisement se fera
+ * @param girlProperty l'attribut du tableau girl sur lequel le croisement se fera
+ * @param newName le nom de l'attribut issu du croisement dans le tableau mother
+ * @param forceArray force l'attribut synthétique à être un tableau
+ * @param girlPropertyToRemove indique si on doit retirer la propriété dans le tableau girl
+ * @param motherPropertyToRemove indique si on doit retirer la propriété dans le tableau girl
  */
 function merger<U, V>(
   mother: U[], girl: V[], motherProperty: string, girlProperty: string, newName: string, forceArray: boolean,
@@ -85,7 +85,7 @@ const keyWords: { name: string, words: string[] }[] = [
   { name: '_cities', words: ['cityCode', 'latitude', 'longitude', 'radius'] },
   { name: '_transportModeSpeed', words: ['transportModeCode', 'year', 'speedKPH'] },
   { name: '_transportModeCode', words: ['code', 'name', 'yearBegin', 'terrestrial'] },
-  { name: '_transportNetwork', words: ['transportModeSpeed', 'idDes', 'idOri'] },
+  { name: '_transportNetwork', words: ['transportMode', 'idDes', 'idOri'] },
   { name: '_populations', words: ['cityCode'] },
 ];
 
@@ -562,6 +562,7 @@ export class Merger {
       }
       this._checkState();
     } else {
+      console.log(headings);
       throw new Error('scheme unknown');
     }
   }
@@ -587,7 +588,7 @@ export class Merger {
       //    merger(transportNetwork, transportModeCode, 'transportModeSpeed', 'code', 'transportDetails', false, false, false);
       merger(cities, population, 'cityCode', 'cityCode', 'populations', false, true, false);
       merger(transportNetwork, cities, 'idDes', 'cityCode', 'destination', false, false, false);
-      merger(cities, transportNetwork, 'cityCode', 'idOri', 'destinations', true, true, false);
+      merger(cities, transportNetwork, 'cityCode', 'idOri', 'edges', true, true, false);
       this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
       this._state = 'missing';
       this._checkState();
