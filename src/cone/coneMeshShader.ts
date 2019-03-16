@@ -11,6 +11,9 @@ import { Shaders } from '../shaders';
 import { GPUComputer } from '../common/gpuComputer';
 const forbiddenAttributes = ['referential', 'position', 'transports'];
 
+/**
+ * [[IShaderAlpha]] is a tbale of alphas with years
+ */
 interface IShaderAlpha {
   [year: string]: Float32Array;
 }
@@ -41,6 +44,11 @@ function fullCleanArrays(): void {
 }
 fullCleanArrays();
 
+/**
+ * function [[localLimitsRaw]]
+ * @param boundaries
+ * @param referential
+ */
 function localLimitsRaw(
   boundaries: Cartographic[][], referential: NEDLocal): { clock: number, distance: number }[] {
   let allPoints: Coordinate[] = [];
@@ -63,6 +71,11 @@ function localLimitsRaw(
   return resultat;
 }
 
+/**
+ * function [[localLimitsFunction]]
+ * @param tab
+ * @param coneStep
+ */
 function localLimitsFunction(tab: { clock: number, distance: number }[], coneStep = CONFIGURATION.coneStep): (x: number) => number {
   let clockDistance = tab.reduce(
     (result, current) => {
@@ -80,7 +93,9 @@ function localLimitsFunction(tab: { clock: number, distance: number }[], coneSte
   return extrapolator(temporaire, 'clock', 'distance');
 }
 
-// quand on change conestep!!
+/**
+ * function [[regenerateFromConeStep]] when [[coneStep]] is modified
+ */
 function regenerateFromConeStep(): void {
   const step = CONFIGURATION.coneStep;
   let clocks: number[] = [];
@@ -127,8 +142,12 @@ function regenerateFromConeStep(): void {
   _gpgpu.positions.updateTextures(options);
 }
 
-// sets the alpha (fixing slopes) of cones according to year
-// and deals with cones that shouldnt be displayed
+/**
+ * function [[updateAlphas]] sets the alpha (fixing slopes) of cones according to year
+ * and deals with cones that shouldnt be displayed
+ *
+ * will call function [[getAlpha]]
+ */
 function updateAlphas(): void {
   let year = CONFIGURATION.year;
   _conesWithoutDisplay = [];
@@ -150,6 +169,9 @@ function updateAlphas(): void {
   _gpgpu.positions.updateTextures(options);
 }
 
+/**
+ * function [[updateWithLimits]] will apply the [[withLimits]] choice
+ */
 function updateWithLimits(): void {
   let withLimits = new Uint8Array(_height);
   for (let i = 0; i < _height; i++) {
@@ -192,6 +214,9 @@ function computation(): void {
     _cones[i].setGeometry(finalPositions.subarray(offset, end), finalUV.subarray(offset, end));
   }
 }
+/**
+ * class [[ConeMeshShader]]
+ */
 export class ConeMeshShader extends PseudoCone {
 
   public otherProperties: any;
@@ -201,6 +226,11 @@ export class ConeMeshShader extends PseudoCone {
   private _position: Cartographic;
   private _alphas: { [year: string]: number };
 
+  /**
+   * will [[generateCones]] from [[cityNetwork]]
+   * @param lookup
+   * @param bboxes
+   */
   public static async generateCones(
     lookup: ILookupCityNetwork, bboxes: IBBox[]): Promise<ConeMeshShader[]> {
     _ready = false;
@@ -281,7 +311,7 @@ export class ConeMeshShader extends PseudoCone {
         let cityTransport = lookup[cityCode];
         let position = cityTransport.referential.cartoRef;
         let referentialGLSL = cityTransport.referential.ned2ECEFMatrix;
-        let transports = cityTransport.transpModesAlpha;
+        let transports = cityTransport.coneAlpha;
         _localLimitsLookup[cityCode] = localLimitsRaw(matchingBBox(position, bboxes), cityTransport.referential);
         let commonProperties = {};
         for (let attribute in cityTransport) {
@@ -324,6 +354,9 @@ export class ConeMeshShader extends PseudoCone {
     super.dispose();
   }
 
+  /**
+   * [[setGeometry]]
+   */
   public setGeometry(positions: Float32Array, uv: Float32Array): void {
     let geometry = <Geometry>this.geometry;
     geometry.computeFaceNormals();
@@ -347,10 +380,22 @@ export class ConeMeshShader extends PseudoCone {
     }
   }
 
+  /**
+   * will [[getAlpha]] depending on [[year]]
+   * @param year
+   */
   public getAlpha(year: string | number): number {
     return this._alphas[year];
   }
 
+  /**
+   * constructor
+   * @param cityCode
+   * @param position
+   * @param alphas // cone angles
+   * @param properties
+   * @param transportName
+   */
   private constructor(cityCode: string, position: Cartographic, alphas: ILookupAlpha, properties: any, transportName: string) {
     const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(400 * 4 * 2), 4).setDynamic(true);
     const interleavedBufferAttributePosition = new InterleavedBufferAttribute(interleavedBufferPosition, 3, 0, false);

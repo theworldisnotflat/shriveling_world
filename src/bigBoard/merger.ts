@@ -170,6 +170,8 @@ function getRatio(theta: number, speedMax: number, speed: number): number {
 }
 
 /**
+ * [[networkFromCities]] is the main function of the project
+ *
  * function [[networkFromCities]] explores the [[transportNetwork]]
  * around each city in order to
  * * determine the geometry of cones ([[cities]])
@@ -334,62 +336,73 @@ function networkFromCities(
     res.pointP = cached.pointP;
     return res;
   }
-  let processedCities: { [begin: string]: { [end: string]: string[] } } = {};
+  // processedODs will contain the value of edgeTranspModeName for each existing edge (OD)
+  let processedODs: { [begin: string]: { [end: string]: string[] } } = {};
   // second part of the function
+  // the main loop for each city
   cities.forEach((city) => {
     let origCityCode = city.cityCode;
     let referential = lookupPosition[origCityCode];
-    if (!processedCities.hasOwnProperty(origCityCode)) {
-      processedCities[origCityCode] = {}; // creates an empty property for 'origCityCode'
+    if (!processedODs.hasOwnProperty(origCityCode)) {
+      processedODs[origCityCode] = {}; // creates an empty property for 'origCityCode'
     }
     if (referential instanceof NEDLocal) {
       let startPoint: ICityExtremityOfEdge = { cityCode: origCityCode, position: referential.cartoRef };
-      let listDest: { [cityCodeEnd: string]: ILookupEdgeList } = {};
-      let transpModesAlpha: ILookupTranspModeAlpha = {};
-      let destAndModes: ILookupDestAndModes = {};
+      // list of edges from the considered city (described by their destination cities)
+      let listOfEdges: { [cityCodeEnd: string]: ILookupEdgeList } = {};
+      let coneAlpha: ILookupTranspModeAlpha = {};
+      let destinationsAndModes: ILookupDestAndModes = {};
       let destCityCode: number;
       let edge: ITranspNetwork, minYear: number, maxYear: number, alpha: number;
       let speedMax: number, speedAmb: number;
       let isTerrestrial: boolean;
-      let currentTranspModeName: string;
-      let currentTranspModeSpeed: ITabSpeedPerYearPerTranspModeItem;
+      let edgeTranspModeName: string;
+      let edgeTranspModeSpeed: ITabSpeedPerYearPerTranspModeItem;
       if (city.edges.length === 0) {
         city.edges.push({ yearBegin: minYear, idDes: -Infinity, transportMode: roadCode });
       }
+      // for each edge incident to the city considered
       for (let i = 0; i < city.edges.length; i++) {
         edge = city.edges[i];
         destCityCode = edge.idDes;
-        currentTranspModeSpeed = speedPerTransportPerYear[edge.transportMode];
-        if (!processedCities.hasOwnProperty(destCityCode)) {
-          processedCities[destCityCode] = {}; // creates an empty property for 'destCityCode'
+        // edgeTranspModeSpeed is the key parameter of the process
+        // it will be confronted to maximumSpeed[year]
+        edgeTranspModeSpeed = speedPerTransportPerYear[edge.transportMode];
+        // prepare tables
+        if (!processedODs.hasOwnProperty(destCityCode)) {
+          processedODs[destCityCode] = {};
         }
-        if (!processedCities[origCityCode].hasOwnProperty(destCityCode)) {
-          processedCities[origCityCode][destCityCode] = []; // o-d edge
-          processedCities[destCityCode][origCityCode] = []; // d-o edge
+        if (!processedODs[origCityCode].hasOwnProperty(destCityCode)) {
+          processedODs[origCityCode][destCityCode] = []; // o-d edge
+          processedODs[destCityCode][origCityCode] = []; // d-o edge
         }
         if (lookupPosition.hasOwnProperty(destCityCode)) {
           minYear = Math.min(edge.yearBegin, minYear);
           maxYear = edge.yearEnd ? edge.yearEnd : maxYear;
-          if (currentTranspModeSpeed !== undefined) {
-            currentTranspModeName = currentTranspModeSpeed.name;
-            isTerrestrial = _transportName.cones.indexOf(currentTranspModeName) !== -1;
-            if (!transpModesAlpha.hasOwnProperty(currentTranspModeName)) {
-              transpModesAlpha[currentTranspModeName] = {};
+          if (edgeTranspModeSpeed !== undefined) { // for maximum security :)
+            edgeTranspModeName = edgeTranspModeSpeed.name;
+            // if mode isTerrestrial it will affect the slope of cones
+            isTerrestrial = _transportName.cones.indexOf(edgeTranspModeName) !== -1;
+            // prepare tables
+            if (!coneAlpha.hasOwnProperty(edgeTranspModeName)) {
+              coneAlpha[edgeTranspModeName] = {};
             }
-            if (!destAndModes.hasOwnProperty(destCityCode)) {
-              destAndModes[destCityCode] = {};
+            if (!destinationsAndModes.hasOwnProperty(destCityCode)) {
+              destinationsAndModes[destCityCode] = {};
             }
-            if (!destAndModes[destCityCode].hasOwnProperty(currentTranspModeName)) {
-              destAndModes[destCityCode][currentTranspModeName] = [];
+            if (!destinationsAndModes[destCityCode].hasOwnProperty(edgeTranspModeName)) {
+              destinationsAndModes[destCityCode][edgeTranspModeName] = [];
             }
-            let currentModeSpeed = currentTranspModeSpeed.tabYearSpeed;
-            let edgeToBeProcessed = processedCities[origCityCode][destCityCode].indexOf(currentTranspModeName) === -1;
-            processedCities[origCityCode][destCityCode].push(currentTranspModeName);
-            processedCities[destCityCode][origCityCode].push(currentTranspModeName);
+            let edgeModeSpeed = edgeTranspModeSpeed.tabYearSpeed;
+            let edgeToBeProcessed = processedODs[origCityCode][destCityCode].indexOf(edgeTranspModeName) === -1;
+            processedODs[origCityCode][destCityCode].push(edgeTranspModeName);
+            processedODs[destCityCode][origCityCode].push(edgeTranspModeName);
+            // for each year the alpha will be computed
             for (let year = minYear; year <= maxYear; year++) {
               if (isTerrestrial === true) {
+                // then we affect the slope of cones
                 speedMax = maximumSpeed[year];
-                speedAmb = currentModeSpeed[year];
+                speedAmb = edgeModeSpeed[year];
                 // this is [equation 1](http://bit.ly/2tLfehC)
                 // of the slope of the cone
                 // executed because transport mode [[isTerrestrial]]
@@ -398,25 +411,27 @@ function networkFromCities(
                 if (alpha < 0) {
                   alpha += CONFIGURATION.TWO_PI;
                 }
-                transpModesAlpha[currentTranspModeName][year] = alpha;
-                destAndModes[destCityCode][currentTranspModeName].push({ year: year, speed: currentModeSpeed[year] });
+                coneAlpha[edgeTranspModeName][year] = alpha;
+                destinationsAndModes[destCityCode][edgeTranspModeName].push({ year: year, speed: edgeModeSpeed[year] });
               } else {
+                // case when edge transport mode is not terrestrial
+                // we generate a line for the edge
                 if (edgeToBeProcessed === true) {
                   let { end, middle, theta, pointP, pointQ } = cachedGetTheMiddle(origCityCode, destCityCode);
-                  let ratio = getRatio(theta, maximumSpeed[year], currentModeSpeed[year]);
-                  if (!listDest.hasOwnProperty(destCityCode)) {
-                    listDest[destCityCode] = <ILookupEdgeList>{};
-                    listDest[destCityCode].end = end;
-                    listDest[destCityCode].middle = middle;
-                    listDest[destCityCode].pointP = pointP;
-                    listDest[destCityCode].pointQ = pointQ;
-                    listDest[destCityCode].theta = theta;
-                    listDest[destCityCode].ratio = {};
+                  let ratio = getRatio(theta, maximumSpeed[year], edgeModeSpeed[year]);
+                  if (!listOfEdges.hasOwnProperty(destCityCode)) {
+                    listOfEdges[destCityCode] = <ILookupEdgeList>{};
+                    listOfEdges[destCityCode].end = end;
+                    listOfEdges[destCityCode].middle = middle;
+                    listOfEdges[destCityCode].pointP = pointP;
+                    listOfEdges[destCityCode].pointQ = pointQ;
+                    listOfEdges[destCityCode].theta = theta;
+                    listOfEdges[destCityCode].ratio = {};
                   }
-                  if (!listDest[destCityCode].ratio.hasOwnProperty(currentTranspModeName)) {
-                    listDest[destCityCode].ratio[currentTranspModeName] = {};
+                  if (!listOfEdges[destCityCode].ratio.hasOwnProperty(edgeTranspModeName)) {
+                    listOfEdges[destCityCode].ratio[edgeTranspModeName] = {};
                   }
-                  listDest[destCityCode].ratio[currentTranspModeName][year] = ratio;
+                  listOfEdges[destCityCode].ratio[edgeTranspModeName][year] = ratio;
                 }
               }
             }
@@ -425,8 +440,8 @@ function networkFromCities(
         // road is the basic network, always present, not described
         // in the transport network input file,
         // roads will generate the cone with the steepest slope
-        if (!transpModesAlpha.hasOwnProperty('Road')) {
-          transpModesAlpha['Road'] = {};
+        if (!coneAlpha.hasOwnProperty('Road')) {
+          coneAlpha['Road'] = {};
         }
         let roadSpeed = speedPerTransportPerYear[roadCode].tabYearSpeed;
         for (let year = roadBegin; year <= maxYear; year++) {
@@ -439,15 +454,17 @@ function networkFromCities(
           if (alpha < 0) {
             alpha += CONFIGURATION.TWO_PI;
           }
-          transpModesAlpha['Road'][year] = alpha;
+          coneAlpha['Road'][year] = alpha;
         }
 
+        // retrieves network data for cones generation
         network[origCityCode] = {
-          referential: referential, transpModesAlpha: transpModesAlpha,
-          destAndModes: destAndModes, origCityProperties: city,
+          referential: referential, coneAlpha: coneAlpha,
+          destAndModes: destinationsAndModes, origCityProperties: city,
         };
-        if (Object.keys(listDest).length > 0) {
-          edgesData[origCityCode] = { begin: startPoint, list: listDest };
+        if (Object.keys(listOfEdges).length > 0) {
+          // retrieves edges info from origCityCode for edges generation
+          edgesData[origCityCode] = { begin: startPoint, list: listOfEdges };
         }
       }
     }

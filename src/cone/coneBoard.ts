@@ -91,7 +91,7 @@ export class ConeBoard {
         let myConsistentLookup = <ILookupCityNetwork>{};
         for (let cityCode in lookup.lookupCityNetwork) {
             if (lookup.lookupCityNetwork.hasOwnProperty(cityCode) &&
-                Object.keys(lookup.lookupCityNetwork[cityCode].transpModesAlpha).length > 1) {
+                Object.keys(lookup.lookupCityNetwork[cityCode].coneAlpha).length > 1) {
                 myConsistentLookup[cityCode] = lookup.lookupCityNetwork[cityCode];
             }
         }

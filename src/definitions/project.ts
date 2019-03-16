@@ -70,7 +70,7 @@ export interface ILookupTranspModeSpeed {
  * A transport mode is associated to a cone slope (alpha)
  * for a given year
  */
-export interface ILookupTransportModeAlpha {
+export interface ILookupConeAlpha {
   [transpModeCode: string]: ILookupAlpha;
 }
 
@@ -91,7 +91,7 @@ export interface ILookupDestAndModes {
  */
 export interface ICityNetwork {
   referential: NEDLocal;
-  transpModesAlpha: ILookupTransportModeAlpha;
+  coneAlpha: ILookupConeAlpha;
   destAndModes: ILookupDestAndModes;
   origCityProperties: ICity;
 }
