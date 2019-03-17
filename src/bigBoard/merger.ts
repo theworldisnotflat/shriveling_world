@@ -415,7 +415,7 @@ function networkFromCities(
                 destinationsAndModes[destCityCode][edgeTranspModeName].push({ year: year, speed: edgeModeSpeed[year] });
               } else {
                 // case when edge transport mode is not terrestrial
-                // we generate a line for the edge
+                // we will generate a line for the edge
                 if (edgeToBeProcessed === true) {
                   let { end, middle, theta, pointP, pointQ } = cachedGetTheMiddle(origCityCode, destCityCode);
                   let ratio = getRatio(theta, maximumSpeed[year], edgeModeSpeed[year]);
