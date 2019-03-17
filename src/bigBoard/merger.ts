@@ -27,11 +27,14 @@ import { CONFIGURATION } from '../common/configuration';
  * assure le croisement de deux tableaux d'objet sur un attribut. La clé de croisement
  * est renommée. À la fin de la procédure, le tableau receptacle est enrichi.
  *
- * @param mother le tableau d'objet receptacle du croisement
- * @param girl le tableau qui complète le tableau précédent
- * @param motherProperty l'attribut du tableau mother sur lequel le croisement se fera
- * @param girlProperty l'attribut du tableau girl sur lequel le croisement se fera
- * @param newName le nom de l'attribut issu du croisement dans le tableau mother
+ * realises the merge of two tables base on an attribute. The key for the merge is renamed.
+ * At the end of the process the recipient table is enriched.
+ *
+ * @param mother le tableau d'objet receptacle du croisement/the recipient table
+ * @param girl le tableau qui complète le tableau précédent/where additional data lies
+ * @param motherProperty l'attribut du tableau mother sur lequel le croisement se fera/the property of the merge
+ * @param girlProperty l'attribut du tableau girl sur lequel le croisement se fera/the property of the merge
+ * @param newName le nom de l'attribut issu du croisement dans le tableau mother/
  * @param forceArray force l'attribut synthétique à être un tableau
  * @param girlPropertyToRemove indique si on doit retirer la propriété dans le tableau girl
  * @param motherPropertyToRemove indique si on doit retirer la propriété dans le tableau girl
@@ -90,8 +93,8 @@ const keyWords: { name: string, words: string[] }[] = [
 ];
 
 // "thetaLimit" = threshold angle of the modelled air services speed:
-// - beyond "thetaLimit" speed has the constant value "speed"
-// - below "thetaLimit" speed decreases from value "speed" to zero depending on the value of "theta"
+// * beyond "thetaLimit" speed has the constant value "speed"
+// * below "thetaLimit" speed decreases from value "speed" to zero depending on the value of "theta"
 const thetaLimit = 2000 / (CONFIGURATION.earthRadiusMeters / 1000);
 let _minYear: number = 1930;
 let _maxYear: number = 1932;
@@ -249,17 +252,29 @@ function networkFromCities(
   _transportName = { lines: [], cones: [] };
   /**
    * Tableau associatif liant un mode de transport à un un objet de type [[ITabSpeedPerYearPerTranspModeItem]]
+   *
+   * association table linking a transpot mode to an object of type [[ITabSpeedPerYearPerTranspModeItem]]
    */
   let speedPerTransportPerYear: { [transportCode: string]: ITabSpeedPerYearPerTranspModeItem } = {};
   /**
    * pour chaque mode de transport:
-   *  - on détermine si c'est de type terrestrev(cône) ou aérien (lignes)
-   *  - la fenêtre temporelle du mode de transport
-   *  - le tableau de vitesse du mode de transport considéré.
-   *    La formule d'interpolation utilisées pour constituée ce tableau retourne
+   *  * on détermine si c'est de type terrestrev(cône) ou aérien (lignes)
+   *  * la fenêtre temporelle du mode de transport
+   *  * le tableau de vitesse du mode de transport considéré.
+   *    La formule d'interpolation utilisées pour constituer ce tableau retourne
    *    pour chaque année de la fenêtre temporelle précédemment calculée
    *    une vitesse interpolée linéairement entre deux dates où la vitesse était connue.
    *  À la sortie de cette boucle, [[speedPerTransportPerYear]]  et [[maximumSpeed]] sont renseignés
+   *
+   * For each transport mode:
+   * * we dertermine if it is terrestrial (cones) or not (line)
+   * * the temporal scope of the transort mode
+   * * the table of speed of the considered transport modes.
+   * the interpolation function used to populate the table returns
+   * for each year in the temporal scope an interpolated speed between
+   * the two dates when the speed is known
+   *
+   * At the end of this loop [[speedPerTransportPerYear]] and [[maximumSpeed]] are populated
    */
   transportModeCode.forEach((transportMode) => {
     let transportCode = transportMode.code;
@@ -313,10 +328,14 @@ function networkFromCities(
   });
   /**
    * fonction mettant en cache les calculs d'ouverture angulaire entre deux villes (l'ordre des villes n'a pas d'importance)
-   * @param  begin code de la ville de début
-   * @param  end   code de la ville de fin
+   *
+   * function putting in cache the computation of angles and points between cities (the order of cities has no importance)
+   * @param  begin code de la ville de début/starting city code
+   * @param  end   code de la ville de fin/ending city code
    * @return       retourne le résultat des calculs prenant en compte les deux villes
    * en entrée (ouverture angulaire, points P et Q et point milieu)
+   *
+   * returns the result of the computation witht the two cities as input (opening theta, points P Q and midpoint)
    */
   function cachedGetTheMiddle(begin: number, end: number): ILookupCache {
     let res = <ILookupCache>{};
