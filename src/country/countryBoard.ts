@@ -104,7 +104,6 @@ export class CountryBoard {
         this.ready = false;
         this.clean();
         let collection = await CountryMeshShader.generator(geoJson);
-        let that = this;
         collection.forEach(mesh => {
             this.countryMeshCollection.push(mesh);
             this._scene.add(mesh);

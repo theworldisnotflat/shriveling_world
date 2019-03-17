@@ -17,24 +17,24 @@ import { NEDLocal } from '../common/referential';
 import { extrapolator, Cartographic, reviver } from '../common/utils';
 import {
   ITranspMode, ICity, ITransportNetwork as ITranspNetwork,
-  ILookupCityNetwork, ILookupTranspModeSpeed, IMergerState,
+  ILookupCityNetwork, IMergerState,
   ILookupDestAndModes, IPopulation, ITransportModeSpeed, ILookupEdgesAndTranspModes,
   ILookupEdges, ICityExtremityOfEdge, ILookupEdgeList,
   ILookupConeAlpha,
 } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
 /**
- * [[merger]] creates interfaces, for instance
- * between cities and populations, etc.
+ * assure le croisement de deux tableaux d'objet sur un attribut. La clé de croisement
+ * est renommée. À la fin de la procédure, le tableau receptacle est enrichi.
  *
- * @param mother
- * @param girl
- * @param motherProperty
- * @param girlProperty
- * @param newName
- * @param forceArray
- * @param girlPropertyToRemove
- * @param motherPropertyToRemove
+ * @param mother le tableau d'objet receptacle du croisement
+ * @param girl le tableau qui complète le tableau précédent
+ * @param motherProperty l'attribut du tableau mother sur lequel le croisement se fera
+ * @param girlProperty l'attribut du tableau girl sur lequel le croisement se fera
+ * @param newName le nom de l'attribut issu du croisement dans le tableau mother
+ * @param forceArray force l'attribut synthétique à être un tableau
+ * @param girlPropertyToRemove indique si on doit retirer la propriété dans le tableau girl
+ * @param motherPropertyToRemove indique si on doit retirer la propriété dans le tableau girl
  */
 function merger<U, V>(
   mother: U[], girl: V[], motherProperty: string, girlProperty: string, newName: string, forceArray: boolean,
@@ -85,7 +85,7 @@ const keyWords: { name: string, words: string[] }[] = [
   { name: '_cities', words: ['cityCode', 'latitude', 'longitude', 'radius'] },
   { name: '_transportModeSpeed', words: ['transportModeCode', 'year', 'speedKPH'] },
   { name: '_transportModeCode', words: ['code', 'name', 'yearBegin', 'terrestrial'] },
-  { name: '_transportNetwork', words: ['transportModeSpeed', 'idDes', 'idOri'] },
+  { name: '_transportNetwork', words: ['transportMode', 'idDes', 'idOri'] },
   { name: '_populations', words: ['cityCode'] },
 ];
 
@@ -188,12 +188,12 @@ function getRatio(theta: number, speedMax: number, speed: number): number {
  *
  * More about the [geometry of cones](https://timespace.hypotheses.org/121)
  *
- * @param transpModeCode
+ * @param transportModeCode
  * @param cities
  * @param transpNetwork
  */
 function networkFromCities(
-  transpModeCode: ITranspMode[], cities: ICity[], transpNetwork: ITranspNetwork[]): ILookupEdgesAndTranspModes {
+  transportModeCode: ITranspMode[], cities: ICity[], transpNetwork: ITranspNetwork[]): ILookupEdgesAndTranspModes {
   let network: ILookupCityNetwork = {};
   let edgesData: ILookupEdges = {};
   // déterminer la fourchette de temps considéré OK
@@ -213,8 +213,9 @@ function networkFromCities(
   interface ISpeedPerYear {
     [year: string]: number;
   }
-  // [[maximumSpeed]] is a table of maximum speed per year
-  // this value will be the reference for all the geometry of cones and edges
+  /**
+   * tableau associatif retournant pour une année donnée, la vitesse du transport le plus rapide
+   */
   let maximumSpeed: ISpeedPerYear = {};
   /**
    * [[ITransportCodeItem]] has a [[speed]] and [[year]]
@@ -224,9 +225,9 @@ function networkFromCities(
     year: number;
   }
   /**
-   * [[ITabSpeedPerYearPerTranspModeItem]] contains a [[tabSpeed]] and a [[name]]
-   *
-   * A transport mode is associated to a table of couples (year, speed)
+   * Interface ayant pour attributs le nom du transport considéré et son tableau
+   * de vitesses. Ce tableau associe à une année la vitesse (dans la limite de
+   * la fenêtre temporelle décrite dans le fichier csv initial) du mode de transport.
    */
   interface ITabSpeedPerYearPerTranspModeItem {
     tabYearSpeed: { [year: string]: number };
@@ -246,8 +247,21 @@ function networkFromCities(
   }
   let roadCode: number, roadBegin: number;
   _transportName = { lines: [], cones: [] };
+  /**
+   * Tableau associatif liant un mode de transport à un un objet de type [[ITabSpeedPerYearPerTranspModeItem]]
+   */
   let speedPerTransportPerYear: { [transportCode: string]: ITabSpeedPerYearPerTranspModeItem } = {};
-  transpModeCode.forEach((transportMode) => {
+  /**
+   * pour chaque mode de transport:
+   *  - on détermine si c'est de type terrestrev(cône) ou aérien (lignes)
+   *  - la fenêtre temporelle du mode de transport
+   *  - le tableau de vitesse du mode de transport considéré.
+   *    La formule d'interpolation utilisées pour constituée ce tableau retourne
+   *    pour chaque année de la fenêtre temporelle précédemment calculée
+   *    une vitesse interpolée linéairement entre deux dates où la vitesse était connue.
+   *  À la sortie de cette boucle, [[speedPerTransportPerYear]]  et [[maximumSpeed]] sont renseignés
+   */
+  transportModeCode.forEach((transportMode) => {
     let transportCode = transportMode.code;
     let transportName = transportMode.name;
     if (transportName === 'Road') {
@@ -287,6 +301,7 @@ function networkFromCities(
     }
     speedPerTransportPerYear[transportCode] = { tabYearSpeed: tabSpeed, name: transportName };
   });
+
   _minYear = minYear;
   _maxYear = maxYear;
   // faire lookup des cartographic/referential par citycode. OK
@@ -296,13 +311,12 @@ function networkFromCities(
     let position = new Cartographic(city.longitude, city.latitude, 0, false);
     lookupPosition[city.cityCode] = new NEDLocal(position);
   });
-
   /**
-   * from the begin and end of an edge this function retrives the middle and
-   * pointP and pointQ at 1/4 and 3/4 of the segment begin-end
-   *
-   * @param begin
-   * @param end
+   * fonction mettant en cache les calculs d'ouverture angulaire entre deux villes (l'ordre des villes n'a pas d'importance)
+   * @param  begin code de la ville de début
+   * @param  end   code de la ville de fin
+   * @return       retourne le résultat des calculs prenant en compte les deux villes
+   * en entrée (ouverture angulaire, points P et Q et point milieu)
    */
   function cachedGetTheMiddle(begin: number, end: number): ILookupCache {
     let res = <ILookupCache>{};
@@ -548,6 +562,7 @@ export class Merger {
       }
       this._checkState();
     } else {
+      console.log(headings);
       throw new Error('scheme unknown');
     }
   }
@@ -573,7 +588,7 @@ export class Merger {
       //    merger(transportNetwork, transportModeCode, 'transportModeSpeed', 'code', 'transportDetails', false, false, false);
       merger(cities, population, 'cityCode', 'cityCode', 'populations', false, true, false);
       merger(transportNetwork, cities, 'idDes', 'cityCode', 'destination', false, false, false);
-      merger(cities, transportNetwork, 'cityCode', 'idOri', 'destinations', true, true, false);
+      merger(cities, transportNetwork, 'cityCode', 'idOri', 'edges', true, true, false);
       this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
       this._state = 'missing';
       this._checkState();

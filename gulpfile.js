@@ -1,17 +1,10 @@
-/**
- * This is where external libraries are declared
- * Each new library must also be declared in the package.json file
- * by the instruction 'npm i -D  XXX' where XXX is the name of the library
- * Beware : the order of insertion is important, i.e. libraries using
- * three.js must be inserter AFTER the three.js line
- */
 'use strict';
 
 const rollup = require('rollup');
 const terser = require('rollup-plugin-terser').terser;
 const typescript = require('rollup-plugin-typescript2');
+const svelte = require('rollup-plugin-svelte')
 const commonjs = require('rollup-plugin-commonjs');
-const nodeResolve = require('rollup-plugin-node-resolve');
 const threeLegacyImport =require('rollup-plugin-threejs-legacy-import');
 const glob = require("glob");
 const fs = require('fs-extra');
@@ -30,6 +23,13 @@ let sources = {
     shader: [
       './src/shaders/**/*.frag', './src/shaders/**/*.vert'
     ],
+    /**
+     * This is where external libraries are declared
+     * Each new library must also be declared in the package.json file
+     * by the instruction 'npm i -D  XXX' where XXX is the name of the library
+     * Beware : the order of insertion is important, i.e. libraries using
+     * three.js must be inserter AFTER the three.js line
+     */
     appThirdParty: [
       'node_modules/twgl.js/dist/4.x/twgl.js',
       'node_modules/three/build/three.js',
@@ -197,7 +197,7 @@ const build = async (done) => {
 const doc= shell.task('typedoc --out documentation/html --json documentation/json.json --name "shriveling the world" --ignoreCompilerErrors --hideGenerator --target ES6 --excludeExternals  --umlLocation remote --umlFormat svg  src')
 const tslint = shell.task('tslint -c tslint.json -e src/webWorkers/**/*.ts src/**/**/*.ts src/*.ts');
 const clean = (done) => {
-  del.sync(['dist', 'example/javascript/', 'src/**/*.js', 'declarations', 'documentation']);
+  del.sync(['dist', 'example/javascript/', 'src/**/*.js','!src/IHM/**/*.js', 'declarations', 'documentation','example/css/']);
   done();
 }
 const server = () => connect.server({root: 'example', port: 8080, livereload: true, https: false});
@@ -205,10 +205,28 @@ const defaultTask = (done) => {
   gulp.src(destinations.js.dist).pipe(gulp.dest(destinations.js.example));
   done();
 };
+const svelteBundle= async (done)=>{
+  const bundle= await rollup.rollup({
+    input:'src/IHM/main.js',
+    plugins:[
+      svelte({
+          css:css=>css.write('example/css/ihm.js')
+        }),
+         isProduction && terser({ecma: 7})
+    ]});
+    await bundle.write({
+      file: 'example/javascript/ihm.js',
+      format: 'iife',
+      name: 'ihm'
+    });
+    done();
+  }
 const buildRequirements = gulp.series(gulp.parallel(compileShaders, compileLibraries, combineExternals), build);
 const defaultRequirement = gulp.series(gulp.parallel(clean, tslint), buildRequirements, defaultTask);
 
 gulp.task('build', buildRequirements);
+
+gulp.task('svelte',svelteBundle)
 
 gulp.task('libraries', compileLibraries);
 
