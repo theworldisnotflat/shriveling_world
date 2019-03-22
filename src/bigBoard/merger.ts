@@ -291,6 +291,7 @@ function networkFromCities(
     let maxYearTransport = transportMode.yearEnd !== undefined ? transportMode.yearEnd : actualYear;
     let tempTransportCodeTab: ITransportCodeItem[] = [], tabSpeed: { [year: string]: number } = {};
     let tempMaxYear: number = transportMode.yearEnd;
+
     transportMode.speeds.forEach((transportSpeed) => {
       tempTransportCodeTab.push({ speed: transportSpeed.speedKPH, year: transportSpeed.year });
       if (maxYear < transportSpeed.year) {
@@ -396,6 +397,8 @@ function networkFromCities(
       if (city.edges.length === 0) {
         city.edges.push({ yearBegin: minYear, idDes: -Infinity, transportMode: roadCode });
       }
+      console.log('_transportName', _transportName);
+      console.log('city.edges', city.edges);
       // for each edge incident to the city considered
       for (let i = 0; i < city.edges.length; i++) {
         edge = city.edges[i];
@@ -433,6 +436,8 @@ function networkFromCities(
             processedODs[origCityCode][destCityCode].push(edgeTranspModeName);
             processedODs[destCityCode][origCityCode].push(edgeTranspModeName);
             // for each year the alpha will be computed
+
+            console.log('isTerrestrial', isTerrestrial);
             for (let year = minYear; year <= maxYear; year++) {
               if (isTerrestrial === true) {
                 // then we affect the slope of cones
@@ -504,6 +509,7 @@ function networkFromCities(
       }
     }
   });
+  console.log(edgesData);
   return { lookupCityNetwork: network, edgesData: edgesData };
 }
 
@@ -576,7 +582,7 @@ export class Merger {
       this[name].push(...getCSV(someString, name === '_transportModeCode'));
       if (name === '_transportModeCode' || name === '_transportNetwork') {
         this[name].forEach((item: ITranspMode | ITranspNetwork) => {
-          if (item.yearEnd === undefined || item.yearEnd.toString() === '') {
+          if (item.yearEnd === undefined || item.yearEnd === null || item.yearEnd.toString() === '') {
             delete item.yearEnd;
           }
         });
@@ -613,10 +619,6 @@ export class Merger {
       this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
       this._state = 'missing';
       this._checkState();
-      console.log(cities);
-      console.log(population);
-      console.log(transportModeCode);
-      console.log(transportNetwork);
     }
   }
 
