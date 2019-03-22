@@ -218,6 +218,8 @@ function networkFromCities(
   }
   /**
    * tableau associatif retournant pour une année donnée, la vitesse du transport le plus rapide
+   *
+   * association table indicating the maximum available speed on a given year
    */
   let maximumSpeed: ISpeedPerYear = {};
   /**
@@ -606,11 +608,15 @@ export class Merger {
       merger(transportModeCode, transportModeSpeed, 'code', 'transportModeCode', 'speeds', true, true, false);
       //    merger(transportNetwork, transportModeCode, 'transportModeSpeed', 'code', 'transportDetails', false, false, false);
       merger(cities, population, 'cityCode', 'cityCode', 'populations', false, true, false);
-      merger(transportNetwork, cities, 'idDes', 'cityCode', 'destination', false, false, false);
+      merger(transportNetwork, cities, 'idDes', 'cityCode', 'subGraph', false, false, false);
       merger(cities, transportNetwork, 'cityCode', 'idOri', 'edges', true, true, false);
       this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
       this._state = 'missing';
       this._checkState();
+      console.log(cities);
+      console.log(population);
+      console.log(transportModeCode);
+      console.log(transportNetwork);
     }
   }
 
