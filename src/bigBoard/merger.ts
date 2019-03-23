@@ -96,8 +96,8 @@ const keyWords: { name: string, words: string[] }[] = [
 // * beyond "thetaLimit" speed has the constant value "speed"
 // * below "thetaLimit" speed decreases from value "speed" to zero depending on the value of "theta"
 const thetaLimit = 2000 / (CONFIGURATION.earthRadiusMeters / 1000);
-let _minYear: number = 1930;
-let _maxYear: number = 1932;
+let _minYear: number = 2000;
+let _maxYear: number = 1900;
 let _transportName: { lines: string[], cones: string[] } = { lines: [], cones: [] };
 const config: Papa.ParseConfig = {
   header: true,
@@ -304,7 +304,6 @@ function networkFromCities(
     });
     maxYearTransport = Math.max(maxYearTransport, tempMaxYear);
     tempTransportCodeTab = tempTransportCodeTab.sort((a, b) => a.year - b.year);
-    console.log(transportMode);
     let extrapolation = extrapolator(tempTransportCodeTab, 'year', 'speed', true);
     let speed: number;
     for (let year = minYearTransport; year <= maxYearTransport; year++) {
@@ -390,7 +389,7 @@ function networkFromCities(
       let coneAlpha: ILookupConeAlpha = {};
       let destinationsAndModes: ILookupDestAndModes = {};
       let destCityCode: number;
-      let edge: ITranspNetwork, minYear: number, maxYear: number, alpha: number;
+      let edge: ITranspNetwork, alpha: number;
       let speedMax: number, speedAmb: number;
       let isTerrestrial: boolean;
       let edgeTranspModeName: string;
@@ -435,7 +434,6 @@ function networkFromCities(
             processedODs[origCityCode][destCityCode].push(edgeTranspModeName);
             processedODs[destCityCode][origCityCode].push(edgeTranspModeName);
             // for each year the alpha will be computed
-
             for (let year = minYear; year <= maxYear; year++) {
               if (isTerrestrial === true) {
                 // then we affect the slope of cones
