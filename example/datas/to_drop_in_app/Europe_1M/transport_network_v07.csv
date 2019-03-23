@@ -4289,3 +4289,61 @@ yearBegin,yearEnd,idOri,nameOri,idDes,nameDes,transportMode,length,notes
 2010,2014,20710,Wenzhou,20464,Beijing,1,,air
 2010,2014,20712,Wuhan,20517,Guangzhou Guangdong,1,,air
 2010,2014,20727,Xianyang Shaanxi,20464,Beijing,1,,air
+1983,,20972,Lyon,20985,Paris,3,HST,
+1990,,20998,Tours,20985,Paris,3,HST,
+1993,,20960,Douai-Lens,20985,Paris,3,HST,
+1993,,20960,Douai-Lens,20969,Lille,3,HST,
+2001,,20972,Lyon,20948,Avignon,3,HST,
+2001,,20973,Marseille-Aix-en-Provence,20948,Avignon,3,HST,
+2001,,20978,Montpellier,20948,Avignon,3,HST,
+2001,,20994,Strasbourg,20985,Paris,3,HST,
+2001,,20998,Tours,20952,Bordeaux,3,HST,
+2001,,20990,Rennes,20985,Paris,3,HST,
+1964,,206156,Shizuoka-Hamamatsu M.M.A.,21671,Tokyo,3,HST,
+1964,,206156,Shizuoka-Hamamatsu M.M.A.,204583,Chukyo M.M.A. (Nagoya),3,HST,
+1964,,206459,Kinki M.M.A. (Osaka),204583,Chukyo M.M.A. (Nagoya),3,HST,
+1975,,206459,Kinki M.M.A. (Osaka),21656,Okayama,3,HST,
+1975,,204585,Hiroshima,21656,Okayama,3,HST,
+1975,,204586,Kitakyushu-Fukuoka M.M.A.,204585,Hiroshima,3,HST,
+1982,,21675,Utsunomiya,21671,Tokyo,3,HST,
+1982,,21675,Utsunomiya,21651,Niigata,3,HST,
+1982,,21675,Utsunomiya,204582,Sendai,3,HST,
+2011,,204586,Kitakyushu-Fukuoka M.M.A.,21633,Kumamoto,3,HST,
+2011,,21633,Kumamoto,21626,Kagoshima,3,HST,
+2015,,21627,Kanazawa,21671,Tokyo,3,HST,
+1997,,20144,Bruxelles-Brussel,20969,Lille,3,HST,
+2002,,20144,Bruxelles-Brussel,20148,Liège,3,HST,
+2009,,20144,Bruxelles-Brussel,20142,Antwerpen,3,HST,
+2009,,21945,Rotterdam,20142,Antwerpen,3,HST,
+2009,,21945,Rotterdam,21930,Amsterdam,3,HST,
+1992,,22549,Madrid,22531,Cordoba,3,HST,
+1992,,22562,Sevilla,22531,Cordoba,3,HST,
+2007,,22550,Malaga,22531,Cordoba,3,HST,
+2007,,22568,Valladolid,22549,Madrid,3,HST,
+2008,,205149,Zaragoza,22549,Madrid,3,HST,
+2010,,22567,Valencia,22549,Madrid,3,HST,
+2013,,22525,Barcelona,205149,Zaragoza,3,HST,
+2013,,22520,Alicante,22549,Madrid,3,HST,
+2014,,22656,Ankara,22682,Eskisehir,3,HST,
+2014,,22648,Sakarya,22682,Eskisehir,3,HST,
+2014,,22648,Sakarya,22704,Izmit,3,HST,
+2014,,22704,Izmit,22684,Gebze,3,HST,
+2014,,22691,Istanbul,22684,Gebze,3,HST,
+2007,,22860,London,20969,Lille,3,HST,
+2004,,21758,Seoul,21739,Cheonan,3,HST,
+2004,,21731,Cheongju,21730,Cheonan,3,HST,
+2004,,21731,Cheongju,21764,Daejon,3,HST,
+2004,,21746,Gumi,21764,Daejon,3,HST,
+2004,,21746,Gumi,21763,Daegu,3,HST,
+2010,,21755,Pohang,21763,Daegu,3,HST,
+2010,,21755,Pohang,21766,Ulsan,3,HST,
+2010,,21757,Busan,21766,Ulsan,3,HST,
+2008,,20464,Beijing,20689,Tianjin,3,HST,wikipedia
+2009,,20712,Wuhan,20474,Changsha,3,HST,wikipedia
+2009,,20474,Changsha,20517,Guangzhou,3,HST,wikipedia
+2010,,20524,Hangzhou,20656,Shanghai,3,HST,wikipedia
+2011,,20689,Tianjin,20567,Ji'nan Shandong,3,HST,wikipedia
+2011,,20567,Ji'nan Shandong,20625,Nanjing Jiangsu,3,HST,wikipedia
+2011,,20625,Nanjing Jiangsu,20715,Wuxi Jiangsu,3,HST,wikipedia
+2011,,20715,Wuxi Jiangsu,20656,Shanghai,3,HST,wikipedia
+2010,2014,20985,Paris,22860,London,3,,hst
