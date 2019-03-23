@@ -304,7 +304,7 @@ function networkFromCities(
     });
     maxYearTransport = Math.max(maxYearTransport, tempMaxYear);
     tempTransportCodeTab = tempTransportCodeTab.sort((a, b) => a.year - b.year);
-    let extrapolation = extrapolator(tempTransportCodeTab, 'year', 'speed', true);
+    let extrapolation = extrapolator(tempTransportCodeTab, 'year', 'speed', false); // boolean à false pour extrapoler au delà des limites!
     let speed: number;
     for (let year = minYearTransport; year <= maxYearTransport; year++) {
       speed = extrapolation(year);

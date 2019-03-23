@@ -161,10 +161,10 @@ export default class BigBoard {
     this.orthographique = true;
 
     this.countryBoard = new CountryBoard(this._scene, this._cameraO);
-    this.countryBoard.show = true;
+    this.countryBoard.show = false;
     this.coneBoard = new ConeBoard(this._scene, this._cameraO, this.countryBoard, this._renderer);
     CONFIGURATION.year = '2010';
-    this._showCitiesName = true;
+    this._showCitiesName = false;
 
     // tslint:disable-next-line
     new GUI(this, container, this._merger);
