@@ -304,6 +304,7 @@ function networkFromCities(
     });
     maxYearTransport = Math.max(maxYearTransport, tempMaxYear);
     tempTransportCodeTab = tempTransportCodeTab.sort((a, b) => a.year - b.year);
+    console.log(transportMode);
     let extrapolation = extrapolator(tempTransportCodeTab, 'year', 'speed', true);
     let speed: number;
     for (let year = minYearTransport; year <= maxYearTransport; year++) {
@@ -397,8 +398,6 @@ function networkFromCities(
       if (city.edges.length === 0) {
         city.edges.push({ yearBegin: minYear, idDes: -Infinity, transportMode: roadCode });
       }
-      console.log('_transportName', _transportName);
-      console.log('city.edges', city.edges);
       // for each edge incident to the city considered
       for (let i = 0; i < city.edges.length; i++) {
         edge = city.edges[i];
@@ -437,7 +436,6 @@ function networkFromCities(
             processedODs[destCityCode][origCityCode].push(edgeTranspModeName);
             // for each year the alpha will be computed
 
-            console.log('isTerrestrial', isTerrestrial);
             for (let year = minYear; year <= maxYear; year++) {
               if (isTerrestrial === true) {
                 // then we affect the slope of cones
@@ -509,7 +507,6 @@ function networkFromCities(
       }
     }
   });
-  console.log(edgesData);
   return { lookupCityNetwork: network, edgesData: edgesData };
 }
 
