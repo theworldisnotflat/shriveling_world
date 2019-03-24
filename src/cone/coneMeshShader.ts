@@ -320,7 +320,7 @@ export class ConeMeshShader extends PseudoCone {
           }
         }
         for (let transportName in transports) {
-          if (transports.hasOwnProperty(transportName)) {
+          if (transports.hasOwnProperty(transportName) && Object.keys(transports[transportName]).length > 0) {
             let alphas = transports[transportName];
             let specificProperties = Object.assign({}, commonProperties, { alphas: alphas, transport: transportName });
             _cones.push(new ConeMeshShader(cityCode, position, alphas, specificProperties, transportName));

@@ -96,8 +96,8 @@ const keyWords: { name: string, words: string[] }[] = [
 // * beyond "thetaLimit" speed has the constant value "speed"
 // * below "thetaLimit" speed decreases from value "speed" to zero depending on the value of "theta"
 const thetaLimit = 2000 / (CONFIGURATION.earthRadiusMeters / 1000);
-let _minYear: number = 1930;
-let _maxYear: number = 1932;
+let _minYear: number = 2000;
+let _maxYear: number = 1900;
 let _transportName: { lines: string[], cones: string[] } = { lines: [], cones: [] };
 const config: Papa.ParseConfig = {
   header: true,
@@ -304,7 +304,7 @@ function networkFromCities(
     });
     maxYearTransport = Math.max(maxYearTransport, tempMaxYear);
     tempTransportCodeTab = tempTransportCodeTab.sort((a, b) => a.year - b.year);
-    let extrapolation = extrapolator(tempTransportCodeTab, 'year', 'speed', true);
+    let extrapolation = extrapolator(tempTransportCodeTab, 'year', 'speed', false); // boolean à false pour extrapoler au delà des limites!
     let speed: number;
     for (let year = minYearTransport; year <= maxYearTransport; year++) {
       speed = extrapolation(year);
@@ -389,7 +389,7 @@ function networkFromCities(
       let coneAlpha: ILookupConeAlpha = {};
       let destinationsAndModes: ILookupDestAndModes = {};
       let destCityCode: number;
-      let edge: ITranspNetwork, minYear: number, maxYear: number, alpha: number;
+      let edge: ITranspNetwork, alpha: number;
       let speedMax: number, speedAmb: number;
       let isTerrestrial: boolean;
       let edgeTranspModeName: string;
@@ -397,8 +397,6 @@ function networkFromCities(
       if (city.edges.length === 0) {
         city.edges.push({ yearBegin: minYear, idDes: -Infinity, transportMode: roadCode });
       }
-      console.log('_transportName', _transportName);
-      console.log('city.edges', city.edges);
       // for each edge incident to the city considered
       for (let i = 0; i < city.edges.length; i++) {
         edge = city.edges[i];
@@ -436,8 +434,6 @@ function networkFromCities(
             processedODs[origCityCode][destCityCode].push(edgeTranspModeName);
             processedODs[destCityCode][origCityCode].push(edgeTranspModeName);
             // for each year the alpha will be computed
-
-            console.log('isTerrestrial', isTerrestrial);
             for (let year = minYear; year <= maxYear; year++) {
               if (isTerrestrial === true) {
                 // then we affect the slope of cones
@@ -509,7 +505,6 @@ function networkFromCities(
       }
     }
   });
-  console.log(edgesData);
   return { lookupCityNetwork: network, edgesData: edgesData };
 }
 
