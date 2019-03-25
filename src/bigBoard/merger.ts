@@ -510,9 +510,14 @@ function networkFromCities(
 
 /**
  * the class [[Merger]] will
- * * introduce the data into [[_cities]], [[_populations]],
- * [[_transportModeSpeed]], [[_transportModeCode]],
- * [[_transportNetwork]], [[_state]] and [[_edgesAndTranspModes]]
+ * * introduce the data into tables
+ *   * [[_cities]],
+ *   * [[_populations]],
+ *   * [[_transportModeSpeed]],
+ *   * [[_transportModeCode]],
+ *   * [[_transportNetwork]],
+ *   * [[_state]] and
+ *   * [[_edgesAndTranspModes]]
  *
  * This class will contain the function [[merge]]
  */
@@ -592,9 +597,14 @@ export class Merger {
   /**
  * The function [[merge]] will
  * * retrieve all from csv files
- * * introduce the data into [[_cities]], [[_populations]],
- * [[_transportModeSpeed]], [[_transportModeCode]],
- * [[_transportNetwork]], [[_state]] and [[_mergedData]]
+ * * introduce the data into tables:
+ *   * [[cities]],
+ *   * [[population]],
+ *   * [[transportModeSpeed]],
+ *   * [[transportModeCode]],
+ *   * [[transportNetwork]],
+ *   * [[_state]] and
+ *   * [[_edgesAndTranspModes]]
  * * link all these tables to each other
  * * execute the main process i.e. [[networkFromCities]]
  */
