@@ -629,7 +629,7 @@ export class Merger {
       // attach city information to ending city edge
       merger(transportNetwork, cities, 'idDes', 'cityCode', 'destCityInfo', false, false, false);
       // generates subgraph from city considered as origin
-      merger(cities, transportNetwork, 'cityCode', 'idOri', 'subGraph', true, true, false);
+      merger(cities, transportNetwork, 'cityCode', 'idOri', 'edges', true, true, false);
       // the main function that generates geometries (cones, lines) by exploring the subgraphs from cities
       this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
       console.log('_edgesAndTranspModes : ', this._edgesAndTranspModes);
