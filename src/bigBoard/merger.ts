@@ -534,7 +534,7 @@ export class Merger {
     return this._state;
   }
   /**
-   * this is the resulting dataset processed by function 
+   * this is the resulting dataset processed by function [[networkFromCities]]
    * in order to give access to the relevant data inside bigBoard
    */
   public get edgesAndTranspModes(): ILookupEdgesAndTranspModes {
