@@ -83,7 +83,9 @@ function merger<U, V>(
   }
 }
 
-// used for parsing data files
+/**
+ * used for parsing data files
+ */
 const keyWords: { name: string, words: string[] }[] = [
   { name: '_cities', words: ['cityCode', 'latitude', 'longitude', 'radius'] },
   { name: '_transportModeSpeed', words: ['transportModeCode', 'year', 'speedKPH'] },
@@ -92,9 +94,11 @@ const keyWords: { name: string, words: string[] }[] = [
   { name: '_populations', words: ['cityCode'] },
 ];
 
-// "thetaLimit" = threshold angle of the modelled air services speed:
-// * beyond "thetaLimit" speed has the constant value "speed"
-// * below "thetaLimit" speed decreases from value "speed" to zero depending on the value of "theta"
+/**
+ * "thetaLimit" = threshold angle of the modelled air services speed:
+ * * beyond "thetaLimit" speed has the constant value "speed"
+ * * below "thetaLimit" speed decreases from value "speed" to zero depending on the value of "theta"
+ */
 const thetaLimit = 2000 / (CONFIGURATION.earthRadiusMeters / 1000);
 let _minYear: number = 2000;
 let _maxYear: number = 1900;
@@ -223,7 +227,9 @@ function networkFromCities(
    */
   let maximumSpeed: ISpeedPerYear = {};
   /**
-   * [[ITransportCodeItem]] has a [[speed]] and [[year]]
+   * [[ITransportCodeItem]] has
+   * * a [[speed]] and
+   * * a [[year]]
    */
   interface ITransportCodeItem {
     speed: number;
