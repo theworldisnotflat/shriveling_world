@@ -14,7 +14,7 @@
 'use strict';
 import * as Papa from 'papaparse';
 import { NEDLocal } from '../common/referential';
-import { extrapolator, Cartographic, reviver } from '../common/utils';
+import { interpolator, Cartographic, reviver } from '../common/utils';
 import {
   ITranspMode, ICity, ITransportNetwork as ITranspNetwork,
   ILookupCityNetwork, IMergerState,
@@ -304,10 +304,10 @@ function networkFromCities(
     });
     maxYearTransport = Math.max(maxYearTransport, tempMaxYear);
     tempTransportCodeTab = tempTransportCodeTab.sort((a, b) => a.year - b.year);
-    let extrapolation = extrapolator(tempTransportCodeTab, 'year', 'speed', false); // boolean à false pour extrapoler au delà des limites!
+    let interpolation = interpolator(tempTransportCodeTab, 'year', 'speed', false); // boolean à false pour interpoler au delà des limites!
     let speed: number;
     for (let year = minYearTransport; year <= maxYearTransport; year++) {
-      speed = extrapolation(year);
+      speed = interpolation(year);
       tabSpeed[year] = speed;
       if (maximumSpeed.hasOwnProperty(year)) {
         if (maximumSpeed[year] < speed) {

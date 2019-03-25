@@ -374,7 +374,7 @@ export function DragnDrop(id: string | HTMLElement, callback: (list: IListFile[]
   }
 }
 
-export function extrapolator<U>(
+export function interpolator<U>(
   normalizedBase: U[], xProperty: string, yProperty: string, strongLimit: boolean = false): (x: number) => number {
   let length = normalizedBase.length;
   let resultat: (x?: number) => number = () => 0;

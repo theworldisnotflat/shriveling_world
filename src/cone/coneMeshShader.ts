@@ -4,7 +4,7 @@ import {
 } from 'three';
 import { CONFIGURATION } from '../common/configuration';
 import { PseudoCone } from './base';
-import { Cartographic, extrapolator, matchingBBox } from '../common/utils';
+import { Cartographic, interpolator, matchingBBox } from '../common/utils';
 import { ILookupCityNetwork, IBBox, ILookupAlpha } from '../definitions/project';
 import { NEDLocal, Coordinate } from '../common/referential';
 import { Shaders } from '../shaders';
@@ -90,7 +90,7 @@ function localLimitsFunction(tab: { clock: number, distance: number }[], coneSte
       temporaire.push({ clock: parseFloat(clockString), distance: clockDistance[clockString] });
     }
   }
-  return extrapolator(temporaire, 'clock', 'distance');
+  return interpolator(temporaire, 'clock', 'distance');
 }
 
 /**
