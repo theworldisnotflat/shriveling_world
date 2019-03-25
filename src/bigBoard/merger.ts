@@ -600,7 +600,7 @@ export class Merger {
   public merge(): void {
     if (this._state === 'ready') {
       this._state = 'pending';
-      // CSV parsing into tables
+      // csv parsing into tables
       let cities: ICity[] = JSON.parse(JSON.stringify(this._cities), reviver);
       let population: IPopulation[] = JSON.parse(JSON.stringify(this._populations), reviver);
       let transportModeCode: ITranspMode[] = JSON.parse(JSON.stringify(this._transportModeCode), reviver);
@@ -620,7 +620,7 @@ export class Merger {
       merger(cities, transportNetwork, 'cityCode', 'idOri', 'edges', true, true, false);
       // the main function that generates geometries (cones, lines) by exploring the subgraphs from cities
       this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
-      
+      console.log('_edgesAndTranspModes : ', this._edgesAndTranspModes);
       this._state = 'missing';
       this._checkState();
     }
