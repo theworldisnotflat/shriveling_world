@@ -103,6 +103,8 @@ function localLimitsFunction(tab: { clock: number, distance: number }[], coneSte
 
 /**
  * function [[regenerateFromConeStep]] when [[coneStep]] is modified
+ *
+ * [[clocks]] are unitary triangles that compose cones, the higher [[conestep]] the smaller clocks are
  */
 function regenerateFromConeStep(): void {
   const step = CONFIGURATION.coneStep;
