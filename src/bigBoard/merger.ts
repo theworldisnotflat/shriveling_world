@@ -600,16 +600,23 @@ export class Merger {
   public merge(): void {
     if (this._state === 'ready') {
       this._state = 'pending';
+      // CSV parsing
       let cities: ICity[] = JSON.parse(JSON.stringify(this._cities), reviver);
       let population: IPopulation[] = JSON.parse(JSON.stringify(this._populations), reviver);
       let transportModeCode: ITranspMode[] = JSON.parse(JSON.stringify(this._transportModeCode), reviver);
       let transportModeSpeed: ITransportModeSpeed[] = JSON.parse(JSON.stringify(this._transportModeSpeed), reviver);
       let transportNetwork: ITranspNetwork[] = JSON.parse(JSON.stringify(this._transportNetwork), reviver);
 
+      // linking tables to eachother
+      // merger(mother, girl, motherProp., girlProp., newName, forceArray, removeMotherProp., removeGirlProp.)
+      // will cross transport modes and speed
       merger(transportModeCode, transportModeSpeed, 'code', 'transportModeCode', 'speeds', true, true, false);
       //    merger(transportNetwork, transportModeCode, 'transportModeSpeed', 'code', 'transportDetails', false, false, false);
+      // will cross cities with population.csv file table information
       merger(cities, population, 'cityCode', 'cityCode', 'populations', false, true, false);
+      // attach city information to ending city edge
       merger(transportNetwork, cities, 'idDes', 'cityCode', 'subGraph', false, false, false);
+      // generates subgraph from city considered as origin
       merger(cities, transportNetwork, 'cityCode', 'idOri', 'edges', true, true, false);
       this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
       this._state = 'missing';
