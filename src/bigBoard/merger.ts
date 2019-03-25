@@ -534,6 +534,7 @@ export class Merger {
     return this._state;
   }
   /**
+   * this is the resulting dataset processed by function 
    * in order to give access to the relevant data inside bigBoard
    */
   public get edgesAndTranspModes(): ILookupEdgesAndTranspModes {
@@ -603,10 +604,10 @@ export class Merger {
  *   * [[transportModeSpeed]],
  *   * [[transportModeCode]],
  *   * [[transportNetwork]],
- *   * [[_state]] and
- *   * [[_edgesAndTranspModes]]
+ *   * [[_state]]
  * * link all these tables to each other
  * * execute the main process i.e. [[networkFromCities]]
+ * * retrievec resulting data into [[_edgesAndTranspModes]]
  */
   public merge(): void {
     if (this._state === 'ready') {
@@ -626,9 +627,9 @@ export class Merger {
       // will link cities with population.csv file table information
       merger(cities, population, 'cityCode', 'cityCode', 'populations', false, true, false);
       // attach city information to ending city edge
-      merger(transportNetwork, cities, 'idDes', 'cityCode', 'subGraph', false, false, false);
+      merger(transportNetwork, cities, 'idDes', 'cityCode', 'destCityInfo', false, false, false);
       // generates subgraph from city considered as origin
-      merger(cities, transportNetwork, 'cityCode', 'idOri', 'edges', true, true, false);
+      merger(cities, transportNetwork, 'cityCode', 'idOri', 'subGraph', true, true, false);
       // the main function that generates geometries (cones, lines) by exploring the subgraphs from cities
       this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
       console.log('_edgesAndTranspModes : ', this._edgesAndTranspModes);
