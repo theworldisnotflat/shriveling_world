@@ -35,6 +35,14 @@ let _gpgpu: { [x: string]: GPUComputer } = {};
 let _clocks: Float32Array;
 let _alphas: IShaderAlpha;
 
+/**
+ * Generates empty arrays of
+ * * [[_localLimitsLookup]]
+ * * [[_cityCodeOrder]]
+ * * [[_clocks]] i.e. unitary trinagular elements to compose cones
+ * * [[_alphas]] cones angles
+ * * [[_indexesArr]]
+ */
 function fullCleanArrays(): void {
   _localLimitsLookup = {};
   _cityCodeOrder = [];
