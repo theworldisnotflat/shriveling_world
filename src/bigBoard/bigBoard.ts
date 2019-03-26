@@ -131,6 +131,8 @@ export default class BigBoard {
   public coneBoard: ConeBoard;
   /**
    * liste des pays générés depuis un fichier geojson
+   *
+   * list of countries generated from a geojson file
    */
   public countryBoard: CountryBoard;
   // is orthographic camera
