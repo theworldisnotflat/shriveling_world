@@ -96,6 +96,8 @@ export class ConeBoard {
         let bboxes = this._countries.countryMeshCollection.map((country) => country.bbox);
         ConeMeshShader.generateCones(lookup.lookupCityTransport, bboxes).then((cones) => {
             cones.forEach((cone) => {
+                console.log(cone);
+
                 // updateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
                 that.coneMeshCollection.push(cone);
                 cone.visible = that._show;

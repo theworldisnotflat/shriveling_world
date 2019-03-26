@@ -615,11 +615,10 @@ export default class BigBoard {
     let exporter = new OBJExporter();
     alert('Export begins...');
     let groupCone = new Group();
-<<<<<<< HEAD
     let groupLineCourt = new Group();
     let groupLineLong = new Group();
-    this._cones.coneMeshCollection.forEach(cone => groupCone.add(cone));
-    this._cones.lineCollection.forEach(line => {
+    this.coneBoard.coneMeshCollection.forEach(cone => groupCone.add(cone));
+    this.coneBoard.lineCollection.forEach(line => {
        if (line.getOpening <  2000 / ( CONFIGURATION.earthRadiusMeters / 1000)) {
             groupLineCourt.add(line);
        } else {
