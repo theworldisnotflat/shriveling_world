@@ -89,9 +89,10 @@ let link = document.createElement('a');
  * Export in Wavefront OBJ format.
  * Exported file can be imported in Blender.
  *
- * Two files a generated:
+ * Three files a generated:
  * * sceneCones.obj
- * * sceneLines.obj
+ * * sceneLinesLongHaul.obj fo short distance flights above the geodesic
+ * * sceneLinesShortHaul.obj for long distance geodesic flights
  *
  * @param blob     data table in blob format
  * @param filename filename of data table (location to user choice)
