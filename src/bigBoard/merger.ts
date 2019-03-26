@@ -552,7 +552,7 @@ export class Merger {
   public get Cities(): ICity[] { return this._cities; }
   public CitiesByIndex(index: string | number): ICity { return this._cities[index]; }
 
-  public get datas(): ILookupEdgesAndTranspModes {
+  public get conesAndEdgesData(): ILookupEdgesAndTranspModes {
     return this._edgesAndTranspModes;
   }
 

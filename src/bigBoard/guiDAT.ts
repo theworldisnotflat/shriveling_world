@@ -290,7 +290,7 @@ export class GUI {
               .min(this._merger.minYear)
               .max(this._merger.maxYear)
               .updateDisplay();
-            bigBoard.coneBoard.add(this._merger.datas);
+            bigBoard.coneBoard.add(this._merger.conesAndEdgesData);
             // this._merger.clear();
             let sizeText = generalFolder
               .add(bigBoard, '_sizetext', 0, 2)
