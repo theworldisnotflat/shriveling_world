@@ -390,7 +390,9 @@ function networkFromCities(
     }
     if (referential instanceof NEDLocal) {
       let startPoint: ICityExtremityOfEdge = { cityCode: origCityCode, position: referential.cartoRef };
-      // list of edges from the considered city (described by their destination cities)
+      /**
+       *  list of edges from the considered city (described by their destination cities)
+       * */
       let listOfEdges: { [cityCodeEnd: string]: ILookupEdgeList } = {};
       let coneAlpha: ILookupConeAlpha = {};
       let destinationsAndModes: ILookupDestAndModes = {};
