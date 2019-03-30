@@ -183,7 +183,7 @@ function updateAlphas(): void {
  * function [[updateWithLimits]] will apply the [[withLimits]] choice
  */
 function updateWithLimits(): void {
-  let withLimits = new Uint8Array(_height);
+  let withLimits = new Float32Array(_height);
   for (let i = 0; i < _height; i++) {
     withLimits[i] = _cones[i].withLimits ? 1 : 0;
   }
@@ -258,7 +258,7 @@ export class ConeMeshShader extends PseudoCone {
               u_ned2ECEF0s: 'RGB32F',
               u_ned2ECEF1s: 'RGB32F',
               u_ned2ECEF2s: 'RGB32F',
-              u_withLimits: 'R8',
+              u_withLimits: 'R32F',
             },
             3).then(
               (instance) => {

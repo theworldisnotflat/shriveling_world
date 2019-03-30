@@ -12,7 +12,7 @@ uniform sampler2D u_summits;
 uniform sampler2D u_ned2ECEF0s;
 uniform sampler2D u_ned2ECEF1s;
 uniform sampler2D u_ned2ECEF2s;
-uniform isampler2D u_withLimits;
+uniform sampler2D u_withLimits;
 
 uniform float threeRadius;
 uniform float earthRadius;
@@ -41,7 +41,7 @@ void main() {
   ned2ECEF[0] = texelFetch(u_ned2ECEF0s, cityPos, 0).xyz;
   ned2ECEF[1] = texelFetch(u_ned2ECEF1s, cityPos, 0).xyz;
   ned2ECEF[2] = texelFetch(u_ned2ECEF2s, cityPos, 0).xyz;
-  int withLimits = texelFetch(u_withLimits, cityPos, 0).r;
+  float withLimits = texelFetch(u_withLimits, cityPos, 0).r;
 
   vec3 cartoPosition;
   float longueur = longueurMaxi;
@@ -50,7 +50,7 @@ void main() {
   if (clock < 0.0) {
     cartoPosition = summit;
   } else {
-    if (withLimits > 0 && cosEl > 0.0) {
+    if (withLimits > 0.0 && cosEl > 0.0) {
       longueur = min(longueurMaxi, boundaryLimit / cosEl);
     }
     cartoPosition = polar2Cartographic(clock, alpha, longueur, summit,

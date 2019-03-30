@@ -640,7 +640,6 @@ export class Merger {
       merger(cities, transportNetwork, 'cityCode', 'idOri', 'edges', true, true, false);
       // the main function that generates geometries (cones, lines) by exploring the subgraphs from cities
       this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
-      console.log('_edgesAndTranspModes : ', this._edgesAndTranspModes);
       this._state = 'missing';
       this._checkState();
     }
