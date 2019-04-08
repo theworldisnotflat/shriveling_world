@@ -4,6 +4,7 @@ import { Merger } from './merger';
 import { DragnDrop } from '../common/utils';
 import { IListFile } from '../definitions/project';
 import BigBoard from './bigBoard';
+import { ConeMeshShader } from '../cone/coneMeshShader';
 import * as dat from 'dat.gui';
 import * as kit from '@brunoimbrizi/controlkit';
 import { CONFIGURATION } from '../common/configuration';
@@ -133,6 +134,9 @@ export class GUI {
       .add(conf, 'coneStep', 1, 360)
       .step(1)
       .onChange((value: number) => (CONFIGURATION.coneStep = value * CONFIGURATION.deg2rad));
+    coneFolder
+      .add(ConeMeshShader, 'discriminant', 1, 20)
+      .step(1);
     coneFolder.add(bigBoard, 'withLimits').onChange((value: boolean) => (conf['with limits'] = value));
     coneFolder
       .add(bigBoard.coneBoard, 'opacity', 0, 1)
@@ -229,31 +233,6 @@ export class GUI {
                 let subGui = terrestrialControllersList.pop();
                 terresterialFolder.removeFolder(subGui);
               }
-              this._merger.transportNames.cones.forEach(transportName => {
-                let folder = terresterialFolder.addFolder(transportName);
-                terrestrialControllersList.push(folder);
-                function colorListener(): void {
-                  let opacity = <number>coneOpacity.getValue();
-                  let color = parseInt(coneColor.getValue().replace('#', ''), 16);
-                  let limits = <boolean>coneLimits.getValue();
-                  bigBoard.coneBoard.coneMeshCollection
-                    .filter(cone => transportName === cone.transportName)
-                    .forEach(cone => {
-                      let material = <MeshPhongMaterial>cone.material;
-                      material.color.setHex(color);
-                      material.opacity = opacity;
-                      cone.withLimits = limits;
-                    });
-                }
-                let coneColor = folder.addColor(conf, 'couleur cones').name('couleur');
-                coneColor.onChange(colorListener);
-                let coneOpacity = folder
-                  .add(conf, 'transparence des cônes', 0, 1, 0.01)
-                  .name('transparence');
-                coneOpacity.onChange(colorListener);
-                let coneLimits = folder.add(conf, 'with limits').listen();
-                coneLimits.onChange(colorListener);
-              });
 
               while (aerialControllersList.length > 0) {
                 let subGui = aerialControllersList.pop();

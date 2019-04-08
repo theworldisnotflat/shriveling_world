@@ -5,7 +5,7 @@ import { PseudoCone } from './base';
 import { ConeMeshShader } from './coneMeshShader';
 import { Cartographic, searchCriterias } from '../common/utils';
 import {
-    ISumUpCriteria, ILookupEdgesAndTranspModes, ICriterias, ILookupCityNetwork,
+    ISumUpCriteria, ILookupEdgesAndTranspModes, ICriterias,
 } from '../definitions/project';
 import { CountryBoard } from '../country/countryBoard';
 import { LineMeshShader } from './lineMeshShaders';
@@ -88,14 +88,6 @@ export class ConeBoard {
      */
     public add(lookup: ILookupEdgesAndTranspModes): void {
         this.clean();
-        let myConsistentLookup = <ILookupCityNetwork>{};
-        for (let cityCode in lookup.lookupCityNetwork) {
-            if (lookup.lookupCityNetwork.hasOwnProperty(cityCode) &&
-                Object.keys(lookup.lookupCityNetwork[cityCode].coneAlpha).length > 1) {
-                myConsistentLookup[cityCode] = lookup.lookupCityNetwork[cityCode];
-            }
-        }
-        // lookup.lookupCityTransport = myConsistentLookup;
         let that = this;
         let bboxes = this._countries.countryMeshCollection.map((country) => country.bbox);
         ConeMeshShader.generateCones(lookup.lookupCityNetwork, bboxes).then((cones) => {
