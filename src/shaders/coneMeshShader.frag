@@ -34,7 +34,7 @@ void main() {
   ivec2 pos2 = ivec2(pos);
   ivec2 cityPos = ivec2(0, pos2.y);
   float clock = texelFetch(u_clocks, ivec2(pos2.x, 0), 0).r;
-  float alpha = texelFetch(u_alphas, cityPos, 0).r;
+  float alpha = texelFetch(u_alphas, pos2, 0).r;
   float boundaryLimit = texelFetch(u_boundaryLimits, pos2, 0).r;
   vec3 summit = texelFetch(u_summits, cityPos, 0).xyz;
   mat3 ned2ECEF = mat3(0.0);

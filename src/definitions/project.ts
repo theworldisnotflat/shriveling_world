@@ -48,13 +48,32 @@ export interface ICartographic {
 }
 
 /**
+ * an item grouping for a fixed year and a fixed origin city datas to generate
+ * a complex cone the slope for road and slope for each
+ * destination city (clock) using a terrestrial transport.
+ */
+export interface IComplexAlphaItem {
+  /**
+   * this property represents the slope of the road transport for the considered year.
+   */
+  roadAlpha: number;
+  /**
+   * this property lists for the considered year and the considered origin city
+   * each destination city using a terrestrial transport. Each item of this
+   * array is a clock in direction of the destination city and a slope
+   * corresponding to the transport speed linking the two cities. This array can have zero item.
+   */
+  tab: { clock: number, alpha: number }[];
+}
+
+/**
  * it's a lookup mapping for a given year the slope angle between earth surface
  * and cone slope as cone radius is determined, it's the key parameter for cone geometries.
  *
  * This slope (alpha) is determined by ![equation 1](http://bit.ly/2tLfehC)
  */
-export interface ILookupAlpha {
-  [year: string]: number;
+export interface ILookupComplexAlpha {
+  [year: string]: IComplexAlphaItem;
 }
 
 /**
@@ -70,9 +89,9 @@ export interface ILookupTranspModeSpeed {
  * A transport mode is associated to a cone slope (alpha)
  * for a given year
  */
-export interface ILookupConeAlpha {
-  [transpModeCode: string]: ILookupAlpha;
-}
+// export interface ILookupConeAlpha {
+//   [transpModeCode: string]: ILookupAlpha;
+// }
 
 /**
  * a table of destination cities and the associated
@@ -90,9 +109,9 @@ export interface ILookupDestAndModes {
  * * a table of [[origCityProperties]]
  */
 export interface ICityNetwork {
-  referential: NEDLocal;
-  coneAlpha: ILookupConeAlpha;
-  destAndModes: ILookupDestAndModes;
+  referential: NEDLocal; // à inhiber dans forbiddenAttributes de coneMeshShader
+  terrestrialCone: ILookupComplexAlpha; // à inhiber dans forbiddenAttributes de coneMeshShader
+  destinationsAndModes: ILookupDestAndModes;
   origCityProperties: ICity;
 }
 /**

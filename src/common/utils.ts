@@ -374,8 +374,19 @@ export function DragnDrop(id: string | HTMLElement, callback: (list: IListFile[]
   }
 }
 
+/**
+ * fonction permettant d'interpoler des valeurs numériques depuis un tableau
+ * @param  normalizedBase tableau d'objets contenant un attribut numérique en
+ * abscisses et un attribut numérique en ordonnées. Le tableau doit être
+ * ordonnée selon l'attribut des abscisses
+ * @param  xProperty nom de l'attribut correspondant aux abscisses.
+ * @param  yProperty nom de l'attribut correspondant aux ordonnées.
+ * @param  strongLimit indique si la fonction retournée extrapole hors des
+ * limites du tablea fourni en paramètre..
+ * @return  une fonction interpolant
+ */
 export function interpolator<U>(
-  normalizedBase: U[], xProperty: string, yProperty: string, strongLimit: boolean = false): (x: number) => number {
+normalizedBase: U[], xProperty: string, yProperty: string, strongLimit: boolean = false): (x: number) => number {
   let length = normalizedBase.length;
   let resultat: (x?: number) => number = () => 0;
   if (length === 1) {
