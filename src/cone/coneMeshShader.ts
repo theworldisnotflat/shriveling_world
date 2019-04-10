@@ -30,6 +30,9 @@ let _ready = false;
 let _width: number;
 let _height: number;
 
+/**
+ * a list of [[GPUComputer]]
+ */
 let _gpgpu: { [x: string]: GPUComputer } = {};
 
 let _clocks: Float32Array;
