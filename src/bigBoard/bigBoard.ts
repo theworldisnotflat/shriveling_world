@@ -614,7 +614,7 @@ export default class BigBoard {
    *
    * Three files a generated:
    * * sceneCones.obj
-   * * sceneLinesLongHaul.obj fo short distance flights above the geodesic
+   * * sceneLinesLongHaul.obj for short distance flights above the geodesic
    * * sceneLinesShortHaul.obj for long distance geodesic flights
    * @private
    * @memberof BigBoard
