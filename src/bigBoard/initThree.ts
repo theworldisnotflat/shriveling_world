@@ -25,14 +25,14 @@ export async function prepareConfiguration(): Promise<void> {
     });
     let earthMaterial = new MeshBasicMaterial({
       opacity: 0.8,
-      depthTest: true,
-      depthWrite: true,
+      // depthTest: true,
+      // depthWrite: true,
       side: DoubleSide,
       transparent: true,
     });
     // earthMaterial.map = new TextureLoader().load(CONFIGURATION.COUNTRY_TEXTURES.map);
     earthMaterial.map = new CanvasTexture(canvas);
-    earthMaterial.specularMap = new TextureLoader().load(CONFIGURATION.COUNTRY_TEXTURES.specularMap);
+    // earthMaterial.specularMap = new TextureLoader().load(CONFIGURATION.COUNTRY_TEXTURES.specularMap);
     CONFIGURATION.COUNTRY_MATERIAL = earthMaterial;
     CONFIGURATION.BASIC_TEXT_MATERIAL = new MeshPhongMaterial({
       opacity: 1.0,
@@ -117,7 +117,7 @@ async function loadBoundaries(url: string): Promise<HTMLCanvasElement> {
       let deltaX = xmax - xmin;
       let deltaY = ymax - ymin;
       context.font = deltaX / 4 + 'px/' + deltaY / 2 + 'px serif';
-      context.strokeStyle = strokeStyleText;
+      context.fillStyle = strokeStyleText;
       if (deltaX > semiHeight / 100 && deltaX < semiHeight && deltaY > semiHeight / 100 && deltaY < semiHeight) {
         context.fillText(name, xmin + deltaX / 4, ymax - deltaY / 2, deltaX / 2);
       }
