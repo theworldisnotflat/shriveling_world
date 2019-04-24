@@ -1,11 +1,10 @@
 'use strict';
 import { CONFIGURATION } from '../common/configuration';
 import {
-  MeshBasicMaterial, DoubleSide, MeshPhongMaterial, PerspectiveCamera, Scene,
-  WebGLRenderer, DirectionalLight, Fog, AmbientLight, Mesh, LineBasicMaterial, PCFSoftShadowMap,
-  DirectionalLightHelper, Group, OrthographicCamera, FontLoader, TextGeometry, TextureLoader, Vector3,
-  OrbitControls, OBJExporter,
+  PerspectiveCamera, Scene, WebGLRenderer, DirectionalLight, Fog, AmbientLight, Mesh, PCFSoftShadowMap,
+  DirectionalLightHelper, Group, OrthographicCamera, TextGeometry, Vector3, OrbitControls, OBJExporter,
 } from 'three';
+import { prepareConfiguration } from './initThree';
 import { ConeBoard } from '../cone/coneBoard';
 import { CountryBoard } from '../country/countryBoard';
 import { Merger } from './merger';
@@ -27,62 +26,6 @@ declare module 'three' {
 }
 
 declare let Stats: any;
-/**
- * initialise les données de ThreeJS pour l'application (textures, couleurs...)
- *
- * initialising the threejs data of the application (textures, colors, ect.)
- */
-function prepareConfiguration(): void {
-  if (CONFIGURATION.COUNTRY_MATERIAL === undefined) {
-    CONFIGURATION.highLitedMaterial = new MeshBasicMaterial({
-      color: 0xffff00,
-      transparent: true,
-      opacity: 0.5,
-      side: DoubleSide,
-    });
-    let earthMaterial = new MeshBasicMaterial({
-      opacity: 0.8,
-      depthTest: true,
-      depthWrite: true,
-      side: DoubleSide,
-      transparent: true,
-    });
-    earthMaterial.map = new TextureLoader().load(CONFIGURATION.COUNTRY_TEXTURES.map);
-    earthMaterial.specularMap = new TextureLoader().load(CONFIGURATION.COUNTRY_TEXTURES.specularMap);
-    CONFIGURATION.COUNTRY_MATERIAL = earthMaterial;
-    CONFIGURATION.BASIC_CONE_MATERIAL = new MeshPhongMaterial({
-      opacity: 0.8,
-      color: 0xebdede,
-      side: DoubleSide,
-    });
-    CONFIGURATION.BASIC_TEXT_MATERIAL = new MeshPhongMaterial({
-      opacity: 1.0,
-      color: 0xebdede,
-      side: DoubleSide,
-    });
-    // (<MeshPhongMaterial>CONFIGURATION.BASIC_CONE_MATERIAL).map = new TextureLoader().load(CONFIGURATION.CONE_TEXTURE);
-    CONFIGURATION.BASIC_LINE_MATERIAL = new LineBasicMaterial({
-      color: 0x1000ff,
-      linewidth: 0.5,
-      side: DoubleSide,
-      transparent: true,
-      opacity: 0.3,
-    });
-    let loaderFont = new FontLoader();
-    loaderFont.load('gentilis_regular.typeface.json', font => {
-      CONFIGURATION.TEXT_GEOMETRY_OPTIONS = {
-        font: font,
-        size: 0.3,
-        height: 1,
-        curveSegments: 3,
-        bevelEnabled: false,
-        bevelThickness: 0,
-        bevelSize: 0,
-        bevelSegments: 0,
-      };
-    });
-  }
-}
 
 let link = document.createElement('a');
 /**
@@ -161,20 +104,21 @@ export default class BigBoard {
    * GUI is linked to bigBoard (but not contained in)
    */
   constructor() {
-    prepareConfiguration();
-    this._merger = new Merger();
-    let container = this._init();
-    this.orthographique = true;
+    prepareConfiguration().then(() => {
+      this._merger = new Merger();
+      let container = this._init();
+      this.orthographique = true;
 
-    this.countryBoard = new CountryBoard(this._scene, this._cameraO);
-    this.countryBoard.show = false;
-    this.coneBoard = new ConeBoard(this._scene, this._cameraO, this.countryBoard, this._renderer);
-    CONFIGURATION.year = '2010';
-    this._showCitiesName = false;
+      this.countryBoard = new CountryBoard(this._scene, this._cameraO);
+      this.countryBoard.show = false;
+      this.coneBoard = new ConeBoard(this._scene, this._cameraO, this.countryBoard, this._renderer);
+      CONFIGURATION.year = '2010';
+      this._showCitiesName = false;
 
-    // tslint:disable-next-line
-    new GUI(this, container, this._merger);
-    this._animate();
+      // tslint:disable-next-line
+      new GUI(this, container, this._merger);
+      this._animate();
+    });
   }
   /**
    * Enable/Disable showCitiesName paramater in order to show/hide
@@ -619,7 +563,7 @@ export default class BigBoard {
    * @private
    * @memberof BigBoard
    */
- private exporterOBJ(): void {
+  private exporterOBJ(): void {
     let exporter = new OBJExporter();
     alert('Export begins...');
     let groupCone = new Group();
@@ -627,11 +571,11 @@ export default class BigBoard {
     let groupLineLongHaul = new Group();
     this.coneBoard.coneMeshCollection.forEach(cone => groupCone.add(cone));
     this.coneBoard.lineCollection.forEach(line => {
-       if (line.getTheta <  2000 / ( CONFIGURATION.earthRadiusMeters / 1000)) {
-            groupLineShortHaul.add(line);
-       } else {
-            groupLineLongHaul.add(line);
-       }
+      if (line.getTheta < 2000 / (CONFIGURATION.earthRadiusMeters / 1000)) {
+        groupLineShortHaul.add(line);
+      } else {
+        groupLineLongHaul.add(line);
+      }
     });
     let blobCone = new Blob([exporter.parse(groupCone)], { type: 'text/plain;charset=utf-8' });
     save(blobCone, 'sceneCones.obj');
@@ -643,7 +587,7 @@ export default class BigBoard {
     this._scene.add(groupLineShortHaul);
     this._scene.add(groupLineLongHaul);
     alert('Export done');
- }
+  }
 
   /**
    * animate : Animating and displaying the scene every frame

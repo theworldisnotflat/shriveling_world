@@ -11,6 +11,7 @@ export interface ICountryTextureURL {
   specularMap: string;
   bumpMap: string;
   normalMap: string;
+  boundaries: string;
 }
 
 /**
