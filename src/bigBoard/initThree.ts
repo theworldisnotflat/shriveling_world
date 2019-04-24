@@ -118,7 +118,7 @@ async function loadBoundaries(url: string): Promise<HTMLCanvasElement> {
       let deltaY = ymax - ymin;
       context.font = deltaX / 4 + 'px/' + deltaY / 2 + 'px serif';
       context.fillStyle = strokeStyleText;
-      if (deltaX > semiHeight / 100 && deltaX < semiHeight && deltaY > semiHeight / 100 && deltaY < semiHeight) {
+      if (deltaX > semiHeight / 100 && deltaY > semiHeight / 100 ) {
         context.fillText(name, xmin + deltaX / 4, ymax - deltaY / 2, deltaX / 2);
       }
     });
