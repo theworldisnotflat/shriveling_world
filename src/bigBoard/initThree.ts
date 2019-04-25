@@ -73,8 +73,8 @@ async function loadBoundaries(url: string): Promise<HTMLCanvasElement> {
   context.fillStyle = '#EBDEDEAF';
   context.fillRect(0, 0, canvas.width, canvas.height);
   context.textBaseline = 'middle';
-  const strokeStyleDefault = 'rgba(0,0,255,0.5)';
-  const strokeStyleText = 'rgba(0,255,0,0.5)';
+  // const strokeStyleDefault = 'rgba(0,0,255,0.5)';
+  // const strokeStyleText = 'rgba(0,255,0,0.5)';
   context.lineWidth = 2;
   json.features.forEach((feature) => {
     let geometry = feature.geometry;
@@ -92,7 +92,11 @@ async function loadBoundaries(url: string): Promise<HTMLCanvasElement> {
     }
     coordinates.forEach((polygons) => {
       let xmin = Infinity, xmax = -Infinity, ymin = Infinity, ymax = -Infinity;
-      context.strokeStyle = strokeStyleDefault;
+      let hue = Math.floor(Math.random() * 360 + .5);
+      let saturation = Math.floor(Math.random() * 100 + .5);
+      let lightness = Math.floor(Math.random() * 100 + .5);
+      let contain = `hsl(${hue},${saturation}%,${lightness}%)`;
+      context.strokeStyle = contain;
       polygons.forEach((polygon) => {
         let points = polygon.map((point) => {
           let [longitude, latitude] = point;
@@ -113,12 +117,14 @@ async function loadBoundaries(url: string): Promise<HTMLCanvasElement> {
         }
         context.closePath();
         context.stroke();
+        context.fillStyle = contain;
+        context.fill();
       });
       let deltaX = xmax - xmin;
       let deltaY = ymax - ymin;
       context.font = deltaX / 4 + 'px/' + deltaY / 2 + 'px serif';
-      context.fillStyle = strokeStyleText;
-      if (deltaX > semiHeight / 100 && deltaY > semiHeight / 100 ) {
+      context.fillStyle = `hsl(${(hue + 180) % 360},${saturation}%,${lightness}%)`;
+      if (deltaX > semiHeight / 100 && deltaY > semiHeight / 100) {
         context.fillText(name, xmin + deltaX / 4, ymax - deltaY / 2, deltaX / 2);
       }
     });
