@@ -61,7 +61,7 @@ void main() {
       standardParallel1, standardParallel2, representationInit,
       representationEnd, percentRepresentation);
   myOutputColor = vec4(modelPosition, 0.0);
-  uvs = vec4(cartoPosition.x / PI + 0.5, cartoPosition.x / (2.0 * PI) + 0.5,
+  uvs = vec4(cartoPosition.x / (2.0 * PI) + 0.5, cartoPosition.y /  PI + 0.5,
              0.0, 0.0);
   cartoPosition.z = - hauteurBase;
   modelPosition = displayConversions(
