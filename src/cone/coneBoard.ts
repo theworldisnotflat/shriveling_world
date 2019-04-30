@@ -94,12 +94,6 @@ export class ConeBoard {
             cones.forEach((cone, index) => {
                 // updateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
                 that.coneMeshCollection.push(cone);
-                if (index % 4 === 0) {
-                    cone.visible = that._show;
-                    console.log(cone);
-                } else {
-                   // cone.visible = false;
-                }
                 cone.scale.setScalar(that._scale);
                 that._scene.add(cone);
                 that._renderer.render(that._scene, that._camera);
