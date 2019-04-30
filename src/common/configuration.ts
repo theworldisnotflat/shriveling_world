@@ -146,6 +146,7 @@ export const CONFIGURATION = {
     specularMap: 'assets/earthspec4k.jpg',
     bumpMap: 'assets/earthbump4k.jpg',
     normalMap: 'assets/earth_normalmap_flat4k.jpg',
+    boundaries: 'assets/boundaries.geojson',
   },
   CONE_TEXTURE: 'assets/coneTexture.png',
   get COUNTRY_MATERIAL(): Material { return _COUNTRY_MATERIAL; },
