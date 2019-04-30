@@ -3,6 +3,7 @@ shriveling the world
 
 The  "shriveling_world" project aims at producing images of the global geographical time-space, using the third dimension, as in time-space relief maps.
 The word "shriveling" was introduced by Waldo Tobler in his comments of L'Hostis-Mathis time-space relief image, in order to describe the complex contraction process suggested by the model.
+A [scientific blog](https://timespace.hypotheses.org/) contains principles, reflections, references and images related to this project.
 
 # How to use
 
@@ -21,7 +22,7 @@ Go inside the application folder and open a terminal, execute the following line
 
 ```npm i```  (update nodejs)
 
-```gulp```   (compile sources)
+```gulp```   (compile sources) or ```gulp -- testing``` for development (faster, does not minify)
 
 ```gulp server``` (launch server)
 

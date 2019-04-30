@@ -17,11 +17,10 @@
   "exclude": [
     "dist",
     "node_modules",
-    "examples",
-    "temp"
+    "examples"
   ],
   "include": [
-    "src"
+    "src","IHM"
   ]
 
 }

@@ -5,7 +5,7 @@ import {
 import { CONFIGURATION } from '../common/configuration';
 import { Shaders } from '../shaders';
 import { GPUComputer } from '../common/gpuComputer';
-import { ILookupLine } from '../definitions/project';
+import { ILookupEdges } from '../definitions/project';
 
 let _lines: LineMeshShader[];
 
@@ -119,12 +119,12 @@ export class LineMeshShader extends Line {
 
   public begin: string | number;
   public end: string | number;
-  private opening: number;
+  private theta: number;
   private _years: { [year: string]: number };
   private _transportName: string;
   private _ratio: number;
 
-  public static async generateCones(lookup: ILookupLine): Promise<LineMeshShader[]> {
+  public static async generateCones(lookup: ILookupEdges): Promise<LineMeshShader[]> {
     _ready = false;
     _lines = [];
     fullCleanArrays();
@@ -193,7 +193,7 @@ export class LineMeshShader extends Line {
             for (let transportName in endPoint.ratio) {
               if (endPoint.ratio.hasOwnProperty(transportName)) {
                 let ratios = endPoint.ratio[transportName];
-                _lines.push(new LineMeshShader(begin.cityCode, endPoint.end.cityCode, endPoint.opening, ratios, transportName));
+                _lines.push(new LineMeshShader(begin.cityCode, endPoint.end.cityCode, endPoint.theta, ratios, transportName));
                 pControls0.push(...beginGLSL);
                 pControls1.push(...pointPGLSL);
                 pControls2.push(...pointQGLSL);
@@ -229,7 +229,7 @@ export class LineMeshShader extends Line {
     _coefficient = value;
     for (let i = 0; i < _height; i++) {
       let line = _lines[i];
-      _hauteurs[i] = getHeight(line._ratio, line.opening);
+      _hauteurs[i] = getHeight(line._ratio, line.theta);
     }
     computation();
   }
@@ -238,9 +238,10 @@ export class LineMeshShader extends Line {
     (<Material>this.material).dispose();
   }
 
-  public get getOpening(): number {
-    return this.opening;
-  }
+    public get getTheta(): number {
+        return this.theta;
+    }
+
   public get transportName(): string {
     return this._transportName;
   }
@@ -265,14 +266,14 @@ export class LineMeshShader extends Line {
     if (resultat === true) {
       this._ratio = ratio;
       let index = _lines.indexOf(this);
-      _hauteurs[index] = getHeight(this._ratio, this.opening);
-      // console.log(_hauteurs[index], this._ratio, this.opening);
+      _hauteurs[index] = getHeight(this._ratio, this.theta);
+      // console.log(_hauteurs[index], this._ratio, this.theta);
     }
     return resultat;
   }
 
   private constructor(
-    begin: string | number, end: string | number, opening: number, years: { [year: string]: number }, transportName: string) {
+    begin: string | number, end: string | number, theta: number, years: { [year: string]: number }, transportName: string) {
     const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(204 * 4), 4).setDynamic(true);
     const interleavedBufferAttributePosition = new InterleavedBufferAttribute(interleavedBufferPosition, 3, 0, false);
     const bufferGeometry = new BufferGeometry();
@@ -280,7 +281,7 @@ export class LineMeshShader extends Line {
     bufferGeometry.computeBoundingSphere();
     super(bufferGeometry, CONFIGURATION.BASIC_LINE_MATERIAL.clone());
     this._years = years;
-    this.opening = opening;
+    this.theta = theta;
     this.end = end;
     this.begin = begin;
     this.visible = true;

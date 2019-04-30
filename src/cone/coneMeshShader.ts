@@ -4,13 +4,16 @@ import {
 } from 'three';
 import { CONFIGURATION } from '../common/configuration';
 import { PseudoCone } from './base';
-import { Cartographic, extrapolator, matchingBBox } from '../common/utils';
-import { ILookupCityTransport, IBBox, ILookupAlpha } from '../definitions/project';
+import { Cartographic, interpolator, matchingBBox } from '../common/utils';
+import { ILookupCityNetwork, IBBox, ILookupComplexAlpha, IComplexAlphaItem } from '../definitions/project';
 import { NEDLocal, Coordinate } from '../common/referential';
 import { Shaders } from '../shaders';
 import { GPUComputer } from '../common/gpuComputer';
-const forbiddenAttributes = ['referential', 'position', 'transports'];
+const forbiddenAttributes = ['referential', 'terrestrialCone'];
 
+/**
+ * [[IShaderAlpha]] is a table of alphas with years
+ */
 interface IShaderAlpha {
   [year: string]: Float32Array;
 }
@@ -18,7 +21,6 @@ interface IShaderAlpha {
 let _cones: ConeMeshShader[];
 let _indexesArr: Uint16Array;
 let _localLimitsLookup: { [x: string]: { clock: number, distance: number }[] };
-let _conesWithoutDisplay: ConeMeshShader[] = [];
 let _cityCodeOrder: string[];
 let uuid: string = undefined;
 let _dirtyLimits = false;
@@ -26,12 +28,24 @@ let _tickCount = 0;
 let _ready = false;
 let _width: number;
 let _height: number;
+let _discriminant = 2;
 
+/**
+ * a list of [[GPUComputer]]
+ */
 let _gpgpu: { [x: string]: GPUComputer } = {};
 
 let _clocks: Float32Array;
 let _alphas: IShaderAlpha;
 
+/**
+ * Generates empty arrays of
+ * * [[_localLimitsLookup]]
+ * * [[_cityCodeOrder]]
+ * * [[_clocks]] i.e. unitary trinagular elements to compose cones
+ * * [[_alphas]] cones angles
+ * * [[_indexesArr]]
+ */
 function fullCleanArrays(): void {
   _localLimitsLookup = {};
   _cityCodeOrder = [];
@@ -41,6 +55,11 @@ function fullCleanArrays(): void {
 }
 fullCleanArrays();
 
+/**
+ * function [[localLimitsRaw]]
+ * @param boundaries
+ * @param referential
+ */
 function localLimitsRaw(
   boundaries: Cartographic[][], referential: NEDLocal): { clock: number, distance: number }[] {
   let allPoints: Coordinate[] = [];
@@ -63,6 +82,11 @@ function localLimitsRaw(
   return resultat;
 }
 
+/**
+ * function [[localLimitsFunction]]
+ * @param tab
+ * @param coneStep
+ */
 function localLimitsFunction(tab: { clock: number, distance: number }[], coneStep = CONFIGURATION.coneStep): (x: number) => number {
   let clockDistance = tab.reduce(
     (result, current) => {
@@ -77,10 +101,14 @@ function localLimitsFunction(tab: { clock: number, distance: number }[], coneSte
       temporaire.push({ clock: parseFloat(clockString), distance: clockDistance[clockString] });
     }
   }
-  return extrapolator(temporaire, 'clock', 'distance');
+  return interpolator(temporaire, 'clock', 'distance');
 }
 
-// quand on change conestep!!
+/**
+ * function [[regenerateFromConeStep]] when [[coneStep]] is modified
+ *
+ * [[clocks]] are unitary triangles that compose cones, the higher [[conestep]] the smaller clocks are
+ */
 function regenerateFromConeStep(): void {
   const step = CONFIGURATION.coneStep;
   let clocks: number[] = [];
@@ -127,31 +155,66 @@ function regenerateFromConeStep(): void {
   _gpgpu.positions.updateTextures(options);
 }
 
-// sets the alpha (fixing slopes) of cones according to year
-// and deals with cones that shouldnt be displayed
+/**
+ * function [[updateAlphas]] sets the alpha (fixing slopes) of cones according to year
+ * and deals with cones that shouldnt be displayed
+ *
+ * will call function [[getcomplexAlpha]]
+ */
 function updateAlphas(): void {
   let year = CONFIGURATION.year;
-  _conesWithoutDisplay = [];
+  const twoPI = CONFIGURATION.TWO_PI;
+  const ecartMinimum = _discriminant * CONFIGURATION.coneStep;
+  let clockA: number, clockB: number;
+  let interpol: (x: number) => number;
   if (!_alphas.hasOwnProperty(year)) {
-    let temp = new Float32Array(_height);
+    let temp = new Float32Array(_height * _width);
     for (let i = 0; i < _height; i++) {
-      let alpha = _cones[i].getAlpha(year);
-      if (alpha === undefined) {
-        _conesWithoutDisplay.push(_cones[i]);
-        alpha = Math.PI / 2 - 0.0000000001;
+      let complexAlpha = _cones[i].getcomplexAlpha(year);
+      let roadAlpha = complexAlpha.roadAlpha;
+      let alphaTab = [...complexAlpha.tab];
+      let subAlphas: Float32Array;
+      const length = alphaTab.length;
+      if (length === 0) { // il n'y a pas de destination avec un transport terrestre.
+        subAlphas = _clocks.map(() => roadAlpha);
+      } else {
+        let lastItem = { clock: 0, alpha: 0 };
+        lastItem.clock = alphaTab[length - 1].clock - twoPI;
+        lastItem.alpha = alphaTab[length - 1].alpha;
+        let firstItem = { clock: 0, alpha: 0 };
+        firstItem.clock = alphaTab[0].clock + twoPI;
+        firstItem.alpha = alphaTab[0].alpha;
+        // ajout croisés des éléments extrêmes pour avoir un tableau débordant le domaine [0, 2PI].
+        alphaTab.push(firstItem);
+        alphaTab.splice(0, 0, lastItem);
+        for (let i = length + 1; i > 0; i--) {
+          clockA = alphaTab[i - 1].clock;
+          clockB = alphaTab[i].clock;
+          //if (clockB - clockA > ecartMinimum) { // ajout d'une pente de route quand
+            // l'écart d'azimut entre deux destinations est trop grande
+            //alphaTab.splice(i, 0, { alpha: roadAlpha, clock: clockA + (clockB - clockA) / 2 });
+          //}
+        }
+        interpol = interpolator(alphaTab, 'clock', 'alpha');
+        subAlphas = _clocks.map((clock) => interpol(clock));
       }
-      temp[i] = alpha;
+      temp.set(subAlphas, i * _width);
     }
     _alphas[year] = temp;
   }
+  console.log(_alphas[year]);
+
   let options = {
-    u_alphas: { src: _alphas[year], width: 1, height: _height },
+    u_alphas: { src: _alphas[year], width: _width, height: _height },
   };
   _gpgpu.positions.updateTextures(options);
 }
 
+/**
+ * function [[updateWithLimits]] will apply the [[withLimits]] choice
+ */
 function updateWithLimits(): void {
-  let withLimits = new Uint8Array(_height);
+  let withLimits = new Float32Array(_height);
   for (let i = 0; i < _height; i++) {
     withLimits[i] = _cones[i].withLimits ? 1 : 0;
   }
@@ -192,17 +255,25 @@ function computation(): void {
     _cones[i].setGeometry(finalPositions.subarray(offset, end), finalUV.subarray(offset, end));
   }
 }
+/**
+ * class [[ConeMeshShader]]
+ */
 export class ConeMeshShader extends PseudoCone {
 
   public otherProperties: any;
   private _withLimits: boolean;
   private _cityCode: string;
-  private _transportName: string;
+  // private _transportName: string;
   private _position: Cartographic;
-  private _alphas: { [year: string]: number };
+  private _complexAlpha: ILookupComplexAlpha;
 
+  /**
+   * will [[generateCones]] from [[cityNetwork]]
+   * @param lookup
+   * @param bboxes
+   */
   public static async generateCones(
-    lookup: ILookupCityTransport, bboxes: IBBox[]): Promise<ConeMeshShader[]> {
+    lookup: ILookupCityNetwork, bboxes: IBBox[]): Promise<ConeMeshShader[]> {
     _ready = false;
     _cones = [];
     fullCleanArrays();
@@ -218,7 +289,7 @@ export class ConeMeshShader extends PseudoCone {
               u_ned2ECEF0s: 'RGB32F',
               u_ned2ECEF1s: 'RGB32F',
               u_ned2ECEF2s: 'RGB32F',
-              u_withLimits: 'R8',
+              u_withLimits: 'R32F',
             },
             3).then(
               (instance) => {
@@ -281,7 +352,7 @@ export class ConeMeshShader extends PseudoCone {
         let cityTransport = lookup[cityCode];
         let position = cityTransport.referential.cartoRef;
         let referentialGLSL = cityTransport.referential.ned2ECEFMatrix;
-        let transports = cityTransport.transports;
+        let terrestrialData = cityTransport.terrestrialCone;
         _localLimitsLookup[cityCode] = localLimitsRaw(matchingBBox(position, bboxes), cityTransport.referential);
         let commonProperties = {};
         for (let attribute in cityTransport) {
@@ -289,18 +360,12 @@ export class ConeMeshShader extends PseudoCone {
             commonProperties[attribute] = cityTransport[attribute];
           }
         }
-        for (let transportName in transports) {
-          if (transports.hasOwnProperty(transportName)) {
-            let alphas = transports[transportName];
-            let specificProperties = Object.assign({}, commonProperties, { alphas: alphas, transport: transportName });
-            _cones.push(new ConeMeshShader(cityCode, position, alphas, specificProperties, transportName));
-            _cityCodeOrder.push(cityCode);
-            summits.push(...referentialGLSL.summit);
-            ned2ECEF0.push(...referentialGLSL.ned2ECEF0);
-            ned2ECEF1.push(...referentialGLSL.ned2ECEF1);
-            ned2ECEF2.push(...referentialGLSL.ned2ECEF2);
-          }
-        }
+        _cones.push(new ConeMeshShader(cityCode, position, terrestrialData, commonProperties));
+        _cityCodeOrder.push(cityCode);
+        summits.push(...referentialGLSL.summit);
+        ned2ECEF0.push(...referentialGLSL.ned2ECEF0);
+        ned2ECEF1.push(...referentialGLSL.ned2ECEF1);
+        ned2ECEF2.push(...referentialGLSL.ned2ECEF2);
       }
     }
     _height = _cones.length;
@@ -320,38 +385,57 @@ export class ConeMeshShader extends PseudoCone {
     return [..._cones];
   }
 
+  public static get discriminant(): number {
+    return _discriminant;
+  }
+  public static set discriminant(value: number) {
+    _discriminant = value;
+    _alphas = {};
+    updateAlphas();
+    computation();
+  }
   public dispose(): void {
     super.dispose();
   }
 
+  /**
+   * [[setGeometry]]
+   */
   public setGeometry(positions: Float32Array, uv: Float32Array): void {
     let geometry = <Geometry>this.geometry;
     geometry.computeFaceNormals();
     let bufferedGeometry = <BufferGeometry>this.geometry;
-    if (_conesWithoutDisplay.indexOf(this) === -1) {
-      let interleavedBuffer = (<InterleavedBufferAttribute>bufferedGeometry.getAttribute('position')).data;
-      interleavedBuffer.set(positions, 0);
-      interleavedBuffer.needsUpdate = true;
-      // bufferedGeometry.computeVertexNormals();
-      bufferedGeometry.computeBoundingSphere();
-      interleavedBuffer = (<InterleavedBufferAttribute>bufferedGeometry.getAttribute('uv')).data;
-      interleavedBuffer.set(uv, 0);
-      interleavedBuffer.needsUpdate = true;
-      if (bufferedGeometry.drawRange.count !== _indexesArr.length) {
-        bufferedGeometry.getIndex().set(_indexesArr);
-        bufferedGeometry.getIndex().needsUpdate = true;
-        bufferedGeometry.setDrawRange(0, _indexesArr.length);
-      }
-    } else {
-      bufferedGeometry.setDrawRange(0, 0);
+    let interleavedBuffer = (<InterleavedBufferAttribute>bufferedGeometry.getAttribute('position')).data;
+    interleavedBuffer.set(positions, 0);
+    interleavedBuffer.needsUpdate = true;
+    // bufferedGeometry.computeVertexNormals();
+    bufferedGeometry.computeBoundingSphere();
+    interleavedBuffer = (<InterleavedBufferAttribute>bufferedGeometry.getAttribute('uv')).data;
+    interleavedBuffer.set(uv, 0);
+    interleavedBuffer.needsUpdate = true;
+    if (bufferedGeometry.drawRange.count !== _indexesArr.length) {
+      bufferedGeometry.getIndex().set(_indexesArr);
+      bufferedGeometry.getIndex().needsUpdate = true;
+      bufferedGeometry.setDrawRange(0, _indexesArr.length);
     }
   }
 
-  public getAlpha(year: string | number): number {
-    return this._alphas[year];
+  /**
+   * return a [[IComplexAlphaItem]] corresponding to a year for the city defined in this [[ConeMeshShader]]
+   * @param year
+   */
+  public getcomplexAlpha(year: string | number): IComplexAlphaItem {
+    return this._complexAlpha[year];
   }
 
-  private constructor(cityCode: string, position: Cartographic, alphas: ILookupAlpha, properties: any, transportName: string) {
+  /**
+   * constructor
+   * @param cityCode
+   * @param position
+   * @param terrestrialData // cone angles
+   * @param properties
+   */
+  private constructor(cityCode: string, position: Cartographic, terrestrialData: ILookupComplexAlpha, properties: any) {
     const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(400 * 4 * 2), 4).setDynamic(true);
     const interleavedBufferAttributePosition = new InterleavedBufferAttribute(interleavedBufferPosition, 3, 0, false);
     const interleavedBufferUV = new InterleavedBuffer(new Float32Array(400 * 4 * 2), 4).setDynamic(true);
@@ -366,25 +450,16 @@ export class ConeMeshShader extends PseudoCone {
     this._cityCode = cityCode;
     this._position = position;
     this.otherProperties = properties;
-    this._alphas = {};
+    this._complexAlpha = terrestrialData;
     this._withLimits = true;
     this.visible = true;
-    this._transportName = transportName;
     this.castShadow = true;
     // this.receiveShadow = true;
 
-    for (let year in alphas) {
-      if (alphas.hasOwnProperty(year)) {
-        this._alphas[year] = alphas[year];
-      }
-    }
   }
 
   get cityCode(): string {
     return this._cityCode;
-  }
-  get transportName(): string {
-    return this._transportName;
   }
   get cartographicPosition(): Cartographic {
     return this._position;

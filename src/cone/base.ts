@@ -6,7 +6,6 @@ export abstract class PseudoCone extends Mesh {
     public abstract withLimits: boolean;
     public abstract readonly cartographicPosition: Cartographic;
     public abstract readonly cityCode: string;
-    public abstract readonly transportName: string;
     constructor(geometry?: Geometry | BufferGeometry, material?: Material) {
         if (geometry instanceof Geometry) {
             super(geometry, material);
