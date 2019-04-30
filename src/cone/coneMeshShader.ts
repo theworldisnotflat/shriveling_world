@@ -190,10 +190,10 @@ function updateAlphas(): void {
         for (let i = length + 1; i > 0; i--) {
           clockA = alphaTab[i - 1].clock;
           clockB = alphaTab[i].clock;
-          // if (clockB - clockA > ecartMinimum) { // ajout d'une pente de route quand
+          if (clockB - clockA > ecartMinimum) { // ajout d'une pente de route quand
             // l'écart d'azimut entre deux destinations est trop grande
-            // alphaTab.splice(i, 0, { alpha: roadAlpha, clock: clockA + (clockB - clockA) / 2 });
-          // }
+            alphaTab.splice(i, 0, { alpha: roadAlpha, clock: clockA + (clockB - clockA) / 2 });
+          }
         }
         interpol = interpolator(alphaTab, 'clock', 'alpha');
         subAlphas = _clocks.map((clock) => interpol(clock));
@@ -202,8 +202,6 @@ function updateAlphas(): void {
     }
     _alphas[year] = temp;
   }
-  console.log(_alphas[year]);
-
   let options = {
     u_alphas: { src: _alphas[year], width: _width, height: _height },
   };
