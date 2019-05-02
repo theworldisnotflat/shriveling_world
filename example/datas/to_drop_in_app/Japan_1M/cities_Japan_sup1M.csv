@@ -1,0 +1,9 @@
+index,countryCode,countryName,cityCode,urbanAgglomeration,latitude,longitude,radius,yearMotorway,yearHST
+983,392,Japan,204583,Chukyo M.M.A. (Nagoya),35.18147,136.90641,,,1964
+987,392,Japan,206459,Kinki M.M.A. (Osaka),34.675834,135.553823,,,1964
+998,392,Japan,206156,Shizuoka-Hamamatsu M.M.A.,34.9769,138.3831,,,1964
+999,392,Japan,21671,Tokyo,35.6895,139.69171,,,1964
+984,392,Japan,204585,Hiroshima,34.392823,132.460534,,,1975
+988,392,Japan,204586,Kitakyushu-Fukuoka M.M.A.,33.6064,130.4181,,,1975
+997,392,Japan,204582,Sendai,38.256047,140.897639,,,1982
+996,392,Japan,204581,Sapporo,43.06417,141.34694,,,
