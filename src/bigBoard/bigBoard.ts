@@ -528,13 +528,18 @@ export default class BigBoard {
     window.addEventListener(
       'resize',
       () => {
-        this._windowHalfX = window.innerWidth / 2;
-        this._windowHalfY = window.innerHeight / 2;
-
-        this._cameraP.aspect = window.innerWidth / window.innerHeight;
-        this._cameraP.updateProjectionMatrix();
-        // this.updateCamera();
-
+        if ( this.orthographique) {
+          this._cameraO.left = - window.innerWidth / 2;
+          this._cameraO.right = window.innerWidth / 2;
+          this._cameraO.top = window.innerHeight / 2 ;
+          this._cameraO.bottom = -window.innerHeight / 2;
+          this._cameraO.updateProjectionMatrix();
+        } else {
+          this._windowHalfX = window.innerWidth / 2;
+          this._windowHalfY = window.innerHeight / 2;
+          this._cameraP.aspect = window.innerWidth / window.innerHeight;
+          this._cameraP.updateProjectionMatrix();
+        }
         this._renderer.setSize(window.innerWidth, window.innerHeight);
       },
       false);
