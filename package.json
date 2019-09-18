@@ -35,7 +35,7 @@
     "tslint": "^5.16.0",
     "tween.js": "^16.6.0",
     "twgl.js": "^4.9.1",
-    "typedoc": "^0.14.2",
+    "typedoc": "^0.15.0",
     "typedoc-plantuml": "git+https://git@github.com/0815fox/typedoc-plantuml.git",
     "typescript": "^3.4.5",
     "uglify-es": "^3.3.9",
