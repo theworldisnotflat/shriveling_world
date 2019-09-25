@@ -4348,3 +4348,38 @@ yearBegin,yearEnd,idOri,nameOri,idDes,nameDes,transportMode,length,notes
 2011,,20567,Ji'nan Shandong,20625,Nanjing Jiangsu,3,,wikipedia
 2011,,20625,Nanjing Jiangsu,20715,Wuxi Jiangsu,3,,wikipedia
 2011,,20715,Wuxi Jiangsu,20656,Shanghai,3,,wikipedia
+1993,,20464,Beijing,20689,Tianjin,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2008,,23681,Jinzhong,20567,Ji'nan Shandong,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2001,,23637,Haerbin,20471,Changchun,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2001,,20471,Changchun,20666,Shenyang,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+1990,,20666,Shenyang,20489,Dalian,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2010,,20666,Shenyang,20689,Tianjin,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2001,,20464,Beijing,20666,Shenyang,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2017,,20464,Beijing,20551,Hohhot,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2017,,20551,Hohhot,20460,Baotou,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2006,,20689,Tianjin,20567,Ji'nan Shandong,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2008,,20567,Ji'nan Shandong,20641,Qingdao,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2010,,20641,Qingdao,20755,Yantai,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2010,,20755,Yantai,20689,Tianjin,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2010,,20689,Tianjin,20641,Qingdao,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2006,,20567,Ji'nan Shandong,20625,Nanjing Jiangsu,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2010,,20625,Nanjing Jiangsu,20641,Qingdao,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2006,,20625,Nanjing Jiangsu,20715,Wuxi Jiangsu,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2006,,20715,Wuxi Jiangsu,20656,Shanghai,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2010,,20656,Shanghai,20524,Hangzhou,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2010,,20656,Shanghai,20631,Ningbo,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2010,,20631,Ningbo,20524,Hangzhou,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2019,,20524,Hangzhou,20766,Yiwu,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2010,,20715,Wuxi Jiangsu,20524,Hangzhou,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2010,,20631,Ningbo,20710,Wenzhou,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2011,,20631,Ningbo,20766,Yiwu,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2019,,20766,Yiwu,20710,Wenzhou,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2010,,20710,Wenzhou,23619,Fuqing,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+1978,,20684,Taipei,20584,Kaohsiung,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2010,,23619,Fuqing,20720,Xiamen,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2018,,23681,Jinzhong,20793,Zhengzhou,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2018,,23681,Jinzhong,20464,Beijing,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2018,,20793,Zhengzhou,20712,Wuhan,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2014,,20712,Wuhan,20484,Chongqing,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+2018,,20712,Wuhan,20474,Changsha,6,,https://en.wikipedia.org/wiki/List_of_NTHS_Expressways
+
