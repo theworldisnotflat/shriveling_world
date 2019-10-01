@@ -53,7 +53,7 @@ Instructions to the application can also be entered in the console (F12) of the 
 with XXX and value in the following range:
 
 - heightRatio : for the heigth of cones
-- intrudedHeightRatio : for the heigth of cones, in the range [O,1]
+- intrudedHeightRatio : for the heigth of cones, in the range [0,1]
 - coneStep :  modifies the visual aspect of cones (defautl value is 15 degrees)
 - projectionInit : initial projection with values in in the following range : 
   - 'none' for a three dimensional unprojected representation
