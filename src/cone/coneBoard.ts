@@ -93,6 +93,8 @@ export class ConeBoard {
         ConeMeshShader.generateCones(lookup.lookupCityNetwork, bboxes).then((cones) => {
             cones.forEach((cone, index) => {
                 // updateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
+                // add object name to cone
+                cone.name = cone.otherProperties.origCityProperties.urbanAgglomeration;
                 that.coneMeshCollection.push(cone);
                 cone.scale.setScalar(that._scale);
                 that._scene.add(cone);
