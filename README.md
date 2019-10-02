@@ -52,9 +52,8 @@ Instructions to the application can also be entered in the console (F12) of the 
 
 with XXX and value in the following range:
 
-- heightRatio : for the heigth of cones
-- intrudedHeightRatio : for the heigth of cones, in the range [0,1], a ratio of the earth radius
-- coneStep :  modifies the visual aspect of cones (defautl value is 15 degrees)
+- intrudedHeightRatio : sets the heigth of cones, in the range [0,1], a ratio of the earth radius
+- coneStep :  modifies the visual aspect of cones (default value is 15 degrees, a facet = 15°)
 - projectionInit : initial projection with values in in the following range : 
   - 'none' for a three dimensional unprojected representation
   - 'equirectangular' or 1 for an equilateral flat representation
