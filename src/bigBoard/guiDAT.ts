@@ -142,17 +142,20 @@ export class GUI {
       .add(bigBoard.coneBoard, 'opacity', 0, 1)
       .step(0.01)
       .name('opacité');
-    let terresterialFolder = coneFolder.addFolder('configurations spécifiques');
-    let terrestrialControllersList: dat.GUI[] = [];
-    let flagTransportDone = false;
+    // let terresterialFolder = coneFolder.addFolder('configurations spécifiques');
+    // let terrestrialControllersList: dat.GUI[] = [];
+    // let flagTransportDone = false;
 
     // lines
-    let aerialFolder = gui.addFolder('Lignes');
+    let aerialFolder = gui.addFolder('Lines');
     aerialFolder
       .add(CONFIGURATION, 'pointsPerLine', 0, 200)
       .step(1)
-      .name('nombre de points');
+      .name('number of points');
     let aerialControllersList: dat.GUI[] = [];
+    let terresterialFolder = aerialFolder.addFolder('terrestrial modes');
+    let terrestrialControllersList: dat.GUI[] = [];
+    let flagTransportDone = false;
 
     // pays /mise en exergue avec listen?
     // countries / highlight with listen?
@@ -238,9 +241,32 @@ export class GUI {
                 let subGui = aerialControllersList.pop();
                 aerialFolder.removeFolder(subGui);
               }
+              // adding aerial network(s)
               this._merger.transportNames.lines.forEach(transportName => {
                 let folder = aerialFolder.addFolder(transportName);
                 aerialControllersList.push(folder);
+                function lineListener(): void {
+                  let opacity = <number>lineOpacity.getValue();
+                  let color = parseInt(lineColor.getValue().replace('#', ''), 16);
+                  bigBoard.coneBoard.lineCollection
+                    .filter(line => transportName === line.transportName)
+                    .forEach(line => {
+                      let material = <LineBasicMaterial>line.material;
+                      material.color.setHex(color);
+                      material.opacity = opacity;
+                    });
+                }
+                let lineColor = folder.addColor(conf, 'couleur des lignes').name('couleur');
+                lineColor.onChange(lineListener);
+                let lineOpacity = folder
+                  .add(conf, 'transparence des lignes', 0, 1, 0.01)
+                  .name('transparence');
+                lineOpacity.onChange(lineListener);
+              });
+              // adding terrestrial networks
+              this._merger.transportNames.lines.forEach(transportName => {
+                let folder = terresterialFolder.addFolder(transportName);
+                terrestrialControllersList.push(folder);
                 function lineListener(): void {
                   let opacity = <number>lineOpacity.getValue();
                   let color = parseInt(lineColor.getValue().replace('#', ''), 16);
