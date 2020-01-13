@@ -57,7 +57,7 @@ export class GUI {
     };
 
     // light
-    let lightFolder = gui.addFolder('lumière');
+    let lightFolder = gui.addFolder('Light');
     lightFolder.add(bigBoard.ambient, 'intensity', 0, 5, 0.01).name('intensité ambiante');
     lightFolder.addColor(conf, 'couleur lumière').onChange((v: string) => {
       let color = parseInt(v.replace('#', ''), 16);
@@ -86,7 +86,7 @@ export class GUI {
     lightFolder.add(bigBoard.light.shadow.camera, 'far', 0, 1000).step(1);
 
     // generalities
-    let generalFolder = gui.addFolder('Généralités');
+    let generalFolder = gui.addFolder('Generalities');
     let projectionFolder = generalFolder.addFolder('projection');
     let referenceFolder = projectionFolder.addFolder('references');
     const radius = CONFIGURATION.earthRadiusMeters;
@@ -159,12 +159,12 @@ export class GUI {
 
     // pays /mise en exergue avec listen?
     // countries / highlight with listen?
-    let countryFolder = gui.addFolder('pays');
+    let countryFolder = gui.addFolder('Countries');
     countryFolder.add(bigBoard.countryBoard, 'show');
     countryFolder
       .add(bigBoard.countryBoard, 'opacity', 0, 1)
       .step(0.01)
-      .name('opacité');
+      .name('opacity');
     countryFolder.add(bigBoard.countryBoard, 'extruded', -100, 100).step(1);
     countryFolder
       .add(conf, 'exportCountry')
