@@ -119,7 +119,7 @@ export class GUI {
     let annees = generalFolder.add(conf, 'year', 1930, 2030).step(1);
     annees.onChange((v: string | number) => (CONFIGURATION.year = v));
 
-    // toggle Camera Orthograpgic/Perspectiv View
+    // toggle Camera Orthographic/Perspectiv View
     let swapView = projectionFolder.add(bigBoard, 'orthographique');
     swapView.onChange(() => (bigBoard.orthographique = !bigBoard.orthographique));
     generalFolder
@@ -140,8 +140,7 @@ export class GUI {
     coneFolder.add(bigBoard, 'withLimits').onChange((value: boolean) => (conf['with limits'] = value));
     coneFolder
       .add(bigBoard.coneBoard, 'opacity', 0, 1)
-      .step(0.01)
-      .name('opacité');
+      .step(0.01);
     // let terresterialFolder = coneFolder.addFolder('configurations spécifiques');
     // let terrestrialControllersList: dat.GUI[] = [];
     // let flagTransportDone = false;
