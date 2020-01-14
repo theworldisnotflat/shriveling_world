@@ -29,17 +29,17 @@
     "rollup-plugin-svelte": "^5.0.3",
     "rollup-plugin-terser": "^5.1.3",
     "rollup-plugin-threejs-legacy-import": "^1.0.3",
-    "rollup-plugin-typescript2": "^0.24.2",
+    "rollup-plugin-typescript2": "^0.25.3",
     "svelte": "^3.12.1",
-    "three": "^0.108.0",
+    "three": "^0.112.1",
     "tslint": "^5.20.0",
     "tween.js": "^16.6.0",
     "twgl.js": "^4.11.2",
-    "typedoc": "^0.15.0",
+    "typedoc": "^0.16.2",
     "typedoc-plantuml": "git+https://git@github.com/0815fox/typedoc-plantuml.git",
     "typescript": "^3.6.3",
     "uglify-es": "^3.3.9",
-    "yargs": "^14.0.0"
+    "yargs": "^15.1.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
