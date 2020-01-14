@@ -1,5 +1,5 @@
 'use strict';
-import { MeshPhongMaterial, LineBasicMaterial } from 'three';
+import { MeshPhongMaterial, LineBasicMaterial, log } from 'three';
 import { Merger } from './merger';
 import { DragnDrop } from '../common/utils';
 import { IListFile } from '../definitions/project';
@@ -247,6 +247,7 @@ export class GUI {
                 function lineListener(): void {
                   let opacity = <number>lineOpacity.getValue();
                   let color = parseInt(lineColor.getValue().replace('#', ''), 16);
+                  console.log(color);
                   bigBoard.coneBoard.lineCollection
                     .filter(line => transportName === line.transportName)
                     .forEach(line => {
@@ -263,12 +264,13 @@ export class GUI {
                 lineOpacity.onChange(lineListener);
               });
               // adding terrestrial networks
-              this._merger.transportNames.lines.forEach(transportName => {
+              console.log(this._merger.transportNames);
+              this._merger.transportNames.cones.forEach(transportName => {
                 let folder = terresterialFolder.addFolder(transportName);
                 terrestrialControllersList.push(folder);
                 function lineListener(): void {
                   let opacity = <number>lineOpacity.getValue();
-                  let color = parseInt(lineColor.getValue().replace('#', ''), 16);
+                  let color = 65344;
                   bigBoard.coneBoard.lineCollection
                     .filter(line => transportName === line.transportName)
                     .forEach(line => {
