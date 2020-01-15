@@ -1,6 +1,6 @@
 'use strict';
 import {
-  BufferGeometry, InterleavedBufferAttribute, InterleavedBuffer, Line, Material,
+  BufferGeometry, InterleavedBufferAttribute, InterleavedBuffer, Line, Material, DynamicDrawUsage,
 } from 'three';
 import { CONFIGURATION } from '../common/configuration';
 import { Shaders } from '../shaders';
@@ -274,10 +274,10 @@ export class LineMeshShader extends Line {
 
   private constructor(
     begin: string | number, end: string | number, theta: number, years: { [year: string]: number }, transportName: string) {
-    const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(204 * 4), 4).setDynamic(true);
+    const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(204 * 4), 4).setUsage(DynamicDrawUsage);
     const interleavedBufferAttributePosition = new InterleavedBufferAttribute(interleavedBufferPosition, 3, 0, false);
     const bufferGeometry = new BufferGeometry();
-    bufferGeometry.addAttribute('position', interleavedBufferAttributePosition);
+    bufferGeometry.setAttribute('position', interleavedBufferAttributePosition);
     bufferGeometry.computeBoundingSphere();
     super(bufferGeometry, CONFIGURATION.BASIC_LINE_MATERIAL.clone());
     this._years = years;
