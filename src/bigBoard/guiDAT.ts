@@ -1,5 +1,5 @@
 'use strict';
-import { MeshPhongMaterial, LineBasicMaterial } from 'three';
+import { MeshPhongMaterial, LineBasicMaterial, log } from 'three';
 import { Merger } from './merger';
 import { DragnDrop } from '../common/utils';
 import { IListFile } from '../definitions/project';
@@ -38,40 +38,40 @@ export class GUI {
         'Van Der Grinten': 5,
         'conic equidistant': 6,
       },
-      'type de transport': '',
-      'couleur cones': '#' + (<any>CONFIGURATION.BASIC_CONE_MATERIAL).color.getHex().toString(16),
-      'transparence des cônes': CONFIGURATION.BASIC_CONE_MATERIAL.opacity,
-      'couleur des lignes': '#' + CONFIGURATION.BASIC_LINE_MATERIAL.color.getHex().toString(16),
-      'couleur du texte': '#' + CONFIGURATION.BASIC_TEXT_MATERIAL.color.getHex().toString(16),
-      'transparence des lignes': CONFIGURATION.BASIC_LINE_MATERIAL.opacity,
-      'couleur lumière': '#' + bigBoard.light.color.getHex().toString(16),
+      'transport type': '',
+      'cones color': '#' + (<any>CONFIGURATION.BASIC_CONE_MATERIAL).color.getHex().toString(16),
+      'cones transparency': CONFIGURATION.BASIC_CONE_MATERIAL.opacity,
+      'line color': '#' + CONFIGURATION.BASIC_LINE_MATERIAL.color.getHex().toString(16),
+      'text color': '#' + CONFIGURATION.BASIC_TEXT_MATERIAL.color.getHex().toString(16),
+      'line transparency': CONFIGURATION.BASIC_LINE_MATERIAL.opacity,
+      'light color': '#' + bigBoard.light.color.getHex().toString(16),
       intensity: bigBoard.light.intensity,
-      'couleur ambient': '#' + bigBoard.ambient.color.getHex().toString(16),
+      'ambient color': '#' + bigBoard.ambient.color.getHex().toString(16),
       longitude: CONFIGURATION.referenceEquiRectangular.longitude,
       latitude: CONFIGURATION.referenceEquiRectangular.latitude,
       hauteur: CONFIGURATION.referenceEquiRectangular.height,
-      'parallèle standard 1': CONFIGURATION.standardParallel1 * CONFIGURATION.rad2deg,
-      'parallèle standard 2': CONFIGURATION.standardParallel2 * CONFIGURATION.rad2deg,
+      'standard parrallel 1': CONFIGURATION.standardParallel1 * CONFIGURATION.rad2deg,
+      'standard parrallel 2': CONFIGURATION.standardParallel2 * CONFIGURATION.rad2deg,
       'with limits': true,
       exportCountry: bigBoard.orthographique,
     };
 
     // light
     let lightFolder = gui.addFolder('Light');
-    lightFolder.add(bigBoard.ambient, 'intensity', 0, 5, 0.01).name('intensité ambiante');
-    lightFolder.addColor(conf, 'couleur lumière').onChange((v: string) => {
+    lightFolder.add(bigBoard.ambient, 'intensity', 0, 5, 0.01).name('ambient intensity');
+    lightFolder.addColor(conf, 'light color').onChange((v: string) => {
       let color = parseInt(v.replace('#', ''), 16);
       bigBoard.light.color.setHex(color);
       bigBoard.helper.color = color;
       bigBoard.helper.update();
     });
-    lightFolder.addColor(conf, 'couleur ambient').onChange((v: string) => {
+    lightFolder.addColor(conf, 'ambient color').onChange((v: string) => {
       let color = parseInt(v.replace('#', ''), 16);
       bigBoard.ambient.color.setHex(color);
     });
     lightFolder
       .add(conf, 'intensity', 0, 5, 0.01)
-      .name('intensité lumière')
+      .name('light intensity')
       .onChange((v: number) => {
         bigBoard.light.intensity = v;
         bigBoard.helper.update();
@@ -105,13 +105,13 @@ export class GUI {
     let refHeight = referenceFolder.add(conf, 'hauteur', -radius + 10, radius + 10).step(1000);
     refHeight.onChange(changeReference);
     referenceFolder
-      .add(conf, 'parallèle standard 1', -90, 90, 0.1)
+      .add(conf, 'standard parrallel 1', -90, 90, 0.1)
       .onChange((v: number) => (CONFIGURATION.standardParallel1 = v * CONFIGURATION.deg2rad));
     referenceFolder
-      .add(conf, 'parallèle standard 2', -90, 90, 0.1)
+      .add(conf, 'standard parrallel 2', -90, 90, 0.1)
       .onChange((v: number) => (CONFIGURATION.standardParallel2 = v * CONFIGURATION.deg2rad));
-    projectionFolder.add(CONFIGURATION, 'projectionInit', conf.projection).name('projection initiale');
-    projectionFolder.add(CONFIGURATION, 'projectionEnd', conf.projection).name('projection finale');
+    projectionFolder.add(CONFIGURATION, 'projectionInit', conf.projection).name('initial projection');
+    projectionFolder.add(CONFIGURATION, 'projectionEnd', conf.projection).name('final projection');
     projectionFolder
       .add(CONFIGURATION, 'percentProjection', 0, 100)
       .step(1)
@@ -167,7 +167,7 @@ export class GUI {
     countryFolder.add(bigBoard.countryBoard, 'extruded', -100, 100).step(1);
     countryFolder
       .add(conf, 'exportCountry')
-      .name('Export avec continent')
+      .name('Export with continent')
       .onChange(() => (bigBoard.orthographique = !bigBoard.orthographique));
     let countryControllersList: dat.GUI[] = [];
     DragnDrop(
@@ -247,6 +247,7 @@ export class GUI {
                 function lineListener(): void {
                   let opacity = <number>lineOpacity.getValue();
                   let color = parseInt(lineColor.getValue().replace('#', ''), 16);
+                  console.log(color);
                   bigBoard.coneBoard.lineCollection
                     .filter(line => transportName === line.transportName)
                     .forEach(line => {
@@ -255,20 +256,21 @@ export class GUI {
                       material.opacity = opacity;
                     });
                 }
-                let lineColor = folder.addColor(conf, 'couleur des lignes').name('couleur');
+                let lineColor = folder.addColor(conf, 'line color').name('color');
                 lineColor.onChange(lineListener);
                 let lineOpacity = folder
-                  .add(conf, 'transparence des lignes', 0, 1, 0.01)
-                  .name('transparence');
+                  .add(conf, 'line transparency', 0, 1, 0.01)
+                  .name('transparency');
                 lineOpacity.onChange(lineListener);
               });
               // adding terrestrial networks
-              this._merger.transportNames.lines.forEach(transportName => {
+              console.log(this._merger.transportNames);
+              this._merger.transportNames.cones.forEach(transportName => {
                 let folder = terresterialFolder.addFolder(transportName);
                 terrestrialControllersList.push(folder);
                 function lineListener(): void {
                   let opacity = <number>lineOpacity.getValue();
-                  let color = parseInt(lineColor.getValue().replace('#', ''), 16);
+                  let color = 65344;
                   bigBoard.coneBoard.lineCollection
                     .filter(line => transportName === line.transportName)
                     .forEach(line => {
@@ -277,11 +279,11 @@ export class GUI {
                       material.opacity = opacity;
                     });
                 }
-                let lineColor = folder.addColor(conf, 'couleur des lignes').name('couleur');
+                let lineColor = folder.addColor(conf, 'line color').name('color');
                 lineColor.onChange(lineListener);
                 let lineOpacity = folder
-                  .add(conf, 'transparence des lignes', 0, 1, 0.01)
-                  .name('transparence');
+                  .add(conf, 'line transparency', 0, 1, 0.01)
+                  .name('transparency');
                 lineOpacity.onChange(lineListener);
               });
             }
@@ -301,7 +303,7 @@ export class GUI {
               .name('taille du texte')
               .step(0.1);
             sizeText.onChange(() => bigBoard.rescaleText());
-            generalFolder.addColor(conf, 'couleur du texte').onChange((v: string) => {
+            generalFolder.addColor(conf, 'text color').onChange((v: string) => {
               let color = parseInt(v.replace('#', ''), 16);
               CONFIGURATION.BASIC_TEXT_MATERIAL.color.setHex(color);
               bigBoard.updateCityName();

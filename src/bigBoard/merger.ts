@@ -294,6 +294,7 @@ function networkFromCities(
    * At the end of this loop [[speedPerTransportPerYear]] and [[maximumSpeed]] are populated
    */
   transportModeCode.forEach((transportMode) => {
+    console.log('transportMode', transportMode);
     let transportCode = transportMode.code;
     let name = transportMode.name;
     if (name === 'Road') {
