@@ -545,7 +545,7 @@ export default class BigBoard {
       false);
 
     let saveButton = document.createElement('button');
-    saveButton.innerHTML = 'sauvegarde';
+    saveButton.innerHTML = 'Save scene';
     let style = saveButton.style;
     style.zIndex = '1000';
     style.position = 'fixed';

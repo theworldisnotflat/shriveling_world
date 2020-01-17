@@ -98,7 +98,7 @@ export interface ILookupTranspModeSpeed {
  * a table of destination cities and the associated
  * transport modes and their respective speed
  */
-export interface ILookupDestAndModes {
+export interface ILookupDestWithModes {
   [cityCode: string]: ILookupTranspModeSpeed;
 }
 
@@ -112,7 +112,7 @@ export interface ILookupDestAndModes {
 export interface ICityNetwork {
   referential: NEDLocal; // à inhiber dans forbiddenAttributes de coneMeshShader
   terrestrialCone: ILookupComplexAlpha; // à inhiber dans forbiddenAttributes de coneMeshShader
-  destinationsAndModes: ILookupDestAndModes;
+  destinationsWithModes: ILookupDestWithModes;
   origCityProperties: ICity;
 }
 /**

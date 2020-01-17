@@ -18,7 +18,7 @@ import { interpolator, Cartographic, reviver } from '../common/utils';
 import {
   ITranspMode, ICity, ITransportNetwork as ITranspNetwork,
   ILookupCityNetwork, IMergerState,
-  ILookupDestAndModes, IPopulation, ITransportModeSpeed, ILookupEdgesAndTranspModes,
+  ILookupDestWithModes, IPopulation, ITransportModeSpeed, ILookupEdgesAndTranspModes,
   ILookupEdges, ICityExtremityOfEdge, ILookupEdgeList, ILookupComplexAlpha,
 } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
@@ -436,7 +436,7 @@ function networkFromCities(
       let listOfEdges: { [cityCodeEnd: string]: ILookupEdgeList } = {};
       // let coneAlpha: ILookupConeAlpha = {};
       let terrestrialCone: ILookupComplexAlpha = {};
-      let destinationsAndModes: ILookupDestAndModes = {};
+      let destinationsWithModes: ILookupDestWithModes = {};
       let destCityCode: number;
       let edge: ITranspNetwork, alpha: number;
       let edgeTranspModeName: string;
@@ -465,11 +465,11 @@ function networkFromCities(
           maxYear = edge.yearEnd ? edge.yearEnd : maxYear;
           edgeTranspModeName = edgeTranspModeSpeed.name;
           // prepare tables
-          if (!destinationsAndModes.hasOwnProperty(destCityCode)) {
-            destinationsAndModes[destCityCode] = {};
+          if (!destinationsWithModes.hasOwnProperty(destCityCode)) {
+            destinationsWithModes[destCityCode] = {};
           }
-          if (!destinationsAndModes[destCityCode].hasOwnProperty(edgeTranspModeName)) {
-            destinationsAndModes[destCityCode][edgeTranspModeName] = [];
+          if (!destinationsWithModes[destCityCode].hasOwnProperty(edgeTranspModeName)) {
+            destinationsWithModes[destCityCode][edgeTranspModeName] = [];
           }
           let edgeModeSpeed = edgeTranspModeSpeed.tabYearSpeed;
           // pour éviter la duplication des  lignes visuellement!
@@ -486,7 +486,7 @@ function networkFromCities(
               }
               alpha = edgeTranspModeSpeed.tabYearSpeed[year].alpha;
               terrestrialCone[year].tab.push({ alpha, clock });
-              destinationsAndModes[destCityCode][edgeTranspModeName].push({ year: year, speed: edgeModeSpeed[year].speed });
+              destinationsWithModes[destCityCode][edgeTranspModeName].push({ year: year, speed: edgeModeSpeed[year].speed });
             } else {
               // case when edge transport mode is not terrestrial
               // we will generate a line for the edge
@@ -518,7 +518,7 @@ function networkFromCities(
             terrestrialCone[year] = { roadAlpha, tab: [] };
         }
       }
-      network[origCityCode] = { referential, terrestrialCone, destinationsAndModes, origCityProperties: city };
+      network[origCityCode] = { referential, terrestrialCone, destinationsWithModes: destinationsWithModes, origCityProperties: city };
       if (Object.keys(listOfEdges).length > 0) {
         // retrieves edges info from origCityCode for edges generation
         edgesData[origCityCode] = { begin: startPoint, list: listOfEdges };
