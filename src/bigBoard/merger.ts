@@ -18,7 +18,7 @@ import { interpolator, Cartographic, reviver } from '../common/utils';
 import {
   ITranspMode, ICity, ITransportNetwork as ITranspNetwork,
   ILookupCityNetwork, IMergerState,
-  ILookupDestWithModes, IPopulation, ITransportModeSpeed, ILookupEdgesAndTranspModes,
+  ILookupDestWithModes, IPopulation, ITransportModeSpeed, ILookupEdgesWithTranspModes,
   ILookupEdges, ICityExtremityOfEdge, ILookupEdgeList, ILookupComplexAlpha,
 } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
@@ -199,7 +199,7 @@ function getRatio(theta: number, speedMax: number, speed: number): number {
  * @param transpNetwork
  */
 function networkFromCities(
-  transportModeCode: ITranspMode[], cities: ICity[], transpNetwork: ITranspNetwork[]): ILookupEdgesAndTranspModes {
+  transportModeCode: ITranspMode[], cities: ICity[], transpNetwork: ITranspNetwork[]): ILookupEdgesWithTranspModes {
   let network: ILookupCityNetwork = {};
   let edgesData: ILookupEdges = {};
   // déterminer la fourchette de temps considéré OK
@@ -548,7 +548,7 @@ export class Merger {
   private _transportModeCode: ITranspMode[] = [];
   private _transportNetwork: ITranspNetwork[] = [];
   private _state: IMergerState = 'missing';
-  private _edgesAndTranspModes: ILookupEdgesAndTranspModes = <ILookupEdgesAndTranspModes>{};
+  private _edgesAndTranspModes: ILookupEdgesWithTranspModes = <ILookupEdgesWithTranspModes>{};
 
   public get state(): IMergerState {
     return this._state;
@@ -557,14 +557,14 @@ export class Merger {
    * this is the resulting dataset processed by function [[networkFromCities]]
    * in order to give access to the relevant data inside bigBoard
    */
-  public get edgesAndTranspModes(): ILookupEdgesAndTranspModes {
+  public get edgesWithTranspModes(): ILookupEdgesWithTranspModes {
     return this._edgesAndTranspModes;
   }
 
   public get Cities(): ICity[] { return this._cities; }
   public CitiesByIndex(index: string | number): ICity { return this._cities[index]; }
 
-  public get conesAndEdgesData(): ILookupEdgesAndTranspModes {
+  public get conesAndEdgesData(): ILookupEdgesWithTranspModes {
     return this._edgesAndTranspModes;
   }
 
@@ -578,7 +578,7 @@ export class Merger {
     this._transportModeSpeed = [];
     this._transportModeCode = [];
     this._transportNetwork = [];
-    this._edgesAndTranspModes = <ILookupEdgesAndTranspModes>{};
+    this._edgesAndTranspModes = <ILookupEdgesWithTranspModes>{};
     this._state = 'missing';
   }
 
