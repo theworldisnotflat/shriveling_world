@@ -8,7 +8,7 @@ import { prepareConfiguration } from './initThree';
 import { ConeBoard } from '../cone/coneBoard';
 import { CountryBoard } from '../country/countryBoard';
 import { Merger } from './merger';
-import { IMergerState, ISumUpCriteria, ILookupEdgesAndTranspModes, ICriterias } from '../definitions/project';
+import { IMergerState, ISumUpCriteria, ILookupEdgesWithTranspModes as ILookupEdgesWithTranspModes, ICriterias } from '../definitions/project';
 import { PseudoCone } from '../cone/base';
 import { CountryMeshShader } from '../country/countryMeshShader';
 import { GUI } from './guiDAT';
@@ -266,10 +266,10 @@ export default class BigBoard {
   /**
    * Add cone to the coneMeshCollection
    * @todo unused and irrelevant @see coneBoard.add
-   * @param {ILookupEdgesAndTranspModes} lookup
+   * @param {ILookupEdgesWithTranspModes} lookup
    * @memberof BigBoard
    */
-  public addCones(lookup: ILookupEdgesAndTranspModes): void {
+  public addCones(lookup: ILookupEdgesWithTranspModes): void {
     this.coneBoard.add(lookup);
   }
 
@@ -428,13 +428,13 @@ export default class BigBoard {
       var obj = JSON.parse(JSON.stringify(this.getMergerI.Cities[j]));
       var pop = JSON.parse(
         JSON.stringify(
-          this._merger.edgesAndTranspModes.lookupCityNetwork[this.getMergerI.Cities[j].cityCode].origCityProperties
+          this._merger.edgesWithTranspModes.lookupCityNetwork[this.getMergerI.Cities[j].cityCode].origCityProperties
             .populations));
       var population = pop.pop2020;
       if (population > this._populations) {
         var geometry = new TextGeometry(obj.urbanAgglomeration, CONFIGURATION.TEXT_GEOMETRY_OPTIONS);
         mesh = new Mesh(geometry, CONFIGURATION.BASIC_TEXT_MATERIAL);
-        let cart = this._merger.edgesAndTranspModes.lookupCityNetwork[this.getMergerI.Cities[j].cityCode].referential
+        let cart = this._merger.edgesWithTranspModes.lookupCityNetwork[this.getMergerI.Cities[j].cityCode].referential
           .cartoRef;
         let x =
           -CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.cos(cart.latitude * 0.95) * Math.cos(cart.longitude);
@@ -545,7 +545,7 @@ export default class BigBoard {
       false);
 
     let saveButton = document.createElement('button');
-    saveButton.innerHTML = 'sauvegarde';
+    saveButton.innerHTML = 'Save scene';
     let style = saveButton.style;
     style.zIndex = '1000';
     style.position = 'fixed';

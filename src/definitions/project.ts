@@ -98,7 +98,7 @@ export interface ILookupTranspModeSpeed {
  * a table of destination cities and the associated
  * transport modes and their respective speed
  */
-export interface ILookupDestAndModes {
+export interface ILookupDestWithModes {
   [cityCode: string]: ILookupTranspModeSpeed;
 }
 
@@ -112,7 +112,7 @@ export interface ILookupDestAndModes {
 export interface ICityNetwork {
   referential: NEDLocal; // à inhiber dans forbiddenAttributes de coneMeshShader
   terrestrialCone: ILookupComplexAlpha; // à inhiber dans forbiddenAttributes de coneMeshShader
-  destinationsAndModes: ILookupDestAndModes;
+  destinationsWithModes: ILookupDestWithModes;
   origCityProperties: ICity;
 }
 /**
@@ -254,13 +254,13 @@ export type configurationObservableEvt =
 export type configurationCallback = (name: configurationObservableEvt, value: any) => void;
 export type ShaderTypes = 'fragment' | 'vertex';
 /**
- * [[ILookupEdgesAndTranspModes]] contains
+ * [[ILookupEdgesWithTranspModes]] contains
  * * [[lookupCityNetwork]] network data (graph data) with modes and speed parameters
  * * [[edgesData]] edges data for geometric processes
  *
  * (some duplication but the purposes are different)
  */
-export interface ILookupEdgesAndTranspModes {
+export interface ILookupEdgesWithTranspModes {
   lookupCityNetwork: ILookupCityNetwork;
   edgesData: ILookupEdges;
 }

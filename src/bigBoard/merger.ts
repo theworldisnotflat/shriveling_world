@@ -18,7 +18,7 @@ import { interpolator, Cartographic, reviver } from '../common/utils';
 import {
   ITranspMode, ICity, ITransportNetwork as ITranspNetwork,
   ILookupCityNetwork, IMergerState,
-  ILookupDestAndModes, IPopulation, ITransportModeSpeed, ILookupEdgesAndTranspModes,
+  ILookupDestWithModes, IPopulation, ITransportModeSpeed, ILookupEdgesWithTranspModes,
   ILookupEdges, ICityExtremityOfEdge, ILookupEdgeList, ILookupComplexAlpha,
 } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
@@ -199,7 +199,7 @@ function getRatio(theta: number, speedMax: number, speed: number): number {
  * @param transpNetwork
  */
 function networkFromCities(
-  transportModeCode: ITranspMode[], cities: ICity[], transpNetwork: ITranspNetwork[]): ILookupEdgesAndTranspModes {
+  transportModeCode: ITranspMode[], cities: ICity[], transpNetwork: ITranspNetwork[]): ILookupEdgesWithTranspModes {
   let network: ILookupCityNetwork = {};
   let edgesData: ILookupEdges = {};
   // déterminer la fourchette de temps considéré OK
@@ -436,7 +436,7 @@ function networkFromCities(
       let listOfEdges: { [cityCodeEnd: string]: ILookupEdgeList } = {};
       // let coneAlpha: ILookupConeAlpha = {};
       let terrestrialCone: ILookupComplexAlpha = {};
-      let destinationsAndModes: ILookupDestAndModes = {};
+      let destinationsWithModes: ILookupDestWithModes = {};
       let destCityCode: number;
       let edge: ITranspNetwork, alpha: number;
       let edgeTranspModeName: string;
@@ -465,11 +465,11 @@ function networkFromCities(
           maxYear = edge.yearEnd ? edge.yearEnd : maxYear;
           edgeTranspModeName = edgeTranspModeSpeed.name;
           // prepare tables
-          if (!destinationsAndModes.hasOwnProperty(destCityCode)) {
-            destinationsAndModes[destCityCode] = {};
+          if (!destinationsWithModes.hasOwnProperty(destCityCode)) {
+            destinationsWithModes[destCityCode] = {};
           }
-          if (!destinationsAndModes[destCityCode].hasOwnProperty(edgeTranspModeName)) {
-            destinationsAndModes[destCityCode][edgeTranspModeName] = [];
+          if (!destinationsWithModes[destCityCode].hasOwnProperty(edgeTranspModeName)) {
+            destinationsWithModes[destCityCode][edgeTranspModeName] = [];
           }
           let edgeModeSpeed = edgeTranspModeSpeed.tabYearSpeed;
           // pour éviter la duplication des  lignes visuellement!
@@ -486,7 +486,7 @@ function networkFromCities(
               }
               alpha = edgeTranspModeSpeed.tabYearSpeed[year].alpha;
               terrestrialCone[year].tab.push({ alpha, clock });
-              destinationsAndModes[destCityCode][edgeTranspModeName].push({ year: year, speed: edgeModeSpeed[year].speed });
+              destinationsWithModes[destCityCode][edgeTranspModeName].push({ year: year, speed: edgeModeSpeed[year].speed });
             } else {
               // case when edge transport mode is not terrestrial
               // we will generate a line for the edge
@@ -518,7 +518,7 @@ function networkFromCities(
             terrestrialCone[year] = { roadAlpha, tab: [] };
         }
       }
-      network[origCityCode] = { referential, terrestrialCone, destinationsAndModes, origCityProperties: city };
+      network[origCityCode] = { referential, terrestrialCone, destinationsWithModes: destinationsWithModes, origCityProperties: city };
       if (Object.keys(listOfEdges).length > 0) {
         // retrieves edges info from origCityCode for edges generation
         edgesData[origCityCode] = { begin: startPoint, list: listOfEdges };
@@ -548,7 +548,7 @@ export class Merger {
   private _transportModeCode: ITranspMode[] = [];
   private _transportNetwork: ITranspNetwork[] = [];
   private _state: IMergerState = 'missing';
-  private _edgesAndTranspModes: ILookupEdgesAndTranspModes = <ILookupEdgesAndTranspModes>{};
+  private _edgesAndTranspModes: ILookupEdgesWithTranspModes = <ILookupEdgesWithTranspModes>{};
 
   public get state(): IMergerState {
     return this._state;
@@ -557,14 +557,14 @@ export class Merger {
    * this is the resulting dataset processed by function [[networkFromCities]]
    * in order to give access to the relevant data inside bigBoard
    */
-  public get edgesAndTranspModes(): ILookupEdgesAndTranspModes {
+  public get edgesWithTranspModes(): ILookupEdgesWithTranspModes {
     return this._edgesAndTranspModes;
   }
 
   public get Cities(): ICity[] { return this._cities; }
   public CitiesByIndex(index: string | number): ICity { return this._cities[index]; }
 
-  public get conesAndEdgesData(): ILookupEdgesAndTranspModes {
+  public get conesAndEdgesData(): ILookupEdgesWithTranspModes {
     return this._edgesAndTranspModes;
   }
 
@@ -578,7 +578,7 @@ export class Merger {
     this._transportModeSpeed = [];
     this._transportModeCode = [];
     this._transportNetwork = [];
-    this._edgesAndTranspModes = <ILookupEdgesAndTranspModes>{};
+    this._edgesAndTranspModes = <ILookupEdgesWithTranspModes>{};
     this._state = 'missing';
   }
 

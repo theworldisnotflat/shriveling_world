@@ -5,7 +5,7 @@ import { PseudoCone } from './base';
 import { ConeMeshShader } from './coneMeshShader';
 import { Cartographic, searchCriterias } from '../common/utils';
 import {
-    ISumUpCriteria, ILookupEdgesAndTranspModes, ICriterias,
+    ISumUpCriteria, ILookupEdgesWithTranspModes, ICriterias,
 } from '../definitions/project';
 import { CountryBoard } from '../country/countryBoard';
 import { LineMeshShader } from './lineMeshShaders';
@@ -86,7 +86,7 @@ export class ConeBoard {
      *
      * @param lookup
      */
-    public add(lookup: ILookupEdgesAndTranspModes): void {
+    public add(lookup: ILookupEdgesWithTranspModes): void {
         this.clean();
         let that = this;
         let bboxes = this._countries.countryMeshCollection.map((country) => country.bbox);
