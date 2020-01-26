@@ -264,13 +264,16 @@ export class GUI {
                 lineOpacity.onChange(lineListener);
               });
               // adding terrestrial networks
-              console.log(this._merger.transportNames);
+              console.log('adding terrestrial networks', this._merger.transportNames.cones);
               this._merger.transportNames.cones.forEach(transportName => {
                 let folder = terresterialFolder.addFolder(transportName);
                 terrestrialControllersList.push(folder);
+                console.log('bigBoard.coneBoard', bigBoard.coneBoard);
+
                 function lineListener(): void {
                   let opacity = <number>lineOpacity.getValue();
-                  let color = 65344;
+                  let color = parseInt(lineColor.getValue().replace('#', ''), 16);
+
                   bigBoard.coneBoard.lineCollection
                     .filter(line => transportName === line.transportName)
                     .forEach(line => {
