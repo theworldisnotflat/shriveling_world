@@ -101,7 +101,6 @@ export class ConeBoard {
                 that._renderer.render(that._scene, that._camera);
             });
         });
-        console.log('lookup', lookup);
         LineMeshShader.generateCones(lookup.edgesData).then((lines) => {
             lines.forEach((line) => {
                 that.lineCollection.push(line);
