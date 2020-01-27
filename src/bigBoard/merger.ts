@@ -157,6 +157,9 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
 /**
  * getRatio function computes the speed ratio.
  *
+ * In the case of terrestrial edges simple ratio linking
+ * current [speed] dand [speedMax] is computed
+ *
  * In the case of air edges, two equations are used to determine
  * the [heigth of aerial edges above the geodesic](http://bit.ly/2H4FOKw):
  * * below the threshold limit:![below](http://bit.ly/2Xu3kGF)
@@ -164,9 +167,6 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
  * * the figure: ![2](http://bit.ly/2H4FOKw)
  *
  * * "ratio" is the part that differentiates the two equations
- *
- * In the case of terrestrial edges simple ratio linking
- * current [speed] dand [speedMax] is computed
  *
  * [More detailed explanations here](https://timespace.hypotheses.org/121)
  *
