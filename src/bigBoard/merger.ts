@@ -294,7 +294,6 @@ function networkFromCities(
    * At the end of this loop [[speedPerTransportPerYear]] and [[maximumSpeed]] are populated
    */
   transportModeCode.forEach((transportMode) => {
-    console.log('transportMode', transportMode);
     let transportCode = transportMode.code;
     let name = transportMode.name;
     if (name === 'Road') {
@@ -487,6 +486,17 @@ function networkFromCities(
               alpha = edgeTranspModeSpeed.tabYearSpeed[year].alpha;
               terrestrialCone[year].tab.push({ alpha, clock });
               destinationsWithModes[destCityCode][edgeTranspModeName].push({ year: year, speed: edgeModeSpeed[year].speed });
+              if (edgeToBeProcessed === true) { // condition pour éviter de générer deux lignes visuellement identiques!
+                let ratio = getRatio(theta, maximumSpeed[year], edgeModeSpeed[year].speed);
+                console.log('ratio', ratio);
+                if (!listOfEdges.hasOwnProperty(destCityCode)) {
+                  listOfEdges[destCityCode] = <ILookupEdgeList>{ end, middle, pointP, pointQ, theta, ratio: {} };
+                }
+                if (!listOfEdges[destCityCode].ratio.hasOwnProperty(edgeTranspModeName)) {
+                  listOfEdges[destCityCode].ratio[edgeTranspModeName] = {};
+                }
+                listOfEdges[destCityCode].ratio[edgeTranspModeName][year] = ratio;
+              }
             } else {
               // case when edge transport mode is not terrestrial
               // we will generate a line for the edge
@@ -601,6 +611,7 @@ export class Merger {
     if (name !== undefined) {
       this[name] = [];
       this[name].push(...getCSV(someString, name === '_transportModeCode'));
+      console.log(name, this[name]);
       if (name === '_transportModeCode' || name === '_transportNetwork') {
         this[name].forEach((item: ITranspMode | ITranspNetwork) => {
           if (item.yearEnd === undefined || item.yearEnd === null || item.yearEnd.toString() === '') {
@@ -652,7 +663,7 @@ export class Merger {
       merger(cities, transportNetwork, 'cityCode', 'idOri', 'edges', true, true, false);
       // the main function that generates geometries (cones, lines) by exploring the subgraphs from cities
       this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
-
+      console.log(this._edgesAndTranspModes);
       this._state = 'missing';
       this._checkState();
     }

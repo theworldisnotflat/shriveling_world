@@ -101,16 +101,12 @@ export class ConeBoard {
                 that._renderer.render(that._scene, that._camera);
             });
         });
-        console.log('lookup', lookup);
         LineMeshShader.generateCones(lookup.edgesData).then((lines) => {
             lines.forEach((line) => {
-                if ( line.transportName !== 'Aircraft') {
-                    console.log('line', line);
-                    that.lineCollection.push(line);
-                    line.visible = that._show;
-                    line.scale.setScalar(that._scale);
-                    that._scene.add(line);
-                }
+                that.lineCollection.push(line);
+                line.visible = that._show;
+                line.scale.setScalar(that._scale);
+                that._scene.add(line);
                 that._renderer.render(that._scene, that._camera);
             });
         });

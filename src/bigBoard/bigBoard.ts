@@ -8,7 +8,8 @@ import { prepareConfiguration } from './initThree';
 import { ConeBoard } from '../cone/coneBoard';
 import { CountryBoard } from '../country/countryBoard';
 import { Merger } from './merger';
-import { IMergerState, ISumUpCriteria, ILookupEdgesWithTranspModes as ILookupEdgesWithTranspModes, ICriterias } from '../definitions/project';
+import {
+  IMergerState, ISumUpCriteria, ILookupEdgesWithTranspModes as ILookupEdgesWithTranspModes, ICriterias } from '../definitions/project';
 import { PseudoCone } from '../cone/base';
 import { CountryMeshShader } from '../country/countryMeshShader';
 import { GUI } from './guiDAT';
