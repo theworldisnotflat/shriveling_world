@@ -487,7 +487,7 @@ function networkFromCities(
               terrestrialCone[year].tab.push({ alpha, clock });
               destinationsWithModes[destCityCode][edgeTranspModeName].push({ year: year, speed: edgeModeSpeed[year].speed });
               if (edgeToBeProcessed === true) { // condition pour éviter de générer deux lignes visuellement identiques!
-                let ratio = getRatio(theta, edgeModeSpeed[year].speed, edgeModeSpeed[year].speed, edgeTranspModeSpeed.terrestrial);
+                let ratio = getRatio(theta, maximumSpeed[year], edgeModeSpeed[year].speed, edgeTranspModeSpeed.terrestrial);
                 if (!listOfEdges.hasOwnProperty(destCityCode)) {
                   listOfEdges[destCityCode] = <ILookupEdgeList>{ end, middle, pointP, pointQ, theta, ratio: {} };
                 }
@@ -660,6 +660,7 @@ export class Merger {
       merger(cities, transportNetwork, 'cityCode', 'idOri', 'edges', true, true, false);
       // the main function that generates geometries (cones, lines) by exploring the subgraphs from cities
       this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
+      console.log(this._edgesAndTranspModes);
       this._state = 'missing';
       this._checkState();
     }
