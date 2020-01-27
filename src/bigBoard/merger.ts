@@ -474,7 +474,7 @@ function networkFromCities(
             destinationsWithModes[destCityCode][edgeTranspModeName] = [];
           }
           let edgeModeSpeed = edgeTranspModeSpeed.tabYearSpeed;
-          // pour éviter la duplication des  lignes visuellement!
+          // to avoid visual duplication of lines!
           let edgeToBeProcessed = processedODs[origCityCode][destCityCode].indexOf(edgeTranspModeName) === -1;
           processedODs[origCityCode][destCityCode].push(edgeTranspModeName);
           processedODs[destCityCode][origCityCode].push(edgeTranspModeName);
@@ -489,7 +489,7 @@ function networkFromCities(
               alpha = edgeTranspModeSpeed.tabYearSpeed[year].alpha;
               terrestrialCone[year].tab.push({ alpha, clock });
               destinationsWithModes[destCityCode][edgeTranspModeName].push({ year: year, speed: edgeModeSpeed[year].speed });
-              if (edgeToBeProcessed === true) { // condition pour éviter de générer deux lignes visuellement identiques!
+              if (edgeToBeProcessed === true) { // condition to avoid visual duplication of lines!
                 let ratio = getRatio(theta, maximumSpeed[year], edgeModeSpeed[year].speed);
                 console.log('ratio', ratio);
                 if (!listOfEdges.hasOwnProperty(destCityCode)) {
