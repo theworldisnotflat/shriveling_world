@@ -171,8 +171,8 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
  * @param speedMax
  * @param speed
  */
-function getRatio(theta: number, speedMax: number, speed: number): number {
-  return theta < thetaLimit ? speedMax / 4778.25 : speedMax * theta / (2 * speed);
+function getRatio(theta: number, speedMax: number, speed: number, terrestrial: boolean): number {
+  return terrestrial ? speedMax * theta / (2 * speed) : (theta < thetaLimit ? speedMax / 4778.25 : speedMax * theta / (2 * speed));
 }
 
 /**
@@ -487,8 +487,7 @@ function networkFromCities(
               terrestrialCone[year].tab.push({ alpha, clock });
               destinationsWithModes[destCityCode][edgeTranspModeName].push({ year: year, speed: edgeModeSpeed[year].speed });
               if (edgeToBeProcessed === true) { // condition pour éviter de générer deux lignes visuellement identiques!
-                let ratio = getRatio(theta, maximumSpeed[year], edgeModeSpeed[year].speed);
-                console.log('ratio', ratio);
+                let ratio = getRatio(theta, edgeModeSpeed[year].speed, edgeModeSpeed[year].speed, edgeTranspModeSpeed.terrestrial);
                 if (!listOfEdges.hasOwnProperty(destCityCode)) {
                   listOfEdges[destCityCode] = <ILookupEdgeList>{ end, middle, pointP, pointQ, theta, ratio: {} };
                 }
@@ -501,7 +500,7 @@ function networkFromCities(
               // case when edge transport mode is not terrestrial
               // we will generate a line for the edge
               if (edgeToBeProcessed === true) { // condition pour éviter de générer deux lignes visuellement identiques!
-                let ratio = getRatio(theta, maximumSpeed[year], edgeModeSpeed[year].speed);
+                let ratio = getRatio(theta, maximumSpeed[year], edgeModeSpeed[year].speed, false);
                 if (!listOfEdges.hasOwnProperty(destCityCode)) {
                   listOfEdges[destCityCode] = <ILookupEdgeList>{ end, middle, pointP, pointQ, theta, ratio: {} };
                 }
@@ -611,7 +610,6 @@ export class Merger {
     if (name !== undefined) {
       this[name] = [];
       this[name].push(...getCSV(someString, name === '_transportModeCode'));
-      console.log(name, this[name]);
       if (name === '_transportModeCode' || name === '_transportNetwork') {
         this[name].forEach((item: ITranspMode | ITranspNetwork) => {
           if (item.yearEnd === undefined || item.yearEnd === null || item.yearEnd.toString() === '') {
@@ -621,7 +619,6 @@ export class Merger {
       }
       this._checkState();
     } else {
-      console.log(headings);
       throw new Error('scheme unknown');
     }
   }
@@ -663,7 +660,6 @@ export class Merger {
       merger(cities, transportNetwork, 'cityCode', 'idOri', 'edges', true, true, false);
       // the main function that generates geometries (cones, lines) by exploring the subgraphs from cities
       this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
-      console.log(this._edgesAndTranspModes);
       this._state = 'missing';
       this._checkState();
     }
