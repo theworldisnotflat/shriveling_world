@@ -165,6 +165,9 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
  *
  * * "ratio" is the part that differentiates the two equations
  *
+ * In the case of terrestrial edges simple ratio linking
+ * current [speed] dand [speedMax] is computed
+ *
  * [More detailed explanations here](https://timespace.hypotheses.org/121)
  *
  * @param theta
