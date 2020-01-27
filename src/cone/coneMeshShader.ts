@@ -147,7 +147,6 @@ function regenerateFromConeStep(): void {
     boundaries.set(cacheBoundary[_cityCodeOrder[i]], i * _width);
   }
 
-  //  console.log(_width, _height);
   let options = {
     u_clocks: { src: _clocks, width: _width, height: 1 },
     u_boundaryLimits: { src: boundaries, width: _width, height: _height },
@@ -379,7 +378,6 @@ export class ConeMeshShader extends PseudoCone {
     updateWithLimits();
     computation();
     _ready = true;
-    console.log(_height, _width);
     return [..._cones];
   }
 

@@ -614,7 +614,6 @@ export class Merger {
     if (name !== undefined) {
       this[name] = [];
       this[name].push(...getCSV(someString, name === '_transportModeCode'));
-      console.log(name, this[name]);
       if (name === '_transportModeCode' || name === '_transportNetwork') {
         this[name].forEach((item: ITranspMode | ITranspNetwork) => {
           if (item.yearEnd === undefined || item.yearEnd === null || item.yearEnd.toString() === '') {
@@ -624,7 +623,6 @@ export class Merger {
       }
       this._checkState();
     } else {
-      console.log(headings);
       throw new Error('scheme unknown');
     }
   }
