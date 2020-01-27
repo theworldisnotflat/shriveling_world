@@ -267,7 +267,6 @@ export class LineMeshShader extends Line {
       this._ratio = ratio;
       let index = _lines.indexOf(this);
       _hauteurs[index] = getHeight(this._ratio, this.theta);
-      // console.log(_hauteurs[index], this._ratio, this.theta);
     }
     return resultat;
   }

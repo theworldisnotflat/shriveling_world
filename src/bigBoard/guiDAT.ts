@@ -247,7 +247,6 @@ export class GUI {
                 function lineListener(): void {
                   let opacity = <number>lineOpacity.getValue();
                   let color = parseInt(lineColor.getValue().replace('#', ''), 16);
-                  console.log(color);
                   bigBoard.coneBoard.lineCollection
                     .filter(line => transportName === line.transportName)
                     .forEach(line => {
@@ -264,11 +263,9 @@ export class GUI {
                 lineOpacity.onChange(lineListener);
               });
               // adding terrestrial networks
-              console.log('adding terrestrial networks', this._merger.transportNames.cones);
               this._merger.transportNames.cones.forEach(transportName => {
                 let folder = terresterialFolder.addFolder(transportName);
                 terrestrialControllersList.push(folder);
-                console.log('bigBoard.coneBoard', bigBoard.coneBoard);
 
                 function lineListener(): void {
                   let opacity = <number>lineOpacity.getValue();

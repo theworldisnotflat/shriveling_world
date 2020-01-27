@@ -157,6 +157,9 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
 /**
  * getRatio function computes the speed ratio.
  *
+ * In the case of terrestrial edges simple ratio linking
+ * current [speed] dand [speedMax] is computed
+ *
  * In the case of air edges, two equations are used to determine
  * the [heigth of aerial edges above the geodesic](http://bit.ly/2H4FOKw):
  * * below the threshold limit:![below](http://bit.ly/2Xu3kGF)
@@ -171,8 +174,8 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
  * @param speedMax
  * @param speed
  */
-function getRatio(theta: number, speedMax: number, speed: number): number {
-  return theta < thetaLimit ? speedMax / 4778.25 : speedMax * theta / (2 * speed);
+function getRatio(theta: number, speedMax: number, speed: number, terrestrial: boolean): number {
+  return terrestrial ? speedMax * theta / (2 * speed) : (theta < thetaLimit ? speedMax / 4778.25 : speedMax * theta / (2 * speed));
 }
 
 /**
@@ -471,7 +474,7 @@ function networkFromCities(
             destinationsWithModes[destCityCode][edgeTranspModeName] = [];
           }
           let edgeModeSpeed = edgeTranspModeSpeed.tabYearSpeed;
-          // pour éviter la duplication des  lignes visuellement!
+          // to avoid visual duplication of lines!
           let edgeToBeProcessed = processedODs[origCityCode][destCityCode].indexOf(edgeTranspModeName) === -1;
           processedODs[origCityCode][destCityCode].push(edgeTranspModeName);
           processedODs[destCityCode][origCityCode].push(edgeTranspModeName);
@@ -486,8 +489,8 @@ function networkFromCities(
               alpha = edgeTranspModeSpeed.tabYearSpeed[year].alpha;
               terrestrialCone[year].tab.push({ alpha, clock });
               destinationsWithModes[destCityCode][edgeTranspModeName].push({ year: year, speed: edgeModeSpeed[year].speed });
-              if (edgeToBeProcessed === true) { // condition pour éviter de générer deux lignes visuellement identiques!
-                let ratio = getRatio(theta, maximumSpeed[year], edgeModeSpeed[year].speed);
+              if (edgeToBeProcessed === true) { // condition to avoid visual duplication of lines!
+                let ratio = getRatio(theta, maximumSpeed[year], edgeModeSpeed[year].speed, edgeTranspModeSpeed.terrestrial);
                 console.log('ratio', ratio);
                 if (!listOfEdges.hasOwnProperty(destCityCode)) {
                   listOfEdges[destCityCode] = <ILookupEdgeList>{ end, middle, pointP, pointQ, theta, ratio: {} };
@@ -501,7 +504,7 @@ function networkFromCities(
               // case when edge transport mode is not terrestrial
               // we will generate a line for the edge
               if (edgeToBeProcessed === true) { // condition pour éviter de générer deux lignes visuellement identiques!
-                let ratio = getRatio(theta, maximumSpeed[year], edgeModeSpeed[year].speed);
+                let ratio = getRatio(theta, maximumSpeed[year], edgeModeSpeed[year].speed, edgeTranspModeSpeed.terrestrial);
                 if (!listOfEdges.hasOwnProperty(destCityCode)) {
                   listOfEdges[destCityCode] = <ILookupEdgeList>{ end, middle, pointP, pointQ, theta, ratio: {} };
                 }
@@ -611,7 +614,6 @@ export class Merger {
     if (name !== undefined) {
       this[name] = [];
       this[name].push(...getCSV(someString, name === '_transportModeCode'));
-      console.log(name, this[name]);
       if (name === '_transportModeCode' || name === '_transportNetwork') {
         this[name].forEach((item: ITranspMode | ITranspNetwork) => {
           if (item.yearEnd === undefined || item.yearEnd === null || item.yearEnd.toString() === '') {
@@ -621,7 +623,6 @@ export class Merger {
       }
       this._checkState();
     } else {
-      console.log(headings);
       throw new Error('scheme unknown');
     }
   }
