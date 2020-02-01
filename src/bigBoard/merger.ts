@@ -563,7 +563,7 @@ export class Merger {
   private _transportModeCode: ITranspMode[] = [];
   private _transportNetwork: ITranspNetwork[] = [];
   private _state: IMergerState = 'missing';
-  private _edgesAndTranspModes: ILookupEdgesWithTranspModes = <ILookupEdgesWithTranspModes>{};
+  private _edgesWithTranspModes: ILookupEdgesWithTranspModes = <ILookupEdgesWithTranspModes>{};
 
   public get state(): IMergerState {
     return this._state;
@@ -573,14 +573,14 @@ export class Merger {
    * in order to give access to the relevant data inside bigBoard
    */
   public get edgesWithTranspModes(): ILookupEdgesWithTranspModes {
-    return this._edgesAndTranspModes;
+    return this._edgesWithTranspModes;
   }
 
   public get Cities(): ICity[] { return this._cities; }
   public CitiesByIndex(index: string | number): ICity { return this._cities[index]; }
 
   public get conesAndEdgesData(): ILookupEdgesWithTranspModes {
-    return this._edgesAndTranspModes;
+    return this._edgesWithTranspModes;
   }
 
   public get minYear(): number { return _minYear; }
@@ -593,7 +593,7 @@ export class Merger {
     this._transportModeSpeed = [];
     this._transportModeCode = [];
     this._transportNetwork = [];
-    this._edgesAndTranspModes = <ILookupEdgesWithTranspModes>{};
+    this._edgesWithTranspModes = <ILookupEdgesWithTranspModes>{};
     this._state = 'missing';
   }
 
@@ -665,8 +665,8 @@ export class Merger {
       // generates subgraph from city considered as origin
       merger(cities, transportNetwork, 'cityCode', 'idOri', 'edges', true, true, false);
       // the main function that generates geometries (cones, lines) by exploring the subgraphs from cities
-      this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
-      console.log(this._edgesAndTranspModes);
+      this._edgesWithTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
+      console.log(this._edgesWithTranspModes);
       this._state = 'missing';
       this._checkState();
     }
@@ -679,7 +679,7 @@ export class Merger {
         this._transportModeSpeed.length > 0 && this._transportModeCode.length > 0 &&
         this._transportNetwork.length > 0) {
         state = 'ready';
-        if (Object.keys(this._edgesAndTranspModes).length > 0) {
+        if (Object.keys(this._edgesWithTranspModes).length > 0) {
           state = 'complete';
         }
       }
