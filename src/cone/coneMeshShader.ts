@@ -42,7 +42,7 @@ let _alphas: IShaderAlpha;
  * Generates empty arrays of
  * * [[_localLimitsLookup]]
  * * [[_cityCodeOrder]]
- * * [[_clocks]] i.e. unitary trinagular elements to compose cones
+ * * [[_clocks]] i.e. unitary triangular elements to compose cones
  * * [[_alphas]] cones angles
  * * [[_indexesArr]]
  */
