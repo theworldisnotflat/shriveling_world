@@ -158,7 +158,7 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
  * getSpeedRatio function computes the speed ratio.
  *
  * In the case of terrestrial edges simple ratio linking
- * current [speed] dand [speedMax] is computed according to this
+ * current [speed] dand [maxSpeed] is computed according to this
  * ![equation](http://bit.ly/2EejFpW)
  *
  * In the case of air edges, two equations are used to determine
@@ -173,11 +173,11 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
  * [More detailed explanations here](https://timespace.hypotheses.org/121)
  *
  * @param theta
- * @param speedMax
+ * @param maxSpeed
  * @param speed
  */
-function getSpeedRatio(theta: number, speedMax: number, speed: number, terrestrial: boolean): number {
-  return terrestrial ? speedMax * theta / (2 * speed) : (theta < thetaLimit ? speedMax / 4778.25 : speedMax * theta / (2 * speed));
+function getSpeedRatio(theta: number, maxSpeed: number, speed: number, terrestrial: boolean): number {
+  return terrestrial ? maxSpeed * theta / (2 * speed) : (theta < thetaLimit ? maxSpeed / 4778.25 : maxSpeed * theta / (2 * speed));
 }
 
 /**
@@ -349,13 +349,13 @@ function networkFromCities(
       for (let year in tabYearSpeed) {
         if (maximumSpeed.hasOwnProperty(year)) {
           // then we affect the slope of cones
-          let speedMax = maximumSpeed[year];
+          let maxSpeed = maximumSpeed[year];
           let speedAmb = tabYearSpeed[year].speed;
           // this is [equation 1](http://bit.ly/2tLfehC)
           // of the slope of the cone
           // executed because transport mode [[isTerrestrial]]
           let alpha = Math.atan(Math.sqrt(
-            (speedMax / speedAmb) * (speedMax / speedAmb) - 1));
+            (maxSpeed / speedAmb) * (maxSpeed / speedAmb) - 1));
           if (alpha < 0) {
             alpha += CONFIGURATION.TWO_PI;
           }
