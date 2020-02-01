@@ -31,25 +31,25 @@ fullCleanArrays();
 
 /**
  * formule de la hauteur des arcs fonction de [[theta]]
- * et du [[ratio]] des vitesses
+ * et du [[speedRatio]] des vitesses
  *
  * formules of the heigth of edges function of '[[theta]]' and '[[ratio]]'
- * * '[[ratio]]' is computed in function '[[getRatio]]' in file [[bigBoard/merger.ts]]
- * * '[[ratio]]' is computed with [two formulas](https://timespace.hypotheses.org/121)
+ * * '[[speedRatio]]' is computed in function '[[getSpeedRatio]]' in file [[bigBoard/merger.ts]]
+ * * '[[speedRatio]]' is computed with [two formulas](https://timespace.hypotheses.org/121)
  * depending on '[[theta]]' compared with '[[thetaLimit]]'
  *
  * * below [[thetaLimit]]: ![below](http://bit.ly/2Xu3kGF)
  * * beyond [[thetaLimit]]: ![beyond](http://bit.ly/2EejFpW)
  * * the figure: ![2](http://bit.ly/2H4FOKw)
  *
- * @param ratio
+ * @param speedRatio
  * @param theta
  */
-function getHeight(ratio: number, theta: number): number {
+function getHeight(speedRatio: number, theta: number): number {
   const semiTheta = theta / 2;
   const sinSemiTheta = Math.sin(semiTheta);
   const cosSemiTheta = Math.cos(semiTheta);
-  const secondTerm = Math.sqrt(ratio * ratio - sinSemiTheta * sinSemiTheta);
+  const secondTerm = Math.sqrt(speedRatio * speedRatio - sinSemiTheta * sinSemiTheta);
   const thirdTerm = 0;
   // the equation of length om'
   const result = ((cosSemiTheta + secondTerm + thirdTerm) *
@@ -122,7 +122,7 @@ export class LineMeshShader extends Line {
   private theta: number;
   private _years: { [year: string]: number };
   private _transportName: string;
-  private _ratio: number;
+  private _speedRatio: number;
 
   public static async generateCones(lookup: ILookupEdges): Promise<LineMeshShader[]> {
     _ready = false;
@@ -229,7 +229,7 @@ export class LineMeshShader extends Line {
     _coefficient = value;
     for (let i = 0; i < _height; i++) {
       let line = _lines[i];
-      _hauteurs[i] = getHeight(line._ratio, line.theta);
+      _hauteurs[i] = getHeight(line._speedRatio, line.theta);
     }
     computation();
   }
@@ -261,12 +261,12 @@ export class LineMeshShader extends Line {
 
   // sets the heigth of edges
   public isAvailable(year: string | number): boolean {
-    let ratio = this._years[year];
-    let resultat = ratio !== undefined;
+    let speedRatio = this._years[year];
+    let resultat = speedRatio !== undefined;
     if (resultat === true) {
-      this._ratio = ratio;
+      this._speedRatio = speedRatio;
       let index = _lines.indexOf(this);
-      _hauteurs[index] = getHeight(this._ratio, this.theta);
+      _hauteurs[index] = getHeight(this._speedRatio, this.theta);
     }
     return resultat;
   }
@@ -285,6 +285,6 @@ export class LineMeshShader extends Line {
     this.begin = begin;
     this.visible = true;
     this._transportName = transportName;
-    this._ratio = 0;
+    this._speedRatio = 0;
   }
 }
