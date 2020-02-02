@@ -94,7 +94,8 @@ const keyWords: { name: string, words: string[] }[] = [
 ];
 
 /**
- * "thetaLimit" = threshold angle of the modelled air services speed:
+ * "thetaLimit" = threshold angle of the modelled air services speed.
+ * The threshold length is fixed at 2000 km for the current (2010) air system
  * * beyond "thetaLimit" speed has the constant value "speed"
  * * below "thetaLimit" speed decreases from value "speed" to zero depending on the value of "theta"
  */
@@ -157,6 +158,9 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
 /**
  * getSpeedRatio function computes the speed ratio.
  *
+ * [[theta]] is the angle between the two cities
+ * in the unprojected situation
+ *
  * In the case of terrestrial edges simple ratio linking
  * current [speed] dand [maxSpeed] is computed according to this
  * ![equation](http://bit.ly/2EejFpW)
@@ -166,7 +170,8 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
  * * below the threshold limit:![below](http://bit.ly/2Xu3kGF)
  * * beyond the threshold limit: ![beyond](http://bit.ly/2EejFpW)
  * * the figure: ![2](http://bit.ly/2H4FOKw)
- * The threshold is taken at 2000 km
+ * The threshold is taken at 2000 km, based on ![an analysis of
+ * current (2010) OD pairs of flight ](http://bit.ly/2OiEFC4)
  *
  * * "ratio" is the part that differentiates the two equations
  *
@@ -177,7 +182,13 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
  * @param speed
  */
 function getSpeedRatio(theta: number, speedMax: number, speed: number, terrestrial: boolean): number {
-  return terrestrial ? speedMax * theta / (2 * speed) : (theta < thetaLimit ? speedMax / 4778.25 : speedMax * theta / (2 * speed));
+  return terrestrial ?
+              // usual terrestrial mode situation
+              speedMax * theta / (2 * speed) :
+              // aerial case
+              (theta < thetaLimit ?
+                       speedMax / 4778.25 :
+                       speedMax * theta / (2 * speed));
 }
 
 /**
@@ -494,7 +505,6 @@ function networkFromCities(
               if (edgeToBeProcessed === true) { // condition to avoid visual duplication of lines!
                 let speedRatio = getSpeedRatio(theta, maximumSpeed[year], edgeModeSpeed[year].speed, edgeTranspModeSpeed.terrestrial);
                 console.log('ratio', speedRatio);
-                console.log('maximumSpeed[year]', maximumSpeed[year]);
                 if (!listOfEdges.hasOwnProperty(destCityCode)) {
                   listOfEdges[destCityCode] = <ILookupEdgeList>{ end, middle, pointP, pointQ, theta, ratio: {} };
                 }
