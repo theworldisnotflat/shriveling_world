@@ -190,9 +190,9 @@ export class LineMeshShader extends Line {
             let pointPGLSL = endPoint.pointP.toThreeGLSL();
             let pointQGLSL = endPoint.pointQ.toThreeGLSL();
             let endGLSL = endPoint.end.position.toThreeGLSL();
-            for (let transportName in endPoint.ratio) {
-              if (endPoint.ratio.hasOwnProperty(transportName)) {
-                let ratios = endPoint.ratio[transportName];
+            for (let transportName in endPoint.speedRatio) {
+              if (endPoint.speedRatio.hasOwnProperty(transportName)) {
+                let ratios = endPoint.speedRatio[transportName];
                 _lines.push(new LineMeshShader(begin.cityCode, endPoint.end.cityCode, endPoint.theta, ratios, transportName));
                 pControls0.push(...beginGLSL);
                 pControls1.push(...pointPGLSL);
