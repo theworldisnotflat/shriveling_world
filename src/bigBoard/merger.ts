@@ -94,7 +94,8 @@ const keyWords: { name: string, words: string[] }[] = [
 ];
 
 /**
- * "thetaLimit" = threshold angle of the modelled air services speed:
+ * "thetaLimit" = threshold angle of the modelled air services speed.
+ * The threshold length is fixed at 2000 km for the current (2010) air system
  * * beyond "thetaLimit" speed has the constant value "speed"
  * * below "thetaLimit" speed decreases from value "speed" to zero depending on the value of "theta"
  */
@@ -155,29 +156,36 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
 }
 
 /**
- * getRatio function computes the speed ratio.
+ * [[getModelledSpeed]] computes a new speed for aerial links
+ * having a length less than [[thetaLimit]]
+ * this modelled speed will be lower than the considered mode speed
  *
- * In the case of terrestrial edges simple ratio linking
- * current [speed] dand [speedMax] is computed according to this
- * ![equation](http://bit.ly/2EejFpW)
+ * [[theta]] is the angle between the two cities
+ * in the unprojected situation
  *
  * In the case of air edges, two equations are used to determine
  * the [heigth of aerial edges above the geodesic](http://bit.ly/2H4FOKw):
  * * below the threshold limit:![below](http://bit.ly/2Xu3kGF)
  * * beyond the threshold limit: ![beyond](http://bit.ly/2EejFpW)
  * * the figure: ![2](http://bit.ly/2H4FOKw)
- * The threshold is taken at 2000 km
- *
- * * "ratio" is the part that differentiates the two equations
+ * The threshold is taken at 2000 km, based on ![an analysis of
+ * current (2010) OD pairs of flight ](http://bit.ly/2OiEFC4)
  *
  * [More detailed explanations here](https://timespace.hypotheses.org/121)
  *
  * @param theta
  * @param speedMax
  * @param speed
+ * @param terrestrial
  */
-function getRatio(theta: number, speedMax: number, speed: number, terrestrial: boolean): number {
-  return terrestrial ? speedMax * theta / (2 * speed) : (theta < thetaLimit ? speedMax / 4778.25 : speedMax * theta / (2 * speed));
+function getModelledSpeed(theta: number, speedMax: number, speed: number, terrestrial: boolean): number {
+  return terrestrial ?
+              // usual terrestrial mode situation
+              speed :
+              // aerial case
+              (theta < thetaLimit ?
+                       (CONFIGURATION.earthRadiusMeters / 1000) * theta * 0.375 :
+                       speed);
 }
 
 /**
@@ -349,13 +357,13 @@ function networkFromCities(
       for (let year in tabYearSpeed) {
         if (maximumSpeed.hasOwnProperty(year)) {
           // then we affect the slope of cones
-          let speedMax = maximumSpeed[year];
+          let maxSpeed = maximumSpeed[year];
           let speedAmb = tabYearSpeed[year].speed;
           // this is [equation 1](http://bit.ly/2tLfehC)
           // of the slope of the cone
           // executed because transport mode [[isTerrestrial]]
           let alpha = Math.atan(Math.sqrt(
-            (speedMax / speedAmb) * (speedMax / speedAmb) - 1));
+            (maxSpeed / speedAmb) * (maxSpeed / speedAmb) - 1));
           if (alpha < 0) {
             alpha += CONFIGURATION.TWO_PI;
           }
@@ -483,8 +491,9 @@ function networkFromCities(
           // for each year the alpha will be computed
           for (let year = minYear; year <= maxYear; year++) {
             if (edgeTranspModeSpeed.terrestrial === true) {
+              // we generate a cone and draw edges
               if (!terrestrialCone.hasOwnProperty(year)) {
-                // initialisation du complexe cone pour une ville d'origine et une année fixée.
+                // initialising  complex cone for a given city and year
                 let roadAlpha = speedPerTransportPerYear[roadCode].tabYearSpeed[year].alpha;
                 terrestrialCone[year] = { roadAlpha, tab: [] };
               }
@@ -492,28 +501,42 @@ function networkFromCities(
               terrestrialCone[year].tab.push({ alpha, clock });
               destinationsWithModes[destCityCode][edgeTranspModeName].push({ year: year, speed: edgeModeSpeed[year].speed });
               if (edgeToBeProcessed === true) { // condition to avoid visual duplication of lines!
-                let ratio = getRatio(theta, maximumSpeed[year], edgeModeSpeed[year].speed, edgeTranspModeSpeed.terrestrial);
-                console.log('ratio', ratio);
+                let modelledSpeed = getModelledSpeed(theta, maximumSpeed[year], edgeModeSpeed[year].speed,
+                                                     edgeTranspModeSpeed.terrestrial);
+                // the ratio linking the current speed and maxSpeed is
+                // computed according to this ![equation](http://bit.ly/2EejFpW)
+                let speedRatio = maximumSpeed[year] * theta / (2 * modelledSpeed);
                 if (!listOfEdges.hasOwnProperty(destCityCode)) {
-                  listOfEdges[destCityCode] = <ILookupEdgeList>{ end, middle, pointP, pointQ, theta, ratio: {} };
+                  listOfEdges[destCityCode] = <ILookupEdgeList>{ end, middle, pointP, pointQ, theta, speedRatio: {} };
                 }
-                if (!listOfEdges[destCityCode].ratio.hasOwnProperty(edgeTranspModeName)) {
-                  listOfEdges[destCityCode].ratio[edgeTranspModeName] = {};
+                if (!listOfEdges[destCityCode].speedRatio.hasOwnProperty(edgeTranspModeName)) {
+                  listOfEdges[destCityCode].speedRatio[edgeTranspModeName] = {};
                 }
-                listOfEdges[destCityCode].ratio[edgeTranspModeName][year] = ratio;
+                listOfEdges[destCityCode].speedRatio[edgeTranspModeName][year] = speedRatio;
               }
             } else {
               // case when edge transport mode is not terrestrial
               // we will generate a line for the edge
               if (edgeToBeProcessed === true) { // condition pour éviter de générer deux lignes visuellement identiques!
-                let ratio = getRatio(theta, maximumSpeed[year], edgeModeSpeed[year].speed, edgeTranspModeSpeed.terrestrial);
+                let modelledSpeed = getModelledSpeed(theta, maximumSpeed[year], edgeModeSpeed[year].speed,
+                                                     edgeTranspModeSpeed.terrestrial);
+                // the ratio linking the current speed and maxSpeed is
+                // computed according to this ![equation](http://bit.ly/2EejFpW)
+                let speedRatio = maximumSpeed[year] * theta / (2 * modelledSpeed);
+                // console.log('destCity', this._cities[destCityCode].urbanAgglomeration);
+                // console.log('origCity', this._cities[origCityCode].urbanAgglomeration);
+                console.log('orig', city.urbanAgglomeration);
+                console.log('mode', edgeTranspModeSpeed.name);
+                console.log('theta km', (CONFIGURATION.earthRadiusMeters / 1000) * theta);
+                console.log('edgeModeSpeed[year].speed', edgeModeSpeed[year].speed);
+                console.log('modelledSpeed', modelledSpeed);
                 if (!listOfEdges.hasOwnProperty(destCityCode)) {
-                  listOfEdges[destCityCode] = <ILookupEdgeList>{ end, middle, pointP, pointQ, theta, ratio: {} };
+                  listOfEdges[destCityCode] = <ILookupEdgeList>{ end, middle, pointP, pointQ, theta, speedRatio: {} };
                 }
-                if (!listOfEdges[destCityCode].ratio.hasOwnProperty(edgeTranspModeName)) {
-                  listOfEdges[destCityCode].ratio[edgeTranspModeName] = {};
+                if (!listOfEdges[destCityCode].speedRatio.hasOwnProperty(edgeTranspModeName)) {
+                  listOfEdges[destCityCode].speedRatio[edgeTranspModeName] = {};
                 }
-                listOfEdges[destCityCode].ratio[edgeTranspModeName][year] = ratio;
+                listOfEdges[destCityCode].speedRatio[edgeTranspModeName][year] = speedRatio;
               }
             }
           }

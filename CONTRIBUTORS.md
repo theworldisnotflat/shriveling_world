@@ -9,8 +9,10 @@
 * **[Nicolas Roelandt](https://github.com/Bakaniko)**
   * Contributor
   * strategy and communication
-* **[Jeff Barbier]()**
+* **[Jeff Barbier](https://github.com/phbrbr)**
   * Contributor
   * import export debuging
-* **[Fabian Wenner]()**
+* **[Fabian Wenner](https://github.com/fwenner)**
   * datasets
+* **[Georges Mariano](https://github.com/JMR-uge)**
+  * deployment

@@ -28,7 +28,7 @@ Go inside the application folder and open a terminal, execute the following line
 
 ```gulp doc``` (compile documentation)
 
-Then open in browser this adress http://localhost:8080. 
+Then open in browser this adress http://localhost:8080.
 
 ## Introducing data in the application
 
@@ -54,7 +54,7 @@ with XXX and value in the following range:
 
 - intrudedHeightRatio : sets the heigth of cones, in the range [0,1], a ratio of the earth radius
 - coneStep :  modifies the visual aspect of cones (default value is 15 degrees, a facet = 15°)
-- projectionInit : initial projection with values in in the following range : 
+- projectionInit : initial projection with values in in the following range :
   - 'none' for a three dimensional unprojected representation
   - 'equirectangular' or 1 for an equilateral flat representation
   - 'Mercator' or 2 for a 2-dimensional Mercator

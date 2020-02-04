@@ -283,7 +283,7 @@ export interface ILookupEdgeList {
   pointP: Cartographic;
   pointQ: Cartographic;
   middle: Cartographic;
-  ratio: { [transportName: string]: { [year: string]: number } };
+  speedRatio: { [transportName: string]: { [year: string]: number } };
   theta: number;
 }
 /**
