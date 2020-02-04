@@ -14,3 +14,5 @@
   * import export debuging
 * **[Fabian Wenner]()**
   * datasets
+* **[Georges Mariano](https://github.com/JMR-uge)**
+  * deployment
