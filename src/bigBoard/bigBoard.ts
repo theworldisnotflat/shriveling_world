@@ -559,7 +559,7 @@ export default class BigBoard {
   }
 
   /**
-   * Export in Wavefront OBJ format.
+   * Export the scene in Wavefront OBJ format.
    * Exported files can be imported in Blender.
    *
    * Three files a generated:
