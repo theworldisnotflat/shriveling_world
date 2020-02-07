@@ -194,7 +194,7 @@ const build = async (done) => {
   done();
 };
 
-const doc= shell.task('typedoc --out documentation/html --json documentation/json.json --name "shriveling the world" --ignoreCompilerErrors --hideGenerator --target ES6 --excludeExternals  --umlLocation remote --umlFormat svg  src')
+const doc= shell.task('typedoc --out documentation/html --json documentation/json.json --name "shriveling the world" --ignoreCompilerErrors --hideGenerator --target ES6  src')
 const tslint = shell.task('tslint -c tslint.json -e src/webWorkers/**/*.ts src/**/**/*.ts src/*.ts');
 const clean = (done) => {
   del.sync(['dist', 'example/javascript/', 'src/**/*.js','!src/IHM/**/*.js', 'declarations', 'documentation','example/css/']);

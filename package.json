@@ -21,7 +21,6 @@
     "gulp-connect": "^5.6.1",
     "gulp-shell": "^0.7.0",
     "gulp-typedoc": "^2.2.2",
-    "handlebars": "^4.7.3",
     "papaparse": "^5.0.2",
     "poly2tri": "^1.5.0",
     "rollup": "^1.31.0",
@@ -36,7 +35,6 @@
     "tween.js": "^16.6.0",
     "twgl.js": "^4.14.2",
     "typedoc": "^0.16.9",
-    "typedoc-plantuml": "git+https://git@github.com/0815fox/typedoc-plantuml.git",
     "typescript": "^3.7.5",
     "uglify-es": "^3.3.9",
     "yargs": "^15.1.0"
