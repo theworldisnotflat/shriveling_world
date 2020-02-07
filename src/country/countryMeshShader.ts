@@ -1,6 +1,6 @@
 'use strict';
 import { Point, SweepContext, IPointLike } from 'poly2tri';
-import { Mesh, InterleavedBuffer, InterleavedBufferAttribute, BufferGeometry, BufferAttribute } from 'three';
+import { Mesh, InterleavedBuffer, InterleavedBufferAttribute, BufferGeometry, BufferAttribute, DynamicDrawUsage } from 'three';
 import { CONFIGURATION } from '../common/configuration';
 import { Cartographic } from '../common/utils';
 import { IBBox, IMarkLimits } from '../definitions/project';
@@ -449,15 +449,15 @@ export class CountryMeshShader extends Mesh {
 
   private constructor(preMesh: IPreMesh, mainProperty: string, outputLimits: IMarkLimits) {
     let positionDelta = outputLimits.end - outputLimits.begin;
-    const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(positionDelta), 4).setDynamic(true);
+    const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(positionDelta), 4).setUsage(DynamicDrawUsage);
     const interleavedBufferAttributePosition = new InterleavedBufferAttribute(interleavedBufferPosition, 3, 0, false);
-    const interleavedBufferNormal = new InterleavedBuffer(new Float32Array(positionDelta), 4).setDynamic(true);
+    const interleavedBufferNormal = new InterleavedBuffer(new Float32Array(positionDelta), 4).setUsage(DynamicDrawUsage);
     const interleavedBufferAttributeNormal = new InterleavedBufferAttribute(interleavedBufferNormal, 3, 0, false);
     const bufferGeometry = new BufferGeometry();
     let preGeometry = preMesh.geometry;
-    bufferGeometry.addAttribute('position', interleavedBufferAttributePosition);
-    bufferGeometry.addAttribute('normal', interleavedBufferAttributeNormal);
-    bufferGeometry.addAttribute('uv', new BufferAttribute(preGeometry.uvs, 2));
+    bufferGeometry.setAttribute('position', interleavedBufferAttributePosition);
+    bufferGeometry.setAttribute('normal', interleavedBufferAttributeNormal);
+    bufferGeometry.setAttribute('uv', new BufferAttribute(preGeometry.uvs, 2));
     bufferGeometry.setIndex(new BufferAttribute(preGeometry.indexes, 1));
     bufferGeometry.setDrawRange(0, preGeometry.indexes.length);
     bufferGeometry.computeBoundingSphere();

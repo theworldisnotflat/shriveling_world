@@ -1,6 +1,6 @@
 'use strict';
 import {
-  BufferGeometry, Geometry, InterleavedBufferAttribute, BufferAttribute, InterleavedBuffer,
+  BufferGeometry, Geometry, InterleavedBufferAttribute, BufferAttribute, InterleavedBuffer, DynamicDrawUsage,
 } from 'three';
 import { CONFIGURATION } from '../common/configuration';
 import { PseudoCone } from './base';
@@ -424,36 +424,6 @@ export class ConeMeshShader extends PseudoCone {
     return this._complexAlpha[year];
   }
 
-  /**
-   * constructor
-   * @param cityCode
-   * @param position
-   * @param terrestrialData // cone angles
-   * @param properties
-   */
-  private constructor(cityCode: string, position: Cartographic, terrestrialData: ILookupComplexAlpha, properties: any) {
-    const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(400 * 4 * 2), 4).setDynamic(true);
-    const interleavedBufferAttributePosition = new InterleavedBufferAttribute(interleavedBufferPosition, 3, 0, false);
-    const interleavedBufferUV = new InterleavedBuffer(new Float32Array(400 * 4 * 2), 4).setDynamic(true);
-    const interleavedBufferAttributeUV = new InterleavedBufferAttribute(interleavedBufferUV, 3, 0, false);
-    const bufferGeometry = new BufferGeometry();
-    bufferGeometry.addAttribute('position', interleavedBufferAttributePosition);
-    bufferGeometry.addAttribute('uv', interleavedBufferAttributeUV);
-    bufferGeometry.setIndex(new BufferAttribute(new Uint16Array(400 * 6 * 2), 1).setDynamic(true));
-    bufferGeometry.setDrawRange(0, 0);
-    bufferGeometry.computeBoundingSphere();
-    super(bufferGeometry, CONFIGURATION.BASIC_CONE_MATERIAL.clone());
-    this._cityCode = cityCode;
-    this._position = position;
-    this.otherProperties = properties;
-    this._complexAlpha = terrestrialData;
-    this._withLimits = true;
-    this.visible = true;
-    this.castShadow = true;
-    // this.receiveShadow = true;
-
-  }
-
   get cityCode(): string {
     return this._cityCode;
   }
@@ -471,4 +441,34 @@ export class ConeMeshShader extends PseudoCone {
       this._withLimits = value;
     }
   }
+  /**
+   * constructor
+   * @param cityCode
+   * @param position
+   * @param terrestrialData // cone angles
+   * @param properties
+   */
+  private constructor(cityCode: string, position: Cartographic, terrestrialData: ILookupComplexAlpha, properties: any) {
+    const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(400 * 4 * 2), 4).setUsage(DynamicDrawUsage);
+    const interleavedBufferAttributePosition = new InterleavedBufferAttribute(interleavedBufferPosition, 3, 0, false);
+    const interleavedBufferUV = new InterleavedBuffer(new Float32Array(400 * 4 * 2), 4).setUsage(DynamicDrawUsage);
+    const interleavedBufferAttributeUV = new InterleavedBufferAttribute(interleavedBufferUV, 3, 0, false);
+    const bufferGeometry = new BufferGeometry();
+    bufferGeometry.setAttribute('position', interleavedBufferAttributePosition);
+    bufferGeometry.setAttribute('uv', interleavedBufferAttributeUV);
+    bufferGeometry.setIndex(new BufferAttribute(new Uint16Array(400 * 6 * 2), 1).setUsage(DynamicDrawUsage));
+    bufferGeometry.setDrawRange(0, 0);
+    bufferGeometry.computeBoundingSphere();
+    super(bufferGeometry, CONFIGURATION.BASIC_CONE_MATERIAL.clone());
+    this._cityCode = cityCode;
+    this._position = position;
+    this.otherProperties = properties;
+    this._complexAlpha = terrestrialData;
+    this._withLimits = true;
+    this.visible = true;
+    this.castShadow = true;
+    // this.receiveShadow = true;
+
+  }
+
 }
