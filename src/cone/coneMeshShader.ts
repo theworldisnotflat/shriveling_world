@@ -424,6 +424,23 @@ export class ConeMeshShader extends PseudoCone {
     return this._complexAlpha[year];
   }
 
+  get cityCode(): string {
+    return this._cityCode;
+  }
+  get cartographicPosition(): Cartographic {
+    return this._position;
+  }
+
+  get withLimits(): boolean {
+    return this._withLimits;
+  }
+
+  set withLimits(value: boolean) {
+    if (value !== this._withLimits) {
+      _dirtyLimits = true;
+      this._withLimits = value;
+    }
+  }
   /**
    * constructor
    * @param cityCode
@@ -454,21 +471,4 @@ export class ConeMeshShader extends PseudoCone {
 
   }
 
-  get cityCode(): string {
-    return this._cityCode;
-  }
-  get cartographicPosition(): Cartographic {
-    return this._position;
-  }
-
-  get withLimits(): boolean {
-    return this._withLimits;
-  }
-
-  set withLimits(value: boolean) {
-    if (value !== this._withLimits) {
-      _dirtyLimits = true;
-      this._withLimits = value;
-    }
-  }
 }
