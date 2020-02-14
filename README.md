@@ -66,7 +66,8 @@ with XXX and value in the following range:
 ## Testing lengths and angles
 
 As the final output of the tool is, in the general case, an image, testing the distances and angles is a way to make sure the model is correct:
-- length of edges and links can be [measured with a ruler on the screen](https://timespace.hypotheses.org/115) or on a printed image.
+- length of straight edges and links can be [measured with a ruler on the screen](https://timespace.hypotheses.org/115) or on a printed image
+- length of curves may be measured by means of a little string adjusted along the image and then measured with the ruler
 - It may be useful to check visually the acuracy of the model by measuring angles with [an on-line protractor tool](https://www.ginifab.com/feeds/angle_measurement/)
 
 # Road map
