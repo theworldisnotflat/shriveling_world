@@ -9,7 +9,7 @@ A [scientific blog](https://timespace.hypotheses.org/) contains principles, refl
 
 ## Requisites
 You need updated version of node.js, npm and nvm:
-- https://github.com/nodesource/distributions/blob/master/README.md#deb
+- [node latest version](https://github.com/nodesource/distributions/blob/master/README.md#deb)
 
 - ```nvm install node ```
 
@@ -44,7 +44,7 @@ Drag'n'drop (one by one in Ubuntu) the following geojson and csv files found in 
 ## Instructions for use
 Instructions for the application are provided in a lateral user interface.
 
-Export to gltf (.obj) file format is available (red button in the bottom). In order to import in blender the file produced from the app, a Blender plugin must be installed : https://github.com/ksons/gltf-blender-importer
+Export to gltf (.obj) file format is available (red button in the bottom). In order to import in blender the file produced from the app, [a Blender plugin must be installed](https://github.com/ksons/gltf-blender-importer)
 
 Instructions to the application can also be entered in the console (F12) of the browser
 
@@ -63,8 +63,11 @@ with XXX and value in the following range:
 - year: base year of the representation (value in the networks files)
 - pointsPerLine=X where X is an integer between 1 and 199 included. This value influences the way curves are drawn.
 
+## Testing lengths and angles
 
-
+As the final output of the tool is, in the general case, an image, testing the distances and angles is a way to make sure the model is correct:
+- length of edges and links can be [measured with a ruler on the screen](https://timespace.hypotheses.org/115) or on a printed image.
+- It may be useful to check visually the acuracy of the model by measuring angles with [an on-line protractor tool](https://www.ginifab.com/feeds/angle_measurement/)
 
 # Road map
-https://github.com/theworldisnotflat/shriveling_world/wiki
+A [roadmap is maintained up to date here](https://github.com/theworldisnotflat/shriveling_world/wiki)
