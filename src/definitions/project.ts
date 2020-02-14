@@ -178,7 +178,7 @@ export interface ICity {
   longitude: number;
   radius: number; // for cases of cities in islands close to a continent
   populations?: IPopulation;
-  edges?: ITransportNetwork[];
+  edges?: ITransportNetworkEdge[];
 }
 
 /**
@@ -210,7 +210,7 @@ export interface ITranspMode {
 }
 
 /**
- * Here we find data of each link/edge in the [[ITransportNetwork]]
+ * Here we find data of each link/edge in the [[ITransportNetworkEdge]]
  *
  * Each link/edge has
  * * a [[yearBegin]] and
@@ -219,7 +219,7 @@ export interface ITranspMode {
  * * and  destination [[idDes]]
  * * a transport mode [[transportMode]]
  */
-export interface ITransportNetwork {
+export interface ITransportNetworkEdge {
   yearBegin: number;
   yearEnd?: number;
   idOri?: number;

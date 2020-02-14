@@ -270,11 +270,14 @@ function networkFromCities(
     terrestrial: boolean;
   }
   /**
-   * ILookupCache concerns an edge with an end
-   * middle, pointP at 1/4 anf pointQ at 3/4
-   * and finally theta the angle between the two cities
+   * [[ILookupCacheAnchorsEdgeCone]] describes:
+   * * an edge with an end middle, pointP
+   *   at 1/4 anf pointQ at 3/4, as anchor points
+   * * description of the cone with
+   *   theta the angle between the two cities
+   *   and clock the unit triangle tha generates the cone
    */
-  interface ILookupCache {
+  interface ILookupCacheAnchorsEdgeCone {
     end?: ICityExtremityOfEdge;
     pointP: Cartographic;
     pointQ: Cartographic;
@@ -378,24 +381,24 @@ function networkFromCities(
   }
   // faire lookup des cartographic/referential par citycode. OK
   let lookupPosition: { [cityCode: string]: NEDLocal } = {};
-  let lookupMiddle: { [cityCodeBegin: number]: { [cityCodeEnd: number]: ILookupCache } } = {};
+  let lookupMiddle: { [cityCodeBegin: number]: { [cityCodeEnd: number]: ILookupCacheAnchorsEdgeCone } } = {};
   cities.forEach((city) => {
     let position = new Cartographic(city.longitude, city.latitude, 0, false);
     lookupPosition[city.cityCode] = new NEDLocal(position);
   });
   /**
-   * fonction mettant en cache les calculs d'ouverture angulaire entre deux villes (l'ordre des villes n'a pas d'importance)
    *
-   * function putting in cache the computation of angles and points between cities (the order of cities has no importance)
-   * @param  begin code de la ville de début/starting city code
-   * @param  end   code de la ville de fin/ending city code
-   * @return       retourne le résultat des calculs prenant en compte les deux villes
-   * en entrée (ouverture angulaire, points P et Q et point milieu)
+   * function putting in cache the unit triangles (clock) of the cone
+   * the computation of angles and anchor points
+   * of edges between cities (the order of cities has no importance)
    *
-   * returns the result of the computation witht the two cities as input (opening theta, points P Q and midpoint)
+   * @param  begin starting city code
+   * @param  end   ending city code
+   * @return returns the result of the computation with the two cities as input
+   * (opening theta, points P Q and midpoint)
    */
-  function cachedGetTheMiddle(begin: number, end: number): ILookupCache {
-    let res = <ILookupCache>{};
+  function cachedGetTheMiddle(begin: number, end: number): ILookupCacheAnchorsEdgeCone {
+    let res = <ILookupCacheAnchorsEdgeCone>{};
     res.end = { cityCode: end, position: lookupPosition[end].cartoRef };
     if (lookupMiddle.hasOwnProperty(begin)) {
       if (!lookupMiddle[begin].hasOwnProperty(end)) {
