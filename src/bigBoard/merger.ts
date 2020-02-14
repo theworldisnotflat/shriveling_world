@@ -16,7 +16,7 @@ import * as Papa from 'papaparse';
 import { NEDLocal } from '../common/referential';
 import { interpolator, Cartographic, reviver } from '../common/utils';
 import {
-  ITranspMode, ICity, ITransportNetwork as ITranspNetwork,
+  ITranspMode, ICity, ITransportNetworkEdge as ITranspNetworkEdge,
   ILookupCityNetwork, IMergerState,
   ILookupDestWithModes, IPopulation, ITransportModeSpeed, ILookupEdgesWithTranspModes,
   ILookupEdges, ICityExtremityOfEdge, ILookupEdgeList, ILookupComplexAlpha,
@@ -216,7 +216,7 @@ function getModelledSpeed(theta: number, speedMax: number, speed: number, terres
  * @param transpNetwork
  */
 function networkFromCities(
-  transportModeCode: ITranspMode[], cities: ICity[], transpNetwork: ITranspNetwork[]): ILookupEdgesWithTranspModes {
+  transportModeCode: ITranspMode[], cities: ICity[], transpNetwork: ITranspNetworkEdge[]): ILookupEdgesWithTranspModes {
   let network: ILookupCityNetwork = {};
   let edgesData: ILookupEdges = {};
   // déterminer la fourchette de temps considéré OK
@@ -457,7 +457,7 @@ function networkFromCities(
       let terrestrialCone: ILookupComplexAlpha = {};
       let destinationsWithModes: ILookupDestWithModes = {};
       let destCityCode: number;
-      let edge: ITranspNetwork, alpha: number;
+      let edge: ITranspNetworkEdge, alpha: number;
       let edgeTranspModeName: string;
       let edgeTranspModeSpeed: ITabSpeedPerYearPerTranspModeItem;
       if (city.edges.length === 0) {
@@ -591,7 +591,7 @@ export class Merger {
   private _populations: IPopulation[] = [];
   private _transportModeSpeed: ITransportModeSpeed[] = [];
   private _transportModeCode: ITranspMode[] = [];
-  private _transportNetwork: ITranspNetwork[] = [];
+  private _transportNetwork: ITranspNetworkEdge[] = [];
   private _state: IMergerState = 'missing';
   private _edgesAndTranspModes: ILookupEdgesWithTranspModes = <ILookupEdgesWithTranspModes>{};
 
@@ -647,7 +647,7 @@ export class Merger {
       this[name] = [];
       this[name].push(...getCSV(someString, name === '_transportModeCode'));
       if (name === '_transportModeCode' || name === '_transportNetwork') {
-        this[name].forEach((item: ITranspMode | ITranspNetwork) => {
+        this[name].forEach((item: ITranspMode | ITranspNetworkEdge) => {
           if (item.yearEnd === undefined || item.yearEnd === null || item.yearEnd.toString() === '') {
             delete item.yearEnd;
           }
@@ -681,7 +681,7 @@ export class Merger {
       let population: IPopulation[] = JSON.parse(JSON.stringify(this._populations), reviver);
       let transportModeCode: ITranspMode[] = JSON.parse(JSON.stringify(this._transportModeCode), reviver);
       let transportModeSpeed: ITransportModeSpeed[] = JSON.parse(JSON.stringify(this._transportModeSpeed), reviver);
-      let transportNetwork: ITranspNetwork[] = JSON.parse(JSON.stringify(this._transportNetwork), reviver);
+      let transportNetwork: ITranspNetworkEdge[] = JSON.parse(JSON.stringify(this._transportNetwork), reviver);
 
       // linking tables to eachother
       // merger(mother, girl, motherProp., girlProp., newName, forceArray, removeMotherProp., removeGirlProp.)
