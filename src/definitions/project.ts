@@ -95,7 +95,7 @@ export interface ILookupTranspModeSpeed {
 // }
 
 /**
- * a table of destination cities and the associated
+ * a table of destination [[cityCode]] and the associated
  * transport modes and their respective speed
  */
 export interface ILookupDestWithModes {
@@ -178,11 +178,11 @@ export interface ICity {
   longitude: number;
   radius: number; // for cases of cities in islands close to a continent
   populations?: IPopulation;
-  edges?: ITransportNetworkEdge[];
+  edges?: IEdge[];
 }
 
 /**
- * the [[speedKPH]] of a transport mode may be different
+ * the [[speedKPH]] of a given transport mode may be different
  * depending on [[year]]
  */
 export interface ITransportModeSpeed {
@@ -210,7 +210,7 @@ export interface ITranspMode {
 }
 
 /**
- * Here we find data of each link/edge in the [[ITransportNetworkEdge]]
+ * Here we find data a link/edge in the [[IEdge]]
  *
  * Each link/edge has
  * * a [[yearBegin]] and
@@ -219,7 +219,7 @@ export interface ITranspMode {
  * * and  destination [[idDes]]
  * * a transport mode [[transportMode]]
  */
-export interface ITransportNetworkEdge {
+export interface IEdge {
   yearBegin: number;
   yearEnd?: number;
   idOri?: number;
@@ -260,7 +260,7 @@ export type ShaderTypes = 'fragment' | 'vertex';
  *
  * (some duplication but the purposes are different)
  */
-export interface ILookupEdgesWithTranspModes {
+export interface ILookupEdgesAndCityNetwork {
   lookupCityNetwork: ILookupCityNetwork;
   edgesData: ILookupEdges;
 }

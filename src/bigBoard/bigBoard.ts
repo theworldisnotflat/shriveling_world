@@ -9,7 +9,7 @@ import { ConeBoard } from '../cone/coneBoard';
 import { CountryBoard } from '../country/countryBoard';
 import { Merger } from './merger';
 import {
-  IMergerState, ISumUpCriteria, ILookupEdgesWithTranspModes as ILookupEdgesWithTranspModes, ICriterias } from '../definitions/project';
+  IMergerState, ISumUpCriteria, ILookupEdgesAndCityNetwork as ILookupEdgesAndCityNetwork, ICriterias } from '../definitions/project';
 import { PseudoCone } from '../cone/base';
 import { CountryMeshShader } from '../country/countryMeshShader';
 import { GUI } from './guiDAT';
@@ -267,10 +267,10 @@ export default class BigBoard {
   /**
    * Add cone to the coneMeshCollection
    * @todo unused and irrelevant @see coneBoard.add
-   * @param {ILookupEdgesWithTranspModes} lookup
+   * @param {ILookupEdgesAndCityNetwork} lookup
    * @memberof BigBoard
    */
-  public addCones(lookup: ILookupEdgesWithTranspModes): void {
+  public addCones(lookup: ILookupEdgesAndCityNetwork): void {
     this.coneBoard.add(lookup);
   }
 
