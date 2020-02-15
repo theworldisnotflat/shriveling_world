@@ -83,7 +83,7 @@ function merger<U, V>(
 }
 
 /**
- * used for parsing data files
+ * used for parsing data files with columns
  */
 const keyWords: { name: string, words: string[] }[] = [
   { name: '_cities', words: ['cityCode', 'latitude', 'longitude', 'radius'] },
