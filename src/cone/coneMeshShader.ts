@@ -170,12 +170,12 @@ function updateAlphas(): void {
     let temp = new Float32Array(_height * _width);
     for (let i = 0; i < _height; i++) {
       let complexAlpha = _cones[i].getcomplexAlpha(year);
-      let roadAlpha = complexAlpha.roadAlpha;
+      let coneAlpha = complexAlpha.coneAlpha;
       let alphaTab = [...complexAlpha.tab];
       let subAlphas: Float32Array;
       const length = alphaTab.length;
       if (length === 0) { // il n'y a pas de destination avec un transport terrestre.
-        subAlphas = _clocks.map(() => roadAlpha);
+        subAlphas = _clocks.map(() => coneAlpha);
       } else {
         let lastItem = { clock: 0, alpha: 0 };
         lastItem.clock = alphaTab[length - 1].clock - twoPI;
@@ -191,7 +191,7 @@ function updateAlphas(): void {
           clockB = alphaTab[i].clock;
           if (clockB - clockA > ecartMinimum) { // ajout d'une pente de route quand
             // l'écart d'azimut entre deux destinations est trop grande
-            alphaTab.splice(i, 0, { alpha: roadAlpha, clock: clockA + (clockB - clockA) / 2 });
+            alphaTab.splice(i, 0, { alpha: coneAlpha, clock: clockA + (clockB - clockA) / 2 });
           }
         }
         interpol = interpolator(alphaTab, 'clock', 'alpha');

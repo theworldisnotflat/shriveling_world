@@ -501,8 +501,8 @@ function networkFromCities(
               // we generate a cone and draw edges
               if (!terrestrialCone.hasOwnProperty(year)) {
                 // initialising  complex cone for a given city and year
-                let roadAlpha = speedPerTransportPerYear[roadCode].tabYearSpeed[year].alpha;
-                terrestrialCone[year] = { roadAlpha, tab: [] };
+                let coneAlpha = speedPerTransportPerYear[roadCode].tabYearSpeed[year].alpha;
+                terrestrialCone[year] = { coneAlpha: coneAlpha, tab: [] };
               }
               alpha = edgeTranspModeSpeed.tabYearSpeed[year].alpha;
               terrestrialCone[year].tab.push({ alpha, clock });
@@ -559,8 +559,8 @@ function networkFromCities(
       }
       if (Object.keys(terrestrialCone).length === 0) { // cas des villes sans destinations ou uniquement des transports type aérien
         for (let year = minYear; year <= maxYear; year++) {
-            let roadAlpha = speedPerTransportPerYear[roadCode].tabYearSpeed[year].alpha;
-            terrestrialCone[year] = { roadAlpha, tab: [] };
+            let coneAlpha = speedPerTransportPerYear[roadCode].tabYearSpeed[year].alpha;
+            terrestrialCone[year] = { coneAlpha: coneAlpha, tab: [] };
         }
       }
       network[origCityCode] = { referential, terrestrialCone, destinationsWithModes: destinationsWithModes, origCityProperties: city };

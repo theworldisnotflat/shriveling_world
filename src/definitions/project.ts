@@ -57,7 +57,7 @@ export interface IComplexAlphaItem {
   /**
    * this property represents the slope of the road transport for the considered year.
    */
-  roadAlpha: number;
+  coneAlpha: number;
   /**
    * this property lists for the considered year and the considered origin city
    * each destination city using a terrestrial transport. Each item of this
