@@ -6,6 +6,7 @@
   "dependencies": {},
   "devDependencies": {
     "@brunoimbrizi/controlkit": "^0.1.99",
+    "@rollup/plugin-commonjs": "^11.0.2",
     "@types/dat.gui": "^0.7.4",
     "@types/geojson": "^7946.0.7",
     "@types/papaparse": "^5.0.1",
@@ -24,7 +25,6 @@
     "papaparse": "^5.0.2",
     "poly2tri": "^1.5.0",
     "rollup": "^1.31.1",
-    "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-svelte": "^5.0.3",
     "rollup-plugin-terser": "^5.1.3",
     "rollup-plugin-threejs-legacy-import": "^1.0.3",
