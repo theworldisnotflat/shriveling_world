@@ -1,0 +1,22 @@
+language: node_js
+node_js:
+ - "node"
+before_script:
+  - npm install -g gulp-cli
+install: npm i
+script:
+  - gulp doc
+  - gulp
+deploy:
+  provider: pages
+  skip_cleanup: true
+  repo: theworldisnotflat/shriveling_world_documentation
+  github_token: $GH_TOKEN
+  keep_history: true
+  local_dir: deployment # dossier qu'on souhaite exporter dans pages
+  on:
+    branch: master
+notifications:
+  email:
+    on_success: never
+    on_failure: always
