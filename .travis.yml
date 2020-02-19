@@ -1,8 +1,10 @@
 language: node_js
+node_js:
+ - "node"
 before_script:
   - npm install -g gulp-cli
 install: npm i
-script: 
+script:
   - gulp doc
   - gulp
 deploy:
@@ -11,7 +13,7 @@ deploy:
   repo: theworldisnotflat/shriveling_world_documentation
   github_token: 04d327a19282141f08fe57876916d34c8dc5c923 # Set in the settings page of your repository, as a secure variable
   keep_history: true
-  local_dir: example # dossier qu'on souhaite exporter dans pages 
+  local_dir: example # dossier qu'on souhaite exporter dans pages
   on:
     branch: master
 notifications:
