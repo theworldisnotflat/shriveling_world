@@ -111,7 +111,7 @@ export interface ILookupDestWithModes {
  */
 export interface ICityNetwork {
   referential: NEDLocal; // à inhiber dans forbiddenAttributes de coneMeshShader
-  terrestrialCone: ILookupComplexAlpha; // à inhiber dans forbiddenAttributes de coneMeshShader
+  cone: ILookupComplexAlpha; // à inhiber dans forbiddenAttributes de coneMeshShader
   destinationsWithModes: ILookupDestWithModes;
   origCityProperties: ICity;
 }

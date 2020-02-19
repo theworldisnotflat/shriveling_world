@@ -9,7 +9,7 @@ import { ILookupCityNetwork, IBBox, ILookupComplexAlpha, IComplexAlphaItem } fro
 import { NEDLocal, Coordinate } from '../common/referential';
 import { Shaders } from '../shaders';
 import { GPUComputer } from '../common/gpuComputer';
-const forbiddenAttributes = ['referential', 'terrestrialCone'];
+const forbiddenAttributes = ['referential', 'cone'];
 
 /**
  * [[IShaderAlpha]] is a table of alphas with years
@@ -349,7 +349,7 @@ export class ConeMeshShader extends PseudoCone {
         let cityTransport = lookup[cityCode];
         let position = cityTransport.referential.cartoRef;
         let referentialGLSL = cityTransport.referential.ned2ECEFMatrix;
-        let terrestrialData = cityTransport.terrestrialCone;
+        let terrestrialData = cityTransport.cone;
         _localLimitsLookup[cityCode] = localLimitsRaw(matchingBBox(position, bboxes), cityTransport.referential);
         let commonProperties = {};
         for (let attribute in cityTransport) {

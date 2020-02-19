@@ -454,7 +454,7 @@ function networkFromCities(
        * */
       let listOfEdges: { [cityCodeEnd: string]: ILookupEdgeList } = {};
       // let coneAlpha: ILookupConeAlpha = {};
-      let terrestrialCone: ILookupComplexAlpha = {};
+      let cone: ILookupComplexAlpha = {};
       let destinationsWithModes: ILookupDestWithModes = {};
       let destCityCode: number;
       let edge: IEdge, alpha: number;
@@ -499,13 +499,13 @@ function networkFromCities(
           for (let year = minYear; year <= maxYear; year++) {
             if (edgeTranspModeSpeed.terrestrial === true) {
               // we generate a cone and draw edges
-              if (!terrestrialCone.hasOwnProperty(year)) {
+              if (!cone.hasOwnProperty(year)) {
                 // initialising  complex cone for a given city and year
                 let coneAlpha = speedPerTransportPerYear[roadCode].tabYearSpeed[year].alpha;
-                terrestrialCone[year] = { coneAlpha: coneAlpha, tab: [] };
+                cone[year] = { coneAlpha: coneAlpha, tab: [] };
               }
               alpha = edgeTranspModeSpeed.tabYearSpeed[year].alpha;
-              terrestrialCone[year].tab.push({ alpha, clock });
+              cone[year].tab.push({ alpha, clock });
               destinationsWithModes[destCityCode][edgeTranspModeName].push({ year: year, speed: edgeModeSpeed[year].speed });
               if (edgeToBeProcessed === true) { // condition to avoid visual duplication of lines!
                 let modelledSpeed = getModelledSpeed(theta, maximumSpeed[year], edgeModeSpeed[year].speed,
@@ -552,18 +552,18 @@ function networkFromCities(
       // à ce niveau, toutes les villes destinataires ont été balayées, il faut
       // remettre dans l'ordre de clock le tableau générant les cônes complexes
       // et insérer le résultat dans network et insérer les edgesData!
-      for (let yearC in terrestrialCone) {
-        if (terrestrialCone.hasOwnProperty(yearC)) {
-          terrestrialCone[yearC].tab = terrestrialCone[yearC].tab.sort((a, b) => a.clock - b.clock);
+      for (let yearC in cone) {
+        if (cone.hasOwnProperty(yearC)) {
+          cone[yearC].tab = cone[yearC].tab.sort((a, b) => a.clock - b.clock);
         }
       }
-      if (Object.keys(terrestrialCone).length === 0) { // cas des villes sans destinations ou uniquement des transports type aérien
+      if (Object.keys(cone).length === 0) { // cas des villes sans destinations ou uniquement des transports type aérien
         for (let year = minYear; year <= maxYear; year++) {
             let coneAlpha = speedPerTransportPerYear[roadCode].tabYearSpeed[year].alpha;
-            terrestrialCone[year] = { coneAlpha: coneAlpha, tab: [] };
+            cone[year] = { coneAlpha: coneAlpha, tab: [] };
         }
       }
-      network[origCityCode] = { referential, terrestrialCone, destinationsWithModes: destinationsWithModes, origCityProperties: city };
+      network[origCityCode] = { referential, cone: cone, destinationsWithModes: destinationsWithModes, origCityProperties: city };
       if (Object.keys(listOfEdges).length > 0) {
         // retrieves edges info from origCityCode for edges generation
         edgesData[origCityCode] = { begin: startPoint, list: listOfEdges };
