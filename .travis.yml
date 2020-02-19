@@ -13,7 +13,7 @@ deploy:
   repo: theworldisnotflat/shriveling_world_documentation
   github_token: $GH_TOKEN
   keep_history: true
-  local_dir: example # dossier qu'on souhaite exporter dans pages
+  local_dir: deployment # dossier qu'on souhaite exporter dans pages
   on:
     branch: master
 notifications:
