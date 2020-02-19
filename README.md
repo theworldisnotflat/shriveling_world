@@ -28,7 +28,7 @@ Go inside the application folder and open a terminal, execute the following line
 
 ```gulp doc``` (compile documentation)
 
-Then open in browser this adress http://localhost:8080.
+Then open in a browser this adress http://localhost:8080.
 
 ## Introducing data in the application
 
@@ -44,7 +44,7 @@ Drag'n'drop the following geojson and csv files found in example/datas in the we
 ## Instructions for use
 Instructions for the application are provided in a lateral user interface.
 
-Export to gltf (.obj) file format is available (red button in the bottom). In order to import in blender the file produced from the app, [a Blender plugin must be installed](https://github.com/ksons/gltf-blender-importer)
+Export to gltf (.obj) file format is available (red button in the bottom). In order to import in Blender the file produced from the app, [a Blender plugin must be installed](https://github.com/ksons/gltf-blender-importer)
 
 Instructions to the application can also be entered in the console (F12) of the browser
 
@@ -53,6 +53,8 @@ Instructions to the application can also be entered in the console (F12) of the 
 with XXX and value in the following range:
 
 - intrudedHeightRatio : sets the heigth of cones, in the range [0,1], a ratio of the earth radius
+
+For these other command lines an UI already exists
 - coneStep :  modifies the visual aspect of cones (default value is 15 degrees, a facet = 15°)
 - projectionInit : initial projection with values in in the following range :
   - 'none' for a three dimensional unprojected representation
@@ -61,14 +63,14 @@ with XXX and value in the following range:
 - projectionEnd : the final projection with value as projectionBegin
 - projectionPercent: transition value between projectionBegin and projectionEnd. Value included in the range 0 to 100 included.
 - year: base year of the representation (value in the networks files)
-- pointsPerLine=X where X is an integer between 1 and 199 included. This value influences the way curves are drawn.
+- pointsPerLine=X where X is an integer between 1 and 199 included. This value influences the way curves are drawn. The value **zero** draws all straight lines, while the value **1** draws broken lines
 
 ## Testing lengths and angles
 
 As the final output of the tool is, in the general case, an image, testing the distances and angles is a way to make sure the model is correct:
 - length of straight edges and links can be [measured with a ruler on the screen](https://timespace.hypotheses.org/115) or on a printed image
 - length of curves may be measured by means of a little string adjusted along the image and then measured with the ruler
-- It may be useful to check visually the acuracy of the model by measuring angles with [an on-line protractor tool](https://www.ginifab.com/feeds/angle_measurement/)
+- measuring angles with [an on-line protractor tool](https://www.ginifab.com/feeds/angle_measurement/)
 
 # Road map
 A [roadmap is maintained up to date here](https://github.com/theworldisnotflat/shriveling_world/wiki)
