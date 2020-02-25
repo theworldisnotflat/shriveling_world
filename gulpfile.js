@@ -10,6 +10,7 @@ const glob = require("glob");
 const fs = require('fs-extra');
 const uglify = require("uglify-es");
 const typedoc = require("gulp-typedoc");
+const { readdirSync } = require('fs')
 
 let gulp = require('gulp'),
   del = require('del'),
@@ -128,6 +129,12 @@ function glob2Array(inputs) {
   });
   return files;
 }
+
+const getDirectories = (source) =>
+  readdirSync(source, { withFileTypes: true })
+    .filter(dirent => dirent.isDirectory())
+    .map(dirent => dirent.name);
+
 const cache = {};
 let externalLibraries = '';
 
@@ -206,11 +213,12 @@ const defaultTask = (done) => {
   done();
 };
 const svelteBundle= async (done)=>{
+  console.log(getDirectories('.'));
   const bundle= await rollup.rollup({
     input:'src/IHM/main.js',
     plugins:[
       svelte({
-          css:css=>css.write('example/css/ihm.js')
+          css:css=>css.write('example/css/ihm.css')
         }),
          isProduction && terser({ecma: 7})
     ]});
