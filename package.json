@@ -3,10 +3,14 @@
   "version": "0.0.1",
   "description": "The  \"shriveling_world\" project aims at producing images of geographical time-space, using the third dimension, as in time-space relief maps.",
   "main": "gulpfile.js",
-  "dependencies": {},
+  "dependencies": {
+    "npm": "^6.13.7"
+  },
   "devDependencies": {
     "@brunoimbrizi/controlkit": "^0.1.99",
     "@rollup/plugin-commonjs": "^11.0.2",
+    "@rollup/plugin-json": "^4.0.2",
+    "@rollup/plugin-node-resolve": "^7.1.1",
     "@types/dat.gui": "^0.7.4",
     "@types/geojson": "^7946.0.7",
     "@types/papaparse": "^5.0.1",
@@ -28,17 +32,16 @@
     "rollup": "^1.31.1",
     "rollup-plugin-svelte": "^5.0.3",
     "rollup-plugin-terser": "^5.1.3",
-    "rollup-plugin-threejs-legacy-import": "^1.0.3",
     "rollup-plugin-typescript2": "^0.26.0",
     "svelte": "^3.18.2",
     "three": "^0.113.2",
     "tslint": "^6.0.0",
-    "tween.js": "^16.6.0",
     "twgl.js": "^4.14.2",
     "typedoc": "^0.16.10",
     "typescript": "^3.7.5",
     "uglify-es": "^3.3.9",
-    "yargs": "^15.1.0"
+    "yargs": "^15.1.0",
+    "zip-lib": "^0.5.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

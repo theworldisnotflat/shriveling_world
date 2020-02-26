@@ -47,7 +47,7 @@ export async function prepareConfiguration(): Promise<void> {
       opacity: 0.3,
     });
     let loaderFont = new FontLoader();
-    loaderFont.load('gentilis_regular.typeface.json', font => {
+    loaderFont.load('assets/gentilis_regular.typeface.json', font => {
       CONFIGURATION.TEXT_GEOMETRY_OPTIONS = {
         font: font,
         size: 0.3,

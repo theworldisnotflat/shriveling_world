@@ -5,12 +5,13 @@ const terser = require('rollup-plugin-terser').terser;
 const typescript = require('rollup-plugin-typescript2');
 const svelte = require('rollup-plugin-svelte')
 const commonjs = require('@rollup/plugin-commonjs');
-const threeLegacyImport =require('rollup-plugin-threejs-legacy-import');
+const resolve = require('@rollup/plugin-node-resolve');
+const json = require( '@rollup/plugin-json');
 const glob = require("glob");
-const fs = require('fs-extra');
+const {readdirSync,readFileSync,readFile,outputFile} = require('fs-extra');
 const uglify = require("uglify-es");
 const typedoc = require("gulp-typedoc");
-const { readdirSync } = require('fs')
+const Zip = require( 'zip-lib');
 
 let gulp = require('gulp'),
   del = require('del'),
@@ -32,44 +33,31 @@ let sources = {
      * three.js must be inserter AFTER the three.js line
      */
     appThirdParty: [
-      'node_modules/twgl.js/dist/4.x/twgl.js',
-      'node_modules/three/build/three.js',
-      'node_modules/three/examples/js/libs/stats.min.js',
-      'node_modules/three/examples/js/controls/OrbitControls.js',
-      'node_modules/three/examples/js/exporters/OBJExporter.js',
-      'node_modules/tween.js/src/Tween.js',
-      'node_modules/poly2tri/dist/poly2tri.js',
       'node_modules/papaparse/papaparse.js',
-      'node_modules/dat.gui/build/dat.gui.js'
     ],
-    workerThirdParty: ['node_modules/twgl.js/dist/4.x/twgl.js'],
-    // three.js comes with lots of little plugins in examples folder. In order
-    // to reuse these plugins, we need to explicit it here.
-    threeExplicitExports:{
-      'controls/OrbitControls':['OrbitControls'],
-      'exporters/OBJExporter':['OBJExporter']}
-  }
+    template:'templates/app/**/**.*'
+  },
+  datasets:'datasets/'
 };
 
 let destinations = {
   js: {
     dist: 'dist/*.js',
-    example: 'example/javascript'
+    get example() {return destinations.app+'javascript/'}
   },
-  doc:{html:'documentation/html',json:'documentation/json'}
+  app:'pages/app/',
+  doc:{html:'documentation/html',json:'documentation/json'},
+  get datasets(){ return destinations.app+'datasets/'}
 };
 
-const rollupExternal = ['three', 'papaparse', 'poly2tri', 'twgl.js', 'dat.gui'];
+const rollupExternal = ['papaparse'];
 const rollupGlobal = {
-  'three': 'THREE',
-  'papaparse': 'Papa',
-  'poly2tri': 'poly2tri',
-  'twgl.js': 'twgl',
-  'dat.gui': 'dat'
+  'papaparse': 'Papa'
 };
 const rollupPlugins = [
+  json(),
+  resolve({browser:true,preferBuiltins:false}),
   commonjs({include: /node_modules/, ignoreGlobal: false, sourceMap: false}),
-  threeLegacyImport({  explicitExports:sources.app.threeExplicitExports}),
   typescript({useTsconfigDeclarationDir: true})
 ];
 const rollupFormat = 'iife';
@@ -86,9 +74,9 @@ let shaders = {};
 let libraries = {};
 
 function commentStripper(contents) {
-  var newContents = [];
-  for (var i = 0; i < contents.length; ++i) {
-    var c = contents.charAt(i);
+  let newContents = [];
+  for (let i = 0; i < contents.length; ++i) {
+    let c = contents.charAt(i);
     if (c === '/') {
       c = contents.charAt(++i);
       if (c === '/') {
@@ -146,7 +134,7 @@ const compileShaders = async (done) => {
       : 'fragment';
     let last = file.split('/');
     let name = last[last.length - 1].replace('.frag', '').replace('.vert', '');
-    let fileContent = fs.readFileSync(file, 'utf8');
+    let fileContent = readFileSync(file, 'utf8');
     if (!shaders.hasOwnProperty(name)) {
       shaders[name] = {};
     }
@@ -155,23 +143,9 @@ const compileShaders = async (done) => {
   done();
 };
 
-const compileLibraries = async (done) => {
-  const librariesFiles = glob2Array(sources.app.workerThirdParty);
-  await Promise.all(librariesFiles.map(async (file) => {
-    let last = file.split('/');
-    let name = last[last.length - 1].replace('.ts', '');
-    let fileContent = fs.readFileSync(file, 'utf8');
-    if (isProduction) {
-      fileContent = uglify.minify(fileContent, {ecma: 7}).code;
-    }
-    libraries[name] = fileContent;
-  }));
-  done();
-};
-
 const combineExternals = async (done) => {
   let temp = await Promise.all(sources.app.appThirdParty.map(async (file) => {
-    let fileContent = await fs.readFile(file, 'utf8');
+    let fileContent = await readFile(file, 'utf8');
     if (isProduction) {
       fileContent = uglify.minify(fileContent, {ecma: 7}).code;
     }
@@ -197,23 +171,30 @@ const build = async (done) => {
   let code = await bundle.generate(outputOptions);
   // console.log(code.output[0].code)
   code = externalLibraries + code.output[0].code.replace(/.__SHADERS_HERE__./, shadersString).replace(/.__LIBRARIES_HERE__./, librariesString);
-  await fs.outputFile(__dirname + '/dist/shriveling.js', code);
+  await outputFile(__dirname + '/dist/shriveling.js', code);
   done();
 };
 
 const doc= shell.task('typedoc --out documentation/html --json documentation/json.json --name "shriveling the world" --ignoreCompilerErrors --hideGenerator --target ES6  src')
 const tslint = shell.task('tslint -c tslint.json -e src/webWorkers/**/*.ts src/**/**/*.ts src/*.ts');
 const clean = (done) => {
-  del.sync(['dist', 'example/javascript/', 'src/**/*.js','!src/IHM/**/*.js', 'declarations', 'documentation','example/css/']);
+  del.sync(['dist', 'pages', 'src/**/*.js','!src/IHM/**/*.js', 'declarations', 'documentation','example/css/']);
   done();
 }
-const server = () => connect.server({root: 'example', port: 8080, livereload: true, https: false});
+const server = () => connect.server({root: destinations.app, port: 8080, livereload: true, https: false});
 const defaultTask = (done) => {
   gulp.src(destinations.js.dist).pipe(gulp.dest(destinations.js.example));
+  gulp.src(sources.app.template).pipe(gulp.dest(destinations.app));
   done();
 };
+const zipper= async done=>{
+  await Promise.all(getDirectories('datasets').map((directory,i)=> {
+    Zip.archiveFolder(sources.datasets+directory,destinations.datasets+directory+'.zip')
+  }));
+  done();
+}
 const svelteBundle= async (done)=>{
-  console.log(getDirectories('.'));
+
   const bundle= await rollup.rollup({
     input:'src/IHM/main.js',
     plugins:[
@@ -229,14 +210,16 @@ const svelteBundle= async (done)=>{
     });
     done();
   }
-const buildRequirements = gulp.series(gulp.parallel(compileShaders, compileLibraries, combineExternals), build);
+const buildRequirements = gulp.series(gulp.parallel(compileShaders,/* compileLibraries,*/ combineExternals), build);
 const defaultRequirement = gulp.series(gulp.parallel(clean, tslint), buildRequirements, defaultTask);
+
+gulp.task('zip',zipper);
 
 gulp.task('build', buildRequirements);
 
 gulp.task('svelte',svelteBundle)
 
-gulp.task('libraries', compileLibraries);
+// gulp.task('libraries', compileLibraries);
 
 gulp.task('externals', combineExternals);
 
