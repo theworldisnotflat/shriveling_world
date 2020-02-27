@@ -6,7 +6,7 @@ import {
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { OBJExporter } from 'three/examples/jsm/exporters/OBJExporter.js';
-// import  Stats  from 'three/examples/jsm/libs/stats.module';
+import   Stats  from 'three/examples/js/libs/stats.min';
 import { prepareConfiguration } from './initThree';
 import { ConeBoard } from '../cone/coneBoard';
 import { CountryBoard } from '../country/countryBoard';
@@ -73,7 +73,7 @@ export default class BigBoard {
   public countryBoard: CountryBoard;
   // is orthographic camera
   public orthographique: boolean;
-  // private _stats: any;
+  private _stats: any;
   private _controls: OrbitControls;
 
   private _cameraO: OrthographicCamera;
@@ -451,11 +451,12 @@ export default class BigBoard {
   private _init(): HTMLDivElement {
     let container = document.createElement('div');
     document.body.appendChild(container);
-    // this._stats = new Stats();
-    // this._stats.domElement.style.position = 'absolute';
-    // this._stats.domElement.style.bottom = '0px';
-    // this._stats.domElement.style.zIndex = 100;
-    // container.appendChild(this._stats.domElement);
+    // tslint:disable-next-line
+    this._stats =  new Stats();
+    this._stats.domElement.style.position = 'absolute';
+    this._stats.domElement.style.bottom = '0px';
+    this._stats.domElement.style.zIndex = 100;
+    container.appendChild(this._stats.domElement);
     this._cameraP = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 15000);
     this._cameraO = new OrthographicCamera(
       -this._windowHalfX,
@@ -597,7 +598,7 @@ export default class BigBoard {
     this._controls.object = camera;
     requestAnimationFrame(() => this._animate());
     this._renderer.render(scene, camera);
-    // this._stats.update();
+    this._stats.update();
     this._controls.update();
     CONFIGURATION.tick();
   }
