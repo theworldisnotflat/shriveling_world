@@ -73,7 +73,7 @@ Go inside the application folder and open a terminal, execute the following line
 
 ```npm i```  (update nodejs)
 
-```gulp```   (compile sources) or ```gulp --testing``` for development (faster, does not minify)
+```gulp```   (compile sources) or ``` gulp --testing --debug``` for development (faster, does not minify)
 
 ```gulp server``` (launch server)
 
