@@ -16,10 +16,10 @@ import Papa from 'papaparse';
 import { NEDLocal } from '../common/referential';
 import { interpolator, Cartographic, reviver } from '../common/utils';
 import {
-  ITranspMode, ICity, IEdge as IEdge,
+  ITranspMode, ICity, IEdge as ILink,
   ILookupCityNetwork, IMergerState,
   ILookupDestWithModes, IPopulation, ITransportModeSpeed, ILookupEdgesAndCityNetwork,
-  ILookupEdges, ICityExtremityOfEdge, ILookupEdgeList, ILookupComplexAlpha,
+  ILookupLinks, ICityExtremityOfLink, ILookupLinkList, ILookupComplexAlpha,
 } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
 /**
@@ -216,9 +216,9 @@ function getModelledSpeed(theta: number, speedMax: number, speed: number, terres
  * @param transpNetwork
  */
 function networkFromCities(
-  transportModeCode: ITranspMode[], cities: ICity[], transpNetwork: IEdge[]): ILookupEdgesAndCityNetwork {
+  transportModeCode: ITranspMode[], cities: ICity[], transpNetwork: ILink[]): ILookupEdgesAndCityNetwork {
   let network: ILookupCityNetwork = {};
-  let edgesData: ILookupEdges = {};
+  let edgesData: ILookupLinks = {};
   // déterminer la fourchette de temps considéré OK
   // determine the considered time-frame
   let actualYear = (new Date()).getFullYear();
@@ -270,15 +270,15 @@ function networkFromCities(
     terrestrial: boolean;
   }
   /**
-   * [[ILookupCacheAnchorsEdgeCone]] describes:
-   * * an edge with an end middle, pointP
+   * [[ILookupCacheAnchorsLinkCone]] describes:
+   * * a link with an end middle, pointP
    *   at 1/4 anf pointQ at 3/4, as anchor points
    * * description of the cone with
    *   theta the angle between the two cities
    *   and clock the unit triangle tha generates the cone
    */
-  interface ILookupCacheAnchorsEdgeCone {
-    end?: ICityExtremityOfEdge;
+  interface ILookupCacheAnchorsLinkCone {
+    end?: ICityExtremityOfLink;
     pointP: Cartographic;
     pointQ: Cartographic;
     middle: Cartographic;
@@ -381,7 +381,7 @@ function networkFromCities(
   }
   // faire lookup des cartographic/referential par citycode. OK
   let lookupPosition: { [cityCode: string]: NEDLocal } = {};
-  let lookupMiddle: { [cityCodeBegin: number]: { [cityCodeEnd: number]: ILookupCacheAnchorsEdgeCone } } = {};
+  let lookupMiddle: { [cityCodeBegin: number]: { [cityCodeEnd: number]: ILookupCacheAnchorsLinkCone } } = {};
   cities.forEach((city) => {
     let position = new Cartographic(city.longitude, city.latitude, 0, false);
     lookupPosition[city.cityCode] = new NEDLocal(position);
@@ -397,8 +397,8 @@ function networkFromCities(
    * @return returns the result of the computation with the two cities as input
    * (opening theta, points P Q and midpoint)
    */
-  function cachedGetTheMiddle(begin: number, end: number): ILookupCacheAnchorsEdgeCone {
-    let res = <ILookupCacheAnchorsEdgeCone>{};
+  function cachedGetTheMiddle(begin: number, end: number): ILookupCacheAnchorsLinkCone {
+    let res = <ILookupCacheAnchorsLinkCone>{};
     res.end = { cityCode: end, position: lookupPosition[end].cartoRef };
     if (lookupMiddle.hasOwnProperty(begin)) {
       if (!lookupMiddle[begin].hasOwnProperty(end)) {
@@ -434,7 +434,7 @@ function networkFromCities(
     res.clock = cached.clock;
     return res;
   }
-  // processedODs will contain the value of edgeTranspModeName for each existing edge (OD)
+  // processedODs will contain the value of linkTranspModeName for each existing link (OD)
   // processedODs évite de dupliquer visuellement les lignes:
   //  - génération de la ligne partant de cityA vers cityB
   //  - pas de génération de la ligne partant de cityB vers cityA grâce à processedODs
@@ -448,85 +448,85 @@ function networkFromCities(
       processedODs[origCityCode] = {}; // creates an empty property for 'origCityCode'
     }
     if (referential instanceof NEDLocal) {
-      let startPoint: ICityExtremityOfEdge = { cityCode: origCityCode, position: referential.cartoRef };
+      let startPoint: ICityExtremityOfLink = { cityCode: origCityCode, position: referential.cartoRef };
       /**
        *  list of edges from the considered city (described by their destination cities)
        * */
-      let listOfEdges: { [cityCodeEnd: string]: ILookupEdgeList } = {};
+      let listOfEdges: { [cityCodeEnd: string]: ILookupLinkList } = {};
       // let coneAlpha: ILookupConeAlpha = {};
       let cone: ILookupComplexAlpha = {};
       let destinationsWithModes: ILookupDestWithModes = {};
       let destCityCode: number;
-      let edge: IEdge, alpha: number;
-      let edgeTranspModeName: string;
-      let edgeTranspModeSpeed: ITabSpeedPerYearPerTranspModeItem;
-      if (city.edges.length === 0) {
-        city.edges.push({ yearBegin: minYear, idDes: -Infinity, transportMode: roadCode });
+      let link: ILink, alpha: number;
+      let linkTranspModeName: string;
+      let linkTranspModeSpeed: ITabSpeedPerYearPerTranspModeItem;
+      if (city.links.length === 0) {
+        city.links.push({ yearBegin: minYear, idDes: -Infinity, transportMode: roadCode });
       }
-      // for each edge incident to the city considered
-      for (let i = 0; i < city.edges.length; i++) {
-        edge = city.edges[i];
-        destCityCode = edge.idDes;
-        // edgeTranspModeSpeed is the key parameter of the process
+      // for each link incident to the city considered
+      for (let i = 0; i < city.links.length; i++) {
+        link = city.links[i];
+        destCityCode = link.idDes;
+        // linkTranspModeSpeed is the key parameter of the process
         // it will be confronted to maximumSpeed[year]
-        edgeTranspModeSpeed = speedPerTransportPerYear[edge.transportMode];
+        linkTranspModeSpeed = speedPerTransportPerYear[link.transportMode];
         // prepare tables
         if (!processedODs.hasOwnProperty(destCityCode)) {
           processedODs[destCityCode] = {};
         }
         if (!processedODs[origCityCode].hasOwnProperty(destCityCode)) {
-          processedODs[origCityCode][destCityCode] = []; // o-d edge
-          processedODs[destCityCode][origCityCode] = []; // d-o edge to avoid
+          processedODs[origCityCode][destCityCode] = []; // o-d link
+          processedODs[destCityCode][origCityCode] = []; // d-o link to avoid
         }
         if (lookupPosition.hasOwnProperty(destCityCode)) {
           let { end, middle, theta, pointP, pointQ, clock } = cachedGetTheMiddle(origCityCode, destCityCode);
-          minYear = Math.min(edge.yearBegin, minYear);
-          maxYear = edge.yearEnd ? edge.yearEnd : maxYear;
-          edgeTranspModeName = edgeTranspModeSpeed.name;
+          minYear = Math.min(link.yearBegin, minYear);
+          maxYear = link.yearEnd ? link.yearEnd : maxYear;
+          linkTranspModeName = linkTranspModeSpeed.name;
           // prepare tables
           if (!destinationsWithModes.hasOwnProperty(destCityCode)) {
             destinationsWithModes[destCityCode] = {};
           }
-          if (!destinationsWithModes[destCityCode].hasOwnProperty(edgeTranspModeName)) {
-            destinationsWithModes[destCityCode][edgeTranspModeName] = [];
+          if (!destinationsWithModes[destCityCode].hasOwnProperty(linkTranspModeName)) {
+            destinationsWithModes[destCityCode][linkTranspModeName] = [];
           }
-          let edgeModeSpeed = edgeTranspModeSpeed.tabYearSpeed;
+          let edgeModeSpeed = linkTranspModeSpeed.tabYearSpeed;
           // to avoid visual duplication of lines!
-          let edgeToBeProcessed = processedODs[origCityCode][destCityCode].indexOf(edgeTranspModeName) === -1;
-          processedODs[origCityCode][destCityCode].push(edgeTranspModeName);
-          processedODs[destCityCode][origCityCode].push(edgeTranspModeName);
+          let linkToBeProcessed = processedODs[origCityCode][destCityCode].indexOf(linkTranspModeName) === -1;
+          processedODs[origCityCode][destCityCode].push(linkTranspModeName);
+          processedODs[destCityCode][origCityCode].push(linkTranspModeName);
           // for each year the alpha will be computed
           for (let year = minYear; year <= maxYear; year++) {
-            if (edgeTranspModeSpeed.terrestrial === true) {
+            if (linkTranspModeSpeed.terrestrial === true) {
               // we generate a cone and draw edges
               if (!cone.hasOwnProperty(year)) {
                 // initialising  complex cone for a given city and year
                 let coneAlpha = speedPerTransportPerYear[roadCode].tabYearSpeed[year].alpha;
                 cone[year] = { coneAlpha: coneAlpha, tab: [] };
               }
-              alpha = edgeTranspModeSpeed.tabYearSpeed[year].alpha;
+              alpha = linkTranspModeSpeed.tabYearSpeed[year].alpha;
               cone[year].tab.push({ alpha, clock });
-              destinationsWithModes[destCityCode][edgeTranspModeName].push({ year: year, speed: edgeModeSpeed[year].speed });
-              if (edgeToBeProcessed === true) { // condition to avoid visual duplication of lines!
+              destinationsWithModes[destCityCode][linkTranspModeName].push({ year: year, speed: edgeModeSpeed[year].speed });
+              if (linkToBeProcessed === true) { // condition to avoid visual duplication of lines!
                 let modelledSpeed = getModelledSpeed(theta, maximumSpeed[year], edgeModeSpeed[year].speed,
-                  edgeTranspModeSpeed.terrestrial);
+                  linkTranspModeSpeed.terrestrial);
                 // the ratio linking the current speed and maxSpeed is
                 // computed according to this ![equation](http://bit.ly/2EejFpW)
                 let speedRatio = maximumSpeed[year] * theta / (2 * modelledSpeed);
                 if (!listOfEdges.hasOwnProperty(destCityCode)) {
-                  listOfEdges[destCityCode] = <ILookupEdgeList>{ end, middle, pointP, pointQ, theta, speedRatio: {} };
+                  listOfEdges[destCityCode] = <ILookupLinkList>{ end, middle, pointP, pointQ, theta, speedRatio: {} };
                 }
-                if (!listOfEdges[destCityCode].speedRatio.hasOwnProperty(edgeTranspModeName)) {
-                  listOfEdges[destCityCode].speedRatio[edgeTranspModeName] = {};
+                if (!listOfEdges[destCityCode].speedRatio.hasOwnProperty(linkTranspModeName)) {
+                  listOfEdges[destCityCode].speedRatio[linkTranspModeName] = {};
                 }
-                listOfEdges[destCityCode].speedRatio[edgeTranspModeName][year] = speedRatio;
+                listOfEdges[destCityCode].speedRatio[linkTranspModeName][year] = speedRatio;
               }
             } else {
-              // case when edge transport mode is not terrestrial
-              // we will generate a line for the edge
-              if (edgeToBeProcessed === true) { // condition pour éviter de générer deux lignes visuellement identiques!
+              // case when link transport mode is not terrestrial
+              // we will generate a line for the link
+              if (linkToBeProcessed === true) { // condition pour éviter de générer deux lignes visuellement identiques!
                 let modelledSpeed = getModelledSpeed(theta, maximumSpeed[year], edgeModeSpeed[year].speed,
-                  edgeTranspModeSpeed.terrestrial);
+                  linkTranspModeSpeed.terrestrial);
                 // the ratio linking the current speed and maxSpeed is
                 // computed according to this ![equation](http://bit.ly/2EejFpW)
                 let speedRatio = maximumSpeed[year] * theta / (2 * modelledSpeed);
@@ -539,12 +539,12 @@ function networkFromCities(
                 // console.log('edgeModeSpeed[year].speed', edgeModeSpeed[year].speed);
                 // console.log('modelledSpeed', modelledSpeed);
                 if (!listOfEdges.hasOwnProperty(destCityCode)) {
-                  listOfEdges[destCityCode] = <ILookupEdgeList>{ end, middle, pointP, pointQ, theta, speedRatio: {} };
+                  listOfEdges[destCityCode] = <ILookupLinkList>{ end, middle, pointP, pointQ, theta, speedRatio: {} };
                 }
-                if (!listOfEdges[destCityCode].speedRatio.hasOwnProperty(edgeTranspModeName)) {
-                  listOfEdges[destCityCode].speedRatio[edgeTranspModeName] = {};
+                if (!listOfEdges[destCityCode].speedRatio.hasOwnProperty(linkTranspModeName)) {
+                  listOfEdges[destCityCode].speedRatio[linkTranspModeName] = {};
                 }
-                listOfEdges[destCityCode].speedRatio[edgeTranspModeName][year] = speedRatio;
+                listOfEdges[destCityCode].speedRatio[linkTranspModeName][year] = speedRatio;
               }
             }
           }
@@ -592,7 +592,7 @@ export class Merger {
   private _populations: IPopulation[] = [];
   private _transportModeSpeed: ITransportModeSpeed[] = [];
   private _transportModeCode: ITranspMode[] = [];
-  private _transportNetwork: IEdge[] = [];
+  private _transportNetwork: ILink[] = [];
   private _state: IMergerState = 'missing';
   private _edgesAndTranspModes: ILookupEdgesAndCityNetwork = <ILookupEdgesAndCityNetwork>{};
 
@@ -648,7 +648,7 @@ export class Merger {
       this[name] = [];
       this[name].push(...getCSV(someString, name === '_transportModeCode'));
       if (name === '_transportModeCode' || name === '_transportNetwork') {
-        this[name].forEach((item: ITranspMode | IEdge) => {
+        this[name].forEach((item: ITranspMode | ILink) => {
           if (item.yearEnd === undefined || item.yearEnd === null || item.yearEnd.toString() === '') {
             delete item.yearEnd;
           }
@@ -682,7 +682,7 @@ export class Merger {
       let population: IPopulation[] = JSON.parse(JSON.stringify(this._populations), reviver);
       let transportModeCode: ITranspMode[] = JSON.parse(JSON.stringify(this._transportModeCode), reviver);
       let transportModeSpeed: ITransportModeSpeed[] = JSON.parse(JSON.stringify(this._transportModeSpeed), reviver);
-      let transportNetwork: IEdge[] = JSON.parse(JSON.stringify(this._transportNetwork), reviver);
+      let transportNetwork: ILink[] = JSON.parse(JSON.stringify(this._transportNetwork), reviver);
 
       // linking tables to eachother
       // merger(mother, girl, motherProp., girlProp., newName, forceArray, removeMotherProp., removeGirlProp.)
@@ -691,7 +691,7 @@ export class Merger {
       //    merger(transportNetwork, transportModeCode, 'transportModeSpeed', 'code', 'transportDetails', false, false, false);
       // will link cities with population.csv file table information
       merger(cities, population, 'cityCode', 'cityCode', 'populations', false, true, false);
-      // attach city information to ending city edge
+      // attach city information to ending city link
       merger(transportNetwork, cities, 'idDes', 'cityCode', 'destCityInfo', false, false, false);
       // generates subgraph from city considered as origin
       merger(cities, transportNetwork, 'cityCode', 'idOri', 'edges', true, true, false);

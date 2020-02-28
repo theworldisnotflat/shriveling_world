@@ -178,7 +178,7 @@ export interface ICity {
   longitude: number;
   radius: number; // for cases of cities in islands close to a continent
   populations?: IPopulation;
-  edges?: IEdge[];
+  links?: ILink[];
 }
 
 /**
@@ -210,16 +210,16 @@ export interface ITranspMode {
 }
 
 /**
- * Here we find data a link/edge in the [[IEdge]]
+ * Here we find data a link in the [[ILink]]
  *
- * Each link/edge has
+ * Each link has
  * * a [[yearBegin]] and
  * * a [[yearEnd]]
  * * an origin [[idOri]]
  * * and  destination [[idDes]]
  * * a transport mode [[transportMode]]
  */
-export interface IEdge {
+export interface ILink {
   yearBegin: number;
   yearEnd?: number;
   idOri?: number;
@@ -262,24 +262,24 @@ export type ShaderTypes = 'fragment' | 'vertex';
  */
 export interface ILookupEdgesAndCityNetwork {
   lookupCityNetwork: ILookupCityNetwork;
-  edgesData: ILookupEdges;
+  edgesData: ILookupLinks;
 }
 /**
- * defines the city at the other extremity of an edge
+ * defines the city at the other extremity of a link
  */
-export interface ICityExtremityOfEdge {
+export interface ICityExtremityOfLink {
   cityCode: string | number;
   position: Cartographic;
 }
 /**
- * data associated to an edge from a given city
+ * data associated to a link from a given city
  *
  * [[pointP]] and [[pointQ]] are control points for Bezier curves
  *
  * [[theta]] is the angle between cities
  */
-export interface ILookupEdgeList {
-  end: ICityExtremityOfEdge;
+export interface ILookupLinkList {
+  end: ICityExtremityOfLink;
   pointP: Cartographic;
   pointQ: Cartographic;
   middle: Cartographic;
@@ -287,19 +287,19 @@ export interface ILookupEdgeList {
   theta: number;
 }
 /**
- * Lines (or edges) from a city
+ * Links from a city
  */
-export interface ILookupEdgesFromCity {
-  begin: ICityExtremityOfEdge;
-  list: { [cityCodeEnd: string]: ILookupEdgeList };
+export interface ILookupLinksFromCity {
+  begin: ICityExtremityOfLink;
+  list: { [cityCodeEnd: string]: ILookupLinkList };
 }
 /**
- * a line and its associated graph edge has a [[cityCodeBegin]]
+ * a line and its associated graph link has a [[cityCodeBegin]]
  *
  * other parameters of this line derive from the [[ILookupLineItem]]
  */
-export interface ILookupEdges {
-  [cityCodeBegin: number]: ILookupEdgesFromCity;
+export interface ILookupLinks {
+  [cityCodeBegin: number]: ILookupLinksFromCity;
 }
 export interface IMarkLimits {
   begin: number; // inclusif

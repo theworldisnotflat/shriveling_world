@@ -5,7 +5,7 @@ import {
 import { CONFIGURATION } from '../common/configuration';
 import { Shaders } from '../shaders';
 import { GPUComputer } from '../common/gpuComputer';
-import { ILookupEdges } from '../definitions/project';
+import { ILookupLinks } from '../definitions/project';
 
 let _lines: LineMeshShader[];
 
@@ -124,7 +124,7 @@ export class LineMeshShader extends Line {
   private _transportName: string;
   private _speedRatio: number;
 
-  public static async generateCones(lookup: ILookupEdges): Promise<LineMeshShader[]> {
+  public static async generateCones(lookup: ILookupLinks): Promise<LineMeshShader[]> {
     _ready = false;
     _lines = [];
     fullCleanArrays();
