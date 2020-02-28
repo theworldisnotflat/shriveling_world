@@ -7,28 +7,10 @@ A [scientific blog](https://timespace.hypotheses.org/) contains principles, refl
 
 # How to use
 
-## Requisites
-You need updated version of node.js, npm and nvm:
-- [node latest version](https://github.com/nodesource/distributions/blob/master/README.md#deb)
+## For users
+The app runs in a browser from this adress:
+[Shriveling world](https://theworldisnotflat.github.io/shriveling_world_documentation/)
 
-- ```nvm install node ```
-
-Does not work with old version of nodejs (with version 4 does not work, with version 8 to 11 does)
-
-
-## Compiling sources and launching the server
-First you need to download sources from this github page. Copy the folder on your machine.
-Go inside the application folder and open a terminal, execute the following lines, one by one:
-
-```npm i```  (update nodejs)
-
-```gulp```   (compile sources) or ```gulp --testing``` for development (faster, does not minify)
-
-```gulp server``` (launch server)
-
-```gulp doc``` (compile documentation)
-
-Then open in a browser this adress http://localhost:8080.
 
 ## Introducing data in the application
 
@@ -71,6 +53,34 @@ As the final output of the tool is, in the general case, an image, testing the d
 - length of straight edges and links can be [measured with a ruler on the screen](https://timespace.hypotheses.org/115) or on a printed image
 - length of curves may be measured by means of a little string adjusted along the image and then measured with the ruler
 - measuring angles with [an on-line protractor tool](https://www.ginifab.com/feeds/angle_measurement/)
+
+
+
+## For developpers
+
+### Requisites
+You need updated version of node.js, npm and nvm:
+- [node latest version](https://github.com/nodesource/distributions/blob/master/README.md#deb)
+
+- ```nvm install node ```
+
+Does not work with old version of nodejs (with version 4 does not work, with version 8 to 11 does)
+
+
+### Compiling sources and launching the server
+First you need to download sources from this github page. Copy the folder on your machine.
+Go inside the application folder and open a terminal, execute the following lines, one by one:
+
+```npm i```  (update nodejs)
+
+```gulp```   (compile sources) or ```gulp --testing``` for development (faster, does not minify)
+
+```gulp server``` (launch server)
+
+```gulp doc``` (compile documentation)
+
+Then open in a browser this adress http://localhost:8080.
+
 
 # Road map
 A [roadmap is maintained up to date here](https://github.com/theworldisnotflat/shriveling_world/wiki)
