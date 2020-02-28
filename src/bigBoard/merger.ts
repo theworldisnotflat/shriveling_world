@@ -16,7 +16,7 @@ import Papa from 'papaparse';
 import { NEDLocal } from '../common/referential';
 import { interpolator, Cartographic, reviver } from '../common/utils';
 import {
-  ITranspMode, ICity, IEdge as ILink,
+  ITranspMode, ICity, ILink as ILink,
   ILookupCityNetwork, IMergerState,
   ILookupDestWithModes, IPopulation, ITransportModeSpeed, ILookupEdgesAndCityNetwork,
   ILookupLinks, ICityExtremityOfLink, ILookupLinkList, ILookupComplexAlpha,
