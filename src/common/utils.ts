@@ -517,3 +517,22 @@ export function generateUUID(): string {
   }
   return uuid;
 }
+let link = document.createElement('a');
+/**
+ * Export in Wavefront OBJ format.
+ * Exported file can be imported in Blender.
+ *
+ * Three files a generated:
+ * * sceneCones.obj
+ * * sceneLinesLongHaul.obj fo short distance flights above the geodesic
+ * * sceneLinesShortHaul.obj for long distance geodesic flights
+ *
+ * @param blob     data table in blob format
+ * @param filename filename of data table (location to user choice)
+ *
+ */
+export function save(blob: any, filename: string): void {
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+}

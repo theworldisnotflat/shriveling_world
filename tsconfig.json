@@ -11,8 +11,8 @@
     "outDir": "dist",
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
-    "noImplicitAny": false
-
+    "noImplicitAny": false,
+    "baseUrl": ".",
   },
   "exclude": [
     "dist",
