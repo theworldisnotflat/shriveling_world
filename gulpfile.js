@@ -3,81 +3,69 @@
 const rollup = require('rollup');
 const terser = require('rollup-plugin-terser').terser;
 const typescript = require('rollup-plugin-typescript2');
-const svelte = require('rollup-plugin-svelte')
+const svelte = require('rollup-plugin-svelte');
 const commonjs = require('@rollup/plugin-commonjs');
-const threeLegacyImport =require('rollup-plugin-threejs-legacy-import');
-const glob = require("glob");
-const fs = require('fs-extra');
-const uglify = require("uglify-es");
-const typedoc = require("gulp-typedoc");
-
-let gulp = require('gulp'),
-  del = require('del'),
-  shell = require('gulp-shell'),
-  connect = require('gulp-connect'),
-  argv = require('yargs').argv,
-  glsl = require('glslify');
+const resolve = require('@rollup/plugin-node-resolve');
+const json = require('@rollup/plugin-json');
+const glob = require('glob');
+const {
+    readdirSync,
+    readFileSync,
+    outputFile,
+    createWriteStream,
+    ensureDir,
+} = require('fs-extra');
+const uglify = require('uglify-es');
+const typedoc = require('gulp-typedoc');
+const stripDebug = require('strip-debug');
+const gulp = require('gulp');
+const del = require('del');
+const shell = require('gulp-shell');
+const connect = require('gulp-connect');
+const argv = require('yargs').argv;
+const glsl = require('glslify');
+const { createDeflate } = require('zlib');
+const { Readable } = require('stream');
 
 let sources = {
-  app: {
-    shader: [
-      './src/shaders/**/*.frag', './src/shaders/**/*.vert'
-    ],
-    /**
-     * This is where external libraries are declared
-     * Each new library must also be declared in the package.json file
-     * by the instruction 'npm i -D  XXX' where XXX is the name of the library
-     * Beware : the order of insertion is important, i.e. libraries using
-     * three.js must be inserter AFTER the three.js line
-     */
-    appThirdParty: [
-      'node_modules/twgl.js/dist/4.x/twgl.js',
-      'node_modules/three/build/three.js',
-      'node_modules/three/examples/js/libs/stats.min.js',
-      'node_modules/three/examples/js/controls/OrbitControls.js',
-      'node_modules/three/examples/js/exporters/OBJExporter.js',
-      'node_modules/tween.js/src/Tween.js',
-      'node_modules/poly2tri/dist/poly2tri.js',
-      'node_modules/papaparse/papaparse.js',
-      'node_modules/dat.gui/build/dat.gui.js'
-    ],
-    workerThirdParty: ['node_modules/twgl.js/dist/4.x/twgl.js'],
-    // three.js comes with lots of little plugins in examples folder. In order
-    // to reuse these plugins, we need to explicit it here.
-    threeExplicitExports:{
-      'controls/OrbitControls':['OrbitControls'],
-      'exporters/OBJExporter':['OBJExporter']}
-  }
+    app: {
+        shader: ['./src/shaders/**/*.frag', './src/shaders/**/*.vert'],
+        template: 'templates/app/**/**.*',
+    },
+    datasets: 'datasets/',
 };
 
 let destinations = {
-  js: {
-    dist: 'dist/*.js',
-    example: 'example/javascript'
-  },
-  doc:{html:'documentation/html',json:'documentation/json'}
+    js: {
+        dist: 'dist/*.js',
+        get example() {
+            return destinations.app + 'javascript/';
+        },
+    },
+    app: 'pages/app/',
+    doc: { html: 'documentation/html', json: 'documentation/json' },
+    get datasets() {
+        return destinations.app + 'datasets/';
+    },
 };
 
-const rollupExternal = ['three', 'papaparse', 'poly2tri', 'twgl.js', 'dat.gui'];
-const rollupGlobal = {
-  'three': 'THREE',
-  'papaparse': 'Papa',
-  'poly2tri': 'poly2tri',
-  'twgl.js': 'twgl',
-  'dat.gui': 'dat'
-};
 const rollupPlugins = [
-  commonjs({include: /node_modules/, ignoreGlobal: false, sourceMap: false}),
-  threeLegacyImport({  explicitExports:sources.app.threeExplicitExports}),
-  typescript({useTsconfigDeclarationDir: true})
+    json(),
+    resolve({ browser: true, preferBuiltins: false }),
+    commonjs({
+        include: /node_modules/,
+        ignoreGlobal: false,
+        sourceMap: false,
+    }),
+    typescript({ useTsconfigDeclarationDir: true }),
 ];
 const rollupFormat = 'iife';
-let isProduction = argv.testing === true
-  ? false
-  : true;
+let isProduction = argv.testing === true ? false : true;
+
+let isDebugging = argv.debug === true ? true : false;
 
 if (isProduction) {
-  rollupPlugins.push(terser({ecma: 7}));
+    rollupPlugins.push(terser({ ecma: 7 }));
 }
 
 let shaders = {};
@@ -85,152 +73,215 @@ let shaders = {};
 let libraries = {};
 
 function commentStripper(contents) {
-  var newContents = [];
-  for (var i = 0; i < contents.length; ++i) {
-    var c = contents.charAt(i);
-    if (c === '/') {
-      c = contents.charAt(++i);
-      if (c === '/') {
-        while (c !== '\r' && c !== '\n' && i < contents.length) {
-          c = contents.charAt(++i);
-        }
-      } else if (c === '*') {
-        while (i < contents.length) {
-          c = contents.charAt(++i);
-          if (c === '*') {
+    let newContents = [];
+    for (let i = 0; i < contents.length; ++i) {
+        let c = contents.charAt(i);
+        if (c === '/') {
             c = contents.charAt(++i);
-            while (c === '*') {
-              c = contents.charAt(++i);
-            }
             if (c === '/') {
-              c = contents.charAt(++i);
-              break;
+                while (c !== '\r' && c !== '\n' && i < contents.length) {
+                    c = contents.charAt(++i);
+                }
+            } else if (c === '*') {
+                while (i < contents.length) {
+                    c = contents.charAt(++i);
+                    if (c === '*') {
+                        c = contents.charAt(++i);
+                        while (c === '*') {
+                            c = contents.charAt(++i);
+                        }
+                        if (c === '/') {
+                            c = contents.charAt(++i);
+                            break;
+                        }
+                    }
+                }
+            } else {
+                --i;
+                c = '/';
             }
-          }
         }
-      } else {
-        --i;
-        c = '/';
-      }
+        newContents.push(c);
     }
-    newContents.push(c);
-  }
 
-  newContents = newContents.join('');
-  newContents = newContents.replace(/\s+$/gm, '').replace(/^\s+/gm, '').replace(/\n+/gm, '\n');
-  return newContents;
+    newContents = newContents.join('');
+    newContents = newContents
+        .replace(/\s+$/gm, '')
+        .replace(/^\s+/gm, '')
+        .replace(/\n+/gm, '\n');
+    return newContents;
 }
 
 function glob2Array(inputs) {
-  const files = [];
-  inputs.forEach((path) => {
-    files.push(...glob.sync(path))
-  });
-  return files;
+    const files = [];
+    inputs.forEach(path => {
+        files.push(...glob.sync(path));
+    });
+    return files;
 }
+
+const getDirectories = source =>
+    readdirSync(source, { withFileTypes: true })
+        .filter(dirent => dirent.isDirectory())
+        .map(dirent => dirent.name);
+
+const folder2dict = source => {
+    let result = [];
+    readdirSync(source, { withFileTypes: true })
+        .filter(dirent => !dirent.isDirectory())
+        .map(dirent => dirent.name)
+        .forEach(name => {
+          result.push({name:name,text:readFileSync(source + '/' + name, {
+              encoding: 'utf8',
+          })})
+        });
+    return result;
+};
+
 const cache = {};
-let externalLibraries = '';
 
-const compileShaders = async (done) => {
-  const shadersFiles = glob2Array(sources.app.shader);
-  await Promise.all(shadersFiles.map(async (file) => {
-    let typeShader = file.endsWith('vert')
-      ? 'vertex'
-      : 'fragment';
-    let last = file.split('/');
-    let name = last[last.length - 1].replace('.frag', '').replace('.vert', '');
-    let fileContent = fs.readFileSync(file, 'utf8');
-    if (!shaders.hasOwnProperty(name)) {
-      shaders[name] = {};
-    }
-    shaders[name][typeShader] = commentStripper(glsl.compile(fileContent));
-  }));
-  done();
+const compileShaders = async done => {
+    const shadersFiles = glob2Array(sources.app.shader);
+    await Promise.all(
+        shadersFiles.map(async file => {
+            let typeShader = file.endsWith('vert') ? 'vertex' : 'fragment';
+            let last = file.split('/');
+            let name = last[last.length - 1]
+                .replace('.frag', '')
+                .replace('.vert', '');
+            let fileContent = readFileSync(file, 'utf8');
+            if (!shaders.hasOwnProperty(name)) {
+                shaders[name] = {};
+            }
+            shaders[name][typeShader] = commentStripper(
+                glsl.compile(fileContent)
+            );
+        })
+    );
+    done();
 };
 
-const compileLibraries = async (done) => {
-  const librariesFiles = glob2Array(sources.app.workerThirdParty);
-  await Promise.all(librariesFiles.map(async (file) => {
-    let last = file.split('/');
-    let name = last[last.length - 1].replace('.ts', '');
-    let fileContent = fs.readFileSync(file, 'utf8');
-    if (isProduction) {
-      fileContent = uglify.minify(fileContent, {ecma: 7}).code;
-    }
-    libraries[name] = fileContent;
-  }));
-  done();
+const build = async done => {
+    let { shadersString, librariesString } = {
+        shadersString: JSON.stringify(shaders),
+        librariesString: JSON.stringify(libraries),
+    };
+    const bundle = await rollup.rollup({
+        input: 'src/bigBoard/bigBoard.ts',
+        cache: cache,
+        plugins: rollupPlugins,
+    });
+    const outputOptions = {
+        file: 'dist/shriveling.js',
+        format: rollupFormat,
+        name: 'shriveling',
+    };
+    await bundle.write(outputOptions);
+    let code = await bundle.generate(outputOptions);
+    code = code.output[0].code;
+    code = !isProduction && isDebugging ? code : stripDebug(code).toString();
+    code = code
+        .replace(/.__SHADERS_HERE__./, shadersString)
+        .replace(/.__LIBRARIES_HERE__./, librariesString);
+    await outputFile(__dirname + '/dist/shriveling.js', code);
+    done();
 };
 
-const combineExternals = async (done) => {
-  let temp = await Promise.all(sources.app.appThirdParty.map(async (file) => {
-    let fileContent = await fs.readFile(file, 'utf8');
-    if (isProduction) {
-      fileContent = uglify.minify(fileContent, {ecma: 7}).code;
-    }
-    return fileContent;
-  }))
-  externalLibraries = temp.join('\n') + '\n';
-  done();
+const doc = shell.task(
+    'typedoc --out pages/documentation/html --json documentation/json.json --name "shriveling the world" --ignoreCompilerErrors --hideGenerator --target ES6  src'
+);
+const tslint = shell.task(
+    'tslint -c tslint.json -e src/webWorkers/**/*.ts src/**/**/*.ts src/*.ts'
+);
+const clean = done => {
+    del.sync([
+        'dist',
+        'pages',
+        'src/**/*.js',
+        '!src/IHM/**/*.js',
+        'declarations',
+        'documentation',
+        'example/css/',
+    ]);
+    done();
 };
+const server = () =>
+    connect.server({
+        root: destinations.app,
+        port: 8080,
+        livereload: true,
+        https: false,
+    });
+const defaultTask = done => {
+    gulp.src(destinations.js.dist).pipe(gulp.dest(destinations.js.example));
+    gulp.src(sources.app.template).pipe(gulp.dest(destinations.app));
+    done();
+};
+const zipper = async done => {
+    let datasets = getDirectories('datasets');
+    await ensureDir(__dirname + '/' + destinations.datasets);
+    await Promise.all(
+        datasets.map(directory => {
+            let datas = JSON.stringify(
+                folder2dict('datasets/' + directory + '/')
+            );
+            const readableStream = new Readable();
+            readableStream._read = () => {};
 
-const build = async (done) => {
-  let {shadersString, librariesString} = {
-    shadersString: JSON.stringify(shaders),
-    librariesString: JSON.stringify(libraries)
-  };
-  const bundle = await rollup.rollup({input: 'src/bigBoard/bigBoard.ts', cache: cache, plugins: rollupPlugins, external: rollupExternal});
-  const outputOptions = {
-    file: 'dist/shriveling.js',
-    format: rollupFormat,
-    name: 'shriveling',
-    globals: rollupGlobal
-  }
-  await bundle.write(outputOptions);
-  let code = await bundle.generate(outputOptions);
-  // console.log(code.output[0].code)
-  code = externalLibraries + code.output[0].code.replace(/.__SHADERS_HERE__./, shadersString).replace(/.__LIBRARIES_HERE__./, librariesString);
-  await fs.outputFile(__dirname + '/dist/shriveling.js', code);
-  done();
+            let deflate = createDeflate({level:9});
+            readableStream.push(datas, 'utf8');
+            readableStream.push(null);
+            readableStream
+                .pipe(deflate)
+                .pipe(
+                    createWriteStream(
+                        __dirname +
+                            '/' +
+                            destinations.datasets +
+                            directory +
+                            '.zip'
+                    )
+                );
+        })
+    );
+    outputFile(
+        __dirname + '/' + destinations.datasets + 'datasets.json',
+        JSON.stringify(datasets)
+    );
+    done();
 };
-
-const doc= shell.task('typedoc --out documentation/html --json documentation/json.json --name "shriveling the world" --ignoreCompilerErrors --hideGenerator --target ES6  src')
-const tslint = shell.task('tslint -c tslint.json -e src/webWorkers/**/*.ts src/**/**/*.ts src/*.ts');
-const clean = (done) => {
-  del.sync(['dist', 'example/javascript/', 'src/**/*.js','!src/IHM/**/*.js', 'declarations', 'documentation','example/css/']);
-  done();
-}
-const server = () => connect.server({root: 'example', port: 8080, livereload: true, https: false});
-const defaultTask = (done) => {
-  gulp.src(destinations.js.dist).pipe(gulp.dest(destinations.js.example));
-  done();
-};
-const svelteBundle= async (done)=>{
-  const bundle= await rollup.rollup({
-    input:'src/IHM/main.js',
-    plugins:[
-      svelte({
-          css:css=>css.write('example/css/ihm.js')
-        }),
-         isProduction && terser({ecma: 7})
-    ]});
+const svelteBundle = async done => {
+    const bundle = await rollup.rollup({
+        input: 'src/IHM/main.js',
+        plugins: [
+            svelte({
+                css: css => css.write('example/css/ihm.css'),
+            }),
+            isProduction && terser({ ecma: 7 }),
+        ],
+    });
     await bundle.write({
-      file: 'example/javascript/ihm.js',
-      format: 'iife',
-      name: 'ihm'
+        file: 'example/javascript/ihm.js',
+        format: 'iife',
+        name: 'ihm',
     });
     done();
-  }
-const buildRequirements = gulp.series(gulp.parallel(compileShaders, compileLibraries, combineExternals), build);
-const defaultRequirement = gulp.series(gulp.parallel(clean, tslint), buildRequirements, defaultTask);
+};
+const buildRequirements = gulp.series(
+    gulp.parallel(compileShaders, zipper),
+    build
+);
+const defaultRequirement = gulp.series(
+    gulp.parallel(clean /*, tslint*/),
+    buildRequirements,
+    defaultTask
+);
+
+gulp.task('zip', zipper);
 
 gulp.task('build', buildRequirements);
 
-gulp.task('svelte',svelteBundle)
-
-gulp.task('libraries', compileLibraries);
-
-gulp.task('externals', combineExternals);
+gulp.task('svelte', svelteBundle);
 
 gulp.task('shaders', compileShaders);
 

@@ -12,7 +12,7 @@
  *
  */
 'use strict';
-import * as Papa from 'papaparse';
+import Papa from 'papaparse';
 import { NEDLocal } from '../common/referential';
 import { interpolator, Cartographic, reviver } from '../common/utils';
 import {
@@ -180,16 +180,16 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
  */
 function getModelledSpeed(theta: number, speedMax: number, speed: number, terrestrial: boolean): number {
   return terrestrial ?
-              // usual terrestrial mode situation
-              speed :
-              // aerial case
-              (theta < thetaLimit ?
-                      // in the general case 2000 km / 750 kph (factor 0.375)
-                      // for Germany based on Hamburg-München route 600 km, 1h20 = 450 kph (factor 0.75)
-                      // (CONFIGURATION.earthRadiusMeters / 1000) * theta * 0.375 :
-                      // (CONFIGURATION.earthRadiusMeters / 1000) * theta * 750 / 2000 :
-                      (CONFIGURATION.earthRadiusMeters / 1000) * theta * 450 / 600 :
-                      speed);
+    // usual terrestrial mode situation
+    speed :
+    // aerial case
+    (theta < thetaLimit ?
+      // in the general case 2000 km / 750 kph (factor 0.375)
+      // for Germany based on Hamburg-München route 600 km, 1h20 = 450 kph (factor 0.75)
+      // (CONFIGURATION.earthRadiusMeters / 1000) * theta * 0.375 :
+      // (CONFIGURATION.earthRadiusMeters / 1000) * theta * 750 / 2000 :
+      (CONFIGURATION.earthRadiusMeters / 1000) * theta * 450 / 600 :
+      speed);
 }
 
 /**
@@ -509,7 +509,7 @@ function networkFromCities(
               destinationsWithModes[destCityCode][edgeTranspModeName].push({ year: year, speed: edgeModeSpeed[year].speed });
               if (edgeToBeProcessed === true) { // condition to avoid visual duplication of lines!
                 let modelledSpeed = getModelledSpeed(theta, maximumSpeed[year], edgeModeSpeed[year].speed,
-                                                     edgeTranspModeSpeed.terrestrial);
+                  edgeTranspModeSpeed.terrestrial);
                 // the ratio linking the current speed and maxSpeed is
                 // computed according to this ![equation](http://bit.ly/2EejFpW)
                 let speedRatio = maximumSpeed[year] * theta / (2 * modelledSpeed);
@@ -526,17 +526,18 @@ function networkFromCities(
               // we will generate a line for the edge
               if (edgeToBeProcessed === true) { // condition pour éviter de générer deux lignes visuellement identiques!
                 let modelledSpeed = getModelledSpeed(theta, maximumSpeed[year], edgeModeSpeed[year].speed,
-                                                     edgeTranspModeSpeed.terrestrial);
+                  edgeTranspModeSpeed.terrestrial);
                 // the ratio linking the current speed and maxSpeed is
                 // computed according to this ![equation](http://bit.ly/2EejFpW)
                 let speedRatio = maximumSpeed[year] * theta / (2 * modelledSpeed);
+                debugger;
                 // console.log('destCity', this._cities[destCityCode].urbanAgglomeration);
                 // console.log('origCity', this._cities[origCityCode].urbanAgglomeration);
-                console.log('orig', city.urbanAgglomeration);
-                console.log('mode', edgeTranspModeSpeed.name);
-                console.log('theta km', (CONFIGURATION.earthRadiusMeters / 1000) * theta);
-                console.log('edgeModeSpeed[year].speed', edgeModeSpeed[year].speed);
-                console.log('modelledSpeed', modelledSpeed);
+                // console.log('orig', city.urbanAgglomeration);
+                // console.log('mode', edgeTranspModeSpeed.name);
+                // console.log('theta km', (CONFIGURATION.earthRadiusMeters / 1000) * theta);
+                // console.log('edgeModeSpeed[year].speed', edgeModeSpeed[year].speed);
+                // console.log('modelledSpeed', modelledSpeed);
                 if (!listOfEdges.hasOwnProperty(destCityCode)) {
                   listOfEdges[destCityCode] = <ILookupEdgeList>{ end, middle, pointP, pointQ, theta, speedRatio: {} };
                 }
@@ -559,8 +560,8 @@ function networkFromCities(
       }
       if (Object.keys(cone).length === 0) { // cas des villes sans destinations ou uniquement des transports type aérien
         for (let year = minYear; year <= maxYear; year++) {
-            let coneAlpha = speedPerTransportPerYear[roadCode].tabYearSpeed[year].alpha;
-            cone[year] = { coneAlpha: coneAlpha, tab: [] };
+          let coneAlpha = speedPerTransportPerYear[roadCode].tabYearSpeed[year].alpha;
+          cone[year] = { coneAlpha: coneAlpha, tab: [] };
         }
       }
       network[origCityCode] = { referential, cone: cone, destinationsWithModes: destinationsWithModes, origCityProperties: city };
@@ -696,7 +697,7 @@ export class Merger {
       merger(cities, transportNetwork, 'cityCode', 'idOri', 'edges', true, true, false);
       // the main function that generates geometries (cones, lines) by exploring the subgraphs from cities
       this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
-      console.log(this._edgesAndTranspModes);
+      // console.log(this._edgesAndTranspModes);
       this._state = 'missing';
       this._checkState();
     }
