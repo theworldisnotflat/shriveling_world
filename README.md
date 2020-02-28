@@ -15,7 +15,7 @@ The app runs in a browser from this adress:
 ## Introducing data in the application
 
 
-Drag'n'drop the following geojson and csv files found in example/datas in the web app:
+Drag'n'drop the following geojson and csv files found in the folder datasets in the web app:
 - cities.csv
 - population.csv
 - transport_mode_code.csv
