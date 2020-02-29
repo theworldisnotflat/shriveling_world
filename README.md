@@ -7,12 +7,21 @@ A [scientific blog](https://timespace.hypotheses.org/) contains principles, refl
 
 # How to use
 
-## For users
-The app runs in a browser from this adress:
+## For users: first steps
+**Step #1**:The app runs in a browser from this adress:
+
 [Shriveling world](https://theworldisnotflat.github.io/shriveling_world_documentation/)
 
+**Step #2**: Once the app runs in the browser data is read by two ways:
 
-## Introducing data in the application
+1. Cick on predefined dataset list on the left side of the broser window
+2. Introduce data in the app by grag'n'drop (see below)
+
+Attention: in any case data processing may take time, depending on the number of cities. So once 
+
+**Step #3**: enjoy! navigate around the threedimensional structure with mouse controls, define projection through interface, define desired control parameters through the interface on the right. 
+
+## Introducing data in the application by drag'n'drop
 
 
 Drag'n'drop the following geojson and csv files found in the folder datasets in the web app:
