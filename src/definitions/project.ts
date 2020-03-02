@@ -168,7 +168,7 @@ export interface IPopulation {
  * * [[urbanAgglomeration]] is the name of the city
  * * [[radius]]: number; // for cases of cities in islands close to a continent
  * * [[populations]] for several years as provided in csv file 'population.csv'
- * * [[edges]] is a table will be determined by scanning the [[ITransportNetwork]]
+ * * [[links]] is a table will be determined by scanning the [[ITransportNetwork]]
  */
 export interface ICity {
   countryCode: number;

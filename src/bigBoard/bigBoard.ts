@@ -435,7 +435,7 @@ export default class BigBoard {
             var obj = JSON.parse(JSON.stringify(this.getMergerI.Cities[j]));
             var pop = JSON.parse(
                 JSON.stringify(
-                    this._merger.edgesWithTranspModes.lookupCityNetwork[
+                    this._merger.linksWithTranspModes.lookupCityNetwork[
                         this.getMergerI.Cities[j].cityCode
                     ].origCityProperties.populations
                 )
@@ -447,7 +447,7 @@ export default class BigBoard {
                     CONFIGURATION.TEXT_GEOMETRY_OPTIONS
                 );
                 mesh = new Mesh(geometry, CONFIGURATION.BASIC_TEXT_MATERIAL);
-                let cart = this._merger.edgesWithTranspModes.lookupCityNetwork[
+                let cart = this._merger.linksWithTranspModes.lookupCityNetwork[
                     this.getMergerI.Cities[j].cityCode
                 ].referential.cartoRef;
                 let x =

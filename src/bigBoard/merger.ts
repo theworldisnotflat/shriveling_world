@@ -218,7 +218,7 @@ function getModelledSpeed(theta: number, speedMax: number, speed: number, terres
 function networkFromCities(
   transportModeCode: ITranspMode[], cities: ICity[], transpNetwork: ILink[]): ILookupLinksAndCityNetwork {
   let network: ILookupCityNetwork = {};
-  let edgesData: ILookupLinks = {};
+  let linksData: ILookupLinks = {};
   // déterminer la fourchette de temps considéré OK
   // determine the considered time-frame
   let actualYear = (new Date()).getFullYear();
@@ -490,7 +490,7 @@ function networkFromCities(
           if (!destinationsWithModes[destCityCode].hasOwnProperty(linkTranspModeName)) {
             destinationsWithModes[destCityCode][linkTranspModeName] = [];
           }
-          let edgeModeSpeed = linkTranspModeSpeed.tabYearSpeed;
+          let LinkModeSpeed = linkTranspModeSpeed.tabYearSpeed;
           // to avoid visual duplication of lines!
           let linkToBeProcessed = processedODs[origCityCode][destCityCode].indexOf(linkTranspModeName) === -1;
           processedODs[origCityCode][destCityCode].push(linkTranspModeName);
@@ -506,9 +506,9 @@ function networkFromCities(
               }
               alpha = linkTranspModeSpeed.tabYearSpeed[year].alpha;
               cone[year].tab.push({ alpha, clock });
-              destinationsWithModes[destCityCode][linkTranspModeName].push({ year: year, speed: edgeModeSpeed[year].speed });
+              destinationsWithModes[destCityCode][linkTranspModeName].push({ year: year, speed: LinkModeSpeed[year].speed });
               if (linkToBeProcessed === true) { // condition to avoid visual duplication of lines!
-                let modelledSpeed = getModelledSpeed(theta, maximumSpeed[year], edgeModeSpeed[year].speed,
+                let modelledSpeed = getModelledSpeed(theta, maximumSpeed[year], LinkModeSpeed[year].speed,
                   linkTranspModeSpeed.terrestrial);
                 // the ratio linking the current speed and maxSpeed is
                 // computed according to this ![equation](http://bit.ly/2EejFpW)
@@ -525,7 +525,7 @@ function networkFromCities(
               // case when link transport mode is not terrestrial
               // we will generate a line for the link
               if (linkToBeProcessed === true) { // condition pour éviter de générer deux lignes visuellement identiques!
-                let modelledSpeed = getModelledSpeed(theta, maximumSpeed[year], edgeModeSpeed[year].speed,
+                let modelledSpeed = getModelledSpeed(theta, maximumSpeed[year], LinkModeSpeed[year].speed,
                   linkTranspModeSpeed.terrestrial);
                 // the ratio linking the current speed and maxSpeed is
                 // computed according to this ![equation](http://bit.ly/2EejFpW)
@@ -534,9 +534,7 @@ function networkFromCities(
                 // console.log('destCity', this._cities[destCityCode].urbanAgglomeration);
                 // console.log('origCity', this._cities[origCityCode].urbanAgglomeration);
                 // console.log('orig', city.urbanAgglomeration);
-                // console.log('mode', edgeTranspModeSpeed.name);
                 // console.log('theta km', (CONFIGURATION.earthRadiusMeters / 1000) * theta);
-                // console.log('edgeModeSpeed[year].speed', edgeModeSpeed[year].speed);
                 // console.log('modelledSpeed', modelledSpeed);
                 if (!listOfEdges.hasOwnProperty(destCityCode)) {
                   listOfEdges[destCityCode] = <ILookupLinkList>{ end, middle, pointP, pointQ, theta, speedRatio: {} };
@@ -552,7 +550,7 @@ function networkFromCities(
       }
       // à ce niveau, toutes les villes destinataires ont été balayées, il faut
       // remettre dans l'ordre de clock le tableau générant les cônes complexes
-      // et insérer le résultat dans network et insérer les edgesData!
+      // et insérer le résultat dans network et insérer les linksData!
       for (let yearC in cone) {
         if (cone.hasOwnProperty(yearC)) {
           cone[yearC].tab = cone[yearC].tab.sort((a, b) => a.clock - b.clock);
@@ -567,11 +565,11 @@ function networkFromCities(
       network[origCityCode] = { referential, cone: cone, destinationsWithModes: destinationsWithModes, origCityProperties: city };
       if (Object.keys(listOfEdges).length > 0) {
         // retrieves links info from origCityCode for links generation
-        edgesData[origCityCode] = { begin: startPoint, list: listOfEdges };
+        linksData[origCityCode] = { begin: startPoint, list: listOfEdges };
       }
     }
   });
-  return { lookupCityNetwork: network, linksData: edgesData };
+  return { lookupCityNetwork: network, linksData: linksData };
 }
 
 /**
@@ -583,7 +581,7 @@ function networkFromCities(
  *   * [[_transportModeCode]],
  *   * [[_transportNetwork]],
  *   * [[_state]] and
- *   * [[_edgesAndTranspModes]]
+ *   * [[_linksAndTranspModes]]
  *
  * This class will contain the function [[merge]]
  */
@@ -594,7 +592,7 @@ export class Merger {
   private _transportModeCode: ITranspMode[] = [];
   private _transportNetwork: ILink[] = [];
   private _state: IMergerState = 'missing';
-  private _edgesAndTranspModes: ILookupLinksAndCityNetwork = <ILookupLinksAndCityNetwork>{};
+  private _linksAndTranspModes: ILookupLinksAndCityNetwork = <ILookupLinksAndCityNetwork>{};
 
   public get state(): IMergerState {
     return this._state;
@@ -603,15 +601,15 @@ export class Merger {
    * this is the resulting dataset processed by function [[networkFromCities]]
    * in order to give access to the relevant data inside bigBoard
    */
-  public get edgesWithTranspModes(): ILookupLinksAndCityNetwork {
-    return this._edgesAndTranspModes;
+  public get linksWithTranspModes(): ILookupLinksAndCityNetwork {
+    return this._linksAndTranspModes;
   }
 
   public get Cities(): ICity[] { return this._cities; }
   public CitiesByIndex(index: string | number): ICity { return this._cities[index]; }
 
   public get conesAndEdgesData(): ILookupLinksAndCityNetwork {
-    return this._edgesAndTranspModes;
+    return this._linksAndTranspModes;
   }
 
   public get minYear(): number { return _minYear; }
@@ -624,7 +622,7 @@ export class Merger {
     this._transportModeSpeed = [];
     this._transportModeCode = [];
     this._transportNetwork = [];
-    this._edgesAndTranspModes = <ILookupLinksAndCityNetwork>{};
+    this._linksAndTranspModes = <ILookupLinksAndCityNetwork>{};
     this._state = 'missing';
   }
 
@@ -672,7 +670,7 @@ export class Merger {
  *   * [[_state]]
  * * link all these tables to each other
  * * execute the main process i.e. [[networkFromCities]]
- * * retrievec resulting data into [[_edgesAndTranspModes]]
+ * * retrievec resulting data into [[_linksAndTranspModes]]
  */
   public merge(): void {
     if (this._state === 'ready') {
@@ -696,8 +694,8 @@ export class Merger {
       // generates subgraph from city considered as origin
       merger(cities, transportNetwork, 'cityCode', 'idOri', 'links', true, true, false);
       // the main function that generates geometries (cones, lines) by exploring the subgraphs from cities
-      this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
-      // console.log(this._edgesAndTranspModes);
+      this._linksAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
+      // console.log(this._linksAndTranspModes);
       this._state = 'missing';
       this._checkState();
     }
@@ -710,7 +708,7 @@ export class Merger {
         this._transportModeSpeed.length > 0 && this._transportModeCode.length > 0 &&
         this._transportNetwork.length > 0) {
         state = 'ready';
-        if (Object.keys(this._edgesAndTranspModes).length > 0) {
+        if (Object.keys(this._linksAndTranspModes).length > 0) {
           state = 'complete';
         }
       }
