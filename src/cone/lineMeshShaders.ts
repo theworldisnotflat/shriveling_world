@@ -15,7 +15,7 @@ let _ready = false;
 let _width: number;
 let _height: number;
 // should be 1 for testing purposes
-// affects the value of the height of edges
+// affects the value of the height of links
 let _coefficient: number = 1;
 
 let _gpgpu: { [x: string]: GPUComputer } = {};
@@ -33,7 +33,7 @@ fullCleanArrays();
  * formule de la hauteur des arcs fonction de [[theta]]
  * et du [[speedRatio]] des vitesses
  *
- * formules of the heigth of edges function of '[[theta]]' and '[[ratio]]'
+ * formules of the heigth of links function of '[[theta]]' and '[[ratio]]'
  * * '[[speedRatio]]' is computed in function '[[getSpeedRatio]]' in file [[bigBoard/merger.ts]]
  * * '[[speedRatio]]' is computed with [two formulas](https://timespace.hypotheses.org/121)
  * depending on '[[theta]]' compared with '[[thetaLimit]]'
@@ -79,7 +79,7 @@ function regenerateStep(): void {
 }
 
 /**
- * update edges (lines) height based on the reference year
+ * update links (lines) height based on the reference year
  */
 function updateYear(): void {
   let year = CONFIGURATION.year;
@@ -223,7 +223,7 @@ export class LineMeshShader extends Line {
   public static get coefficient(): number {
     return _coefficient;
   }
-  // update edges heigth when 'coefficient' changes
+  // update links heigth when 'coefficient' changes
   // for testing purposes only
   public static set coefficient(value: number) {
     _coefficient = value;
@@ -259,7 +259,7 @@ export class LineMeshShader extends Line {
     }
   }
 
-  // sets the heigth of edges
+  // sets the heigth of links
   public isAvailable(year: string | number): boolean {
     let speedRatio = this._years[year];
     let resultat = speedRatio !== undefined;

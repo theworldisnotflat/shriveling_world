@@ -1,9 +1,9 @@
 /**
  * in merger we put the functions used only once
  * which are CPU/GPU intensive functions
- * and which compute the geometry of cones and edges.
+ * and which compute the geometry of cones and links.
  * the functions that must run each time a parameter is modified
- * are located in the respective files for cones and edges
+ * are located in the respective files for cones and links
  *
  * The general achitecture of the project is:
  * * merger with computing intensive functions used once
@@ -18,7 +18,7 @@ import { interpolator, Cartographic, reviver } from '../common/utils';
 import {
   ITranspMode, ICity, ILink as ILink,
   ILookupCityNetwork, IMergerState,
-  ILookupDestWithModes, IPopulation, ITransportModeSpeed, ILookupEdgesAndCityNetwork,
+  ILookupDestWithModes, IPopulation, ITransportModeSpeed, ILookupLinksAndCityNetwork,
   ILookupLinks, ICityExtremityOfLink, ILookupLinkList, ILookupComplexAlpha,
 } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
@@ -163,8 +163,8 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic)
  * [[theta]] is the angle between the two cities
  * in the unprojected situation
  *
- * In the case of air edges, two equations are used to determine
- * the [heigth of aerial edges above the geodesic](http://bit.ly/2H4FOKw):
+ * In the case of air links, two equations are used to determine
+ * the [heigth of aerial links above the geodesic](http://bit.ly/2H4FOKw):
  * * below the threshold limit:![below](http://bit.ly/2Xu3kGF)
  * * beyond the threshold limit: ![beyond](http://bit.ly/2EejFpW)
  * * the figure: ![2](http://bit.ly/2H4FOKw)
@@ -216,7 +216,7 @@ function getModelledSpeed(theta: number, speedMax: number, speed: number, terres
  * @param transpNetwork
  */
 function networkFromCities(
-  transportModeCode: ITranspMode[], cities: ICity[], transpNetwork: ILink[]): ILookupEdgesAndCityNetwork {
+  transportModeCode: ITranspMode[], cities: ICity[], transpNetwork: ILink[]): ILookupLinksAndCityNetwork {
   let network: ILookupCityNetwork = {};
   let edgesData: ILookupLinks = {};
   // déterminer la fourchette de temps considéré OK
@@ -390,7 +390,7 @@ function networkFromCities(
    *
    * function putting in cache the unit triangles (clock) of the cone
    * the computation of angles and anchor points
-   * of edges between cities (the order of cities has no importance)
+   * of links between cities (the order of cities has no importance)
    *
    * @param  begin starting city code
    * @param  end   ending city code
@@ -450,7 +450,7 @@ function networkFromCities(
     if (referential instanceof NEDLocal) {
       let startPoint: ICityExtremityOfLink = { cityCode: origCityCode, position: referential.cartoRef };
       /**
-       *  list of edges from the considered city (described by their destination cities)
+       *  list of links from the considered city (described by their destination cities)
        * */
       let listOfEdges: { [cityCodeEnd: string]: ILookupLinkList } = {};
       // let coneAlpha: ILookupConeAlpha = {};
@@ -498,7 +498,7 @@ function networkFromCities(
           // for each year the alpha will be computed
           for (let year = minYear; year <= maxYear; year++) {
             if (linkTranspModeSpeed.terrestrial === true) {
-              // we generate a cone and draw edges
+              // we generate a cone and draw links
               if (!cone.hasOwnProperty(year)) {
                 // initialising  complex cone for a given city and year
                 let coneAlpha = speedPerTransportPerYear[roadCode].tabYearSpeed[year].alpha;
@@ -566,12 +566,12 @@ function networkFromCities(
       }
       network[origCityCode] = { referential, cone: cone, destinationsWithModes: destinationsWithModes, origCityProperties: city };
       if (Object.keys(listOfEdges).length > 0) {
-        // retrieves edges info from origCityCode for edges generation
+        // retrieves links info from origCityCode for links generation
         edgesData[origCityCode] = { begin: startPoint, list: listOfEdges };
       }
     }
   });
-  return { lookupCityNetwork: network, edgesData: edgesData };
+  return { lookupCityNetwork: network, linksData: edgesData };
 }
 
 /**
@@ -594,7 +594,7 @@ export class Merger {
   private _transportModeCode: ITranspMode[] = [];
   private _transportNetwork: ILink[] = [];
   private _state: IMergerState = 'missing';
-  private _edgesAndTranspModes: ILookupEdgesAndCityNetwork = <ILookupEdgesAndCityNetwork>{};
+  private _edgesAndTranspModes: ILookupLinksAndCityNetwork = <ILookupLinksAndCityNetwork>{};
 
   public get state(): IMergerState {
     return this._state;
@@ -603,14 +603,14 @@ export class Merger {
    * this is the resulting dataset processed by function [[networkFromCities]]
    * in order to give access to the relevant data inside bigBoard
    */
-  public get edgesWithTranspModes(): ILookupEdgesAndCityNetwork {
+  public get edgesWithTranspModes(): ILookupLinksAndCityNetwork {
     return this._edgesAndTranspModes;
   }
 
   public get Cities(): ICity[] { return this._cities; }
   public CitiesByIndex(index: string | number): ICity { return this._cities[index]; }
 
-  public get conesAndEdgesData(): ILookupEdgesAndCityNetwork {
+  public get conesAndEdgesData(): ILookupLinksAndCityNetwork {
     return this._edgesAndTranspModes;
   }
 
@@ -624,7 +624,7 @@ export class Merger {
     this._transportModeSpeed = [];
     this._transportModeCode = [];
     this._transportNetwork = [];
-    this._edgesAndTranspModes = <ILookupEdgesAndCityNetwork>{};
+    this._edgesAndTranspModes = <ILookupLinksAndCityNetwork>{};
     this._state = 'missing';
   }
 
@@ -694,7 +694,7 @@ export class Merger {
       // attach city information to ending city link
       merger(transportNetwork, cities, 'idDes', 'cityCode', 'destCityInfo', false, false, false);
       // generates subgraph from city considered as origin
-      merger(cities, transportNetwork, 'cityCode', 'idOri', 'edges', true, true, false);
+      merger(cities, transportNetwork, 'cityCode', 'idOri', 'links', true, true, false);
       // the main function that generates geometries (cones, lines) by exploring the subgraphs from cities
       this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
       // console.log(this._edgesAndTranspModes);

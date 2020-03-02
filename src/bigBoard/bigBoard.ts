@@ -26,7 +26,7 @@ import { Merger } from './merger';
 import {
     IMergerState,
     ISumUpCriteria,
-    ILookupEdgesAndCityNetwork,
+    ILookupLinksAndCityNetwork,
     ICriterias,
 } from '../definitions/project';
 import { save } from '../common/utils';
@@ -260,10 +260,10 @@ export default class BigBoard {
     /**
      * Add cone to the coneMeshCollection
      * @todo unused and irrelevant @see coneBoard.add
-     * @param {ILookupEdgesAndCityNetwork} lookup
+     * @param {ILookupLinksAndCityNetwork} lookup
      * @memberof BigBoard
      */
-    public addCones(lookup: ILookupEdgesAndCityNetwork): void {
+    public addCones(lookup: ILookupLinksAndCityNetwork): void {
         this.coneBoard.add(lookup);
     }
 

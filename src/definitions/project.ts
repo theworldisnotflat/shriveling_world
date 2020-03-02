@@ -103,7 +103,7 @@ export interface ILookupDestWithModes {
 }
 
 /**
- * A city and its incident edges in the network:
+ * A city and its incident links in the network:
  * * a [[referential]] of coordinates in [[NEDLocal]]
  * * a table of transport modes and their alphas
  * * a list of destinations and associated transport modes
@@ -118,7 +118,8 @@ export interface ICityNetwork {
 /**
  * a [[ILookupCityNetwork]] searches
  * * a cityCode
- * * and retrieves a piece of network [[ICityNetwork]] made of incident edges of cityCode in the transport network
+ * * and retrieves a piece of network [[ICityNetwork]] made of
+ * * incident links of cityCode in the transport network
  *
  * <uml>
  *     ILookupCityNetwork<-ICityNetwork
@@ -256,13 +257,13 @@ export type ShaderTypes = 'fragment' | 'vertex';
 /**
  * [[ILookupEdgesWithTranspModes]] contains
  * * [[lookupCityNetwork]] network data (graph data) with modes and speed parameters
- * * [[edgesData]] edges data for geometric processes
+ * * [[linksData]] links data for geometric processes
  *
  * (some duplication but the purposes are different)
  */
-export interface ILookupEdgesAndCityNetwork {
+export interface ILookupLinksAndCityNetwork {
   lookupCityNetwork: ILookupCityNetwork;
-  edgesData: ILookupLinks;
+  linksData: ILookupLinks;
 }
 /**
  * defines the city at the other extremity of a link

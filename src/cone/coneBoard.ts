@@ -5,7 +5,7 @@ import { PseudoCone } from './base';
 import { ConeMeshShader } from './coneMeshShader';
 import { Cartographic, searchCriterias } from '../common/utils';
 import {
-    ISumUpCriteria, ILookupEdgesAndCityNetwork, ICriterias,
+    ISumUpCriteria, ILookupLinksAndCityNetwork, ICriterias,
 } from '../definitions/project';
 import { CountryBoard } from '../country/countryBoard';
 import { LineMeshShader } from './lineMeshShaders';
@@ -86,7 +86,7 @@ export class ConeBoard {
      *
      * @param lookup
      */
-    public add(lookup: ILookupEdgesAndCityNetwork): void {
+    public add(lookup: ILookupLinksAndCityNetwork): void {
         this.clean();
         let that = this;
         let bboxes = this._countries.countryMeshCollection.map((country) => country.bbox);
@@ -102,7 +102,7 @@ export class ConeBoard {
                 that._renderer.render(that._scene, that._camera);
             });
         });
-        LineMeshShader.generateCones(lookup.edgesData).then((lines) => {
+        LineMeshShader.generateCones(lookup.linksData).then((lines) => {
             lines.forEach((line) => {
                 that.lineCollection.push(line);
                 line.visible = that._show;
