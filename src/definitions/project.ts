@@ -4,77 +4,97 @@
  *
  * the [data model can be seen here](https://github.com/theworldisnotflat/shriveling_world/blob/master/model/modeles.png)
  */
-import { Cartographic } from '../common/utils';
-import { NEDLocal } from '../common/referential';
+import {Cartographic} from '../common/utils';
+import {NEDLocal} from '../common/referential';
 export interface ICountryTextureURL {
-  map: string;
-  specularMap: string;
-  bumpMap: string;
-  normalMap: string;
-  boundaries: string;
+	map: string;
+	specularMap: string;
+	bumpMap: string;
+	normalMap: string;
+	boundaries: string;
 }
 
 /**
- * list of available geographic projections
+ * List of available geographic projections
  */
 export enum PROJECTION_ENUM {
-  none = 0,
-  equirectangular = 1,
-  Mercator = 2,
-  Winkel = 3,
-  Eckert = 4,
-  vanDerGrinten = 5,
-  conicEquidistant = 6,
+	none = 0,
+	equirectangular = 1,
+	Mercator = 2,
+	Winkel = 3,
+	Eckert = 4,
+	vanDerGrinten = 5,
+	conicEquidistant = 6,
 }
 
 export type internalFormatType =
-  'R8' | 'R32F' | 'R16UI' | 'R16I' | 'R32UI' | 'R32I' |
-  'RG8' | 'RG32F' | 'RG16UI' | 'RG16I' | 'RG32UI' | 'RG32I' |
-  'RGB8' | 'RGB32F' | 'RGB16UI' | 'RGB16I' | 'RGB32UI' | 'RGB32I' |
-  'RGBA8' | 'RGBA32F' | 'RGBA16UI' | 'RGBA16I' | 'RGBA32UI' | 'RGBA32I';
+	| 'R8'
+	| 'R32F'
+	| 'R16UI'
+	| 'R16I'
+	| 'R32UI'
+	| 'R32I'
+	| 'RG8'
+	| 'RG32F'
+	| 'RG16UI'
+	| 'RG16I'
+	| 'RG32UI'
+	| 'RG32I'
+	| 'RGB8'
+	| 'RGB32F'
+	| 'RGB16UI'
+	| 'RGB16I'
+	| 'RGB32UI'
+	| 'RGB32I'
+	| 'RGBA8'
+	| 'RGBA32F'
+	| 'RGBA16UI'
+	| 'RGBA16I'
+	| 'RGBA32UI'
+	| 'RGBA32I';
 
 export interface INEDLocalGLSL {
-  ned2ECEF0: number[];
-  ned2ECEF1: number[];
-  ned2ECEF2: number[];
-  summit: number[];
+	ned2ECEF0: number[];
+	ned2ECEF1: number[];
+	ned2ECEF2: number[];
+	summit: number[];
 }
 /**
- * in geographic (lat, lon, height) coordinates
+ * In geographic (lat, lon, height) coordinates
  */
 export interface ICartographic {
-  latitude?: number;
-  longitude?: number;
-  height?: number;
+	latitude?: number;
+	longitude?: number;
+	height?: number;
 }
 
 /**
- * an item grouping for a fixed year and a fixed origin city datas to generate
+ * An item grouping for a fixed year and a fixed origin city datas to generate
  * a complex cone the slope for road and slope for each
  * destination city (clock) using a terrestrial transport.
  */
 export interface IComplexAlphaItem {
-  /**
-   * this property represents the slope of the road transport for the considered year.
-   */
-  coneAlpha: number;
-  /**
-   * this property lists for the considered year and the considered origin city
-   * each destination city using a terrestrial transport. Each item of this
-   * array is a clock in direction of the destination city and a slope
-   * corresponding to the transport speed linking the two cities. This array can have zero item.
-   */
-  tab: { clock: number, alpha: number }[];
+	/**
+	 * This property represents the slope of the road transport for the considered year.
+	 */
+	coneAlpha: number;
+	/**
+	 * This property lists for the considered year and the considered origin city
+	 * each destination city using a terrestrial transport. Each item of this
+	 * array is a clock in direction of the destination city and a slope
+	 * corresponding to the transport speed linking the two cities. This array can have zero item.
+	 */
+	tab: Array<{clock: number; alpha: number}>;
 }
 
 /**
- * it's a lookup mapping for a given year the slope angle between earth surface
+ * It's a lookup mapping for a given year the slope angle between earth surface
  * and cone slope as cone radius is determined, it's the key parameter for cone geometries.
  *
  * This slope (alpha) is determined by ![equation 1](http://bit.ly/2tLfehC)
  */
 export interface ILookupComplexAlpha {
-  [year: string]: IComplexAlphaItem;
+	[year: string]: IComplexAlphaItem;
 }
 
 /**
@@ -83,7 +103,7 @@ export interface ILookupComplexAlpha {
  * Table of couples year-speed for each transport mode
  */
 export interface ILookupTranspModeSpeed {
-  [transpModeCode: string]: { year: number, speed: number }[];
+	[transpModeCode: string]: Array<{year: number; speed: number}>;
 }
 
 /**
@@ -99,7 +119,7 @@ export interface ILookupTranspModeSpeed {
  * transport modes and their respective speed
  */
 export interface ILookupDestWithModes {
-  [cityCode: string]: ILookupTranspModeSpeed;
+	[cityCode: string]: ILookupTranspModeSpeed;
 }
 
 /**
@@ -110,13 +130,13 @@ export interface ILookupDestWithModes {
  * * a table of [[origCityProperties]]
  */
 export interface ICityNetwork {
-  referential: NEDLocal; // à inhiber dans forbiddenAttributes de coneMeshShader
-  cone: ILookupComplexAlpha; // à inhiber dans forbiddenAttributes de coneMeshShader
-  destinationsWithModes: ILookupDestWithModes;
-  origCityProperties: ICity;
+	referential: NEDLocal; // À inhiber dans forbiddenAttributes de coneMeshShader
+	cone: ILookupComplexAlpha; // À inhiber dans forbiddenAttributes de coneMeshShader
+	destinationsWithModes: ILookupDestWithModes;
+	origCityProperties: ICity;
 }
 /**
- * a [[ILookupCityNetwork]] searches
+ * A [[ILookupCityNetwork]] searches
  * * a cityCode
  * * and retrieves a piece of network [[ICityNetwork]] made of incident edges of cityCode in the transport network
  *
@@ -125,36 +145,36 @@ export interface ICityNetwork {
  * </uml>
  */
 export interface ILookupCityNetwork {
-  [cityCode: string]: ICityNetwork;
+	[cityCode: string]: ICityNetwork;
 }
 
 export interface IItemCriteria {
-  value: number | string | Date | boolean;
-  comparator?: '=' | '>' | '>=' | '<' | '<=' | '!=';
+	value: number | string | Date | boolean;
+	comparator?: '=' | '>' | '>=' | '<' | '<=' | '!=';
 }
 
 export interface ICriterias {
-  [attribut: string]: IItemCriteria;
+	[attribut: string]: IItemCriteria;
 }
 
 export interface IOrderAscendant {
-  attribute: string;
-  ascendant: boolean;
+	attribute: string;
+	ascendant: boolean;
 }
 
 export type sumUpType = 'number' | 'date' | 'string' | 'array' | 'object' | 'boolean' | 'undefined';
 
 export interface ISumUpCriteriaItem {
-  type: sumUpType;
-  sumUp?: { max: Date | number, min: Date | number } | string[] | ISumUpCriteria;
+	type: sumUpType;
+	sumUp?: {max: Date | number; min: Date | number} | string[] | ISumUpCriteria;
 }
 
 export interface ISumUpCriteria {
-  [attribut: string]: ISumUpCriteriaItem;
+	[attribut: string]: ISumUpCriteriaItem;
 }
 
 export interface IPopulation {
-  cityCode?: number;
+	cityCode?: number;
 }
 
 /**
@@ -170,25 +190,25 @@ export interface IPopulation {
  * * [[edges]] is a table will be determined by scanning the [[ITransportNetwork]]
  */
 export interface ICity {
-  countryCode: number;
-  countryName: string;
-  cityCode: number;
-  urbanAgglomeration: string;
-  latitude: number;
-  longitude: number;
-  radius: number; // for cases of cities in islands close to a continent
-  populations?: IPopulation;
-  edges?: IEdge[];
+	countryCode: number;
+	countryName: string;
+	cityCode: number;
+	urbanAgglomeration: string;
+	latitude: number;
+	longitude: number;
+	radius: number; // For cases of cities in islands close to a continent
+	populations?: IPopulation;
+	edges?: IEdge[];
 }
 
 /**
- * the [[speedKPH]] of a given transport mode may be different
+ * The [[speedKPH]] of a given transport mode may be different
  * depending on [[year]]
  */
 export interface ITransportModeSpeed {
-  year: number;
-  transportModeCode?: number;
-  speedKPH: number;
+	year: number;
+	transportModeCode?: number;
+	speedKPH: number;
 }
 
 /**
@@ -201,12 +221,12 @@ export interface ITransportModeSpeed {
  * * and has a table of [[speeds]] that may change over years
  */
 export interface ITranspMode {
-  name: string;
-  code: number;
-  yearBegin: number;
-  yearEnd?: number;
-  terrestrial: boolean;  // if yes the transport mode speed can affect the slope of cones
-  speeds: ITransportModeSpeed[];
+	name: string;
+	code: number;
+	yearBegin: number;
+	yearEnd?: number;
+	terrestrial: boolean; // If yes the transport mode speed can affect the slope of cones
+	speeds: ITransportModeSpeed[];
 }
 
 /**
@@ -220,25 +240,25 @@ export interface ITranspMode {
  * * a transport mode [[transportMode]]
  */
 export interface IEdge {
-  yearBegin: number;
-  yearEnd?: number;
-  idOri?: number;
-  idDes: number;
-  transportMode: number;
+	yearBegin: number;
+	yearEnd?: number;
+	idOri?: number;
+	idDes: number;
+	transportMode: number;
 }
 
 export interface IBBox {
-  minLat: number;
-  maxLat: number;
-  minLong: number;
-  maxLong: number;
-  boundary: Cartographic[];
+	minLat: number;
+	maxLat: number;
+	minLong: number;
+	maxLong: number;
+	boundary: Cartographic[];
 }
 
 export interface IPseudoGeometry {
-  uv: ArrayBuffer;
-  index: ArrayBuffer;
-  vertices: { [projectionName: string]: ArrayBuffer };
+	uv: ArrayBuffer;
+	index: ArrayBuffer;
+	vertices: {[projectionName: string]: ArrayBuffer};
 }
 
 export type IMergerState = 'missing' | 'ready' | 'pending' | 'complete';
@@ -248,10 +268,20 @@ export type IMergerState = 'missing' | 'ready' | 'pending' | 'complete';
  * * 'coneStep' is the value in degree of the facet of the cone; low value means high definition of the geometry of cones
  */
 export type configurationObservableEvt =
-  'heightRatio' | 'intrudedHeightRatio' | 'coneStep' | 'TWEEN_TIMING' | 'referenceEquiRectangular' | 'pointsPerLine' |
-  'THREE_EARTH_RADIUS' | 'projectionBegin' | 'projectionEnd' | 'projectionPercent' | 'year' | 'tick';
+	| 'heightRatio'
+	| 'intrudedHeightRatio'
+	| 'coneStep'
+	| 'TWEEN_TIMING'
+	| 'referenceEquiRectangular'
+	| 'pointsPerLine'
+	| 'THREE_EARTH_RADIUS'
+	| 'projectionBegin'
+	| 'projectionEnd'
+	| 'projectionPercent'
+	| 'year'
+	| 'tick';
 
-export type configurationCallback = (name: configurationObservableEvt, value: any) => void;
+export type configurationCallback = (name: configurationObservableEvt, value: unknown) => void;
 export type ShaderTypes = 'fragment' | 'vertex';
 /**
  * [[ILookupEdgesWithTranspModes]] contains
@@ -261,51 +291,51 @@ export type ShaderTypes = 'fragment' | 'vertex';
  * (some duplication but the purposes are different)
  */
 export interface ILookupEdgesAndCityNetwork {
-  lookupCityNetwork: ILookupCityNetwork;
-  edgesData: ILookupEdges;
+	lookupCityNetwork: ILookupCityNetwork;
+	edgesData: ILookupEdges;
 }
 /**
- * defines the city at the other extremity of an edge
+ * Defines the city at the other extremity of an edge
  */
 export interface ICityExtremityOfEdge {
-  cityCode: string | number;
-  position: Cartographic;
+	cityCode: string | number;
+	position: Cartographic;
 }
 /**
- * data associated to an edge from a given city
+ * Data associated to an edge from a given city
  *
  * [[pointP]] and [[pointQ]] are control points for Bezier curves
  *
  * [[theta]] is the angle between cities
  */
 export interface ILookupEdgeList {
-  end: ICityExtremityOfEdge;
-  pointP: Cartographic;
-  pointQ: Cartographic;
-  middle: Cartographic;
-  speedRatio: { [transportName: string]: { [year: string]: number } };
-  theta: number;
+	end: ICityExtremityOfEdge;
+	pointP: Cartographic;
+	pointQ: Cartographic;
+	middle: Cartographic;
+	speedRatio: {[transportName: string]: {[year: string]: number}};
+	theta: number;
 }
 /**
  * Lines (or edges) from a city
  */
 export interface ILookupEdgesFromCity {
-  begin: ICityExtremityOfEdge;
-  list: { [cityCodeEnd: string]: ILookupEdgeList };
+	begin: ICityExtremityOfEdge;
+	list: {[cityCodeEnd: string]: ILookupEdgeList};
 }
 /**
- * a line and its associated graph edge has a [[cityCodeBegin]]
+ * A line and its associated graph edge has a [[cityCodeBegin]]
  *
  * other parameters of this line derive from the [[ILookupLineItem]]
  */
 export interface ILookupEdges {
-  [cityCodeBegin: number]: ILookupEdgesFromCity;
+	[cityCodeBegin: number]: ILookupEdgesFromCity;
 }
 export interface IMarkLimits {
-  begin: number; // inclusif
-  end: number; // exclusif
+	begin: number; // Inclusif
+	end: number; // Exclusif
 }
 export interface IListFile {
-  name: string;
-  text: string;
+	name: string;
+	text: string;
 }

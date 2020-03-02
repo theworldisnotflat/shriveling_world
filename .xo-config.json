@@ -1,0 +1,54 @@
+{
+	"env": "browser",
+	"prettier": true,
+	"ignores":"src/IHM/**/*.js",
+	"rules": {
+		"prettier/prettier": "error",
+		"no-prototype-builtins": "off",
+		"@typescript-eslint/prefer-for-of": "off",
+		"@typescript-eslint/interface-name-prefix": [
+			"error",
+			{ "prefixWithI": "always", "allowUnderscorePrefix": false }
+		],
+		"unicorn/filename-case": "off",
+		"guard-for-in": "off",
+		"complexity": ["warn", 30],
+		"max-depth": ["error", 7],
+		"max-params": ["error", 8],
+		"new-cap": "off",
+		"no-debugger": "off",
+		"@typescript-eslint/no-dynamic-delete": "off",
+		"@typescript-eslint/restrict-plus-operands": "off",
+		"no-inner-declarations": "off",
+		"@typescript-eslint/consistent-type-assertions": "off",
+		"@typescript-eslint/member-ordering": [
+			"error",
+			{
+				"default": [
+					"signature",
+					"public-static-field",
+					"protected-static-field",
+					"private-static-field",
+					"public-instance-field",
+					"protected-instance-field",
+					"private-instance-field",
+					"public-abstract-field",
+					"protected-abstract-field",
+					"private-abstract-field",
+					"public-static-method",
+					"protected-static-method",
+					"private-static-method",
+					"public-constructor",
+					"protected-constructor",
+					"private-constructor",
+					"public-instance-method",
+					"protected-instance-method",
+					"private-instance-method",
+					"public-abstract-method",
+					"protected-abstract-method",
+					"private-abstract-method"
+				]
+			}
+		]
+	}
+}

@@ -1,207 +1,216 @@
 'use strict';
-import { Scene, Camera, WebGLRenderer, Raycaster, Mesh, Vector2, BufferGeometry, Material } from 'three';
-import { CONFIGURATION } from '../common/configuration';
-import { PseudoCone } from './base';
-import { ConeMeshShader } from './coneMeshShader';
-import { Cartographic, searchCriterias } from '../common/utils';
-import {
-    ISumUpCriteria, ILookupEdgesAndCityNetwork, ICriterias,
-} from '../definitions/project';
-import { CountryBoard } from '../country/countryBoard';
-import { LineMeshShader } from './lineMeshShaders';
+import {Scene, Camera, WebGLRenderer, Raycaster, Mesh, Vector2, BufferGeometry, Material} from 'three';
+import {CONFIGURATION} from '../common/configuration';
+import {PseudoCone} from './base';
+import {ConeMeshShader} from './coneMeshShader';
+import {Cartographic, searchCriterias} from '../common/utils';
+import {ISumUpCriteria, ILookupEdgesAndCityNetwork, ICriterias} from '../definitions/project';
+import {CountryBoard} from '../country/countryBoard';
+import {LineMeshShader} from './lineMeshShaders';
 const forbiddenAttributes = ['referential', 'position'];
 
 export class ConeBoard {
-    public coneMeshCollection: PseudoCone[] = [];
-    public lineCollection: LineMeshShader[] = [];
-    private _scene: Scene;
-    private _camera: Camera;
-    private _raycaster: Raycaster;
-    private _highlitedCriterias: ICriterias = {};
-    private _selectedMeshs: Mesh[] = [];
-    private _scale: number = 1;
-    private _show: boolean = true;
-    private _withLimits: boolean = true;
-    private _countries: CountryBoard;
-    private _sumUpProperties: ISumUpCriteria = {};
-    private _renderer: WebGLRenderer;
-    private _opacity: number = 1;
+	public coneMeshCollection: PseudoCone[] = [];
+	public lineCollection: LineMeshShader[] = [];
+	private readonly _scene: Scene;
+	private readonly _camera: Camera;
+	private readonly _raycaster: Raycaster;
+	private _highlitedCriterias: ICriterias = {};
+	private _selectedMeshs: Mesh[] = [];
+	private _scale = 1;
+	private _show = true;
+	private _withLimits = true;
+	private readonly _countries: CountryBoard;
+	private _sumUpProperties: ISumUpCriteria = {};
+	private readonly _renderer: WebGLRenderer;
+	private _opacity = 1;
 
-    get show(): boolean {
-        return this._show;
-    }
-    set show(value: boolean) {
-        this.coneMeshCollection.forEach((country) => {
-            country.visible = value;
-        });
-        this._show = value;
-    }
+	get show(): boolean {
+		return this._show;
+	}
 
-    get withLimits(): boolean {
-        return this._withLimits;
-    }
-    set withLimits(value: boolean) {
-        this.coneMeshCollection.forEach((country) => {
-            country.withLimits = value;
-        });
-        this._withLimits = value;
-    }
+	set show(value: boolean) {
+		this.coneMeshCollection.forEach(country => {
+			country.visible = value;
+		});
+		this._show = value;
+	}
 
-    get scale(): number {
-        return this._scale;
-    }
-    set scale(value: number) {
-        this._selectedMeshs.forEach((mesh) => {
-            mesh.scale.setScalar(value);
-        });
-        this.coneMeshCollection.forEach((mesh) => {
-            mesh.scale.setScalar(value);
-        });
-        this._scale = value;
-    }
+	get withLimits(): boolean {
+		return this._withLimits;
+	}
 
-    get lookupCriterias(): ISumUpCriteria {
-        return this._sumUpProperties;
-    }
-    get opacity(): number {
-        return this._opacity;
-    }
+	set withLimits(value: boolean) {
+		this.coneMeshCollection.forEach(country => {
+			country.withLimits = value;
+		});
+		this._withLimits = value;
+	}
 
-    set opacity(value: number) {
-        if (value > 0 && value <= 1) {
-            this._opacity = value;
-            this.coneMeshCollection.forEach(cone => (<Material>cone.material).opacity = value);
-        }
-    }
+	get scale(): number {
+		return this._scale;
+	}
 
-    public constructor(scene: Scene, camera: Camera, countries: CountryBoard, renderer: WebGLRenderer) {
-        this._scene = scene;
-        this._camera = camera;
-        this._raycaster = new Raycaster();
-        this._countries = countries;
-        this._renderer = renderer;
-    }
+	set scale(value: number) {
+		this._selectedMeshs.forEach(mesh => {
+			mesh.scale.setScalar(value);
+		});
+		this.coneMeshCollection.forEach(mesh => {
+			mesh.scale.setScalar(value);
+		});
+		this._scale = value;
+	}
 
-    /**
-     *
-     * @param lookup
-     */
-    public add(lookup: ILookupEdgesAndCityNetwork): void {
-        this.clean();
-        let that = this;
-        let bboxes = this._countries.countryMeshCollection.map((country) => country.bbox);
-        console.log(lookup.lookupCityNetwork);
-        ConeMeshShader.generateCones(lookup.lookupCityNetwork, bboxes).then((cones) => {
-            cones.forEach((cone, index) => {
-                // updateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
-                // add object name to cone
-                cone.name = cone.otherProperties.origCityProperties.urbanAgglomeration;
-                that.coneMeshCollection.push(cone);
-                cone.scale.setScalar(that._scale);
-                that._scene.add(cone);
-                that._renderer.render(that._scene, that._camera);
-            });
-        });
-        LineMeshShader.generateCones(lookup.edgesData).then((lines) => {
-            lines.forEach((line) => {
-                that.lineCollection.push(line);
-                line.visible = that._show;
-                line.scale.setScalar(that._scale);
-                that._scene.add(line);
-                that._renderer.render(that._scene, that._camera);
-            });
-        });
-    }
+	get lookupCriterias(): ISumUpCriteria {
+		return this._sumUpProperties;
+	}
 
-    public setLayer(transport: string, show: boolean): void {
-        this.searchMesh({ transport: { value: transport } }).forEach((mesh) => {
-            mesh.visible = show;
-        });
-    }
-    public clean(): void {
-        for (let i = this.coneMeshCollection.length - 1; i >= 0; i--) {
-            this._scene.remove(this.coneMeshCollection[i]);
-            this.coneMeshCollection[i].dispose();
-            this.coneMeshCollection.splice(i, 1);
-        }
-        this._sumUpProperties = {};
-    }
+	get opacity(): number {
+		return this._opacity;
+	}
 
-    public getMeshByMouse(event: MouseEvent, highLight: boolean = false): PseudoCone {
-        let resultat: PseudoCone;
-        let mouse = new Vector2();
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-        this._raycaster.setFromCamera(mouse, this._camera);
-        let intersects = this._raycaster.intersectObjects(this.coneMeshCollection);
-        if (intersects.length > 0) {
-            resultat = <PseudoCone>intersects[0].object;
-            this.highLight(resultat.otherProperties, highLight);
-        } else {
-            this._selectedMeshs.forEach((mesh) => {
-                if (!Array.isArray(mesh.material)) {
-                    mesh.material.visible = false;
-                }
-            });
-        }
-        return resultat;
-    }
+	set opacity(value: number) {
+		if (value > 0 && value <= 1) {
+			this._opacity = value;
+			this.coneMeshCollection.forEach(cone => {
+				(<Material>cone.material).opacity = value;
+			});
+		}
+	}
 
-    public setLimits(criterias: ICriterias, limit: boolean): void {
-        this.searchMesh(criterias).forEach((country) => {
-            country.withLimits = limit;
-        });
-    }
+	public constructor(scene: Scene, camera: Camera, countries: CountryBoard, renderer: WebGLRenderer) {
+		this._scene = scene;
+		this._camera = camera;
+		this._raycaster = new Raycaster();
+		this._countries = countries;
+		this._renderer = renderer;
+	}
 
-    public highLight(criterias: ICriterias, light: boolean): void {
-        if (criterias !== this._highlitedCriterias) {
-            this._highlitedCriterias = criterias;
-            let that = this;
-            this._selectedMeshs.forEach((mesh) => {
-                that._scene.remove(mesh);
-            });
-            this._selectedMeshs = this.searchMesh(criterias).map((mesh) => {
-                let geometry = <BufferGeometry>mesh.geometry.clone();
-                let out = new Mesh(geometry, CONFIGURATION.highLitedMaterial);
-                that._scene.add(out);
-                out.scale.setScalar(that._scale);
-                return out;
-            });
-        }
-        this._selectedMeshs.forEach((mesh) => {
-            if (!Array.isArray(mesh.material)) {
-                mesh.material.visible = light;
-            }
-        });
-    }
+	/**
+	 *
+	 * @param lookup
+	 */
+	public add(lookup: ILookupEdgesAndCityNetwork): void {
+		this.clean();
+		const bboxes = this._countries.countryMeshCollection.map(country => country.bbox);
+		console.log(lookup.lookupCityNetwork);
+		ConeMeshShader.generateCones(lookup.lookupCityNetwork, bboxes).then(cones => {
+			cones.forEach(cone => {
+				// UpdateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
+				// add object name to cone
+				cone.name = cone.otherProperties.origCityProperties.urbanAgglomeration;
+				this.coneMeshCollection.push(cone);
+				cone.scale.setScalar(this._scale);
+				this._scene.add(cone);
+				this._renderer.render(this._scene, this._camera);
+			});
+		});
+		LineMeshShader.generateCones(lookup.edgesData).then(lines => {
+			lines.forEach(line => {
+				this.lineCollection.push(line);
+				line.visible = this._show;
+				line.scale.setScalar(this._scale);
+				this._scene.add(line);
+				this._renderer.render(this._scene, this._camera);
+			});
+		});
+	}
 
-    public searchMesh(criterias: ICriterias | Cartographic, path: string = ''): PseudoCone[] {
-        let resultat: PseudoCone[];
-        if (criterias instanceof Cartographic) {
-            resultat = this.coneMeshCollection.filter((cone) => cone.cartographicPosition.approximateDistance(criterias) < 1e-13);
-        } else {
-            resultat = searchCriterias(this.coneMeshCollection, criterias, forbiddenAttributes, 'otherProperties.' + path);
-        }
-        return resultat;
-    }
+	public setLayer(transport: string, show: boolean): void {
+		this.searchMesh({transport: {value: transport}}).forEach(mesh => {
+			mesh.visible = show;
+		});
+	}
 
-    public showCriterias(criterias: ICriterias, state: boolean): void {
-        let realState = state && this._show;
-        this.searchMesh(criterias).forEach((cone) => {
-            cone.visible = realState;
-        });
-    }
+	public clean(): void {
+		for (let i = this.coneMeshCollection.length - 1; i >= 0; i--) {
+			this._scene.remove(this.coneMeshCollection[i]);
+			this.coneMeshCollection[i].dispose();
+			this.coneMeshCollection.splice(i, 1);
+		}
 
-    // private _reHighLight(): void {
-    //     if (this._selectedMeshs.length > 0) {
-    //         let visible = false;
-    //         let temp = this._selectedMeshs[0];
-    //         if (!Array.isArray(temp.material)) {
-    //             visible = temp.material.visible;
-    //         }
-    //         let criterias = this._highlitedCriterias;
-    //         this._highlitedCriterias = undefined;
-    //         this.highLight(criterias, visible);
-    //     }
-    // }
+		this._sumUpProperties = {};
+	}
+
+	public getMeshByMouse(event: MouseEvent, highLight = false): PseudoCone {
+		let resultat: PseudoCone;
+		const mouse = new Vector2();
+		mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+		mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+		this._raycaster.setFromCamera(mouse, this._camera);
+		const intersects = this._raycaster.intersectObjects(this.coneMeshCollection);
+		if (intersects.length > 0) {
+			resultat = <PseudoCone>intersects[0].object;
+			this.highLight(resultat.otherProperties, highLight);
+		} else {
+			this._selectedMeshs.forEach(mesh => {
+				if (!Array.isArray(mesh.material)) {
+					mesh.material.visible = false;
+				}
+			});
+		}
+
+		return resultat;
+	}
+
+	public setLimits(criterias: ICriterias, limit: boolean): void {
+		this.searchMesh(criterias).forEach(country => {
+			country.withLimits = limit;
+		});
+	}
+
+	public highLight(criterias: ICriterias, light: boolean): void {
+		if (criterias !== this._highlitedCriterias) {
+			this._highlitedCriterias = criterias;
+			this._selectedMeshs.forEach(mesh => {
+				this._scene.remove(mesh);
+			});
+			this._selectedMeshs = this.searchMesh(criterias).map(mesh => {
+				const geometry = <BufferGeometry>mesh.geometry.clone();
+				const out = new Mesh(geometry, CONFIGURATION.highLitedMaterial);
+				this._scene.add(out);
+				out.scale.setScalar(this._scale);
+				return out;
+			});
+		}
+
+		this._selectedMeshs.forEach(mesh => {
+			if (!Array.isArray(mesh.material)) {
+				mesh.material.visible = light;
+			}
+		});
+	}
+
+	public searchMesh(criterias: ICriterias | Cartographic, path = ''): PseudoCone[] {
+		let resultat: PseudoCone[];
+		if (criterias instanceof Cartographic) {
+			resultat = this.coneMeshCollection.filter(
+				cone => cone.cartographicPosition.approximateDistance(criterias) < 1e-13
+			);
+		} else {
+			resultat = searchCriterias(this.coneMeshCollection, criterias, forbiddenAttributes, 'otherProperties.' + path);
+		}
+
+		return resultat;
+	}
+
+	public showCriterias(criterias: ICriterias, state: boolean): void {
+		const realState = state && this._show;
+		this.searchMesh(criterias).forEach(cone => {
+			cone.visible = realState;
+		});
+	}
+
+	// Private _reHighLight(): void {
+	//     if (this._selectedMeshs.length > 0) {
+	//         let visible = false;
+	//         let temp = this._selectedMeshs[0];
+	//         if (!Array.isArray(temp.material)) {
+	//             visible = temp.material.visible;
+	//         }
+	//         let criterias = this._highlitedCriterias;
+	//         this._highlitedCriterias = undefined;
+	//         this.highLight(criterias, visible);
+	//     }
+	// }
 }
