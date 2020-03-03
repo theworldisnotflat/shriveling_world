@@ -596,7 +596,6 @@ function networkFromCities(
 							// The ratio linking the current speed and maxSpeed is
 							// computed according to this ![equation](http://bit.ly/2EejFpW)
 							const speedRatio = (maximumSpeed[year] * theta) / (2 * modelledSpeed);
-							debugger;
 							// Console.log('destCity', this._cities[destCityCode].urbanAgglomeration);
 							// console.log('origCity', this._cities[origCityCode].urbanAgglomeration);
 							// console.log('orig', city.urbanAgglomeration);

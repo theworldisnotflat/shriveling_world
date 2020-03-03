@@ -1,7 +1,7 @@
 {
 	"env": "browser",
 	"prettier": true,
-	"ignores":"src/IHM/**/*.js",
+	"ignores": "src/IHM/**/*.js",
 	"rules": {
 		"prettier/prettier": "error",
 		"no-prototype-builtins": "off",
@@ -17,6 +17,8 @@
 		"max-params": ["error", 8],
 		"new-cap": "off",
 		"no-debugger": "off",
+		"@typescript-eslint/no-unnecessary-boolean-literal-compare": "off",
+		"@typescript-eslint/no-unnecessary-type-assertion": "off",
 		"@typescript-eslint/no-dynamic-delete": "off",
 		"@typescript-eslint/restrict-plus-operands": "off",
 		"no-inner-declarations": "off",

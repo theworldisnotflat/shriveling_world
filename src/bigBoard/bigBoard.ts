@@ -255,6 +255,12 @@ export default class BigBoard {
 		this.coneBoard.clean();
 	}
 
+	public cleanAll(): void {
+		this.cleanCones();
+		this.cleanCountries();
+		this._merger.clear();
+	}
+
 	/**
 	 * Add cone to the coneMeshCollection
 	 * @todo unused and irrelevant @see coneBoard.add

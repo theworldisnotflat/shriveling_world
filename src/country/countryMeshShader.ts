@@ -23,7 +23,7 @@ interface IPreGeometry {
 }
 interface IPreMesh {
 	geometry: IPreGeometry;
-	properties: Record<string, string>;
+	properties: any;
 }
 
 let _vertexArrayEntries: Float32Array;
@@ -67,10 +67,10 @@ function generateSteinerPointsFor(poly: number[][]): Point[] {
 	const resultat: Point[] = [];
 	if (poly.length > 2) {
 		const discriminant = 3;
-		let minx = 1e23;
-		let maxx = -1e23;
-		let miny = 1e23;
-		let maxy = -1e23;
+		let minx = Infinity;
+		let maxx = -Infinity;
+		let miny = Infinity;
+		let maxy = -Infinity;
 
 		let i: number;
 		for (i = 0; i < poly.length; i++) {
@@ -126,15 +126,15 @@ function cleanBoundaries(polygon: number[][]): number[][] {
 				done = false;
 			}
 		}
-
 		// Remove collinear edges
+
 		for (i = 0; i < polygon.length; i++) {
 			o = polygon[(i - 1 + polygon.length) % polygon.length];
 			p = polygon[i];
 			q = polygon[(i + 1) % polygon.length];
 			a = {x: o[0] - p[0], y: o[1] - p[1]};
 			b = {x: q[0] - p[0], y: q[1] - p[1]};
-			if (Math.abs((a.x * b.x + a.y * b.y) / Math.sqrt((a.x * a.x + a.y * a.y) * (b.x * b.x + b.y * b.y))) > 1e-5) {
+			if (Math.abs((a.x * b.x + a.y * b.y) / Math.sqrt((a.x * a.x + a.y * a.y) * (b.x * b.x + b.y * b.y))) > 1 - 1e-5) {
 				polygon.splice(i, 1);
 				i = Math.max(-1, i - 2);
 				done = false;
@@ -160,7 +160,7 @@ function cleanBoundaries(polygon: number[][]): number[][] {
 	}
 
 	// There can stll be zero-area triangles between poly and hole
-	// this attempts to reduce the probability of such a situation
+	// This attempts to reduce the probability of such a situation
 	for (i = 0; i < polygon.length; i++) {
 		polygon[i][0] += 1e-9 * Math.random();
 		polygon[i][1] += 1e-9 * Math.random();
@@ -194,6 +194,8 @@ function generateVertices(geometry: GeoJSON.MultiPolygon | GeoJSON.Polygon): IPr
 			} else {
 				holes.push(cleanedBoundaries.map(item => new Point(item[0], item[1])));
 			}
+
+			return cleanedBoundaries;
 		});
 
 		const swctx = new SweepContext(contour);
@@ -201,14 +203,13 @@ function generateVertices(geometry: GeoJSON.MultiPolygon | GeoJSON.Polygon): IPr
 		swctx.addPoints(steinerPoints);
 		swctx.triangulate();
 		const triangles = swctx.getTriangles();
-
 		const verticesPoly2Tri: IPointLike[] = [];
 
 		function findAndAddVertexIndex(p: IPointLike): number {
 			const vs = verticesPoly2Tri;
 			let out = -1;
-			for (const [k, element] of vs.entries()) {
-				if (Math.abs(element.x - p.x) + Math.abs(element.y - p.y) < 1e-5) {
+			for (let k = 0; k < vs.length && out === -1; k++) {
+				if (Math.abs(vs[k].x - p.x) + Math.abs(vs[k].y - p.y) < 1e-5) {
 					out = k;
 				}
 			}
@@ -262,10 +263,9 @@ function generateVertices(geometry: GeoJSON.MultiPolygon | GeoJSON.Polygon): IPr
 			}
 		}
 
-		for (const element of lateralIndexes) {
-			indexes.push(element);
-		}
-
+		lateralIndexes.forEach(latindex => {
+			indexes.push(latindex);
+		});
 		const tempVertice: number[] = [];
 		vertice.forEach(vertex => tempVertice.push(...vertex.toThreeGLSL()));
 		const resultat: IPreGeometry = {
@@ -278,6 +278,7 @@ function generateVertices(geometry: GeoJSON.MultiPolygon | GeoJSON.Polygon): IPr
 			indexes: new Uint16Array(indexes),
 			surfaceBoundary: contour.map(point => new Cartographic(point.x, point.y, 0, false)),
 		};
+
 		return resultat;
 	});
 }
@@ -286,15 +287,18 @@ function uniqueOccurenceCounter(list: any[]): string {
 	const dictionnary = {};
 	list.forEach(item => {
 		for (const att in item) {
-			if (!dictionnary.hasOwnProperty(att)) {
-				dictionnary[att] = [];
-			}
+			if (item.hasOwnProperty(att)) {
+				if (!dictionnary.hasOwnProperty(att)) {
+					dictionnary[att] = [];
+				}
 
-			if (!dictionnary[att].includes(item[att])) {
-				dictionnary[att].push(item[att]);
+				if (dictionnary[att].includes(item[att])) {
+					dictionnary[att].push(item[att]);
+				}
 			}
 		}
 	});
+
 	return Object.keys(dictionnary).sort((a, b) => dictionnary[b].length - dictionnary[a].length)[0];
 }
 
@@ -351,15 +355,13 @@ function computation(): void {
 	};
 	_gpgpu.positions.updateTextures(options);
 	const allPositions = _gpgpu.positions.calculate(_width, _height)[0];
-	let country: CountryMeshShader;
 	let begin: number;
 	let end: number;
-	for (const element of _countries) {
-		country = element;
+	_countries.forEach(country => {
 		begin = country.outputLimits.begin;
 		end = country.outputLimits.end;
 		country.setGeometry(allPositions.subarray(begin, end));
-	}
+	});
 }
 
 export class CountryMeshShader extends Mesh {
@@ -377,31 +379,23 @@ export class CountryMeshShader extends Mesh {
 		const promise = new Promise(resolve => {
 			if (uuid === undefined) {
 				Promise.all([
-					GPUComputer.GPUComputerFactory(
-						getShader('countryMeshShader', 'fragment'),
-						{
-							u_Positions: 'RGB32F', // _vertexArrayEntries
-						},
-						1
-					).then(instance => {
-						_gpgpu.positions = instance;
-						return instance;
-					}),
+					GPUComputer.GPUComputerFactory(getShader('countryMeshShader', 'fragment'), {u_Positions: 'RGB32F'}, 1).then(
+						instance => {
+							_gpgpu.positions = instance;
+							return instance;
+						}
+					),
 				]).then(() => {
 					uuid = CONFIGURATION.addEventListener(
 						'heightRatio intrudedHeightRatio referenceEquiRectangular THREE_EARTH_RADIUS ' +
 							'projectionBegin projectionEnd projectionPercent tick',
 						(name: string) => {
-							if (_ready) {
+							if (_ready === true) {
 								switch (name) {
 									case 'tick':
-										if (_dirty && _tickCount > 10) {
+										if (_dirty === true && _tickCount > 10) {
 											const options = {
-												u_Positions: {
-													src: _vertexArrayEntries,
-													width: _width,
-													height: _height,
-												},
+												u_Positions: {src: _vertexArrayEntries, width: _width, height: _height},
 											};
 											_gpgpu.positions.updateTextures(options);
 											computation();
@@ -432,24 +426,23 @@ export class CountryMeshShader extends Mesh {
 			geoJson.features.forEach(feature => {
 				const properties = feature.properties;
 				uniqueProperties.push(properties);
-				generateVertices(<GeoJSON.MultiPolygon | GeoJSON.Polygon>feature.geometry).forEach(item =>
-					preMeshes.push({geometry: item, properties})
+				generateVertices(<GeoJSON.MultiPolygon | GeoJSON.Polygon>feature.geometry).forEach(geometry =>
+					preMeshes.push({geometry, properties})
 				);
 			});
 			const mainProperty = uniqueOccurenceCounter(uniqueProperties);
 			let indexCount = 0;
 			let oldIndexCount = 0;
 			const vertexArrayEntries: number[] = [];
-			for (const item of preMeshes) {
+			preMeshes.forEach(item => {
 				oldIndexCount = indexCount;
 				indexCount += item.geometry.vertice.length / 3;
 				vertexArrayEntries.push(...item.geometry.vertice);
 				const extruded = item.geometry.extruded;
 				extruded.begin += oldIndexCount * 3;
 				extruded.end += oldIndexCount * 3;
-				const outputLimits = {begin: oldIndexCount * 4, end: indexCount * 4};
-				_countries.push(new CountryMeshShader(item, mainProperty, outputLimits));
-			}
+				_countries.push(new CountryMeshShader(item, mainProperty, {begin: oldIndexCount * 4, end: indexCount * 4}));
+			});
 
 			[_width, _height] = maxRectangle(vertexArrayEntries.length / 3);
 			_vertexArrayEntries = new Float32Array(vertexArrayEntries);
@@ -489,13 +482,13 @@ export class CountryMeshShader extends Mesh {
 			maxLong: -1000,
 			boundary: preGeometry.surfaceBoundary,
 		};
-		for (let i = 0; i < this._boundaryBox.boundary.length; i++) {
-			const pos = this._boundaryBox.boundary[i];
+
+		this._boundaryBox.boundary.forEach(pos => {
 			this._boundaryBox.minLong = Math.min(this._boundaryBox.minLong, pos.longitude);
 			this._boundaryBox.minLat = Math.min(this._boundaryBox.minLat, pos.latitude);
 			this._boundaryBox.maxLong = Math.max(this._boundaryBox.maxLong, pos.longitude);
 			this._boundaryBox.maxLat = Math.max(this._boundaryBox.maxLat, pos.latitude);
-		}
+		});
 
 		this._extrudedLimits = preGeometry.extruded;
 		this.outputLimits = outputLimits;
@@ -547,8 +540,8 @@ export class CountryMeshShader extends Mesh {
 	}
 
 	public setGeometry(positions: Float32Array): void {
-		const bufferedGeometry = this.geometry as BufferGeometry;
-		const interleavedBuffer = (bufferedGeometry.getAttribute('position') as InterleavedBufferAttribute).data;
+		const bufferedGeometry = <BufferGeometry>this.geometry;
+		const interleavedBuffer = (<InterleavedBufferAttribute>bufferedGeometry.getAttribute('position')).data;
 		interleavedBuffer.set(positions, 0);
 		interleavedBuffer.needsUpdate = true;
 		bufferedGeometry.computeBoundingSphere();

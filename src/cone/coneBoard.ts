@@ -129,6 +129,12 @@ export class ConeBoard {
 			this.coneMeshCollection.splice(i, 1);
 		}
 
+		for (let i = this.lineCollection.length - 1; i >= 0; i--) {
+			this._scene.remove(this.lineCollection[i]);
+			this.lineCollection[i].dispose();
+			this.lineCollection.splice(i, 1);
+		}
+
 		this._sumUpProperties = {};
 	}
 

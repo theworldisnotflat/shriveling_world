@@ -31,8 +31,7 @@ export class dataSetManager {
 					raw.arrayBuffer().then(buf => new Uint8Array(buf))
 				);
 				const unzipped: IListFile[] = JSON.parse(new TextDecoder('utf-8').decode(inflate(zip)));
-				bigBoard.cleanCones();
-				bigBoard.cleanCountries();
+				bigBoard.cleanAll();
 				gui.filesToInsert(unzipped);
 			}
 		});
