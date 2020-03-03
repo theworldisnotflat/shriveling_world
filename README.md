@@ -19,7 +19,7 @@ b. Introduce data in the app by grag'n'drop (see below)
 
 Attention: in any case data processing may take time, depending on the number of cities. So once 
 
-**Step #3**: enjoy! navigate around the threedimensional structure with mouse controls, define projection through interface, define desired control parameters through the interface on the right. 
+**Step #3**: enjoy! navigate around the threedimensional structure with mouse controls, define projection through interface, define desired control parameters through the interface on the right. Reload the page in the browser before changing dataset.
 
 ## Introducing data in the application by drag'n'drop
 
