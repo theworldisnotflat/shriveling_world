@@ -750,7 +750,7 @@ export class Merger {
 			this[name] = [];
 			this[name].push(...getCSV(someString, name === '_transportModeCode'));
 			if (name === '_transportModeCode' || name === '_transportNetwork') {
-				this[name].forEach((item: ITranspMode | IEdge) => {
+				(this[name] as IEdge[]).forEach(item => {
 					if (item.yearEnd === undefined || item.yearEnd === null || item.yearEnd.toString() === '') {
 						delete item.yearEnd;
 					}

@@ -17,9 +17,8 @@
     "@types/papaparse": "^5.0.1",
     "@types/tween.js": "^18.5.0",
     "@types/webgl2": "0.0.5",
-    "@typescript-eslint/eslint-plugin": "^2.21.0",
-    "@typescript-eslint/eslint-plugin-tslint": "^2.21.0",
-    "@typescript-eslint/parser": "^2.21.0",
+    "@typescript-eslint/eslint-plugin": "^2.22.0",
+    "@typescript-eslint/parser": "^2.22.0",
     "awesomplete": "^1.1.5",
     "dat.gui": "^0.7.6",
     "del": "^5.1.0",
@@ -44,14 +43,14 @@
     "rollup-plugin-typescript2": "^0.26.0",
     "strip-debug": "^4.0.0",
     "svelte": "^3.18.2",
-    "three": "^0.113.2",
+    "three": "^0.114.0",
     "tslint": "^6.0.0",
     "twgl.js": "^4.14.2",
     "typedoc": "^0.16.10",
     "typescript": "^3.8.3",
     "uglify-es": "^3.3.9",
     "xo": "^0.27.2",
-    "yargs": "^15.1.0"
+    "yargs": "^15.3.0-beta.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
