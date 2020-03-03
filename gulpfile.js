@@ -15,8 +15,6 @@ const {
     createWriteStream,
     ensureDir,
 } = require('fs-extra');
-const uglify = require('uglify-es');
-const typedoc = require('gulp-typedoc');
 const stripDebug = require('strip-debug');
 const gulp = require('gulp');
 const del = require('del');
@@ -190,8 +188,8 @@ const build = async done => {
 const doc = shell.task(
     'typedoc --out pages/documentation/html --json documentation/json.json --name "shriveling the world" --ignoreCompilerErrors --hideGenerator --target ES6  src'
 );
-const tslint = shell.task(
-    'tslint -c tslint.json -e src/webWorkers/**/*.ts src/**/**/*.ts src/*.ts'
+const xo = shell.task(
+    'npx xo --ext .ts src'
 );
 const clean = done => {
     del.sync([
@@ -272,7 +270,7 @@ const buildRequirements = gulp.series(
     build
 );
 const defaultRequirement = gulp.series(
-    gulp.parallel(clean /*, tslint*/),
+    gulp.parallel(clean , xo),
     buildRequirements,
     defaultTask
 );
@@ -285,7 +283,7 @@ gulp.task('svelte', svelteBundle);
 
 gulp.task('shaders', compileShaders);
 
-gulp.task('tslint', tslint);
+gulp.task('xo', xo);
 
 gulp.task('clean', clean);
 

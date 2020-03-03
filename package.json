@@ -31,7 +31,6 @@
     "gulp": "^4.0.1",
     "gulp-connect": "^5.6.1",
     "gulp-shell": "^0.8.0",
-    "gulp-typedoc": "^2.2.2",
     "hugo-bin": "^0.53.3",
     "pako": "^1.0.11",
     "papaparse": "^5.1.1",
@@ -48,7 +47,6 @@
     "twgl.js": "^4.14.2",
     "typedoc": "^0.16.10",
     "typescript": "^3.8.3",
-    "uglify-es": "^3.3.9",
     "xo": "^0.27.2",
     "yargs": "^15.3.0-beta.0"
   },
