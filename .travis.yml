@@ -6,14 +6,14 @@ before_script:
 install: npm i
 script:
   - gulp doc
-  - gulp
+  - gulp --testing --debug
 deploy:
   provider: pages
   skip_cleanup: true
   repo: theworldisnotflat/shriveling_world_documentation
   github_token: $GH_TOKEN
   keep_history: true
-  local_dir: pages # dossier qu'on souhaite exporter dans pages
+  local_dir: pages/app # dossier qu'on souhaite exporter dans pages
   on:
     branch: master
 notifications:

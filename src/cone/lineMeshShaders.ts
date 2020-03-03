@@ -32,7 +32,7 @@ fullCleanArrays();
  * Formule de la hauteur des arcs fonction de [[theta]]
  * et du [[speedRatio]] des vitesses
  *
- * formules of the heigth of edges function of '[[theta]]' and '[[ratio]]'
+ * formules of the heigth of links function of '[[theta]]' and '[[ratio]]'
  * * '[[speedRatio]]' is computed in function '[[getSpeedRatio]]' in file [[bigBoard/merger.ts]]
  * * '[[speedRatio]]' is computed with [two formulas](https://timespace.hypotheses.org/121)
  * depending on '[[theta]]' compared with '[[thetaLimit]]'

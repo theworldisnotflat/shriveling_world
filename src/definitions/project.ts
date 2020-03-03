@@ -123,7 +123,7 @@ export interface ILookupDestWithModes {
 }
 
 /**
- * A city and its incident edges in the network:
+ * A city and its incident links in the network:
  * * a [[referential]] of coordinates in [[NEDLocal]]
  * * a table of transport modes and their alphas
  * * a list of destinations and associated transport modes
@@ -138,7 +138,8 @@ export interface ICityNetwork {
 /**
  * A [[ILookupCityNetwork]] searches
  * * a cityCode
- * * and retrieves a piece of network [[ICityNetwork]] made of incident edges of cityCode in the transport network
+ * * and retrieves a piece of network [[ICityNetwork]] made of
+ * * incident links of cityCode in the transport network
  *
  * <uml>
  *     ILookupCityNetwork<-ICityNetwork
@@ -187,7 +188,7 @@ export interface IPopulation {
  * * [[urbanAgglomeration]] is the name of the city
  * * [[radius]]: number; // for cases of cities in islands close to a continent
  * * [[populations]] for several years as provided in csv file 'population.csv'
- * * [[edges]] is a table will be determined by scanning the [[ITransportNetwork]]
+ * * [[links]] is a table will be determined by scanning the [[ITransportNetwork]]
  */
 export interface ICity {
 	countryCode: number;
@@ -230,9 +231,9 @@ export interface ITranspMode {
 }
 
 /**
- * Here we find data a link/edge in the [[IEdge]]
+ * Here we find data a link in the [[ILink]]
  *
- * Each link/edge has
+ * Each link has
  * * a [[yearBegin]] and
  * * a [[yearEnd]]
  * * an origin [[idOri]]
@@ -286,7 +287,7 @@ export type ShaderTypes = 'fragment' | 'vertex';
 /**
  * [[ILookupEdgesWithTranspModes]] contains
  * * [[lookupCityNetwork]] network data (graph data) with modes and speed parameters
- * * [[edgesData]] edges data for geometric processes
+ * * [[linksData]] links data for geometric processes
  *
  * (some duplication but the purposes are different)
  */
@@ -317,7 +318,7 @@ export interface ILookupEdgeList {
 	theta: number;
 }
 /**
- * Lines (or edges) from a city
+ * Links from a city
  */
 export interface ILookupEdgesFromCity {
 	begin: ICityExtremityOfEdge;

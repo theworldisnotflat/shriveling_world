@@ -1,9 +1,9 @@
 /**
  * In merger we put the functions used only once
  * which are CPU/GPU intensive functions
- * and which compute the geometry of cones and edges.
+ * and which compute the geometry of cones and links.
  * the functions that must run each time a parameter is modified
- * are located in the respective files for cones and edges
+ * are located in the respective files for cones and links
  *
  * The general achitecture of the project is:
  * * merger with computing intensive functions used once
@@ -186,8 +186,8 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic): {middle: Cartogra
  * [[theta]] is the angle between the two cities
  * in the unprojected situation
  *
- * In the case of air edges, two equations are used to determine
- * the [heigth of aerial edges above the geodesic](http://bit.ly/2H4FOKw):
+ * In the case of air links, two equations are used to determine
+ * the [heigth of aerial links above the geodesic](http://bit.ly/2H4FOKw):
  * * below the threshold limit:![below](http://bit.ly/2Xu3kGF)
  * * beyond the threshold limit: ![beyond](http://bit.ly/2EejFpW)
  * * the figure: ![2](http://bit.ly/2H4FOKw)
@@ -665,7 +665,7 @@ function networkFromCities(
  *   * [[_transportModeCode]],
  *   * [[_transportNetwork]],
  *   * [[_state]] and
- *   * [[_edgesAndTranspModes]]
+ *   * [[_linksAndTranspModes]]
  *
  * This class will contain the function [[merge]]
  */
