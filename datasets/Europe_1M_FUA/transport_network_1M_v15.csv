@@ -4304,17 +4304,14 @@ yearBegin,yearEnd,idOri,nameOri,idDes,nameDes,transportMode,length,notes
 2011,,21633,Kumamoto,21626,Kagoshima,31,,HST
 2015,,21627,Kanazawa,21671,Tokyo,31,,HST
 1983,,20972,Lyon,20985,Paris,31,,HST
-1990,,20998,Tours,20985,Paris,31,,HST
-1993,,20960,Douai-Lens,20985,Paris,31,,HST
-1993,,20960,Douai-Lens,20969,Lille,31,,HST
-2001,,20972,Lyon,20948,Avignon,31,,HST
-2001,,20973,Marseille-Aix-en-Provence,20948,Avignon,31,,HST
-2001,,20978,Montpellier,20948,Avignon,31,,HST
-2001,,20994,Strasbourg,20985,Paris,31,,HST
+1990,,20981,Nantes,20985,Paris,31,,HST
+1993,,20985,Paris,20969,Lille,31,,HST
+2001,,20972,Lyon,20973,Marseille-Aix-en-Provence,31,,HST
+2001,,204367,Mannheim,20985,Paris,31,,HST covered by Paris-Strasbourg
 2001,,20998,Tours,20952,Bordeaux,31,,HST
 2001,,20990,Rennes,20985,Paris,31,,HST
 1997,,20144,Bruxelles-Brussel,20969,Lille,31,,HST
-2002,,20144,Bruxelles-Brussel,20148,Liège,31,,HST
+2002,,20144,Bruxelles-Brussel,204358,K�ln (Cologne),31,,HST
 2009,,20144,Bruxelles-Brussel,20142,Antwerpen,31,,HST
 2009,,21945,Rotterdam,20142,Antwerpen,31,,HST
 2009,,21945,Rotterdam,21930,Amsterdam,31,,HST
@@ -4323,20 +4320,12 @@ yearBegin,yearEnd,idOri,nameOri,idDes,nameDes,transportMode,length,notes
 2006,,204376,Nurenberg,204371,München (Munich),31,,HST https://en.wikipedia.org/wiki/Nuremberg%E2%80%93Munich_high-speed_railway
 2002,,204358,Köln (Cologne),204332,Frankfurt am Main,31,,HST https://en.wikipedia.org/wiki/Cologne%E2%80%93Frankfurt_high-speed_rail_line#Opening_and_start-up
 1991,,204367,Mannheim,204397,Stuttgart,31,,HST https://en.wikipedia.org/wiki/Mannheim%E2%80%93Stuttgart_high-speed_railway
-2016,,204376,Nurenberg,204439,Leipzig,31,,HST https://en.wikipedia.org/wiki/High-speed_rail_in_Germany
-1992,,22549,Madrid,22531,Cordoba,31,,HST
-1992,,22562,Sevilla,22531,Cordoba,31,,HST
-2007,,22550,Malaga,22531,Cordoba,31,,HST
-2007,,22568,Valladolid,22549,Madrid,31,,HST
-2008,,205149,Zaragoza,22549,Madrid,31,,HST
+2016,,204376,Nurenberg,204296,Berlin,31,,HST https://en.wikipedia.org/wiki/High-speed_rail_in_Germany (considered extension from Leipzig)
+1992,,22549,Madrid,22562,Sevilla,31,,HST
 2010,,22567,Valencia,22549,Madrid,31,,HST
-2013,,22525,Barcelona,205149,Zaragoza,31,,HST
-2013,,22520,Alicante,22549,Madrid,31,,HST
-2014,,22656,Ankara,22682,Eskisehir,31,,HST
-2014,,22648,Sakarya,22682,Eskisehir,31,,HST
-2014,,22648,Sakarya,22704,Izmit,31,,HST
-2014,,22704,Izmit,22684,Gebze,31,,HST
-2014,,22691,Istanbul,22684,Gebze,31,,HST
+2013,,22525,Barcelona,22549,Madrid,31,,HST
+2014,,22656,Ankara,22691,Istanbul,31,,HST
+2014,,22656,Ankara,22705,Konya,31,,HST
 2007,,22860,London,20969,Lille,31,,HST
 2004,,21758,Seoul,21739,Cheonan,31,,HST
 2004,,21731,Cheongju,21730,Cheonan,31,,HST
