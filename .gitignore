@@ -15,3 +15,6 @@ package-lock.json
 .Rhistory
 documentation
 pages
+templates/blog/public
+templates/blog/content/documentation/
+templates/blog/themes

@@ -1,12 +1,11 @@
 language: node_js
 node_js:
  - "node"
-before_script:
+before_install:
   - npm install -g gulp-cli
 install: npm i
 script:
-  - gulp doc
-  - gulp --testing --debug
+  - gulp
 deploy:
   provider: pages
   skip_cleanup: true

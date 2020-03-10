@@ -1,0 +1,16 @@
+languageCode = "fr-fr"
+DefaultContentLanguage = "fr"
+title = "Shriveling world"
+theme = "techdoc"
+[[menu.main]]
+    name = "Home" #Name in the navigation bar
+    weight = 10 #The larger the weight, the more on the right this item will be
+    url = "/" #URL address
+[[menu.main]]
+    name = "doc technique"
+    weight = 20
+    url = "/documentation/"
+[[menu.main]]
+    name = "application"
+    weight = 30
+    url = "/app/"
