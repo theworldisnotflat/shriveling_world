@@ -232,7 +232,7 @@ const doc = series(
 
 const xo = shell.task('npx xo --ext .ts src');
 
-const hugoGeneration = shell.task(`cd templates/blog && npx hugo -D --debug`, {
+const hugoGeneration = shell.task(`cd templates/blog && npx hugo -D --debug ${isProduction?'': '-b "http://127.0.0.1:8080"'}`, {
 	verbose: true,
 });
 
@@ -248,17 +248,7 @@ const clone = shell.task('git clone https://github.com/thingsym/hugo-theme-techd
 const postinstall = async done => {
 	const dropThemes = cleaner(['templates/blog/themes']);
 	await dropThemes(() => {});
-	await clone();
-	const htmls = glob2Array(['templates/blog/themes/techdoc/layouts/partials/**/**/*.html']);
-	const reg = /absURL/g;
-	await Promise.all(
-		htmls.map(async html => {
-			let fileContent = readFileSync(html, 'utf8');
-			await outputFile(__dirname + '/' + html, fileContent.replace(reg, 'relURL'));
-			return fileContent;
-		})
-	);
-	done();
+	clone(done);
 };
 
 const hugoRequirements = series(hugoGeneration, hugoCopy);

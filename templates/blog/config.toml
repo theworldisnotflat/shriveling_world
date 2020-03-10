@@ -3,6 +3,7 @@ DefaultContentLanguage = "fr"
 title = "Shriveling world"
 theme = "techdoc"
 relativeURLs = "true"
+baseURL= "https://theworldisnotflat.github.io/shriveling_world_documentation"
 [[menu.main]]
     name = "Home" #Name in the navigation bar
     weight = 10 #The larger the weight, the more on the right this item will be
