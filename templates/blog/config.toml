@@ -2,6 +2,7 @@ languageCode = "fr-fr"
 DefaultContentLanguage = "fr"
 title = "Shriveling world"
 theme = "techdoc"
+relativeURLs = "true"
 [[menu.main]]
     name = "User documentation" #Name in the navigation bar
     weight = 10 #The larger the weight, the more on the right this item will be
