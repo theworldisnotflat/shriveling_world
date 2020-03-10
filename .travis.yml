@@ -5,8 +5,7 @@ before_script:
   - npm install -g gulp-cli
 install: npm i
 script:
-  - gulp doc
-  - gulp --testing --debug
+  - gulp
 deploy:
   provider: pages
   skip_cleanup: true
