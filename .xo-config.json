@@ -23,6 +23,9 @@
 		"@typescript-eslint/restrict-plus-operands": "off",
 		"no-inner-declarations": "off",
 		"@typescript-eslint/consistent-type-assertions": "off",
+		"unicorn/no-abusive-eslint-disable":"off",
+		"unicorn/prevent-abbreviations":"off",
+		"eslint-comments/no-unused-disable":"off",
 		"@typescript-eslint/member-ordering": [
 			"error",
 			{
