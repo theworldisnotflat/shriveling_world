@@ -4304,11 +4304,20 @@ yearBegin,yearEnd,idOri,nameOri,idDes,nameDes,transportMode,length,notes
 2011,,21633,Kumamoto,21626,Kagoshima,31,,HST
 2015,,21627,Kanazawa,21671,Tokyo,31,,HST
 1983,,20972,Lyon,20985,Paris,31,,HST
+<<<<<<< HEAD:datasets/Europe_1M/transport_network_1M_v15.csv
+1990,,20998,Tours,20985,Paris,31,,HST
+1993,,20985,Paris,20969,Lille,31,,HST
+2001,,20972,Lyon,20973,Marseille-Aix-en-Provence,31,,HST
+2001,,20978,Montpellier,20948,Avignon,31,,HST
+2016,,20994,Strasbourg,20985,Paris,31,,HST
+2016,,20985,Paris,20952,Bordeaux,31,,HST
+=======
 1990,,20981,Nantes,20985,Paris,31,,HST
 1993,,20985,Paris,20969,Lille,31,,HST
 2001,,20972,Lyon,20973,Marseille-Aix-en-Provence,31,,HST
 2001,,204367,Mannheim,20985,Paris,31,,HST covered by Paris-Strasbourg
 2001,,20998,Tours,20952,Bordeaux,31,,HST
+>>>>>>> 303fc427bd47ab876a0a085566ad03c4234f2139:datasets/Europe_1M_FUA/transport_network_1M_v15.csv
 2001,,20990,Rennes,20985,Paris,31,,HST
 1997,,20144,Bruxelles-Brussel,20969,Lille,31,,HST
 2002,,20144,Bruxelles-Brussel,204358,Köln (Cologne),31,,HST
