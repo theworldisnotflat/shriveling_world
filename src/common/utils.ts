@@ -121,36 +121,33 @@ export const ZERO_CARTOGRAPHIC = new Cartographic();
 
 Object.freeze(ZERO_CARTOGRAPHIC);
 
-function updateSumupCriteriaByDateOrNumber(
-	subObject: {max: Date | number; min: Date | number},
-	temp: Date | number
-): void {
-	const comparMin = compare(subObject.min, temp, true);
-	const comparMax = compare(subObject.max, temp, true);
+function updateSumupCriteriaByDateOrNumber(subObject: {max: Date | number; min: Date | number}, temporary): void {
+	const comparMin = compare(subObject.min, temporary, true);
+	const comparMax = compare(subObject.max, temporary, true);
 	if (comparMin > 0) {
-		subObject.min = temp;
+		subObject.min = temporary;
 	}
 
 	if (comparMax < 0) {
-		subObject.max = temp;
+		subObject.max = temporary;
 	}
 }
 
 export function updateSumUpCriteria(sumup: ISumUpCriteria, properties: any): ISumUpCriteria {
-	let temp: any;
-	let typeofTemp: string;
+	let temporary;
+	let typeofTemporary;
 	// Attention si properties est un tableau
 	for (const attribute in properties) {
 		if (properties.hasOwnProperty(attribute)) {
-			temp = properties[attribute];
-			if (temp !== undefined || temp !== null) {
-				typeofTemp = typeof temp;
+			temporary = properties[attribute];
+			if (temporary !== undefined || temporary !== null) {
+				typeofTemporary = typeof temporary;
 				if (sumup.hasOwnProperty(attribute)) {
-					switch (typeofTemp) {
+					switch (typeofTemporary) {
 						case 'string':
 							if (sumup[attribute].type === 'string') {
-								if (!(<string[]>sumup[attribute].sumUp).includes(temp)) {
-									(<string[]>sumup[attribute].sumUp).push(temp);
+								if (!(<string[]>sumup[attribute].sumUp).includes(temporary)) {
+									(<string[]>sumup[attribute].sumUp).push(temporary);
 								}
 							} else {
 								sumup[attribute].type = 'undefined';
@@ -159,14 +156,14 @@ export function updateSumUpCriteria(sumup: ISumUpCriteria, properties: any): ISu
 
 							break;
 						case 'object':
-							if (temp instanceof Date && sumup[attribute].type === 'date') {
-								updateSumupCriteriaByDateOrNumber(<{max: Date; min: Date}>sumup[attribute].sumUp, temp);
-							} else if (Array.isArray(temp) && sumup[attribute].type === 'array') {
-								temp.forEach(item => {
+							if (temporary instanceof Date && sumup[attribute].type === 'date') {
+								updateSumupCriteriaByDateOrNumber(<{max: Date; min: Date}>sumup[attribute].sumUp, temporary);
+							} else if (Array.isArray(temporary) && sumup[attribute].type === 'array') {
+								temporary.forEach(item => {
 									updateSumUpCriteria(<ISumUpCriteria>sumup[attribute].sumUp, item);
 								});
 							} else if (sumup[attribute].type === 'object') {
-								updateSumUpCriteria(<ISumUpCriteria>sumup[attribute].sumUp, temp);
+								updateSumUpCriteria(<ISumUpCriteria>sumup[attribute].sumUp, temporary);
 							} else {
 								sumup[attribute].type = 'undefined';
 								delete sumup[attribute].sumUp;
@@ -186,7 +183,7 @@ export function updateSumUpCriteria(sumup: ISumUpCriteria, properties: any): ISu
 							break;
 						case 'number':
 							if (sumup[attribute].type === 'number') {
-								updateSumupCriteriaByDateOrNumber(<{max: number; min: number}>sumup[attribute].sumUp, temp);
+								updateSumupCriteriaByDateOrNumber(<{max: number; min: number}>sumup[attribute].sumUp, temporary);
 							} else {
 								sumup[attribute].type = 'undefined';
 								delete sumup[attribute].sumUp;
@@ -196,22 +193,22 @@ export function updateSumUpCriteria(sumup: ISumUpCriteria, properties: any): ISu
 						default:
 					}
 				} else {
-					switch (typeofTemp) {
+					switch (typeofTemporary) {
 						case 'string':
 							sumup[attribute] = {type: 'string', sumUp: []};
-							(<string[]>sumup[attribute].sumUp).push(temp);
+							(<string[]>sumup[attribute].sumUp).push(temporary);
 							break;
 						case 'object':
-							if (temp instanceof Date) {
-								sumup[attribute] = {type: 'date', sumUp: {max: temp, min: temp}};
-							} else if (Array.isArray(temp)) {
+							if (temporary instanceof Date) {
+								sumup[attribute] = {type: 'date', sumUp: {max: temporary, min: temporary}};
+							} else if (Array.isArray(temporary)) {
 								sumup[attribute] = {type: 'array', sumUp: {}};
-								temp.forEach(item => {
+								temporary.forEach(item => {
 									updateSumUpCriteria(<ISumUpCriteria>sumup[attribute].sumUp, item);
 								});
 							} else {
 								sumup[attribute] = {type: 'object', sumUp: {}};
-								updateSumUpCriteria(<ISumUpCriteria>sumup[attribute].sumUp, temp);
+								updateSumUpCriteria(<ISumUpCriteria>sumup[attribute].sumUp, temporary);
 							}
 
 							break;
@@ -223,7 +220,7 @@ export function updateSumUpCriteria(sumup: ISumUpCriteria, properties: any): ISu
 						case 'function':
 							break;
 						case 'number':
-							sumup[attribute] = {type: 'number', sumUp: {max: temp, min: temp}};
+							sumup[attribute] = {type: 'number', sumUp: {max: temporary, min: temporary}};
 							break;
 						default:
 					}
@@ -313,7 +310,7 @@ function compareItemCriteria(value: any, itemCriteria: IItemCriteria): boolean {
 }
 
 function getObjectByString(objet: any, path: string): any {
-	path = path.replace(/\[(\w+|\*)\]/g, '.$1'); // Convert indexes to properties
+	path = path.replace(/\[(\w+|\*)]/g, '.$1'); // Convert indexes to properties
 	path = path.replace(/^\./, ''); // Strip a leading dot
 	const tab = path.split('.');
 	let subAttribut = tab.shift();
@@ -497,18 +494,17 @@ export function interpolator<U>(
 	return resultat;
 }
 
-/* Tslint:disable */
-const iso8601RegExp = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))/;
-/* Tslint:enable */
+// eslint-disable-next-line unicorn/better-regex
+const iso8601RegExp = /(\d{4}-[01]\d-[0-3]\dT[0-2](?:\d:[0-5]){2}\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2](?:\d:[0-5]){2}\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))/;
 
-// to use for JSON.parse
+// To use for JSON.parse
 export const reviver: any = <U>(_key: string, value: any): U | any => {
 	const resultat: any | U = value;
 
 	if (typeof value === 'string') {
-		const temp = value.replace(' ', '');
-		if (iso8601RegExp.exec(temp)) {
-			value = new Date(temp);
+		const temporary = value.replace(' ', '');
+		if (iso8601RegExp.exec(temporary)) {
+			value = new Date(temporary);
 		}
 	}
 
@@ -559,12 +555,12 @@ export function getLocalLimits(
 	}
 
 	const length = resultat.length;
-	let temp: {clock: number; distance: number};
+	let temporary;
 	for (let i = 0; i < length; i++) {
-		temp = resultat[i];
+		temporary = resultat[i];
 		resultat.push(
-			{clock: temp.clock - CONFIGURATION.TWO_PI, distance: temp.distance},
-			{clock: temp.clock + CONFIGURATION.TWO_PI, distance: temp.distance}
+			{clock: temporary.clock - CONFIGURATION.TWO_PI, distance: temporary.distance},
+			{clock: temporary.clock + CONFIGURATION.TWO_PI, distance: temporary.distance}
 		);
 	}
 
