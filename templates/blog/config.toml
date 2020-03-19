@@ -3,7 +3,7 @@ DefaultContentLanguage = "fr"
 title = "Shriveling world"
 theme = "techdoc"
 relativeURLs = "true"
-baseURL= "https://theworldisnotflat.github.io/shriveling_world_documentation"
+baseURL= "https://theworldisnotflat.github.io/shriveling_world_documentation/"
 [[menu.main]]
     name = "User documentation" #Name in the navigation bar
     weight = 10 #The larger the weight, the more on the right this item will be
@@ -11,8 +11,8 @@ baseURL= "https://theworldisnotflat.github.io/shriveling_world_documentation"
 [[menu.main]]
     name = "Developper documentation"
     weight = 20
-    url = "/documentation/"
+    url = "documentation/"
 [[menu.main]]
     name = "Application"
     weight = 30
-    url = "/app/"
+    url = "app/"
