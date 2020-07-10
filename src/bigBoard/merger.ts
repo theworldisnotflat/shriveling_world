@@ -210,8 +210,8 @@ function getModelledSpeed(theta: number, speedMax: number, speed: number, terres
 		? // In the general case 2000 km / 750 kph (factor 0.375)
 		  // for Germany based on Hamburg-München route 600 km, 1h20 = 450 kph (factor 0.75)
 		  // (CONFIGURATION.earthRadiusMeters / 1000) * theta * 0.375 :
-		  // (CONFIGURATION.earthRadiusMeters / 1000) * theta * 750 / 2000 :
-		  ((CONFIGURATION.earthRadiusMeters / 1000) * theta * 450) / 600
+		  // ((CONFIGURATION.earthRadiusMeters / 1000) * theta * 450) / 600 :
+		  ((CONFIGURATION.earthRadiusMeters / 1000) * theta * 750) / 2000
 		: speed;
 }
 
