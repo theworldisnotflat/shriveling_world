@@ -31,12 +31,12 @@ import {GUI} from './guiDAT';
 
 /**
  * C'est la classe qui contrôle toute l'application: la liste des cônes, pays et
- * lignes ainsi que la scene THREE.JS + les commandes et le comportement...
+ * courbes ainsi que la scene THREE.JS + les commandes et le comportement...
  *
  * This class controls all the application:
  * * the list of [[_cones]],
  * * [[_countries]],
- * * lines
+ * * curves
  * This is where the THREE.JS scene is defined with commands and behaviors
  */
 export default class BigBoard {
@@ -568,41 +568,41 @@ export default class BigBoard {
 	 * Export the scene in Wavefront OBJ format.
 	 * Exported files can be imported in Blender.
 	 *
-	 * Three files a generated:
+	 * Three files are generated:
 	 * * sceneCones.obj
-	 * * sceneLinesLongHaul.obj for short distance flights above the geodesic
-	 * * sceneLinesShortHaul.obj for long distance geodesic flights
+	 * * sceneCurvesLongHaul.obj for short distance flights above the geodesic
+	 * * sceneCurvesShortHaul.obj for long distance geodesic flights
 	 * @private
 	 * @memberof BigBoard
 	 */
 	private exporterOBJ(): void {
 		const exporter = new OBJExporter();
 		const groupCone = new Group();
-		const groupLineShortHaul = new Group();
-		const groupLineLongHaul = new Group();
+		const groupCurveShortHaul = new Group();
+		const groupCurvesLongHaul = new Group();
 		this.coneBoard.coneMeshCollection.forEach(cone => groupCone.add(cone));
-		this.coneBoard.lineCollection.forEach(line => {
-			if (line.getTheta < 2000 / (CONFIGURATION.earthRadiusMeters / 1000)) {
-				groupLineShortHaul.add(line);
+		this.coneBoard.curveCollection.forEach(curve => {
+			if (curve.getTheta < 2000 / (CONFIGURATION.earthRadiusMeters / 1000)) {
+				groupCurveShortHaul.add(curve);
 			} else {
-				groupLineLongHaul.add(line);
+				groupCurvesLongHaul.add(curve);
 			}
 		});
 		const blobCone = new Blob([exporter.parse(groupCone)], {
 			type: 'text/plain;charset=utf-8',
 		});
 		save(blobCone, 'sceneCones.obj');
-		const blobLineShort = new Blob([exporter.parse(groupLineShortHaul)], {
+		const blobCurveShort = new Blob([exporter.parse(groupCurveShortHaul)], {
 			type: 'text/plain;charset=utf-8',
 		});
-		save(blobLineShort, 'sceneLinesShortHaul.obj');
-		const blobLineLong = new Blob([exporter.parse(groupLineLongHaul)], {
+		save(blobCurveShort, 'sceneCurvesShortHaul.obj');
+		const blobCurveLong = new Blob([exporter.parse(groupCurvesLongHaul)], {
 			type: 'text/plain;charset=utf-8',
 		});
-		save(blobLineLong, 'sceneLinesLongHaul.obj');
+		save(blobCurveLong, 'sceneCurvesLongHaul.obj');
 		this._scene.add(groupCone);
-		this._scene.add(groupLineShortHaul);
-		this._scene.add(groupLineLongHaul);
+		this._scene.add(groupCurveShortHaul);
+		this._scene.add(groupCurvesLongHaul);
 	}
 
 	/**

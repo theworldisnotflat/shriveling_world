@@ -124,7 +124,7 @@ const keyWords: Array<{name: string; words: string[]}> = [
 const thetaLimit = 2000 / (CONFIGURATION.earthRadiusMeters / 1000);
 let _minYear = 2000;
 let _maxYear = 1900;
-let _transportName: {lines: string[]; cones: string[]} = {lines: [], cones: []};
+let _transportName: {curves: string[]; cones: string[]} = {curves: [], cones: []};
 const config: Papa.ParseConfig = {
 	header: true,
 	dynamicTyping: true,
@@ -221,7 +221,7 @@ function getModelledSpeed(theta: number, speedMax: number, speed: number, terres
  * function [[networkFromCities]] explores the [[transportNetwork]]
  * around each city in order to
  * * determine the geometry of cones ([[cities]])
- * * and to draw lines
+ * * and to draw curves
  *
  * First part of the function is putting in cache all the computations
  * needed from each city, and especially  the [[referential]]
@@ -313,7 +313,7 @@ function networkFromCities(
 		clock: number;
 	}
 	let roadCode: number;
-	_transportName = {lines: [], cones: []};
+	_transportName = {curves: [], cones: []};
 	/**
 	 * Tableau associatif liant un mode de transport à un un objet de type [[ITabSpeedPerYearPerTranspModeItem]]
 	 *
@@ -322,7 +322,7 @@ function networkFromCities(
 	const speedPerTransportPerYear: {[transportCode: string]: ITabSpeedPerYearPerTranspModeItem} = {};
 	/**
 	 * For each transport mode:
-	 * * we dertermine if it is terrestrial (cones) or not (line)
+	 * * we dertermine if it is terrestrial (cones) or not (curve)
 	 * * the temporal scope of the transort mode
 	 * * the table of speed of the considered transport modes.
 	 * the interpolation function used to populate the table returns
@@ -338,7 +338,7 @@ function networkFromCities(
 			roadCode = transportCode;
 		}
 
-		_transportName[transportMode.terrestrial ? 'cones' : 'lines'].push(name);
+		_transportName[transportMode.terrestrial ? 'cones' : 'curves'].push(name);
 		const minYearTransport = Math.max(transportMode.yearBegin, minYear);
 		let maxYearTransport = transportMode.yearEnd === undefined ? actualYear : transportMode.yearEnd;
 		let tempTransportCodeTab: ITransportCodeItem[] = [];
@@ -526,7 +526,7 @@ function networkFromCities(
 					}
 
 					const edgeModeSpeed = edgeTranspModeSpeed.tabYearSpeed;
-					// To avoid visual duplication of lines!
+					// To avoid visual duplication of curves!
 					const edgeToBeProcessed = !processedODs[origCityCode][destCityCode].includes(edgeTranspModeName);
 					processedODs[origCityCode][destCityCode].push(edgeTranspModeName);
 					processedODs[destCityCode][origCityCode].push(edgeTranspModeName);
@@ -547,7 +547,7 @@ function networkFromCities(
 								speed: edgeModeSpeed[year].speed,
 							});
 							if (edgeToBeProcessed) {
-								// Condition to avoid visual duplication of lines!
+								// Condition to avoid visual duplication of curves!
 								const modelledSpeed = getModelledSpeed(
 									theta,
 									maximumSpeed[year],
@@ -701,7 +701,7 @@ export class Merger {
 		return _maxYear;
 	}
 
-	public get transportNames(): {lines: string[]; cones: string[]} {
+	public get transportNames(): {curves: string[]; cones: string[]} {
 		return _transportName;
 	}
 
@@ -787,7 +787,7 @@ export class Merger {
 			merger(transportNetwork, cities, 'idDes', 'cityCode', 'destCityInfo', false, false, false);
 			// Generates subgraph from city considered as origin
 			merger(cities, transportNetwork, 'cityCode', 'idOri', 'edges', true, true, false);
-			// The main function that generates geometries (cones, lines) by exploring the subgraphs from cities
+			// The main function that generates geometries (cones, curves) by exploring the subgraphs from cities
 			this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
 			// Console.log(this._edgesAndTranspModes);
 			this._state = 'missing';

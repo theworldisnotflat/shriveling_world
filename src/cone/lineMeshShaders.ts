@@ -62,7 +62,7 @@ function getHeight(speedRatio: number, theta: number): number {
  * higher values will consume processor load
  */
 function regenerateStep(): void {
-	const step = 1 / CONFIGURATION.pointsPerLine;
+	const step = 1 / CONFIGURATION.pointsPerCurve;
 	const t: number[] = [];
 	for (let i = 0; i < 1; i += step) {
 		t.push(i);
@@ -147,11 +147,11 @@ export class LineMeshShader extends Line {
 				]).then(() => {
 					uuid = CONFIGURATION.addEventListener(
 						'heightRatio intrudedHeightRatio  referenceEquiRectangular THREE_EARTH_RADIUS ' +
-							'projectionBegin projectionEnd projectionPercent year pointsPerLine',
+							'projectionBegin projectionEnd projectionPercent year pointsPerCurve',
 						(name: string) => {
 							if (_ready) {
 								switch (name) {
-									case 'pointsPerLine':
+									case 'pointsPerCurve':
 										_t = new Float32Array(0);
 										regenerateStep();
 										updateYear();

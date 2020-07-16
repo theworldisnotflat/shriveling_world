@@ -11,7 +11,7 @@ const forbiddenAttributes = ['referential', 'position'];
 
 export class ConeBoard {
 	public coneMeshCollection: PseudoCone[] = [];
-	public lineCollection: LineMeshShader[] = [];
+	public curveCollection: LineMeshShader[] = [];
 	private readonly _scene: Scene;
 	private readonly _camera: Camera;
 	private readonly _raycaster: Raycaster;
@@ -107,7 +107,7 @@ export class ConeBoard {
 		});
 		LineMeshShader.generateCones(lookup.edgesData).then(lines => {
 			lines.forEach(line => {
-				this.lineCollection.push(line);
+				this.curveCollection.push(line);
 				line.visible = this._show;
 				line.scale.setScalar(this._scale);
 				this._scene.add(line);
@@ -129,10 +129,10 @@ export class ConeBoard {
 			this.coneMeshCollection.splice(i, 1);
 		}
 
-		for (let i = this.lineCollection.length - 1; i >= 0; i--) {
-			this._scene.remove(this.lineCollection[i]);
-			this.lineCollection[i].dispose();
-			this.lineCollection.splice(i, 1);
+		for (let i = this.curveCollection.length - 1; i >= 0; i--) {
+			this._scene.remove(this.curveCollection[i]);
+			this.curveCollection[i].dispose();
+			this.curveCollection.splice(i, 1);
 		}
 
 		this._sumUpProperties = {};

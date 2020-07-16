@@ -274,7 +274,7 @@ export type configurationObservableEvt =
 	| 'coneStep'
 	| 'TWEEN_TIMING'
 	| 'referenceEquiRectangular'
-	| 'pointsPerLine'
+	| 'pointsPerCurve'
 	| 'THREE_EARTH_RADIUS'
 	| 'projectionBegin'
 	| 'projectionEnd'

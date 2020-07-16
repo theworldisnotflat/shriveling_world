@@ -33,9 +33,9 @@ let conf = {
 	'transport type': '',
 	'cones color': '#',
 	'cones transparency': 0,
-	'line color': '#',
+	'curve color': '#',
 	'text color': '#',
-	'line transparency': 0,
+	'curve transparency': 0,
 	'light color': '#',
 	intensity: 0,
 	'ambient color': '#',
@@ -70,9 +70,9 @@ export class GUI {
 			'transport type': '',
 			'cones color': '#' + (<any>CONFIGURATION.BASIC_CONE_MATERIAL).color.getHex().toString(16),
 			'cones transparency': CONFIGURATION.BASIC_CONE_MATERIAL.opacity,
-			'line color': '#' + CONFIGURATION.BASIC_LINE_MATERIAL.color.getHex().toString(16),
+			'curve color': '#' + CONFIGURATION.BASIC_LINE_MATERIAL.color.getHex().toString(16),
 			'text color': '#' + CONFIGURATION.BASIC_TEXT_MATERIAL.color.getHex().toString(16),
-			'line transparency': CONFIGURATION.BASIC_LINE_MATERIAL.opacity,
+			'curve transparency': CONFIGURATION.BASIC_LINE_MATERIAL.opacity,
 			'light color': '#' + bigBoard.light.color.getHex().toString(16),
 			intensity: bigBoard.light.intensity,
 			'ambient color': '#' + bigBoard.ambient.color.getHex().toString(16),
@@ -161,48 +161,48 @@ export class GUI {
 					}
 
 					// Adding aerial network(s)
-					this._merger.transportNames.lines.forEach(transportName => {
+					this._merger.transportNames.curves.forEach(transportName => {
 						const folder = aerialFolder.addFolder(transportName);
 						aerialControllersList.push(folder);
-						function lineListener(): void {
-							const opacity = <number>lineOpacity.getValue();
-							const color = parseInt(lineColor.getValue().replace('#', ''), 16);
-							bigBoard.coneBoard.lineCollection
-								.filter(line => transportName === line.transportName)
-								.forEach(line => {
-									const material = <LineBasicMaterial>line.material;
+						function curveListener(): void {
+							const opacity = <number>curveOpacity.getValue();
+							const color = parseInt(curveColor.getValue().replace('#', ''), 16);
+							bigBoard.coneBoard.curveCollection
+								.filter(curve => transportName === curve.transportName)
+								.forEach(curve => {
+									const material = <LineBasicMaterial>curve.material;
 									material.color.setHex(color);
 									material.opacity = opacity;
 								});
 						}
 
-						const lineColor = folder.addColor(conf, 'line color').name('color');
-						lineColor.onChange(lineListener);
-						const lineOpacity = folder.add(conf, 'line transparency', 0, 1, 0.01).name('transparency');
-						lineOpacity.onChange(lineListener);
+						const curveColor = folder.addColor(conf, 'curve color').name('color');
+						curveColor.onChange(curveListener);
+						const curveOpacity = folder.add(conf, 'curve transparency', 0, 1, 0.01).name('transparency');
+						curveOpacity.onChange(curveListener);
 					});
 					// Adding terrestrial networks
 					this._merger.transportNames.cones.forEach(transportName => {
 						const folder = terresterialFolder.addFolder(transportName);
 						terrestrialControllersList.push(folder);
 
-						function lineListener(): void {
-							const opacity = <number>lineOpacity.getValue();
-							const color = parseInt(lineColor.getValue().replace('#', ''), 16);
+						function curveListener(): void {
+							const opacity = <number>curveOpacity.getValue();
+							const color = parseInt(curveColor.getValue().replace('#', ''), 16);
 
-							bigBoard.coneBoard.lineCollection
-								.filter(line => transportName === line.transportName)
-								.forEach(line => {
-									const material = <LineBasicMaterial>line.material;
+							bigBoard.coneBoard.curveCollection
+								.filter(curve => transportName === curve.transportName)
+								.forEach(curve => {
+									const material = <LineBasicMaterial>curve.material;
 									material.color.setHex(color);
 									material.opacity = opacity;
 								});
 						}
 
-						const lineColor = folder.addColor(conf, 'line color').name('color');
-						lineColor.onChange(lineListener);
-						const lineOpacity = folder.add(conf, 'line transparency', 0, 1, 0.01).name('transparency');
-						lineOpacity.onChange(lineListener);
+						const curveColor = folder.addColor(conf, 'curve color').name('color');
+						curveColor.onChange(curveListener);
+						const curveOpacity = folder.add(conf, 'curve transparency', 0, 1, 0.01).name('transparency');
+						curveOpacity.onChange(curveListener);
 					});
 				}
 
@@ -338,10 +338,10 @@ export class GUI {
 		// let terrestrialControllersList: dat.GUI[] = [];
 		// let flagTransportDone = false;
 
-		// lines
-		aerialFolder = gui.addFolder('Lines');
+		// curves
+		aerialFolder = gui.addFolder('Curves');
 		aerialFolder
-			.add(CONFIGURATION, 'pointsPerLine', 0, 200)
+			.add(CONFIGURATION, 'pointsPerCurve', 0, 200)
 			.step(1)
 			.name('number of points');
 		terresterialFolder = aerialFolder.addFolder('terrestrial modes');

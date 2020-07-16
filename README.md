@@ -54,7 +54,7 @@ For these other command lines an UI already exists
 - projectionEnd : the final projection with value as projectionBegin
 - projectionPercent: transition value between projectionBegin and projectionEnd. Value included in the range 0 to 100 included.
 - year: base year of the representation (value in the networks files)
-- pointsPerLine=X where X is an integer between 1 and 199 included. This value influences the way curves are drawn. The value **zero** draws all straight lines, while the value **1** draws broken lines
+- pointsPerCurve=X where X is an integer between 1 and 199 included. This value influences the way curves are drawn. The value **zero** draws all straight lines, while the value **1** draws broken lines
 
 ## Testing lengths and angles
 

@@ -43,7 +43,7 @@ let _COUNTRY_MATERIAL: Material;
 let _BASIC_CONE_MATERIAL: Material;
 let _BASIC_TEXT_MATERIAL: MeshBasicMaterial;
 let _BASIC_LINE_MATERIAL: LineBasicMaterial;
-let _pointsPerLine = 50;
+let _pointsPerCurve = 50;
 let _SIZE_TEXT: number;
 let _TEXT_GEOMETRY_OPTIONS: TextGeometryParameters;
 
@@ -61,7 +61,7 @@ const _listeners: {
 	projectionPercent: IEventListItem[];
 	year: IEventListItem[];
 	tick: IEventListItem[];
-	pointsPerLine: IEventListItem[];
+	pointsPerCurve: IEventListItem[];
 } = {
 	heightRatio: [],
 	intrudedHeightRatio: [],
@@ -74,7 +74,7 @@ const _listeners: {
 	projectionPercent: [],
 	year: [],
 	tick: [],
-	pointsPerLine: [],
+	pointsPerCurve: [],
 };
 function fireEvents(attribute: configurationObservableEvt, value: any): void {
 	if (_listeners.hasOwnProperty(attribute)) {
@@ -154,15 +154,15 @@ export const CONFIGURATION = {
 	/**
 	 * Graph edges are drawn as lines with intermediate points.
 	 *
-	 * high value of [[pointsPerLine]] gives better definition of curves (bézier curves)
+	 * high value of [[pointsPerCurve]] gives better definition of curves (bézier curves)
 	 */
-	get pointsPerLine(): number {
-		return _pointsPerLine;
+	get pointsPerCurve(): number {
+		return _pointsPerCurve;
 	},
-	set pointsPerLine(value: number) {
+	set pointsPerCurve(value: number) {
 		if (value >= 1 && value <= 200) {
-			_pointsPerLine = value;
-			fireEvents('pointsPerLine', value);
+			_pointsPerCurve = value;
+			fireEvents('pointsPerCurve', value);
 		}
 	},
 	/**
