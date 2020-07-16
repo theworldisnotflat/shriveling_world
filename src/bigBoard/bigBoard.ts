@@ -31,7 +31,7 @@ import {GUI} from './guiDAT';
 
 /**
  * C'est la classe qui contrôle toute l'application: la liste des cônes, pays et
- *  lignes ainsi que la scene THREE.JS + les commandes et le comportement...
+ * lignes ainsi que la scene THREE.JS + les commandes et le comportement...
  *
  * This class controls all the application:
  * * the list of [[_cones]],

@@ -321,15 +321,6 @@ function networkFromCities(
 	 */
 	const speedPerTransportPerYear: {[transportCode: string]: ITabSpeedPerYearPerTranspModeItem} = {};
 	/**
-	 * Pour chaque mode de transport:
-	 *  * on détermine si c'est de type terrestrev(cône) ou aérien (lignes)
-	 *  * la fenêtre temporelle du mode de transport
-	 *  * le tableau de vitesse du mode de transport considéré.
-	 *    La formule d'interpolation utilisées pour constituer ce tableau retourne
-	 *    pour chaque année de la fenêtre temporelle précédemment calculée
-	 *    une vitesse interpolée linéairement entre deux dates où la vitesse était connue.
-	 *  À la sortie de cette boucle, [[speedPerTransportPerYear]]  et [[maximumSpeed]] sont renseignés
-	 *
 	 * For each transport mode:
 	 * * we dertermine if it is terrestrial (cones) or not (line)
 	 * * the temporal scope of the transort mode
@@ -585,7 +576,7 @@ function networkFromCities(
 							}
 						} else if (edgeToBeProcessed) {
 							// Case when edge transport mode is not terrestrial
-							// we will generate a line for the edge
+							// we will generate a curve for the edge
 							// Condition pour éviter de générer deux lignes visuellement identiques!
 							const modelledSpeed = getModelledSpeed(
 								theta,
