@@ -599,8 +599,8 @@ const link = document.createElement('a');
  *
  * Three files a generated:
  * * sceneCones.obj
- * * sceneLinesLongHaul.obj fo short distance flights above the geodesic
- * * sceneLinesShortHaul.obj for long distance geodesic flights
+ * * sceneCurvesLongHaul.obj fo short distance flights above the geodesic
+ * * sceneCurvesShortHaul.obj for long distance geodesic flights
  *
  * @param blob     data table in blob format
  * @param filename filename of data table (location to user choice)

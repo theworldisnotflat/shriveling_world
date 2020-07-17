@@ -325,9 +325,9 @@ export interface ILookupEdgesFromCity {
 	list: {[cityCodeEnd: string]: ILookupEdgeList};
 }
 /**
- * A line and its associated graph edge has a [[cityCodeBegin]]
+ * A curve and its associated graph edge has a [[cityCodeBegin]]
  *
- * other parameters of this line derive from the [[ILookupLineItem]]
+ * other parameters of this curve derive from the [[ILookupCurveItem]]
  */
 export interface ILookupEdges {
 	[cityCodeBegin: number]: ILookupEdgesFromCity;
