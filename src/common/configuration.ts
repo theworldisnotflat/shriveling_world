@@ -152,7 +152,7 @@ export const CONFIGURATION = {
 		}
 	},
 	/**
-	 * Graph edges are drawn as lines with intermediate points.
+	 * Graph edges are drawn as curves with intermediate points.
 	 *
 	 * high value of [[pointsPerCurve]] gives better definition of curves (bézier curves)
 	 */

@@ -5,9 +5,9 @@ import {getShader} from '../shaders';
 import {GPUComputer} from '../common/gpuComputer';
 import {ILookupEdges} from '../definitions/project';
 
-let _lines: LineMeshShader[];
+let _curves: LineMeshShader[];
 
-let _linesWithoutDisplay: LineMeshShader[] = [];
+let curvesDontDisplay: LineMeshShader[] = [];
 let uuid: string;
 let _ready = false;
 let _width: number;
@@ -78,14 +78,14 @@ function regenerateStep(): void {
 }
 
 /**
- * Update edges (lines) height based on the reference year
+ * Update curves height based on the reference year
  */
 function updateYear(): void {
 	const year = CONFIGURATION.year;
-	_linesWithoutDisplay = [];
+	curvesDontDisplay = [];
 	for (let i = 0; i < _height; i++) {
-		if (!_lines[i].isAvailable(year)) {
-			_linesWithoutDisplay.push(_lines[i]);
+		if (!_curves[i].isAvailable(year)) {
+			curvesDontDisplay.push(_curves[i]);
 		}
 	}
 }
@@ -110,7 +110,7 @@ function computation(): void {
 	const tempo = _gpgpu.positions.calculate(_width, _height);
 	const allPositions = tempo[0];
 	for (let i = 0; i < _height; i++) {
-		_lines[i].setGeometry(allPositions.subarray(i * _width * 4, (i + 1) * _width * 4));
+		_curves[i].setGeometry(allPositions.subarray(i * _width * 4, (i + 1) * _width * 4));
 	}
 }
 
@@ -124,7 +124,7 @@ export class LineMeshShader extends Line {
 
 	public static async generateCones(lookup: ILookupEdges): Promise<LineMeshShader[]> {
 		_ready = false;
-		_lines = [];
+		_curves = [];
 		fullCleanArrays();
 		const promise = new Promise(resolve => {
 			if (uuid === undefined) {
@@ -193,7 +193,7 @@ export class LineMeshShader extends Line {
 						for (const transportName in endPoint.speedRatio) {
 							if (endPoint.speedRatio.hasOwnProperty(transportName)) {
 								const ratios = endPoint.speedRatio[transportName];
-								_lines.push(
+								_curves.push(
 									new LineMeshShader(begin.cityCode, endPoint.end.cityCode, endPoint.theta, ratios, transportName)
 								);
 								pControls0.push(...beginGLSL);
@@ -207,7 +207,7 @@ export class LineMeshShader extends Line {
 			}
 		}
 
-		_height = _lines.length;
+		_height = _curves.length;
 		_hauteurs = new Float32Array(_height);
 		const options = {
 			u_PControls0: {src: new Float32Array(pControls0), width: 1, height: _height},
@@ -220,7 +220,7 @@ export class LineMeshShader extends Line {
 		updateYear();
 		computation();
 		_ready = true;
-		return [..._lines];
+		return [..._curves];
 	}
 
 	private constructor(
@@ -254,8 +254,8 @@ export class LineMeshShader extends Line {
 	public static set coefficient(value: number) {
 		_coefficient = value;
 		for (let i = 0; i < _height; i++) {
-			const line = _lines[i];
-			_hauteurs[i] = getHeight(line._speedRatio, line.theta);
+			const curve = _curves[i];
+			_hauteurs[i] = getHeight(curve._speedRatio, curve.theta);
 		}
 
 		computation();
@@ -276,7 +276,7 @@ export class LineMeshShader extends Line {
 
 	public setGeometry(positions: Float32Array): void {
 		const bufferedGeometry = <BufferGeometry>this.geometry;
-		if (_linesWithoutDisplay.includes(this)) {
+		if (curvesDontDisplay.includes(this)) {
 			bufferedGeometry.setDrawRange(0, 0);
 		} else {
 			const interleavedBuffer = (<InterleavedBufferAttribute>bufferedGeometry.getAttribute('position')).data;
@@ -293,7 +293,7 @@ export class LineMeshShader extends Line {
 		const resultat = speedRatio !== undefined;
 		if (resultat) {
 			this._speedRatio = speedRatio;
-			const index = _lines.indexOf(this);
+			const index = _curves.indexOf(this);
 			_hauteurs[index] = getHeight(this._speedRatio, this.theta);
 		}
 

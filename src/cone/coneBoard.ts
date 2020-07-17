@@ -105,12 +105,12 @@ export class ConeBoard {
 				this._renderer.render(this._scene, this._camera);
 			});
 		});
-		LineMeshShader.generateCones(lookup.edgesData).then(lines => {
-			lines.forEach(line => {
-				this.curveCollection.push(line);
-				line.visible = this._show;
-				line.scale.setScalar(this._scale);
-				this._scene.add(line);
+		LineMeshShader.generateCones(lookup.edgesData).then(curves => {
+			curves.forEach(curve => {
+				this.curveCollection.push(curve);
+				curve.visible = this._show;
+				curve.scale.setScalar(this._scale);
+				this._scene.add(curve);
 				this._renderer.render(this._scene, this._camera);
 			});
 		});
