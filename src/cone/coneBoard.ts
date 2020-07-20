@@ -6,12 +6,12 @@ import {ConeMeshShader} from './coneMeshShader';
 import {Cartographic, searchCriterias} from '../common/utils';
 import {ISumUpCriteria, ILookupEdgesAndCityNetwork, ICriterias} from '../definitions/project';
 import {CountryBoard} from '../country/countryBoard';
-import {LineMeshShader} from './lineMeshShaders';
+import {CurveMeshShader} from './curveMeshShader';
 const forbiddenAttributes = ['referential', 'position'];
 
 export class ConeBoard {
 	public coneMeshCollection: PseudoCone[] = [];
-	public curveCollection: LineMeshShader[] = [];
+	public curveCollection: CurveMeshShader[] = [];
 	private readonly _scene: Scene;
 	private readonly _camera: Camera;
 	private readonly _raycaster: Raycaster;
@@ -105,7 +105,7 @@ export class ConeBoard {
 				this._renderer.render(this._scene, this._camera);
 			});
 		});
-		LineMeshShader.generateCones(lookup.edgesData).then(curves => {
+		CurveMeshShader.generateCones(lookup.edgesData).then(curves => {
 			curves.forEach(curve => {
 				this.curveCollection.push(curve);
 				curve.visible = this._show;

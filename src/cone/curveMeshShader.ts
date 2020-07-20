@@ -5,9 +5,9 @@ import {getShader} from '../shaders';
 import {GPUComputer} from '../common/gpuComputer';
 import {ILookupEdges} from '../definitions/project';
 
-let _curves: LineMeshShader[];
+let _curves: CurveMeshShader[];
 
-let curvesDontDisplay: LineMeshShader[] = [];
+let curvesDontDisplay: CurveMeshShader[] = [];
 let uuid: string;
 let _ready = false;
 let _width: number;
@@ -114,7 +114,7 @@ function computation(): void {
 	}
 }
 
-export class LineMeshShader extends Line {
+export class CurveMeshShader extends Line {
 	public begin: string | number;
 	public end: string | number;
 	private readonly theta: number;
@@ -122,7 +122,7 @@ export class LineMeshShader extends Line {
 	private readonly _transportName: string;
 	private _speedRatio: number;
 
-	public static async generateCones(lookup: ILookupEdges): Promise<LineMeshShader[]> {
+	public static async generateCones(lookup: ILookupEdges): Promise<CurveMeshShader[]> {
 		_ready = false;
 		_curves = [];
 		fullCleanArrays();
@@ -194,7 +194,7 @@ export class LineMeshShader extends Line {
 							if (endPoint.speedRatio.hasOwnProperty(transportName)) {
 								const ratios = endPoint.speedRatio[transportName];
 								_curves.push(
-									new LineMeshShader(begin.cityCode, endPoint.end.cityCode, endPoint.theta, ratios, transportName)
+									new CurveMeshShader(begin.cityCode, endPoint.end.cityCode, endPoint.theta, ratios, transportName)
 								);
 								pControls0.push(...beginGLSL);
 								pControls1.push(...pointPGLSL);
