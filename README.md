@@ -78,7 +78,7 @@ Does not work with old version of nodejs (with version 4 does not work, with ver
 
 ### Configuration of your IDE
 
-In your IDE, need to install xo extension : 
+In your IDE, need to install xo extension :
 
 - [vscode-linter-xo](https://github.com/SamVerschueren/vscode-linter-xo) for vscode
 - [linter-xo](https://github.com/xojs/atom-linter-xo) for atom
@@ -100,4 +100,5 @@ Then open in a browser this adress http://localhost:8080.
 
 
 # Road map
-A [roadmap is maintained up to date here](https://github.com/theworldisnotflat/shriveling_world/wiki)
+- A [roadmap is maintained up to date here](https://github.com/theworldisnotflat/shriveling_world/wiki)
+- Development is [organised for the coming release](https://github.com/theworldisnotflat/shriveling_world/projects)
