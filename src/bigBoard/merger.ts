@@ -10,6 +10,10 @@
  * * shaders with functions fast to execute in interaction with the user
  * * display conversions where final computation occurs, including geographical projections
  *
+ * The merger function itself realise a connection between data
+ * read in csv files in a manner similar to a databse
+ * so that the project can easily access any part of the input data
+ *
  */
 'use strict';
 import Papa from 'papaparse';
