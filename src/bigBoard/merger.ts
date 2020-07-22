@@ -36,9 +36,6 @@ import {
 } from '../definitions/project';
 import {CONFIGURATION} from '../common/configuration';
 /**
- * Assure le croisement de deux tableaux d'objet sur un attribut. La clé de croisement
- * est renommée. À la fin de la procédure, le tableau receptacle est enrichi.
- *
  * realises the merge of two tables base on an attribute. The key for the merge is renamed.
  * At the end of the process the recipient table is enriched.
  *
