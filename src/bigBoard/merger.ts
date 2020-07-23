@@ -36,7 +36,7 @@ import {
 } from '../definitions/project';
 import {CONFIGURATION} from '../common/configuration';
 /**
- * realises the merge of two tables base on an attribute. The key for the merge is renamed.
+ * Realises the merge of two tables base on an attribute. The key for the merge is renamed.
  * At the end of the process the recipient table is enriched.
  *
  * @param mother le tableau d'objet receptacle du croisement/the recipient table
