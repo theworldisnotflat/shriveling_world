@@ -94,7 +94,7 @@ export class ConeBoard {
 		this.clean();
 		const bboxes = this._countries.countryMeshCollection.map(country => country.bbox);
 		console.log(lookup.lookupCityNetwork);
-		ConeMeshShader.generateCones(lookup.lookupCityNetwork, bboxes).then(cones => {
+		void ConeMeshShader.generateCones(lookup.lookupCityNetwork, bboxes).then(cones => {
 			cones.forEach(cone => {
 				// UpdateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
 				// add object name to cone
@@ -105,7 +105,7 @@ export class ConeBoard {
 				this._renderer.render(this._scene, this._camera);
 			});
 		});
-		CurveMeshShader.generateCones(lookup.edgesData).then(curves => {
+		void CurveMeshShader.generateCones(lookup.edgesData).then(curves => {
 			curves.forEach(curve => {
 				this.curveCollection.push(curve);
 				curve.visible = this._show;

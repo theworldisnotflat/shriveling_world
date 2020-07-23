@@ -6,7 +6,7 @@ import {inflate} from 'pako/lib/inflate';
 
 export class dataSetManager {
 	public constructor(bigBoard: BigBoard, gui: GUI) {
-		this._initInteraction(bigBoard, gui);
+		void this._initInteraction(bigBoard, gui);
 	}
 
 	private async _initInteraction(bigBoard: BigBoard, gui: GUI): Promise<void> {
@@ -32,7 +32,7 @@ export class dataSetManager {
 				);
 				const unzipped: IListFile[] = JSON.parse(new TextDecoder('utf-8').decode(inflate(zip)));
 				bigBoard.cleanAll();
-				gui.filesToInsert(unzipped);
+				void gui.filesToInsert(unzipped);
 			}
 		});
 	}

@@ -87,7 +87,7 @@ export default class BigBoard {
 	 * GUI is linked to bigBoard (but not contained in)
 	 */
 	constructor() {
-		prepareConfiguration().then(() => {
+		void prepareConfiguration().then(() => {
 			this._merger = new Merger();
 			const container = this._init();
 			this.orthographique = true;
@@ -244,7 +244,7 @@ export default class BigBoard {
 	}
 
 	public addCountries(geoJson: any): void {
-		this.countryBoard.add(geoJson);
+		void this.countryBoard.add(geoJson);
 	}
 
 	/**

@@ -242,13 +242,13 @@ function compare(ob1: any, ob2: any, ascendant: boolean): number {
 		ob2 = '';
 	}
 
-	const ob1Float = parseFloat(ob1);
-	const ob2Float = parseFloat(ob2);
+	const ob1Float = Number.parseFloat(ob1);
+	const ob2Float = Number.parseFloat(ob2);
 	if (ob1 instanceof Date && ob2 instanceof Date) {
 		resultat = ob1.getTime() - ob2.getTime();
 	} else if (
-		!isNaN(ob1Float) &&
-		!isNaN(ob2Float) &&
+		!Number.isNaN(ob1Float) &&
+		!Number.isNaN(ob2Float) &&
 		ob1.length === ob1Float.toString().length &&
 		ob2.length === ob2Float.toString().length
 	) {
@@ -367,7 +367,7 @@ export function searchCriterias<T>(
 		return found;
 	}
 
-	return collection.filter(megaFilter);
+	return collection.filter(x => megaFilter(x));
 }
 
 export function orderCriteria<T>(collection: T[], criteriaOrder: IOrderAscendant[] = []): T[] {
@@ -400,7 +400,7 @@ export function DragnDrop(id: string | HTMLElement, callback: (list: IListFile[]
 			evt.stopPropagation();
 			evt.preventDefault();
 			const files = evt.dataTransfer.files;
-			Promise.all(
+			void Promise.all(
 				Array.from(files, async file => {
 					return new Promise(resolve => {
 						const reader = new FileReader();
@@ -494,7 +494,6 @@ export function interpolator<U>(
 	return resultat;
 }
 
-// eslint-disable-next-line unicorn/better-regex
 const iso8601RegExp = /(\d{4}-[01]\d-[0-3]\dT[0-2](?:\d:[0-5]){2}\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2](?:\d:[0-5]){2}\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))/;
 
 // To use for JSON.parse
@@ -550,7 +549,7 @@ export function getLocalLimits(
 	const resultat: Array<{clock: number; distance: number}> = [];
 	for (const clockString in clockDistance) {
 		if (clockDistance.hasOwnProperty(clockString)) {
-			resultat.push({clock: parseFloat(clockString), distance: clockDistance[clockString]});
+			resultat.push({clock: Number.parseFloat(clockString), distance: clockDistance[clockString]});
 		}
 	}
 

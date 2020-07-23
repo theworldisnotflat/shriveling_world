@@ -11,6 +11,8 @@
 			{ "prefixWithI": "always", "allowUnderscorePrefix": false }
 		],
 		"unicorn/filename-case": "off",
+		"unicorn/no-reduce":"off",
+		"keyword-spacing": "off",
 		"guard-for-in": "off",
 		"complexity": ["warn", 30],
 		"max-depth": ["error", 7],
@@ -26,6 +28,7 @@
 		"unicorn/no-abusive-eslint-disable":"off",
 		"unicorn/prevent-abbreviations":"off",
 		"eslint-comments/no-unused-disable":"off",
+		"@typescript-eslint/keyword-spacing":["warn"],
 		"@typescript-eslint/member-ordering": [
 			"error",
 			{

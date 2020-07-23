@@ -137,8 +137,8 @@ const config: Papa.ParseConfig = {
  * Gets the CSV file, parses it,
  * and returns a table
  *
- * @param {string} text
- * @param {boolean} [isTransportModeCode=false]
+ * @param  text
+ * @param [isTransportModeCode=false]
  * @returns {*}
  */
 function getCSV(text: string, isTransportModeCode = false): any {
