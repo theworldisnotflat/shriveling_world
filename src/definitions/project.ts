@@ -130,24 +130,24 @@ export interface ILookupDestWithModes {
  * * a list of destinations and associated transport modes
  * * a table of [[origCityProperties]]
  */
-export interface ICityNetwork {
+export interface ICityGraph {
 	referential: NEDLocal; // À inhiber dans forbiddenAttributes de coneMeshShader
 	cone: ILookupComplexAlpha; // À inhiber dans forbiddenAttributes de coneMeshShader
 	destinationsWithModes: ILookupDestWithModes;
 	origCityProperties: ICity;
 }
 /**
- * A [[ILookupCityNetwork]] searches
+ * A [[ILookupCityGraph]] searches
  * * a cityCode
  * * and retrieves a piece of network [[ICityNetwork]] made of
  * * incident links of cityCode in the transport network
  *
  * <uml>
- *     ILookupCityNetwork<-ICityNetwork
+ *     ILookupCityGraph<-ICityGraph
  * </uml>
  */
-export interface ILookupCityNetwork {
-	[cityCode: string]: ICityNetwork;
+export interface ILookupCityGraph {
+	[cityCode: string]: ICityGraph;
 }
 
 export interface IItemCriteria {
@@ -232,9 +232,9 @@ export interface ITranspMode {
 }
 
 /**
- * Here we find data a link in the [[ILink]]
+ * Here we find data of a graph edge in the [[IEdge]]
  *
- * Each link has
+ * Each edge has
  * * a [[yearBegin]] and
  * * a [[yearEnd]]
  * * an origin [[idOri]]
@@ -286,15 +286,15 @@ export type configurationObservableEvt =
 export type configurationCallback = (name: configurationObservableEvt, value: unknown) => void;
 export type ShaderTypes = 'fragment' | 'vertex';
 /**
- * [[ILookupEdgesWithTranspModes]] contains
- * * [[lookupCityNetwork]] network data (graph data) with modes and speed parameters
- * * [[linksData]] links data for geometric processes
+ * [[ILookupCurvesAndCityGraph]] contains
+ * * [[ILookupCityGraph]] network data (graph data) with modes and speed parameters
+ * * [[curvesData]] curves data for geometric processes
  *
  * (some duplication but the purposes are different)
  */
-export interface ILookupEdgesAndCityNetwork {
-	lookupCityNetwork: ILookupCityNetwork;
-	edgesData: ILookupEdges;
+export interface ILookupCurvesAndCityGraph {
+	lookupCityNetwork: ILookupCityGraph;
+	curvesData: ILookupCurves;
 }
 /**
  * Defines the city at the other extremity of an edge
@@ -304,13 +304,13 @@ export interface ICityExtremityOfEdge {
 	position: Cartographic;
 }
 /**
- * Data associated to an edge from a given city
+ * Curve data associated to an edge from a given city
  *
  * [[pointP]] and [[pointQ]] are control points for Bezier curves
  *
  * [[theta]] is the angle between cities
  */
-export interface ILookupEdgeList {
+export interface ILookupCurveList {
 	end: ICityExtremityOfEdge;
 	pointP: Cartographic;
 	pointQ: Cartographic;
@@ -319,19 +319,19 @@ export interface ILookupEdgeList {
 	theta: number;
 }
 /**
- * Links from a city
+ * Curves from a city
  */
-export interface ILookupEdgesFromCity {
+export interface ILookupCurvesFromCity {
 	begin: ICityExtremityOfEdge;
-	list: {[cityCodeEnd: string]: ILookupEdgeList};
+	list: {[cityCodeEnd: string]: ILookupCurveList};
 }
 /**
  * A curve and its associated graph edge has a [[cityCodeBegin]]
  *
  * other parameters of this curve derive from the [[ILookupCurveItem]]
  */
-export interface ILookupEdges {
-	[cityCodeBegin: number]: ILookupEdgesFromCity;
+export interface ILookupCurves {
+	[cityCodeBegin: number]: ILookupCurvesFromCity;
 }
 export interface IMarkLimits {
 	begin: number; // Inclusif

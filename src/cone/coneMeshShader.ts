@@ -10,7 +10,7 @@ import {
 import {CONFIGURATION} from '../common/configuration';
 import {PseudoCone} from './base';
 import {Cartographic, interpolator, matchingBBox} from '../common/utils';
-import {ILookupCityNetwork, IBBox, ILookupComplexAlpha, IComplexAlphaItem} from '../definitions/project';
+import {ILookupCityGraph, IBBox, ILookupComplexAlpha, IComplexAlphaItem} from '../definitions/project';
 import {NEDLocal, Coordinate} from '../common/referential';
 import {getShader} from '../shaders';
 import {GPUComputer} from '../common/gpuComputer';
@@ -293,7 +293,7 @@ export class ConeMeshShader extends PseudoCone {
 	 * @param lookup
 	 * @param bboxes
 	 */
-	public static async generateCones(lookup: ILookupCityNetwork, bboxes: IBBox[]): Promise<ConeMeshShader[]> {
+	public static async generateCones(lookup: ILookupCityGraph, bboxes: IBBox[]): Promise<ConeMeshShader[]> {
 		_ready = false;
 		_cones = [];
 		fullCleanArrays();

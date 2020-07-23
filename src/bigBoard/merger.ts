@@ -23,15 +23,15 @@ import {
 	ITranspMode,
 	ICity,
 	IEdge,
-	ILookupCityNetwork,
+	ILookupCityGraph,
 	IMergerState,
 	ILookupDestWithModes,
 	IPopulation,
 	ITransportModeSpeed,
-	ILookupEdgesAndCityNetwork,
-	ILookupEdges,
+	ILookupCurvesAndCityGraph,
+	ILookupCurves,
 	ICityExtremityOfEdge,
-	ILookupEdgeList,
+	ILookupCurveList,
 	ILookupComplexAlpha,
 } from '../definitions/project';
 import {CONFIGURATION} from '../common/configuration';
@@ -243,9 +243,9 @@ function networkFromCities(
 	transportModeCode: ITranspMode[],
 	cities: ICity[],
 	transpNetwork: IEdge[]
-): ILookupEdgesAndCityNetwork {
-	const network: ILookupCityNetwork = {};
-	const edgesData: ILookupEdges = {};
+): ILookupCurvesAndCityGraph {
+	const network: ILookupCityGraph = {};
+	const curvesData: ILookupCurves = {};
 	// Déterminer la fourchette de temps considéré OK
 	// determine the considered time-frame
 	const actualYear = new Date().getFullYear();
@@ -482,7 +482,7 @@ function networkFromCities(
 			/**
 			 *  List of edges from the considered city (described by their destination cities)
 			 * */
-			const listOfEdges: {[cityCodeEnd: string]: ILookupEdgeList} = {};
+			const listOfCurves: {[cityCodeEnd: string]: ILookupCurveList} = {};
 			// Let coneAlpha: ILookupConeAlpha = {};
 			const cone: ILookupComplexAlpha = {};
 			const destinationsWithModes: ILookupDestWithModes = {};
@@ -558,8 +558,8 @@ function networkFromCities(
 								// The ratio linking the current speed and maxSpeed is
 								// computed according to this ![equation](http://bit.ly/2EejFpW)
 								const speedRatio = (maximumSpeed[year] * theta) / (2 * modelledSpeed);
-								if (!listOfEdges.hasOwnProperty(destCityCode)) {
-									listOfEdges[destCityCode] = <ILookupEdgeList>{
+								if (!listOfCurves.hasOwnProperty(destCityCode)) {
+									listOfCurves[destCityCode] = <ILookupCurveList>{
 										end,
 										middle,
 										pointP,
@@ -569,11 +569,11 @@ function networkFromCities(
 									};
 								}
 
-								if (!listOfEdges[destCityCode].speedRatio.hasOwnProperty(edgeTranspModeName)) {
-									listOfEdges[destCityCode].speedRatio[edgeTranspModeName] = {};
+								if (!listOfCurves[destCityCode].speedRatio.hasOwnProperty(edgeTranspModeName)) {
+									listOfCurves[destCityCode].speedRatio[edgeTranspModeName] = {};
 								}
 
-								listOfEdges[destCityCode].speedRatio[edgeTranspModeName][year] = speedRatio;
+								listOfCurves[destCityCode].speedRatio[edgeTranspModeName][year] = speedRatio;
 							}
 						} else if (edgeToBeProcessed) {
 							// Case when edge transport mode is not terrestrial
@@ -595,8 +595,8 @@ function networkFromCities(
 							// console.log('theta km', (CONFIGURATION.earthRadiusMeters / 1000) * theta);
 							// console.log('edgeModeSpeed[year].speed', edgeModeSpeed[year].speed);
 							// console.log('modelledSpeed', modelledSpeed);
-							if (!listOfEdges.hasOwnProperty(destCityCode)) {
-								listOfEdges[destCityCode] = <ILookupEdgeList>{
+							if (!listOfCurves.hasOwnProperty(destCityCode)) {
+								listOfCurves[destCityCode] = <ILookupCurveList>{
 									end,
 									middle,
 									pointP,
@@ -606,11 +606,11 @@ function networkFromCities(
 								};
 							}
 
-							if (!listOfEdges[destCityCode].speedRatio.hasOwnProperty(edgeTranspModeName)) {
-								listOfEdges[destCityCode].speedRatio[edgeTranspModeName] = {};
+							if (!listOfCurves[destCityCode].speedRatio.hasOwnProperty(edgeTranspModeName)) {
+								listOfCurves[destCityCode].speedRatio[edgeTranspModeName] = {};
 							}
 
-							listOfEdges[destCityCode].speedRatio[edgeTranspModeName][year] = speedRatio;
+							listOfCurves[destCityCode].speedRatio[edgeTranspModeName][year] = speedRatio;
 						}
 					}
 				}
@@ -639,13 +639,13 @@ function networkFromCities(
 				destinationsWithModes,
 				origCityProperties: city,
 			};
-			if (Object.keys(listOfEdges).length > 0) {
-				// Retrieves edges info from origCityCode for edges generation
-				edgesData[origCityCode] = {begin: startPoint, list: listOfEdges};
+			if (Object.keys(listOfCurves).length > 0) {
+				// Retrieves edges info from origCityCode for curves generation
+				curvesData[origCityCode] = {begin: startPoint, list: listOfCurves};
 			}
 		}
 	});
-	return {lookupCityNetwork: network, edgesData};
+	return {lookupCityNetwork: network, curvesData};
 }
 
 /**
@@ -668,17 +668,17 @@ export class Merger {
 	private _transportModeCode: ITranspMode[] = [];
 	private _transportNetwork: IEdge[] = [];
 	private _state: IMergerState = 'missing';
-	private _edgesAndTranspModes: ILookupEdgesAndCityNetwork = <ILookupEdgesAndCityNetwork>{};
+	private _edgesAndTranspModes: ILookupCurvesAndCityGraph = <ILookupCurvesAndCityGraph>{};
 
 	public get state(): IMergerState {
 		return this._state;
 	}
 
 	/**
-	 * This is the resulting dataset processed by function [[networkFromCities]]
+	 * This is the resulting subgraph processed by function [[networkFromCities]]
 	 * in order to give access to the relevant data inside bigBoard
 	 */
-	public get edgesWithTranspModes(): ILookupEdgesAndCityNetwork {
+	public get edgesWithTranspModes(): ILookupCurvesAndCityGraph {
 		return this._edgesAndTranspModes;
 	}
 
@@ -690,7 +690,7 @@ export class Merger {
 		return this._cities[index];
 	}
 
-	public get conesAndEdgesData(): ILookupEdgesAndCityNetwork {
+	public get conesAndCurvesData(): ILookupCurvesAndCityGraph {
 		return this._edgesAndTranspModes;
 	}
 
@@ -712,7 +712,7 @@ export class Merger {
 		this._transportModeSpeed = [];
 		this._transportModeCode = [];
 		this._transportNetwork = [];
-		this._edgesAndTranspModes = <ILookupEdgesAndCityNetwork>{};
+		this._edgesAndTranspModes = <ILookupCurvesAndCityGraph>{};
 		this._state = 'missing';
 	}
 

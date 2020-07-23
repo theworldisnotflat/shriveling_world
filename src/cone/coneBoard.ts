@@ -4,7 +4,7 @@ import {CONFIGURATION} from '../common/configuration';
 import {PseudoCone} from './base';
 import {ConeMeshShader} from './coneMeshShader';
 import {Cartographic, searchCriterias} from '../common/utils';
-import {ISumUpCriteria, ILookupEdgesAndCityNetwork, ICriterias} from '../definitions/project';
+import {ISumUpCriteria, ILookupCurvesAndCityGraph, ICriterias} from '../definitions/project';
 import {CountryBoard} from '../country/countryBoard';
 import {CurveMeshShader} from './curveMeshShader';
 const forbiddenAttributes = ['referential', 'position'];
@@ -90,7 +90,7 @@ export class ConeBoard {
 	 *
 	 * @param lookup
 	 */
-	public add(lookup: ILookupEdgesAndCityNetwork): void {
+	public add(lookup: ILookupCurvesAndCityGraph): void {
 		this.clean();
 		const bboxes = this._countries.countryMeshCollection.map(country => country.bbox);
 		console.log(lookup.lookupCityNetwork);
@@ -105,7 +105,7 @@ export class ConeBoard {
 				this._renderer.render(this._scene, this._camera);
 			});
 		});
-		void CurveMeshShader.generateCones(lookup.edgesData).then(curves => {
+		void CurveMeshShader.generateCones(lookup.curvesData).then(curves => {
 			curves.forEach(curve => {
 				this.curveCollection.push(curve);
 				curve.visible = this._show;

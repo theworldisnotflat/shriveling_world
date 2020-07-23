@@ -3,7 +3,7 @@ import {BufferGeometry, InterleavedBufferAttribute, InterleavedBuffer, Line, Mat
 import {CONFIGURATION} from '../common/configuration';
 import {getShader} from '../shaders';
 import {GPUComputer} from '../common/gpuComputer';
-import {ILookupEdges} from '../definitions/project';
+import {ILookupCurves} from '../definitions/project';
 
 let _curves: CurveMeshShader[];
 
@@ -122,7 +122,7 @@ export class CurveMeshShader extends Line {
 	private readonly _transportName: string;
 	private _speedRatio: number;
 
-	public static async generateCones(lookup: ILookupEdges): Promise<CurveMeshShader[]> {
+	public static async generateCones(lookup: ILookupCurves): Promise<CurveMeshShader[]> {
 		_ready = false;
 		_curves = [];
 		fullCleanArrays();

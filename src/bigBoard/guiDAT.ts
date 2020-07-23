@@ -215,7 +215,7 @@ export class GUI {
 					.min(this._merger.minYear)
 					.max(this._merger.maxYear)
 					.updateDisplay();
-				bigBoard.coneBoard.add(this._merger.conesAndEdgesData);
+				bigBoard.coneBoard.add(this._merger.conesAndCurvesData);
 				// This._merger.clear();
 				const sizeText = generalFolder
 					.add(bigBoard, '_sizetext', 0, 2)
