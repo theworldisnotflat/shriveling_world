@@ -128,7 +128,7 @@ export class CurveMeshShader extends Line {
 		fullCleanArrays();
 		const promise = new Promise(resolve => {
 			if (uuid === undefined) {
-				Promise.all([
+				void Promise.all([
 					GPUComputer.GPUComputerFactory(
 						getShader('lineMeshShader', 'fragment'),
 						{

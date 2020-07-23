@@ -14,7 +14,7 @@ import {ILookupCityNetwork, IBBox, ILookupComplexAlpha, IComplexAlphaItem} from 
 import {NEDLocal, Coordinate} from '../common/referential';
 import {getShader} from '../shaders';
 import {GPUComputer} from '../common/gpuComputer';
-const forbiddenAttributes = ['referential', 'cone'];
+const forbiddenAttributes = new Set(['referential', 'cone']);
 
 /**
  * [[IShaderAlpha]] is a table of alphas with years
@@ -105,7 +105,7 @@ function localLimitsFunction(
 	const temporaire: Array<{clock: number; distance: number}> = [];
 	for (const clockString in clockDistance) {
 		if (clockDistance.hasOwnProperty(clockString)) {
-			temporaire.push({clock: parseFloat(clockString), distance: clockDistance[clockString]});
+			temporaire.push({clock: Number.parseFloat(clockString), distance: clockDistance[clockString]});
 		}
 	}
 
@@ -299,7 +299,7 @@ export class ConeMeshShader extends PseudoCone {
 		fullCleanArrays();
 		const promise = new Promise(resolve => {
 			if (uuid === undefined) {
-				Promise.all([
+				void Promise.all([
 					GPUComputer.GPUComputerFactory(
 						getShader('coneMeshShader', 'fragment'),
 						{
@@ -379,7 +379,7 @@ export class ConeMeshShader extends PseudoCone {
 				_localLimitsLookup[cityCode] = localLimitsRaw(matchingBBox(position, bboxes), cityTransport.referential);
 				const commonProperties = {};
 				for (const attribute in cityTransport) {
-					if (cityTransport.hasOwnProperty(attribute) && !forbiddenAttributes.includes(attribute)) {
+					if (cityTransport.hasOwnProperty(attribute) && !forbiddenAttributes.has(attribute)) {
 						commonProperties[attribute] = cityTransport[attribute];
 					}
 				}

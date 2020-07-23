@@ -223,7 +223,7 @@ function generateVertices(geometry: GeoJSON.MultiPolygon | GeoJSON.Polygon): IPr
 		}
 
 		const indexes: number[] = [];
-		triangles.forEach(triangle => indexes.push(...triangle.getPoints().map(findAndAddVertexIndex)));
+		triangles.forEach(triangle => indexes.push(...triangle.getPoints().map(t => findAndAddVertexIndex(t))));
 		// Index n'a que la surface inférieure!
 		const vertice = verticesPoly2Tri.map(v => new Cartographic(v.x, v.y, 0, false));
 		// Vertices n'a que la surface inférieure!
@@ -378,7 +378,7 @@ export class CountryMeshShader extends Mesh {
 		fullCleanArrays();
 		const promise = new Promise(resolve => {
 			if (uuid === undefined) {
-				Promise.all([
+				void Promise.all([
 					GPUComputer.GPUComputerFactory(getShader('countryMeshShader', 'fragment'), {u_Positions: 'RGB32F'}, 1).then(
 						instance => {
 							_gpgpu.positions = instance;
