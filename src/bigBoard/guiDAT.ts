@@ -57,7 +57,7 @@ export class GUI {
 		this._merger = merger;
 		conf = {
 			coneStep: CONFIGURATION.coneStep * CONFIGURATION.rad2deg,
-			year: parseInt(<string>CONFIGURATION.year, 10),
+			year: Number.parseInt(<string>CONFIGURATION.year, 10),
 			projection: {
 				aucun: 0,
 				equirectangulaire: 1,
@@ -108,10 +108,10 @@ export class GUI {
 				}
 			}
 		});
-		Promise.all([
+		void Promise.all([
 			new Promise(resolve => {
 				if (!bigBoard.countryBoard.ready && json !== undefined) {
-					bigBoard.countryBoard.add(JSON.parse(json)).then(() => {
+					void bigBoard.countryBoard.add(JSON.parse(json)).then(() => {
 						while (countryControllersList.length > 0) {
 							const subGui = countryControllersList.pop();
 							countryFolder.removeFolder(subGui);
@@ -166,7 +166,7 @@ export class GUI {
 						aerialControllersList.push(folder);
 						function curveListener(): void {
 							const opacity = <number>curveOpacity.getValue();
-							const color = parseInt(curveColor.getValue().replace('#', ''), 16);
+							const color = Number.parseInt(curveColor.getValue().replace('#', ''), 16);
 							bigBoard.coneBoard.curveCollection
 								.filter(curve => transportName === curve.transportName)
 								.forEach(curve => {
@@ -188,7 +188,7 @@ export class GUI {
 
 						function curveListener(): void {
 							const opacity = <number>curveOpacity.getValue();
-							const color = parseInt(curveColor.getValue().replace('#', ''), 16);
+							const color = Number.parseInt(curveColor.getValue().replace('#', ''), 16);
 
 							bigBoard.coneBoard.curveCollection
 								.filter(curve => transportName === curve.transportName)
@@ -223,7 +223,7 @@ export class GUI {
 					.step(0.1);
 				sizeText.onChange(() => bigBoard.rescaleText());
 				generalFolder.addColor(conf, 'text color').onChange((v: string) => {
-					const color = parseInt(v.replace('#', ''), 16);
+					const color = Number.parseInt(v.replace('#', ''), 16);
 					CONFIGURATION.BASIC_TEXT_MATERIAL.color.setHex(color);
 					bigBoard.updateCityName();
 				});
@@ -248,13 +248,13 @@ export class GUI {
 		const lightFolder = gui.addFolder('Light');
 		lightFolder.add(bigBoard.ambient, 'intensity', 0, 5, 0.01).name('ambient intensity');
 		lightFolder.addColor(conf, 'light color').onChange((v: string) => {
-			const color = parseInt(v.replace('#', ''), 16);
+			const color = Number.parseInt(v.replace('#', ''), 16);
 			bigBoard.light.color.setHex(color);
 			bigBoard.helper.color = color;
 			bigBoard.helper.update();
 		});
 		lightFolder.addColor(conf, 'ambient color').onChange((v: string) => {
-			const color = parseInt(v.replace('#', ''), 16);
+			const color = Number.parseInt(v.replace('#', ''), 16);
 			bigBoard.ambient.color.setHex(color);
 		});
 		lightFolder
