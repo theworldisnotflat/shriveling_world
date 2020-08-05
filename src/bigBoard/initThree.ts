@@ -10,13 +10,16 @@ export async function prepareConfiguration(): Promise<void> {
 	if (CONFIGURATION.COUNTRY_MATERIAL === undefined) {
 		const canvas = await loadBoundaries(CONFIGURATION.COUNTRY_TEXTURES.boundaries);
 		CONFIGURATION.BASIC_CONE_MATERIAL = new MeshPhongMaterial({
-			opacity: 0.8,
 			color: 0xebdede,
+			emissive: 0xebdede,
+			transparent: true,
+			opacity: 0.8,
 			side: DoubleSide,
 			map: new CanvasTexture(canvas),
+			flatShading: true,
 		});
 		CONFIGURATION.highLitedMaterial = new MeshBasicMaterial({
-			color: 0xffff00,
+			color: 0xebdede,
 			transparent: true,
 			opacity: 0.5,
 			side: DoubleSide,

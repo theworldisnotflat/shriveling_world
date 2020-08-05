@@ -490,7 +490,7 @@ export default class BigBoard {
 		this._scene.fog = new Fog(0x000000, 1, 15000);
 		this._geometryText = new Group();
 
-		this.light = new DirectionalLight(0xefefff, 1.5); // (0xffffff, 5, 1000, 2);
+		this.light = new DirectionalLight(0xefefff, 0); // (0xffffff, 5, 1000, 2);
 		this.light.castShadow = true;
 		this.light.shadow.mapSize.width = 512; // Default
 		this.light.shadow.mapSize.height = 512; // Default
@@ -500,9 +500,9 @@ export default class BigBoard {
 		// let  that.light = new DirectionalLight( 0xefefff, 1.5 );
 		this.light.position.set(-1, -0.197, 0.377).normalize();
 
-		this.ambient = new AmbientLight(0xffffff);
+		this.ambient = new AmbientLight(0xffffff, 0);
 		this.light.position.set(1, 1, 1);
-		const directionalLight = new DirectionalLight(0xffefef, 1.5);
+		const directionalLight = new DirectionalLight(0xffefef, 0);
 		directionalLight.position.set(-1, -1, -1);
 		this._scene.add(this.light);
 		this._scene.add(directionalLight);
