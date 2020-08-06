@@ -16,3 +16,5 @@
   * datasets
 * **[Georges Mariano](https://github.com/JMR-uge)**
   * deployment
+* **[Fatima Fattouh](https://github.com/saamus)**
+  * Contributor
