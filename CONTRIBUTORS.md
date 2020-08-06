@@ -18,3 +18,4 @@
   * deployment
 * **[Fatima Fattouh](https://github.com/saamus)**
   * Contributor
+  * development, debuging
