@@ -11,8 +11,8 @@ baseURL= "https://theworldisnotflat.github.io/shriveling_world_documentation/"
 [[menu.main]]
     name = "Developper documentation"
     weight = 20
-    url = "documentation/"
+    url = "/documentation"
 [[menu.main]]
     name = "Application"
     weight = 30
-    url = "app/"
+    url = "/app"
