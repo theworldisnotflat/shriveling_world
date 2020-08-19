@@ -1,5 +1,5 @@
 'use strict';
-import {LineBasicMaterial} from 'three';
+import {LineBasicMaterial, MeshPhongMaterial} from 'three';
 import {Merger} from './merger';
 import {DragnDrop} from '../common/utils';
 import {IListFile} from '../definitions/project';
@@ -18,6 +18,7 @@ let countryFolder: dat.GUI;
 let annees: dat.GUIController;
 let generalFolder: dat.GUI;
 let aerialFolder: dat.GUI;
+let coneFolder: dat.GUI;
 let conf = {
 	coneStep: 0,
 	year: 0,
@@ -321,7 +322,7 @@ export class GUI {
 			.onChange(() => bigBoard.showCitiesName()); // Bigboard to parameter
 
 		// cones
-		const coneFolder = gui.addFolder('Cones');
+		coneFolder = gui.addFolder('Cones');
 
 		coneFolder
 			.add(conf, 'coneStep', 1, 360)
@@ -334,6 +335,15 @@ export class GUI {
 			conf['with limits'] = value;
 		});
 		coneFolder.add(bigBoard.coneBoard, 'opacity', 0, 1).step(0.01);
+		coneFolder.addColor(conf, 'cones color').onChange((v: string) => {
+			const color = Number.parseInt(v.replace('#', ''), 16);
+			bigBoard.coneBoard.coneMeshCollection.forEach(cone => {
+				console.log(cone);
+				const material = <MeshPhongMaterial>cone.material;
+				material.color.setHex(color);
+				material.emissive.setHex(color);
+			});
+		});
 		// Let terresterialFolder = coneFolder.addFolder('configurations spécifiques');
 		// let terrestrialControllersList: dat.GUI[] = [];
 		// let flagTransportDone = false;
