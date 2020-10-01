@@ -10,7 +10,7 @@ A [scientific blog](https://timespace.hypotheses.org/) contains principles, refl
 ## For users: first steps
 **Step #1**:The app runs in a browser from this adress:
 
-[Shriveling world](https://theworldisnotflat.github.io/shriveling_world_documentation/)
+[Shriveling world](https://theworldisnotflat.github.io/shriveling_world_documentation/app/)
 
 **Step #2**: Once the app runs in the browser data is read by two ways:
 
