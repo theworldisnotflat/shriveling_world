@@ -1,9 +1,9 @@
 'use strict';
-import {Scene, Camera, Raycaster, Mesh, Vector2, Material} from 'three';
-import {updateSumUpCriteria, Cartographic, searchCriterias} from '../common/utils';
-import {ISumUpCriteria, ICriterias} from '../definitions/project';
-import {CONFIGURATION} from '../common/configuration';
-import {CountryMeshShader} from './countryMeshShader';
+import { Scene, Camera, Raycaster, Mesh, Vector2, Material } from 'three';
+import { updateSumUpCriteria, Cartographic, searchCriterias } from '../common/utils';
+import { ISumUpCriteria, ICriterias } from '../definitions/project';
+import { CONFIGURATION } from '../common/configuration';
+import { CountryMeshShader } from './countryMeshShader';
 export class CountryBoard {
 	public countryMeshCollection: CountryMeshShader[] = [];
 	public ready = false;

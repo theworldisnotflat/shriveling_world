@@ -1,6 +1,6 @@
 'use strict';
-import {CONFIGURATION} from '../common/configuration';
-import {MeshBasicMaterial, DoubleSide, MeshPhongMaterial, LineBasicMaterial, FontLoader, CanvasTexture} from 'three';
+import { CONFIGURATION } from '../common/configuration';
+import { MeshBasicMaterial, DoubleSide, MeshPhongMaterial, LineBasicMaterial, FontLoader, CanvasTexture } from 'three';
 /**
  * Initialise les données de ThreeJS pour l'application (textures, couleurs...)
  *
@@ -112,11 +112,11 @@ async function loadBoundaries(url: string): Promise<HTMLCanvasElement> {
 					xmax = xmax < x ? x : xmax;
 					ymin = ymin > y ? y : ymin;
 					ymax = ymax < y ? y : ymax;
-					return {x, y};
+					return { x, y };
 				});
 				context.beginPath();
 				context.moveTo(points[0].x, points[0].y);
-				let point: {x: number; y: number};
+				let point: { x: number; y: number };
 				for (let i = 1; i < points.length; i++) {
 					point = points[i];
 					context.lineTo(point.x, point.y);

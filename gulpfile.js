@@ -230,7 +230,7 @@ const doc = series(
 	convertMD
 );
 
-const xo = shell.task('npx xo --ext .ts src');
+const lint = shell.task('npm run lint');
 
 const hugoGeneration = shell.task(`cd templates/blog && npx hugo -D --debug ${isProduction?'': '-b "http://127.0.0.1:8080"'}`, {
 	verbose: true,
@@ -323,13 +323,13 @@ const svelteBundle = async done => {
 const buildRequirements = series(parallel(compileShaders, zipper), build);
 
 const defaultRequirement = series(
-	parallel(fullClean, xo),
+	parallel(fullClean, lint),
 	doc,
 	parallel(buildRequirements, hugoRequirements),
 	defaultTask
 );
 
-const devDefault = series(xo, series(buildRequirements, doc), defaultTask);
+const devDefault = series(lint, series(buildRequirements, doc), defaultTask);
 
 const watchFiles = () => {
 	watch(sources.blog.watch, hugoRequirements);

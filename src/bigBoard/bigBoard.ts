@@ -1,5 +1,5 @@
 'use strict';
-import {CONFIGURATION} from '../common/configuration';
+import { CONFIGURATION } from '../common/configuration';
 import {
 	PerspectiveCamera,
 	Scene,
@@ -15,19 +15,19 @@ import {
 	TextGeometry,
 	Vector3,
 } from 'three';
-import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
-import {OBJExporter} from 'three/examples/jsm/exporters/OBJExporter';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { OBJExporter } from 'three/examples/jsm/exporters/OBJExporter';
 import Stats from 'three/examples/js/libs/stats.min';
-import {prepareConfiguration} from './initThree';
-import {dataSetManager} from './datasetManager';
-import {ConeBoard} from '../cone/coneBoard';
-import {CountryBoard} from '../country/countryBoard';
-import {Merger} from './merger';
-import {IMergerState, ISumUpCriteria, ILookupCurvesAndCityGraph, ICriterias} from '../definitions/project';
-import {save} from '../common/utils';
-import {PseudoCone} from '../cone/base';
-import {CountryMeshShader} from '../country/countryMeshShader';
-import {GUI} from './guiDAT';
+import { prepareConfiguration } from './initThree';
+import { DataSetManager } from './datasetManager';
+import { ConeBoard } from '../cone/coneBoard';
+import { CountryBoard } from '../country/countryBoard';
+import { Merger } from './merger';
+import { IMergerState, ISumUpCriteria, ILookupCurvesAndCityGraph, ICriterias } from '../definitions/project';
+import { save } from '../common/utils';
+import { PseudoCone } from '../cone/base';
+import { CountryMeshShader } from '../country/countryMeshShader';
+import { GUI } from './guiDAT';
 
 /**
  * C'est la classe qui contrôle toute l'application: la liste des cônes, pays et
@@ -76,7 +76,7 @@ export default class BigBoard {
 	private _windowHalfX: number = window.innerWidth / 2;
 	private _windowHalfY: number = window.innerHeight / 2;
 	private _merger: Merger;
-	private _datasetManager: dataSetManager;
+	private _datasetManager: DataSetManager;
 
 	// Noeud ajout nom Ville
 	private _geometryText: Group;
@@ -100,7 +100,7 @@ export default class BigBoard {
 
 			const gui = new GUI(this, container, this._merger);
 			// Tslint:disable-next-line
-			this._datasetManager = new dataSetManager(this, gui);
+			this._datasetManager = new DataSetManager(this, gui);
 			this._animate();
 		});
 	}
@@ -431,19 +431,21 @@ export default class BigBoard {
 			const obj = JSON.parse(JSON.stringify(this.getMergerI.Cities[j]));
 			const pop = JSON.parse(
 				JSON.stringify(
-					this._merger.edgesWithTranspModes.lookupCityNetwork[this.getMergerI.Cities[j].cityCode].origCityProperties
-						.populations
+					this._merger.edgesWithTranspModes.lookupCityNetwork[this.getMergerI.Cities[j].cityCode]
+						.origCityProperties.populations
 				)
 			);
 			const population = pop.pop2020;
 			if (population > this._populations) {
 				const geometry = new TextGeometry(obj.urbanAgglomeration, CONFIGURATION.TEXT_GEOMETRY_OPTIONS);
 				mesh = new Mesh(geometry, CONFIGURATION.BASIC_TEXT_MATERIAL);
-				const cart = this._merger.edgesWithTranspModes.lookupCityNetwork[this.getMergerI.Cities[j].cityCode].referential
-					.cartoRef;
-				const x = -CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.cos(cart.latitude * 0.95) * Math.cos(cart.longitude);
+				const cart = this._merger.edgesWithTranspModes.lookupCityNetwork[this.getMergerI.Cities[j].cityCode]
+					.referential.cartoRef;
+				const x =
+					-CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.cos(cart.latitude * 0.95) * Math.cos(cart.longitude);
 				const y = CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.sin(cart.latitude * 0.95);
-				const z = CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.cos(cart.latitude * 0.95) * Math.sin(cart.longitude);
+				const z =
+					CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.cos(cart.latitude * 0.95) * Math.sin(cart.longitude);
 				this._geometryText.add(mesh);
 				mesh.position.set(x, y, z);
 				mesh.lookAt(new Vector3(x * 2, y * 2, z * 2));
@@ -513,7 +515,7 @@ export default class BigBoard {
 		this._scene.add(this.ambient);
 		this._scene.add(this._geometryText);
 
-		this._renderer = new WebGLRenderer({antialias: true});
+		this._renderer = new WebGLRenderer({ antialias: true });
 		this._renderer.shadowMap.enabled = true;
 		this._renderer.shadowMap.type = PCFSoftShadowMap;
 

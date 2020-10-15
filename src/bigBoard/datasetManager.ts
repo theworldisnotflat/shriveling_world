@@ -1,10 +1,10 @@
 'use strict';
-import {GUI} from './guiDAT';
+import { GUI } from './guiDAT';
 import BigBoard from './bigBoard';
-import {IListFile} from '../definitions/project';
-import {inflate} from 'pako/lib/inflate';
+import { IListFile } from '../definitions/project';
+import { inflate } from 'pako/lib/inflate';
 
-export class dataSetManager {
+export class DataSetManager {
 	public constructor(bigBoard: BigBoard, gui: GUI) {
 		void this._initInteraction(bigBoard, gui);
 	}

@@ -1,12 +1,12 @@
 'use strict';
-import {Scene, Camera, WebGLRenderer, Raycaster, Mesh, Vector2, BufferGeometry, Material} from 'three';
-import {CONFIGURATION} from '../common/configuration';
-import {PseudoCone} from './base';
-import {ConeMeshShader} from './coneMeshShader';
-import {Cartographic, searchCriterias} from '../common/utils';
-import {ISumUpCriteria, ILookupCurvesAndCityGraph, ICriterias} from '../definitions/project';
-import {CountryBoard} from '../country/countryBoard';
-import {CurveMeshShader} from './curveMeshShader';
+import { Scene, Camera, WebGLRenderer, Raycaster, Mesh, Vector2, BufferGeometry, Material } from 'three';
+import { CONFIGURATION } from '../common/configuration';
+import { PseudoCone } from './base';
+import { ConeMeshShader } from './coneMeshShader';
+import { Cartographic, searchCriterias } from '../common/utils';
+import { ISumUpCriteria, ILookupCurvesAndCityGraph, ICriterias } from '../definitions/project';
+import { CountryBoard } from '../country/countryBoard';
+import { CurveMeshShader } from './curveMeshShader';
 const forbiddenAttributes = ['referential', 'position'];
 
 export class ConeBoard {
@@ -117,7 +117,7 @@ export class ConeBoard {
 	}
 
 	public setLayer(transport: string, show: boolean): void {
-		this.searchMesh({transport: {value: transport}}).forEach(mesh => {
+		this.searchMesh({ transport: { value: transport } }).forEach(mesh => {
 			mesh.visible = show;
 		});
 	}
@@ -194,7 +194,12 @@ export class ConeBoard {
 				cone => cone.cartographicPosition.approximateDistance(criterias) < 1e-13
 			);
 		} else {
-			resultat = searchCriterias(this.coneMeshCollection, criterias, forbiddenAttributes, 'otherProperties.' + path);
+			resultat = searchCriterias(
+				this.coneMeshCollection,
+				criterias,
+				forbiddenAttributes,
+				'otherProperties.' + path
+			);
 		}
 
 		return resultat;

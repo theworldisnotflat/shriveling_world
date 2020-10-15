@@ -1,12 +1,12 @@
 'use strict';
-import {LineBasicMaterial, MeshPhongMaterial} from 'three';
-import {Merger} from './merger';
-import {DragnDrop} from '../common/utils';
-import {IListFile} from '../definitions/project';
+import { LineBasicMaterial, MeshPhongMaterial } from 'three';
+import { Merger } from './merger';
+import { DragnDrop } from '../common/utils';
+import { IListFile } from '../definitions/project';
 import BigBoard from './bigBoard';
-import {ConeMeshShader} from '../cone/coneMeshShader';
+import { ConeMeshShader } from '../cone/coneMeshShader';
 import * as dat from 'dat.gui';
-import {CONFIGURATION} from '../common/configuration';
+import { CONFIGURATION } from '../common/configuration';
 
 let _filesData: IListFile[] = [];
 const countryControllersList: dat.GUI[] = [];

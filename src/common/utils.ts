@@ -1,6 +1,6 @@
 'use strict';
-import {CONFIGURATION} from './configuration';
-import {NEDLocal, Coordinate} from './referential';
+import { CONFIGURATION } from './configuration';
+import { NEDLocal, Coordinate } from './referential';
 import {
 	ICartographic,
 	ISumUpCriteria,
@@ -40,8 +40,12 @@ export class Cartographic implements ICartographic {
 				(boundary[i].latitude <= position.latitude && boundary[iplus].latitude > position.latitude) ||
 				(boundary[i].latitude > position.latitude && boundary[iplus].latitude <= position.latitude)
 			) {
-				const vt = (position.latitude - boundary[i].latitude) / (boundary[iplus].latitude - boundary[i].latitude);
-				if (position.longitude < boundary[i].longitude + vt * (boundary[iplus].longitude - boundary[i].longitude)) {
+				const vt =
+					(position.latitude - boundary[i].latitude) / (boundary[iplus].latitude - boundary[i].latitude);
+				if (
+					position.longitude <
+					boundary[i].longitude + vt * (boundary[iplus].longitude - boundary[i].longitude)
+				) {
 					cn++;
 				}
 			}
@@ -121,7 +125,7 @@ export const ZERO_CARTOGRAPHIC = new Cartographic();
 
 Object.freeze(ZERO_CARTOGRAPHIC);
 
-function updateSumupCriteriaByDateOrNumber(subObject: {max: Date | number; min: Date | number}, temporary): void {
+function updateSumupCriteriaByDateOrNumber(subObject: { max: Date | number; min: Date | number }, temporary): void {
 	const comparMin = compare(subObject.min, temporary, true);
 	const comparMax = compare(subObject.max, temporary, true);
 	if (comparMin > 0) {
@@ -157,7 +161,10 @@ export function updateSumUpCriteria(sumup: ISumUpCriteria, properties: any): ISu
 							break;
 						case 'object':
 							if (temporary instanceof Date && sumup[attribute].type === 'date') {
-								updateSumupCriteriaByDateOrNumber(<{max: Date; min: Date}>sumup[attribute].sumUp, temporary);
+								updateSumupCriteriaByDateOrNumber(
+									<{ max: Date; min: Date }>sumup[attribute].sumUp,
+									temporary
+								);
 							} else if (Array.isArray(temporary) && sumup[attribute].type === 'array') {
 								temporary.forEach(item => {
 									updateSumUpCriteria(<ISumUpCriteria>sumup[attribute].sumUp, item);
@@ -183,7 +190,10 @@ export function updateSumUpCriteria(sumup: ISumUpCriteria, properties: any): ISu
 							break;
 						case 'number':
 							if (sumup[attribute].type === 'number') {
-								updateSumupCriteriaByDateOrNumber(<{max: number; min: number}>sumup[attribute].sumUp, temporary);
+								updateSumupCriteriaByDateOrNumber(
+									<{ max: number; min: number }>sumup[attribute].sumUp,
+									temporary
+								);
 							} else {
 								sumup[attribute].type = 'undefined';
 								delete sumup[attribute].sumUp;
@@ -195,32 +205,32 @@ export function updateSumUpCriteria(sumup: ISumUpCriteria, properties: any): ISu
 				} else {
 					switch (typeofTemporary) {
 						case 'string':
-							sumup[attribute] = {type: 'string', sumUp: []};
+							sumup[attribute] = { type: 'string', sumUp: [] };
 							(<string[]>sumup[attribute].sumUp).push(temporary);
 							break;
 						case 'object':
 							if (temporary instanceof Date) {
-								sumup[attribute] = {type: 'date', sumUp: {max: temporary, min: temporary}};
+								sumup[attribute] = { type: 'date', sumUp: { max: temporary, min: temporary } };
 							} else if (Array.isArray(temporary)) {
-								sumup[attribute] = {type: 'array', sumUp: {}};
+								sumup[attribute] = { type: 'array', sumUp: {} };
 								temporary.forEach(item => {
 									updateSumUpCriteria(<ISumUpCriteria>sumup[attribute].sumUp, item);
 								});
 							} else {
-								sumup[attribute] = {type: 'object', sumUp: {}};
+								sumup[attribute] = { type: 'object', sumUp: {} };
 								updateSumUpCriteria(<ISumUpCriteria>sumup[attribute].sumUp, temporary);
 							}
 
 							break;
 						case 'boolean':
-							sumup[attribute] = {type: 'boolean'};
+							sumup[attribute] = { type: 'boolean' };
 							break;
 						case 'symbol':
 							break;
 						case 'function':
 							break;
 						case 'number':
-							sumup[attribute] = {type: 'number', sumUp: {max: temporary, min: temporary}};
+							sumup[attribute] = { type: 'number', sumUp: { max: temporary, min: temporary } };
 							break;
 						default:
 					}
@@ -324,7 +334,9 @@ function getObjectByString(objet: any, path: string): any {
 				objet = objet.map(item => getObjectByString(item, subPath));
 				finished = true;
 			} else if (typeof objet === 'object' && !(objet instanceof Date)) {
-				objet = Object.getOwnPropertyNames(objet).map(attributName => getObjectByString(objet[attributName], subPath));
+				objet = Object.getOwnPropertyNames(objet).map(attributName =>
+					getObjectByString(objet[attributName], subPath)
+				);
 				finished = true;
 			}
 		} else if (subAttribut in objet) {
@@ -376,7 +388,11 @@ export function orderCriteria<T>(collection: T[], criteriaOrder: IOrderAscendant
 		let orderAscendant: IOrderAscendant;
 		for (let i = 0; i < criteriaOrder.length && resultat === 0; i++) {
 			orderAscendant = criteriaOrder[i];
-			resultat = compare(item1[orderAscendant.attribute], item2[orderAscendant.attribute], orderAscendant.ascendant);
+			resultat = compare(
+				item1[orderAscendant.attribute],
+				item2[orderAscendant.attribute],
+				orderAscendant.ascendant
+			);
 		}
 
 		return resultat;
@@ -405,7 +421,7 @@ export function DragnDrop(id: string | HTMLElement, callback: (list: IListFile[]
 					return new Promise(resolve => {
 						const reader = new FileReader();
 						reader.addEventListener('load', () => {
-							resolve({name: file.name, text: reader.result});
+							resolve({ name: file.name, text: reader.result });
 						});
 
 						reader.readAsText(file);
@@ -526,7 +542,7 @@ export function matchingBBox(pos: Cartographic, bboxes: IBBox[]): Cartographic[]
 export function getLocalLimits(
 	boundaries: Cartographic[][],
 	referential: NEDLocal
-): Array<{clock: number; distance: number}> {
+): Array<{ clock: number; distance: number }> {
 	const allPoints: Coordinate[] = [];
 	boundaries.forEach(boundary => {
 		boundary.forEach(position => {
@@ -546,10 +562,10 @@ export function getLocalLimits(
 				result[clockClass] === undefined ? current.distance : Math.min(result[clockClass], current.distance);
 			return result;
 		}, {});
-	const resultat: Array<{clock: number; distance: number}> = [];
+	const resultat: Array<{ clock: number; distance: number }> = [];
 	for (const clockString in clockDistance) {
 		if (clockDistance.hasOwnProperty(clockString)) {
-			resultat.push({clock: Number.parseFloat(clockString), distance: clockDistance[clockString]});
+			resultat.push({ clock: Number.parseFloat(clockString), distance: clockDistance[clockString] });
 		}
 	}
 
@@ -558,8 +574,8 @@ export function getLocalLimits(
 	for (let i = 0; i < length; i++) {
 		temporary = resultat[i];
 		resultat.push(
-			{clock: temporary.clock - CONFIGURATION.TWO_PI, distance: temporary.distance},
-			{clock: temporary.clock + CONFIGURATION.TWO_PI, distance: temporary.distance}
+			{ clock: temporary.clock - CONFIGURATION.TWO_PI, distance: temporary.distance },
+			{ clock: temporary.clock + CONFIGURATION.TWO_PI, distance: temporary.distance }
 		);
 	}
 

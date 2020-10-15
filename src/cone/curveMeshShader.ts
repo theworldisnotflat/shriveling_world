@@ -1,9 +1,9 @@
 'use strict';
-import {BufferGeometry, InterleavedBufferAttribute, InterleavedBuffer, Line, Material, DynamicDrawUsage} from 'three';
-import {CONFIGURATION} from '../common/configuration';
-import {getShader} from '../shaders';
-import {GPUComputer} from '../common/gpuComputer';
-import {ILookupCurves} from '../definitions/project';
+import { BufferGeometry, InterleavedBufferAttribute, InterleavedBuffer, Line, Material, DynamicDrawUsage } from 'three';
+import { CONFIGURATION } from '../common/configuration';
+import { getShader } from '../shaders';
+import { GPUComputer } from '../common/gpuComputer';
+import { ILookupCurves } from '../definitions/project';
 
 let _curves: CurveMeshShader[];
 
@@ -16,7 +16,7 @@ let _height: number;
 // affects the value of the height of edges
 let _coefficient = 1;
 
-const _gpgpu: {[x: string]: GPUComputer} = {};
+const _gpgpu: { [x: string]: GPUComputer } = {};
 
 let _t: Float32Array;
 let _hauteurs: Float32Array;
@@ -72,7 +72,7 @@ function regenerateStep(): void {
 	_t = new Float32Array(t);
 	_width = _t.length;
 	const options = {
-		u_tSample: {src: _t, width: _width, height: 1},
+		u_tSample: { src: _t, width: _width, height: 1 },
 	};
 	_gpgpu.positions.updateTextures(options);
 }
@@ -91,7 +91,7 @@ function updateYear(): void {
 }
 
 function computation(): void {
-	const uniforms: {[x: string]: number | ArrayBufferView} = {};
+	const uniforms: { [x: string]: number | ArrayBufferView } = {};
 	uniforms.longueurMaxi = CONFIGURATION.extrudedHeight;
 	uniforms.threeRadius = CONFIGURATION.THREE_EARTH_RADIUS;
 	uniforms.earthRadius = CONFIGURATION.earthRadiusMeters;
@@ -104,7 +104,7 @@ function computation(): void {
 	uniforms.coefficient = _coefficient;
 	_gpgpu.positions.updateUniforms(uniforms);
 	const options = {
-		u_height: {src: _hauteurs, width: 1, height: _height},
+		u_height: { src: _hauteurs, width: 1, height: _height },
 	};
 	_gpgpu.positions.updateTextures(options);
 	const tempo = _gpgpu.positions.calculate(_width, _height);
@@ -118,7 +118,7 @@ export class CurveMeshShader extends Line {
 	public begin: string | number;
 	public end: string | number;
 	private readonly theta: number;
-	private readonly _years: {[year: string]: number};
+	private readonly _years: { [year: string]: number };
 	private readonly _transportName: string;
 	private _speedRatio: number;
 
@@ -194,7 +194,13 @@ export class CurveMeshShader extends Line {
 							if (endPoint.speedRatio.hasOwnProperty(transportName)) {
 								const ratios = endPoint.speedRatio[transportName];
 								_curves.push(
-									new CurveMeshShader(begin.cityCode, endPoint.end.cityCode, endPoint.theta, ratios, transportName)
+									new CurveMeshShader(
+										begin.cityCode,
+										endPoint.end.cityCode,
+										endPoint.theta,
+										ratios,
+										transportName
+									)
 								);
 								pControls0.push(...beginGLSL);
 								pControls1.push(...pointPGLSL);
@@ -210,10 +216,10 @@ export class CurveMeshShader extends Line {
 		_height = _curves.length;
 		_hauteurs = new Float32Array(_height);
 		const options = {
-			u_PControls0: {src: new Float32Array(pControls0), width: 1, height: _height},
-			u_PControls1: {src: new Float32Array(pControls1), width: 1, height: _height},
-			u_PControls2: {src: new Float32Array(pControls2), width: 1, height: _height},
-			u_PControls3: {src: new Float32Array(pControls3), width: 1, height: _height},
+			u_PControls0: { src: new Float32Array(pControls0), width: 1, height: _height },
+			u_PControls1: { src: new Float32Array(pControls1), width: 1, height: _height },
+			u_PControls2: { src: new Float32Array(pControls2), width: 1, height: _height },
+			u_PControls3: { src: new Float32Array(pControls3), width: 1, height: _height },
 		};
 		_gpgpu.positions.updateTextures(options);
 		regenerateStep();
@@ -227,11 +233,18 @@ export class CurveMeshShader extends Line {
 		begin: string | number,
 		end: string | number,
 		theta: number,
-		years: {[year: string]: number},
+		years: { [year: string]: number },
 		transportName: string
 	) {
-		const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(204 * 4), 4).setUsage(DynamicDrawUsage);
-		const interleavedBufferAttributePosition = new InterleavedBufferAttribute(interleavedBufferPosition, 3, 0, false);
+		const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(204 * 4), 4).setUsage(
+			DynamicDrawUsage
+		);
+		const interleavedBufferAttributePosition = new InterleavedBufferAttribute(
+			interleavedBufferPosition,
+			3,
+			0,
+			false
+		);
 		const bufferGeometry = new BufferGeometry();
 		bufferGeometry.setAttribute('position', interleavedBufferAttributePosition);
 		bufferGeometry.computeBoundingSphere();
