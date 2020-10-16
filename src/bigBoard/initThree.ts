@@ -48,7 +48,7 @@ export async function prepareConfiguration(): Promise<void> {
 			opacity: 0.3,
 		});
 		const loaderFont = new FontLoader();
-		loaderFont.load('assets/gentilis_regular.typeface.json', font => {
+		loaderFont.load('assets/gentilis_regular.typeface.json', (font) => {
 			CONFIGURATION.TEXT_GEOMETRY_OPTIONS = {
 				font,
 				size: 0.3,
@@ -67,7 +67,7 @@ const semiHeight = 1024;
 const longLat2XY = semiHeight / 90;
 async function loadBoundaries(url: string): Promise<HTMLCanvasElement> {
 	const requete = new Request(url);
-	const json: GeoJSON.FeatureCollection = await fetch(requete).then(async response => response.json());
+	const json: GeoJSON.FeatureCollection = await fetch(requete).then(async (response) => response.json());
 	const canvas = document.createElement('canvas');
 	canvas.height = semiHeight * 2;
 	canvas.width = semiHeight * 4;
@@ -78,7 +78,7 @@ async function loadBoundaries(url: string): Promise<HTMLCanvasElement> {
 	// Const strokeStyleDefault = 'rgba(0,0,255,0.5)';
 	// const strokeStyleText = 'rgba(0,255,0,0.5)';
 	context.lineWidth = 2;
-	json.features.forEach(feature => {
+	json.features.forEach((feature) => {
 		const geometry = feature.geometry;
 		const name: string = feature.properties.ADM0_A3;
 		let coordinates: number[][][][];
@@ -93,7 +93,7 @@ async function loadBoundaries(url: string): Promise<HTMLCanvasElement> {
 				coordinates = [[[[]]]];
 		}
 
-		coordinates.forEach(polygons => {
+		coordinates.forEach((polygons) => {
 			let xmin = Infinity;
 			let xmax = -Infinity;
 			let ymin = Infinity;
@@ -103,8 +103,8 @@ async function loadBoundaries(url: string): Promise<HTMLCanvasElement> {
 			const lightness = Math.floor(Math.random() * 100 + 0.5);
 			const contain = `hsl(${hue},${saturation}%,${lightness}%)`;
 			context.strokeStyle = contain;
-			polygons.forEach(polygon => {
-				const points = polygon.map(point => {
+			polygons.forEach((polygon) => {
+				const points = polygon.map((point) => {
 					const [longitude, latitude] = point;
 					const x = longitude * longLat2XY + 2 * semiHeight;
 					const y = -latitude * longLat2XY + semiHeight;

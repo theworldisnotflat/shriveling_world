@@ -71,13 +71,13 @@ function localLimitsRaw(
 	referential: NEDLocal
 ): Array<{ clock: number; distance: number }> {
 	const allPoints: Coordinate[] = [];
-	boundaries.forEach(boundary => {
-		boundary.forEach(position => {
+	boundaries.forEach((boundary) => {
+		boundary.forEach((position) => {
 			allPoints.push(referential.cartographic2NED(position));
 		});
 	});
 	const resultat: Array<{ clock: number; distance: number }> = [];
-	allPoints.forEach(pos => {
+	allPoints.forEach((pos) => {
 		const clook = Math.atan2(pos.y, pos.x);
 		const distance = Math.sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z);
 		resultat.push(
@@ -217,7 +217,7 @@ function updateAlphas(): void {
 				}
 
 				interpol = interpolator(alphaTab, 'clock', 'alpha');
-				subAlphas = _clocks.map(clock => interpol(clock));
+				subAlphas = _clocks.map((clock) => interpol(clock));
 			}
 
 			temp.set(subAlphas, i * _width);
@@ -300,7 +300,7 @@ export class ConeMeshShader extends PseudoCone {
 		_ready = false;
 		_cones = [];
 		fullCleanArrays();
-		const promise = new Promise(resolve => {
+		const promise = new Promise((resolve) => {
 			if (uuid === undefined) {
 				void Promise.all([
 					GPUComputer.GPUComputerFactory(
@@ -316,7 +316,7 @@ export class ConeMeshShader extends PseudoCone {
 							u_withLimits: 'R32F',
 						},
 						3
-					).then(instance => {
+					).then((instance) => {
 						_gpgpu.positions = instance;
 						return instance;
 					}),

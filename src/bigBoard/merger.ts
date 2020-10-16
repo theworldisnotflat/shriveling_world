@@ -255,7 +255,7 @@ function networkFromCities(
 	const actualYear = new Date().getFullYear();
 	let minYear = actualYear;
 	let maxYear = 0;
-	transpNetwork.forEach(item => {
+	transpNetwork.forEach((item) => {
 		if (minYear > item.yearBegin) {
 			minYear = item.yearBegin;
 		}
@@ -336,7 +336,7 @@ function networkFromCities(
 	 *
 	 * At the end of this loop [[speedPerTransportPerYear]] and [[maximumSpeed]] are populated
 	 */
-	transportModeCode.forEach(transportMode => {
+	transportModeCode.forEach((transportMode) => {
 		const transportCode = transportMode.code;
 		const name = transportMode.name;
 		if (name === 'Road') {
@@ -350,7 +350,7 @@ function networkFromCities(
 		const tabYearSpeed: { [year: string]: ICoupleTransportAlpha } = {};
 		let tempMaxYear: number = transportMode.yearEnd;
 
-		transportMode.speeds.forEach(transportSpeed => {
+		transportMode.speeds.forEach((transportSpeed) => {
 			tempTransportCodeTab.push({ speed: transportSpeed.speedKPH, year: transportSpeed.year });
 			if (maxYear < transportSpeed.year) {
 				maxYear = transportSpeed.year;
@@ -411,7 +411,7 @@ function networkFromCities(
 	// Faire lookup des cartographic/referential par citycode. OK
 	const lookupPosition: { [cityCode: string]: NEDLocal } = {};
 	const lookupMiddle: { [cityCodeBegin: number]: { [cityCodeEnd: number]: ILookupCacheAnchorsEdgeCone } } = {};
-	cities.forEach(city => {
+	cities.forEach((city) => {
 		const position = new Cartographic(city.longitude, city.latitude, 0, false);
 		lookupPosition[city.cityCode] = new NEDLocal(position);
 	});
@@ -474,7 +474,7 @@ function networkFromCities(
 	const processedODs: { [begin: string]: { [end: string]: string[] } } = {};
 	// Second part of the function
 	// the main loop for each city
-	cities.forEach(city => {
+	cities.forEach((city) => {
 		const origCityCode = city.cityCode;
 		const referential = lookupPosition[origCityCode];
 		if (!processedODs.hasOwnProperty(origCityCode)) {
@@ -749,7 +749,7 @@ export class Merger {
 			this[name] = [];
 			this[name].push(...getCSV(someString, name === '_transportModeCode'));
 			if (name === '_transportModeCode' || name === '_transportNetwork') {
-				(this[name] as IEdge[]).forEach(item => {
+				(this[name] as IEdge[]).forEach((item) => {
 					if (item.yearEnd === undefined || item.yearEnd === null || item.yearEnd.toString() === '') {
 						delete item.yearEnd;
 					}

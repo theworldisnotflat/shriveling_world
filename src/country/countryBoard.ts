@@ -23,7 +23,7 @@ export class CountryBoard {
 	}
 
 	set show(value: boolean) {
-		this.countryMeshCollection.forEach(country => {
+		this.countryMeshCollection.forEach((country) => {
 			country.visible = value;
 		});
 		this._show = value;
@@ -34,7 +34,7 @@ export class CountryBoard {
 	}
 
 	set extruded(value: number) {
-		this.countryMeshCollection.forEach(country => {
+		this.countryMeshCollection.forEach((country) => {
 			country.extruded = value;
 		});
 		this._extruded = value;
@@ -45,10 +45,10 @@ export class CountryBoard {
 	}
 
 	set scale(value: number) {
-		this._selectedMeshs.forEach(mesh => {
+		this._selectedMeshs.forEach((mesh) => {
 			mesh.scale.setScalar(value);
 		});
-		this.countryMeshCollection.forEach(mesh => {
+		this.countryMeshCollection.forEach((mesh) => {
 			mesh.scale.setScalar(value);
 		});
 		this._scale = value;
@@ -65,7 +65,7 @@ export class CountryBoard {
 	set opacity(value: number) {
 		if (value > 0 && value <= 1) {
 			this._opacity = value;
-			this.countryMeshCollection.forEach(country => {
+			this.countryMeshCollection.forEach((country) => {
 				(<Material>country.material).opacity = value;
 			});
 		}
@@ -81,7 +81,7 @@ export class CountryBoard {
 		this.ready = false;
 		this.clean();
 		const collection = await CountryMeshShader.generator(geoJson);
-		collection.forEach(mesh => {
+		collection.forEach((mesh) => {
 			this.countryMeshCollection.push(mesh);
 			this._scene.add(mesh);
 			mesh.visible = this._show;
@@ -97,7 +97,7 @@ export class CountryBoard {
 			this.countryMeshCollection.splice(i, 1);
 		}
 
-		this._selectedMeshs.forEach(mesh => {
+		this._selectedMeshs.forEach((mesh) => {
 			mesh.visible = false;
 		});
 		this._sumUpProperties = {};
@@ -114,7 +114,7 @@ export class CountryBoard {
 			resultat = <CountryMeshShader>intersects[0].object;
 			this.highLight(resultat.otherProperties, highLight);
 		} else {
-			this._selectedMeshs.forEach(mesh => {
+			this._selectedMeshs.forEach((mesh) => {
 				if (!Array.isArray(mesh.material)) {
 					mesh.material.visible = false;
 				}
@@ -125,10 +125,10 @@ export class CountryBoard {
 	}
 
 	public extrude(criterias: ICriterias, value: number): void {
-		this._selectedMeshs.forEach(mesh => {
+		this._selectedMeshs.forEach((mesh) => {
 			mesh.visible = false;
 		});
-		this.searchMesh(criterias).forEach(mesh => {
+		this.searchMesh(criterias).forEach((mesh) => {
 			mesh.extruded = value;
 		});
 		this._reHighLight();
@@ -137,10 +137,10 @@ export class CountryBoard {
 	public highLight(criterias: ICriterias, light: boolean): void {
 		if (criterias !== this._highlitedCriterias) {
 			this._highlitedCriterias = criterias;
-			this._selectedMeshs.forEach(mesh => {
+			this._selectedMeshs.forEach((mesh) => {
 				this._scene.remove(mesh);
 			});
-			this._selectedMeshs = this.searchMesh(criterias).map(mesh => {
+			this._selectedMeshs = this.searchMesh(criterias).map((mesh) => {
 				const geometry = mesh.geometry;
 				const out = new Mesh(geometry, CONFIGURATION.highLitedMaterial);
 				this._scene.add(out);
@@ -149,7 +149,7 @@ export class CountryBoard {
 			});
 		}
 
-		this._selectedMeshs.forEach(mesh => {
+		this._selectedMeshs.forEach((mesh) => {
 			if (!Array.isArray(mesh.material)) {
 				mesh.material.visible = light;
 			}
@@ -159,7 +159,7 @@ export class CountryBoard {
 	public searchMesh(criterias: ICriterias | Cartographic, path = ''): CountryMeshShader[] {
 		let resultat: CountryMeshShader[];
 		if (criterias instanceof Cartographic) {
-			resultat = this.countryMeshCollection.filter(country => country.isInside(criterias));
+			resultat = this.countryMeshCollection.filter((country) => country.isInside(criterias));
 		} else {
 			resultat = searchCriterias(this.countryMeshCollection, criterias, [], 'otherProperties.' + path);
 		}
@@ -169,7 +169,7 @@ export class CountryBoard {
 
 	public showCriterias(criterias: ICriterias, state: boolean): void {
 		const realState = state && this._show;
-		this.searchMesh(criterias).forEach(country => {
+		this.searchMesh(criterias).forEach((country) => {
 			country.visible = realState;
 		});
 	}

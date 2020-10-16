@@ -10,7 +10,7 @@ export class DataSetManager {
 	}
 
 	private async _initInteraction(bigBoard: BigBoard, gui: GUI): Promise<void> {
-		const tab = await fetch('datasets/datasets.json').then(async re => re.json());
+		const tab = await fetch('datasets/datasets.json').then(async (re) => re.json());
 		const element = document.createElement('div');
 		let innerHTML = '';
 		tab.forEach((name: string) => {
@@ -24,11 +24,11 @@ export class DataSetManager {
 		element.style.color = 'white';
 		element.style.textShadow = '2px 2px 4px black';
 		element.style.cursor = 'pointer';
-		element.addEventListener('click', async event => {
+		element.addEventListener('click', async (event) => {
 			const name = (<HTMLElement>event.target).dataset.name;
 			if (name !== undefined) {
-				const zip = await fetch('datasets/' + name).then(async raw =>
-					raw.arrayBuffer().then(buf => new Uint8Array(buf))
+				const zip = await fetch('datasets/' + name).then(async (raw) =>
+					raw.arrayBuffer().then((buf) => new Uint8Array(buf))
 				);
 				const unzipped: IListFile[] = JSON.parse(new TextDecoder('utf-8').decode(inflate(zip)));
 				bigBoard.cleanAll();

@@ -97,7 +97,7 @@ export class GUI {
 
 		_filesData.push(...list);
 		let json: string;
-		_filesData.forEach(item => {
+		_filesData.forEach((item) => {
 			const name = item.name.toLowerCase();
 			if (name.endsWith('.geojson')) {
 				json = item.text;
@@ -110,7 +110,7 @@ export class GUI {
 			}
 		});
 		void Promise.all([
-			new Promise(resolve => {
+			new Promise((resolve) => {
 				if (!bigBoard.countryBoard.ready && json !== undefined) {
 					void bigBoard.countryBoard.add(JSON.parse(json)).then(() => {
 						while (countryControllersList.length > 0) {
@@ -121,7 +121,7 @@ export class GUI {
 						const synonymes: string[] = [];
 						bigBoard.countryBoard.countryMeshCollection
 							.sort((a, b) => a.mainName.localeCompare(b.mainName))
-							.forEach(country => {
+							.forEach((country) => {
 								let countryName = country.mainName;
 								let i = -1;
 								while (synonymes.includes(countryName)) {
@@ -131,15 +131,9 @@ export class GUI {
 
 								synonymes.push(countryName);
 								const folder = countryFolder.addFolder(countryName);
-								folder
-									.add(country, 'extruded', -100, 100)
-									.step(1)
-									.listen();
+								folder.add(country, 'extruded', -100, 100).step(1).listen();
 								folder.add(country, 'visible').listen();
-								folder
-									.add(country.material, 'opacity', 0, 1)
-									.step(0.01)
-									.listen();
+								folder.add(country.material, 'opacity', 0, 1).step(0.01).listen();
 								countryControllersList.push(folder);
 							});
 						resolve();
@@ -148,7 +142,7 @@ export class GUI {
 					resolve();
 				}
 			}),
-			new Promise(resolve => {
+			new Promise((resolve) => {
 				if (bigBoard.state === 'complete' && !flagTransportDone) {
 					flagTransportDone = true;
 					while (terrestrialControllersList.length > 0) {
@@ -162,15 +156,15 @@ export class GUI {
 					}
 
 					// Adding aerial network(s)
-					this._merger.transportNames.curves.forEach(transportName => {
+					this._merger.transportNames.curves.forEach((transportName) => {
 						const folder = aerialFolder.addFolder(transportName);
 						aerialControllersList.push(folder);
 						function curveListener(): void {
 							const opacity = <number>curveOpacity.getValue();
 							const color = Number.parseInt(curveColor.getValue().replace('#', ''), 16);
 							bigBoard.coneBoard.curveCollection
-								.filter(curve => transportName === curve.transportName)
-								.forEach(curve => {
+								.filter((curve) => transportName === curve.transportName)
+								.forEach((curve) => {
 									const material = <LineBasicMaterial>curve.material;
 									material.color.setHex(color);
 									material.opacity = opacity;
@@ -183,7 +177,7 @@ export class GUI {
 						curveOpacity.onChange(curveListener);
 					});
 					// Adding terrestrial networks
-					this._merger.transportNames.cones.forEach(transportName => {
+					this._merger.transportNames.cones.forEach((transportName) => {
 						const folder = terresterialFolder.addFolder(transportName);
 						terrestrialControllersList.push(folder);
 
@@ -192,8 +186,8 @@ export class GUI {
 							const color = Number.parseInt(curveColor.getValue().replace('#', ''), 16);
 
 							bigBoard.coneBoard.curveCollection
-								.filter(curve => transportName === curve.transportName)
-								.forEach(curve => {
+								.filter((curve) => transportName === curve.transportName)
+								.forEach((curve) => {
 									const material = <LineBasicMaterial>curve.material;
 									material.color.setHex(color);
 									material.opacity = opacity;
@@ -212,16 +206,10 @@ export class GUI {
 		]).then(() => {
 			if (bigBoard.countryBoard.ready && bigBoard.state === 'complete') {
 				flagTransportDone = false;
-				annees
-					.min(this._merger.minYear)
-					.max(this._merger.maxYear)
-					.updateDisplay();
+				annees.min(this._merger.minYear).max(this._merger.maxYear).updateDisplay();
 				bigBoard.coneBoard.add(this._merger.conesAndCurvesData);
 				// This._merger.clear();
-				const sizeText = generalFolder
-					.add(bigBoard, '_sizetext', 0, 2)
-					.name('taille du texte')
-					.step(0.1);
+				const sizeText = generalFolder.add(bigBoard, '_sizetext', 0, 2).name('taille du texte').step(0.1);
 				sizeText.onChange(() => bigBoard.rescaleText());
 				generalFolder.addColor(conf, 'text color').onChange((v: string) => {
 					const color = Number.parseInt(v.replace('#', ''), 16);
@@ -302,10 +290,7 @@ export class GUI {
 		});
 		projectionFolder.add(CONFIGURATION, 'projectionInit', conf.projection).name('initial projection');
 		projectionFolder.add(CONFIGURATION, 'projectionEnd', conf.projection).name('final projection');
-		projectionFolder
-			.add(CONFIGURATION, 'percentProjection', 0, 100)
-			.step(1)
-			.name('transition projection');
+		projectionFolder.add(CONFIGURATION, 'percentProjection', 0, 100).step(1).name('transition projection');
 		annees = generalFolder.add(conf, 'year', 1930, 2030).step(1);
 		annees.onChange((v: string | number) => {
 			CONFIGURATION.year = v;
@@ -337,7 +322,7 @@ export class GUI {
 		coneFolder.add(bigBoard.coneBoard, 'opacity', 0, 1).step(0.01);
 		coneFolder.addColor(conf, 'cones color').onChange((v: string) => {
 			const color = Number.parseInt(v.replace('#', ''), 16);
-			bigBoard.coneBoard.coneMeshCollection.forEach(cone => {
+			bigBoard.coneBoard.coneMeshCollection.forEach((cone) => {
 				console.log(cone);
 				const material = <MeshPhongMaterial>cone.material;
 				material.color.setHex(color);
@@ -350,20 +335,14 @@ export class GUI {
 
 		// curves
 		aerialFolder = gui.addFolder('Curves');
-		aerialFolder
-			.add(CONFIGURATION, 'pointsPerCurve', 0, 200)
-			.step(1)
-			.name('number of points');
+		aerialFolder.add(CONFIGURATION, 'pointsPerCurve', 0, 200).step(1).name('number of points');
 		terresterialFolder = aerialFolder.addFolder('terrestrial modes');
 
 		// Pays /mise en exergue avec listen?
 		// countries / highlight with listen?
 		countryFolder = gui.addFolder('Countries');
 		countryFolder.add(bigBoard.countryBoard, 'show');
-		countryFolder
-			.add(bigBoard.countryBoard, 'opacity', 0, 1)
-			.step(0.01)
-			.name('opacity');
+		countryFolder.add(bigBoard.countryBoard, 'opacity', 0, 1).step(0.01).name('opacity');
 		countryFolder.add(bigBoard.countryBoard, 'extruded', -100, 100).step(1);
 		countryFolder
 			.add(conf, 'exportCountry')

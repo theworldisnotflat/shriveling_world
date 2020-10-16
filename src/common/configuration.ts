@@ -3,7 +3,8 @@
  * key variables of the project
  */
 'use strict';
-import { MeshBasicMaterial, LineBasicMaterial, Material, TextGeometryParameters } from 'three';
+import { MeshBasicMaterial, LineBasicMaterial, Material } from 'three';
+import { TextGeometryParameters } from 'three/src/geometries/TextBufferGeometry';
 import { generateUUID } from './utils';
 import {
 	PROJECTION_ENUM,
@@ -325,7 +326,7 @@ export const CONFIGURATION = {
 	},
 	addEventListener(events: string, callBack: configurationCallback, uuid = generateUUID(), scope?: any): string {
 		const eventNames = events.split(' ');
-		eventNames.forEach(name => {
+		eventNames.forEach((name) => {
 			if (_listeners.hasOwnProperty(name)) {
 				(<IEventListItem[]>_listeners[name]).push({ cb: callBack, scope, uuid });
 			}

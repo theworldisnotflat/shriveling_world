@@ -5,7 +5,7 @@ const terser = require('rollup-plugin-terser').terser;
 const typescript = require('rollup-plugin-typescript2');
 const svelte = require('rollup-plugin-svelte');
 const commonjs = require('@rollup/plugin-commonjs');
-const resolve = require('@rollup/plugin-node-resolve');
+const {nodeResolve} = require('@rollup/plugin-node-resolve');
 const json = require('@rollup/plugin-json');
 const glob = require('glob');
 const { readdirSync, readFileSync, outputFile, createWriteStream, ensureDir } = require('fs-extra');
@@ -54,7 +54,7 @@ let destinations = {
 
 const rollupPlugins = [
 	json(),
-	resolve({ browser: true, preferBuiltins: false }),
+	nodeResolve({ browser: true, preferBuiltins: false }),
 	commonjs({
 		include: /node_modules/,
 		ignoreGlobal: false,

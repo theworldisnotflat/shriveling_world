@@ -30,7 +30,7 @@ export class ConeBoard {
 	}
 
 	set show(value: boolean) {
-		this.coneMeshCollection.forEach(country => {
+		this.coneMeshCollection.forEach((country) => {
 			country.visible = value;
 		});
 		this._show = value;
@@ -41,7 +41,7 @@ export class ConeBoard {
 	}
 
 	set withLimits(value: boolean) {
-		this.coneMeshCollection.forEach(country => {
+		this.coneMeshCollection.forEach((country) => {
 			country.withLimits = value;
 		});
 		this._withLimits = value;
@@ -52,10 +52,10 @@ export class ConeBoard {
 	}
 
 	set scale(value: number) {
-		this._selectedMeshs.forEach(mesh => {
+		this._selectedMeshs.forEach((mesh) => {
 			mesh.scale.setScalar(value);
 		});
-		this.coneMeshCollection.forEach(mesh => {
+		this.coneMeshCollection.forEach((mesh) => {
 			mesh.scale.setScalar(value);
 		});
 		this._scale = value;
@@ -72,7 +72,7 @@ export class ConeBoard {
 	set opacity(value: number) {
 		if (value > 0 && value <= 1) {
 			this._opacity = value;
-			this.coneMeshCollection.forEach(cone => {
+			this.coneMeshCollection.forEach((cone) => {
 				(<Material>cone.material).opacity = value;
 			});
 		}
@@ -92,10 +92,10 @@ export class ConeBoard {
 	 */
 	public add(lookup: ILookupCurvesAndCityGraph): void {
 		this.clean();
-		const bboxes = this._countries.countryMeshCollection.map(country => country.bbox);
+		const bboxes = this._countries.countryMeshCollection.map((country) => country.bbox);
 		console.log(lookup.lookupCityNetwork);
-		void ConeMeshShader.generateCones(lookup.lookupCityNetwork, bboxes).then(cones => {
-			cones.forEach(cone => {
+		void ConeMeshShader.generateCones(lookup.lookupCityNetwork, bboxes).then((cones) => {
+			cones.forEach((cone) => {
 				// UpdateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
 				// add object name to cone
 				cone.name = cone.otherProperties.origCityProperties.urbanAgglomeration;
@@ -105,8 +105,8 @@ export class ConeBoard {
 				this._renderer.render(this._scene, this._camera);
 			});
 		});
-		void CurveMeshShader.generateCones(lookup.curvesData).then(curves => {
-			curves.forEach(curve => {
+		void CurveMeshShader.generateCones(lookup.curvesData).then((curves) => {
+			curves.forEach((curve) => {
 				this.curveCollection.push(curve);
 				curve.visible = this._show;
 				curve.scale.setScalar(this._scale);
@@ -117,7 +117,7 @@ export class ConeBoard {
 	}
 
 	public setLayer(transport: string, show: boolean): void {
-		this.searchMesh({ transport: { value: transport } }).forEach(mesh => {
+		this.searchMesh({ transport: { value: transport } }).forEach((mesh) => {
 			mesh.visible = show;
 		});
 	}
@@ -149,7 +149,7 @@ export class ConeBoard {
 			resultat = <PseudoCone>intersects[0].object;
 			this.highLight(resultat.otherProperties, highLight);
 		} else {
-			this._selectedMeshs.forEach(mesh => {
+			this._selectedMeshs.forEach((mesh) => {
 				if (!Array.isArray(mesh.material)) {
 					mesh.material.visible = false;
 				}
@@ -160,7 +160,7 @@ export class ConeBoard {
 	}
 
 	public setLimits(criterias: ICriterias, limit: boolean): void {
-		this.searchMesh(criterias).forEach(country => {
+		this.searchMesh(criterias).forEach((country) => {
 			country.withLimits = limit;
 		});
 	}
@@ -168,10 +168,10 @@ export class ConeBoard {
 	public highLight(criterias: ICriterias, light: boolean): void {
 		if (criterias !== this._highlitedCriterias) {
 			this._highlitedCriterias = criterias;
-			this._selectedMeshs.forEach(mesh => {
+			this._selectedMeshs.forEach((mesh) => {
 				this._scene.remove(mesh);
 			});
-			this._selectedMeshs = this.searchMesh(criterias).map(mesh => {
+			this._selectedMeshs = this.searchMesh(criterias).map((mesh) => {
 				const geometry = <BufferGeometry>mesh.geometry.clone();
 				const out = new Mesh(geometry, CONFIGURATION.highLitedMaterial);
 				this._scene.add(out);
@@ -180,7 +180,7 @@ export class ConeBoard {
 			});
 		}
 
-		this._selectedMeshs.forEach(mesh => {
+		this._selectedMeshs.forEach((mesh) => {
 			if (!Array.isArray(mesh.material)) {
 				mesh.material.visible = light;
 			}
@@ -191,7 +191,7 @@ export class ConeBoard {
 		let resultat: PseudoCone[];
 		if (criterias instanceof Cartographic) {
 			resultat = this.coneMeshCollection.filter(
-				cone => cone.cartographicPosition.approximateDistance(criterias) < 1e-13
+				(cone) => cone.cartographicPosition.approximateDistance(criterias) < 1e-13
 			);
 		} else {
 			resultat = searchCriterias(
@@ -207,7 +207,7 @@ export class ConeBoard {
 
 	public showCriterias(criterias: ICriterias, state: boolean): void {
 		const realState = state && this._show;
-		this.searchMesh(criterias).forEach(cone => {
+		this.searchMesh(criterias).forEach((cone) => {
 			cone.visible = realState;
 		});
 	}

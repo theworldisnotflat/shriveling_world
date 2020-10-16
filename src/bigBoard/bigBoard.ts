@@ -582,8 +582,8 @@ export default class BigBoard {
 		const groupCone = new Group();
 		const groupCurveShortHaul = new Group();
 		const groupCurvesLongHaul = new Group();
-		this.coneBoard.coneMeshCollection.forEach(cone => groupCone.add(cone));
-		this.coneBoard.curveCollection.forEach(curve => {
+		this.coneBoard.coneMeshCollection.forEach((cone) => groupCone.add(cone));
+		this.coneBoard.curveCollection.forEach((curve) => {
 			if (curve.getTheta < 2000 / (CONFIGURATION.earthRadiusMeters / 1000)) {
 				groupCurveShortHaul.add(curve);
 			} else {

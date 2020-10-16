@@ -58,7 +58,7 @@ export class Cartographic implements ICartographic {
 		const distance = Cartographic.exactDistance(pos1, pos2);
 		const resultat: Cartographic[] = [];
 		if (distance > 0) {
-			fractions.forEach(fraction => {
+			fractions.forEach((fraction) => {
 				const A = Math.sin((1 - fraction) * distance) / Math.sin(distance);
 				const B = Math.sin(fraction * distance) / Math.sin(distance);
 				const x =
@@ -166,7 +166,7 @@ export function updateSumUpCriteria(sumup: ISumUpCriteria, properties: any): ISu
 									temporary
 								);
 							} else if (Array.isArray(temporary) && sumup[attribute].type === 'array') {
-								temporary.forEach(item => {
+								temporary.forEach((item) => {
 									updateSumUpCriteria(<ISumUpCriteria>sumup[attribute].sumUp, item);
 								});
 							} else if (sumup[attribute].type === 'object') {
@@ -213,7 +213,7 @@ export function updateSumUpCriteria(sumup: ISumUpCriteria, properties: any): ISu
 								sumup[attribute] = { type: 'date', sumUp: { max: temporary, min: temporary } };
 							} else if (Array.isArray(temporary)) {
 								sumup[attribute] = { type: 'array', sumUp: {} };
-								temporary.forEach(item => {
+								temporary.forEach((item) => {
 									updateSumUpCriteria(<ISumUpCriteria>sumup[attribute].sumUp, item);
 								});
 							} else {
@@ -285,7 +285,7 @@ function compare(ob1: any, ob2: any, ascendant: boolean): number {
 function compareItemCriteria(value: any, itemCriteria: IItemCriteria): boolean {
 	let resultat = false;
 	if (Array.isArray(value)) {
-		value.forEach(item => {
+		value.forEach((item) => {
 			resultat = resultat || compareItemCriteria(item, itemCriteria);
 		});
 	} else {
@@ -331,10 +331,10 @@ function getObjectByString(objet: any, path: string): any {
 		} else if (subAttribut === '*') {
 			const subPath = tab.join('.');
 			if (Array.isArray(objet)) {
-				objet = objet.map(item => getObjectByString(item, subPath));
+				objet = objet.map((item) => getObjectByString(item, subPath));
 				finished = true;
 			} else if (typeof objet === 'object' && !(objet instanceof Date)) {
-				objet = Object.getOwnPropertyNames(objet).map(attributName =>
+				objet = Object.getOwnPropertyNames(objet).map((attributName) =>
 					getObjectByString(objet[attributName], subPath)
 				);
 				finished = true;
@@ -379,7 +379,7 @@ export function searchCriterias<T>(
 		return found;
 	}
 
-	return collection.filter(x => megaFilter(x));
+	return collection.filter((x) => megaFilter(x));
 }
 
 export function orderCriteria<T>(collection: T[], criteriaOrder: IOrderAscendant[] = []): T[] {
@@ -417,8 +417,8 @@ export function DragnDrop(id: string | HTMLElement, callback: (list: IListFile[]
 			evt.preventDefault();
 			const files = evt.dataTransfer.files;
 			void Promise.all(
-				Array.from(files, async file => {
-					return new Promise(resolve => {
+				Array.from(files, async (file) => {
+					return new Promise((resolve) => {
 						const reader = new FileReader();
 						reader.addEventListener('load', () => {
 							resolve({ name: file.name, text: reader.result });
@@ -427,7 +427,7 @@ export function DragnDrop(id: string | HTMLElement, callback: (list: IListFile[]
 						reader.readAsText(file);
 					});
 				})
-			).then(tab => callback.call(scope, tab));
+			).then((tab) => callback.call(scope, tab));
 		}
 
 		container.addEventListener('dragover', handleDragOver, false);
@@ -529,14 +529,14 @@ export const reviver: any = <U>(_key: string, value: any): U | any => {
 export function matchingBBox(pos: Cartographic, bboxes: IBBox[]): Cartographic[][] {
 	return bboxes
 		.filter(
-			bboxe =>
+			(bboxe) =>
 				pos.latitude >= bboxe.minLat &&
 				pos.latitude <= bboxe.maxLat &&
 				pos.longitude >= bboxe.minLong &&
 				pos.longitude <= bboxe.maxLong &&
 				Cartographic.isInside(pos, bboxe.boundary)
 		)
-		.map(bboxe => bboxe.boundary);
+		.map((bboxe) => bboxe.boundary);
 }
 
 export function getLocalLimits(
@@ -544,13 +544,13 @@ export function getLocalLimits(
 	referential: NEDLocal
 ): Array<{ clock: number; distance: number }> {
 	const allPoints: Coordinate[] = [];
-	boundaries.forEach(boundary => {
-		boundary.forEach(position => {
+	boundaries.forEach((boundary) => {
+		boundary.forEach((position) => {
 			allPoints.push(referential.cartographic2NED(position));
 		});
 	});
 	const clockDistance = allPoints
-		.map(pos => {
+		.map((pos) => {
 			return {
 				clock: Math.atan2(pos.y, pos.x),
 				distance: Math.sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z),

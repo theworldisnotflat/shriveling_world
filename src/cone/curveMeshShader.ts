@@ -126,7 +126,7 @@ export class CurveMeshShader extends Line {
 		_ready = false;
 		_curves = [];
 		fullCleanArrays();
-		const promise = new Promise(resolve => {
+		const promise = new Promise((resolve) => {
 			if (uuid === undefined) {
 				void Promise.all([
 					GPUComputer.GPUComputerFactory(
@@ -140,7 +140,7 @@ export class CurveMeshShader extends Line {
 							u_height: 'R32F',
 						},
 						1
-					).then(instance => {
+					).then((instance) => {
 						_gpgpu.positions = instance;
 						return instance;
 					}),
