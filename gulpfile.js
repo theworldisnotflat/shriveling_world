@@ -27,8 +27,8 @@ let sources = {
 	},
 	datasets: './datasets/',
 	blog: {
-		watch: ['./templates/blog/content/**/*.*', '!./templates/blog/public/**/**/*.*'],
-		content: './templates/blog/public/**/**/*.*',
+		watch: ['./templates/blog/content/documentation/**/*.*', '!./templates/blog/public/**/**/*.*'],
+		content: './templates/blog/public/**/**/**/*.*',
 	},
 };
 
@@ -70,7 +70,7 @@ if (argv._[0] === 'dev') {
 	isProduction = false;
 	isDebugging = true;
 }
-
+const baseURL=isProduction?'https://theworldisnotflat.github.io/shriveling_world_documentation/': 'http://127.0.0.1:8080/'
 let shaders = {};
 
 let libraries = {};
@@ -118,7 +118,7 @@ function commentStripper(contents) {
 function glob2Array(inputs) {
 	const files = [];
 	inputs.forEach(path => {
-		files.push(...glob.sync(path));
+		files.push(...glob.sync(path,{nodir:true}));
 	});
 	return files;
 }
@@ -225,19 +225,21 @@ const convertMD = async done => {
 const doc = series(
 	cleanTemp,
 	shell.task(
-		'typedoc --plugin typedoc-plugin-markdown --out temp --json temp/json.json  --readme none  --name "shriveling the world documentation" --ignoreCompilerErrors --hideGenerator --target ES6  src'
+		'npx typedoc --plugin typedoc-plugin-markdown --out temp --json temp/json.json  --readme none  --name "shriveling the world documentation" --ignoreCompilerErrors --hideGenerator --target ES6  src'
 	),
 	convertMD
 );
 
 const lint = shell.task('npm run lint');
 
-const hugoGeneration = shell.task(`cd templates/blog && npx hugo -D --debug ${isProduction?'': '-b "http://127.0.0.1:8080"'}`, {
+const hugoGeneration = shell.task(`cd templates/blog && npx hugo -D --debug -b "${baseURL}"`, {
 	verbose: true,
 });
 
-const hugoCopy = done => {
+
+const hugoCopy = async done => {
 	src(sources.blog.content)
+		// .pipe(replace(regex, '$1/$3'))
 		.pipe(dest(destinations.blog))
 		.pipe(connect.reload());
 	done();
@@ -334,10 +336,10 @@ const devDefault = series(lint, series(buildRequirements, doc), defaultTask);
 const watchFiles = () => {
 	watch(sources.blog.watch, hugoRequirements);
 	watch([...sources.app.shader, ...sources.app.template, sources.datasets, sources.app.src], devDefault);
-	series(fullClean, series(defaultRequirement, hugoRequirements))();
+	series(fullClean, defaultRequirement, hugoRequirements)();
 };
 
-const devRequirements = parallel(server, watchFiles);
+const devRequirements = parallel(watchFiles,server);
 
 exports.svelte = svelteBundle;
 exports.fullClean = fullClean;
