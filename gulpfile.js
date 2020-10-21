@@ -232,7 +232,7 @@ const doc = series(
 
 const lint = shell.task('npm run lint');
 
-const hugoGeneration = shell.task(`cd templates/blog && npx hugo -D --debug -b "${baseURL}"`, {
+const hugoGeneration = shell.task(`cd templates/blog && ../../node_modules/.bin/hugo -D --debug -b "${baseURL}"`, {
 	verbose: true,
 });
 
