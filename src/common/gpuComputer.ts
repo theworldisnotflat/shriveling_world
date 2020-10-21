@@ -1,5 +1,5 @@
 'use strict';
-import {internalFormatType} from '../definitions/project';
+import { internalFormatType } from '../definitions/project';
 import {
 	TextureOptions,
 	BufferInfo,
@@ -35,9 +35,9 @@ const vertexCode =
 
 function generateTextureOptions(
 	gl: WebGL2RenderingContext,
-	texturesType: {[x: string]: internalFormatType}
-): {[x: string]: TextureOptions} {
-	const resultat: {[x: string]: TextureOptions} = {};
+	texturesType: { [x: string]: internalFormatType }
+): { [x: string]: TextureOptions } {
+	const resultat: { [x: string]: TextureOptions } = {};
 	for (const name in texturesType) {
 		if (texturesType.hasOwnProperty(name)) {
 			const formatType = texturesType[name];
@@ -86,27 +86,27 @@ export class GPUComputer {
 	private readonly _fbi: FramebufferInfo = undefined;
 	private readonly _attachments: TextureOptions[] = undefined;
 	private readonly _programInfo: ProgramInfo = undefined;
-	private readonly _texturesOptions: {[x: string]: TextureOptions} = {};
-	private readonly _textures: {[x: string]: WebGLTexture} = {};
-	private _uniforms: {[x: string]: number | ArrayBufferView} = {};
+	private readonly _texturesOptions: { [x: string]: TextureOptions } = {};
+	private readonly _textures: { [x: string]: WebGLTexture } = {};
+	private _uniforms: { [x: string]: number | ArrayBufferView } = {};
 	private readonly _bufferAttachments: number[] = [];
 
 	public static async GPUComputerFactory(
 		fragmentCode: string,
-		initTextures: {[x: string]: internalFormatType},
+		initTextures: { [x: string]: internalFormatType },
 		outputNumber = 1
 	): Promise<GPUComputer> {
 		if (GPUComputer._gl === undefined) {
 			if (typeof OffscreenCanvas === 'undefined') {
-				GPUComputer._gl = document.createElement('canvas').getContext('webgl2', {antialias: false});
+				GPUComputer._gl = document.createElement('canvas').getContext('webgl2', { antialias: false });
 			} else {
-				GPUComputer._gl = new OffscreenCanvas(256, 256).getContext('webgl2', {antialias: false});
+				GPUComputer._gl = new OffscreenCanvas(256, 256).getContext('webgl2', { antialias: false });
 			}
 
 			addExtensionsToContext(<WebGLRenderingContext>GPUComputer._gl);
 			GPUComputer._attributesInfo = createBufferInfoFromArrays(<WebGLRenderingContext>GPUComputer._gl, {
-				position: {numComponents: 2, data: [-1, -1, 1, -1, 1, 1, -1, 1]},
-				texture: {numComponents: 2, data: [0, 0, 1, 0, 1, 1, 0, 1]},
+				position: { numComponents: 2, data: [-1, -1, 1, -1, 1, 1, -1, 1] },
+				texture: { numComponents: 2, data: [0, 0, 1, 0, 1, 1, 0, 1] },
 				indices: [0, 2, 1, 0, 2, 3],
 			});
 		}
@@ -133,8 +133,8 @@ export class GPUComputer {
 
 	private constructor(
 		fragmentCode: string,
-		texturesOptions: {[x: string]: TextureOptions},
-		textures: {[x: string]: WebGLTexture},
+		texturesOptions: { [x: string]: TextureOptions },
+		textures: { [x: string]: WebGLTexture },
 		outputNumber: number
 	) {
 		this._programInfo = createProgramInfo(<WebGLRenderingContext>GPUComputer._gl, [vertexCode, fragmentCode]);
@@ -153,7 +153,7 @@ export class GPUComputer {
 		this._textures = textures;
 	}
 
-	public updateUniforms(value: {[x: string]: number | ArrayBufferView}): void {
+	public updateUniforms(value: { [x: string]: number | ArrayBufferView }): void {
 		for (const att in value) {
 			if (value.hasOwnProperty(att)) {
 				this._uniforms[att] = value[att];
@@ -162,7 +162,7 @@ export class GPUComputer {
 	}
 
 	public updateTextures(texs: {
-		[x: string]: {src: ArrayBufferView; width: number; height: number; depth?: number};
+		[x: string]: { src: ArrayBufferView; width: number; height: number; depth?: number };
 	}): void {
 		for (const att in texs) {
 			if (this._texturesOptions.hasOwnProperty(att)) {
@@ -171,7 +171,12 @@ export class GPUComputer {
 				oldLookup.width = newLookup.width;
 				oldLookup.height = newLookup.height;
 				oldLookup.depth = newLookup.depth;
-				setTextureFromArray(<WebGLRenderingContext>GPUComputer._gl, this._textures[att], newLookup.src, oldLookup);
+				setTextureFromArray(
+					<WebGLRenderingContext>GPUComputer._gl,
+					this._textures[att],
+					newLookup.src,
+					oldLookup
+				);
 			}
 		}
 	}

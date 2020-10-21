@@ -3,8 +3,9 @@
  * key variables of the project
  */
 'use strict';
-import {MeshBasicMaterial, LineBasicMaterial, Material, TextGeometryParameters} from 'three';
-import {generateUUID} from './utils';
+import { MeshBasicMaterial, LineBasicMaterial, Material } from 'three';
+import { TextGeometryParameters } from 'three/src/geometries/TextBufferGeometry';
+import { generateUUID } from './utils';
 import {
 	PROJECTION_ENUM,
 	ICountryTextureURL,
@@ -25,7 +26,7 @@ const _TWO_PI: number = 2 * Math.PI;
 const _earthRadiusMeters = 6371e3;
 const _OVER_PI: number = 1 / Math.PI;
 const _OVER_TWO_PI: number = 1 / (2 * Math.PI);
-const _referenceEquiRectangular: ICartographic = {latitude: 0, longitude: 0, height: 0};
+const _referenceEquiRectangular: ICartographic = { latitude: 0, longitude: 0, height: 0 };
 const _referenceEquiRectangularFloat32Array = new Float32Array(3);
 let _standardParallel1: number = 30 * _deg2rad;
 let _standardParallel2: number = 45 * _deg2rad;
@@ -79,7 +80,7 @@ const _listeners: {
 function fireEvents(attribute: configurationObservableEvt, value: any): void {
 	if (_listeners.hasOwnProperty(attribute)) {
 		const callBackList = _listeners[attribute];
-		let item: {cb: configurationCallback; scope?: any};
+		let item: { cb: configurationCallback; scope?: any };
 		let scope: any;
 		let callBack: configurationCallback;
 		for (const element of callBackList) {
@@ -325,9 +326,9 @@ export const CONFIGURATION = {
 	},
 	addEventListener(events: string, callBack: configurationCallback, uuid = generateUUID(), scope?: any): string {
 		const eventNames = events.split(' ');
-		eventNames.forEach(name => {
+		eventNames.forEach((name) => {
 			if (_listeners.hasOwnProperty(name)) {
-				(<IEventListItem[]>_listeners[name]).push({cb: callBack, scope, uuid});
+				(<IEventListItem[]>_listeners[name]).push({ cb: callBack, scope, uuid });
 			}
 		});
 		return uuid;
