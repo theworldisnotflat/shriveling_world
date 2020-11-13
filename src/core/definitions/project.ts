@@ -273,7 +273,6 @@ export type configurationObservableEvt =
 	| 'heightRatio'
 	| 'intrudedHeightRatio'
 	| 'coneStep'
-	| 'TWEEN_TIMING'
 	| 'referenceEquiRectangular'
 	| 'pointsPerCurve'
 	| 'THREE_EARTH_RADIUS'

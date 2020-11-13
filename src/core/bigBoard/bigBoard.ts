@@ -24,10 +24,11 @@ import { ConeBoard } from '../cone/coneBoard';
 import { CountryBoard } from '../country/countryBoard';
 import { Merger } from './merger';
 import type { IMergerState, ISumUpCriteria, ILookupCurvesAndCityGraph, ICriterias } from '../definitions/project';
-import { save } from '../common/utils';
+import { saveAs } from 'file-saver';
 import type { PseudoCone } from '../cone/base';
 import type { CountryMeshShader } from '../country/countryMeshShader';
 import { GUI } from './guiDAT';
+import jszip from 'jszip/dist/jszip';
 import type * as GeoJSON from 'geojson';
 
 /**
@@ -46,7 +47,7 @@ export default class BigBoard {
 	 *
 	 * the configuration of the app, available in static
 	 */
-	public static configuration: any = CONFIGURATION;
+	public static configuration = CONFIGURATION;
 	public helper: DirectionalLightHelper;
 	public light: DirectionalLight;
 	public ambient: AmbientLight;
@@ -87,7 +88,7 @@ export default class BigBoard {
 	 *
 	 * GUI is linked to bigBoard (but not contained in)
 	 */
-	constructor(element: HTMLElement) {
+	constructor(element: HTMLElement, dat: HTMLElement) {
 		void prepareConfiguration().then(() => {
 			this._merger = new Merger();
 			const container = this._init(element);
@@ -99,7 +100,7 @@ export default class BigBoard {
 			CONFIGURATION.year = '2010';
 			this._showCitiesName = false;
 
-			const gui = new GUI(this, container, this._merger);
+			const gui = new GUI(this, dat, this._merger);
 			this._datasetManager = new DataSetManager(this, gui);
 			this._animate();
 		});
@@ -464,12 +465,12 @@ export default class BigBoard {
 	 */
 	private _init(element: HTMLElement): HTMLDivElement {
 		const container = document.createElement('div');
-		element.append(container);
+		element.appendChild(container);
 		this._stats = new Stats();
 		this._stats.domElement.style.position = 'absolute';
 		this._stats.domElement.style.top = '0px';
 		this._stats.domElement.style.zIndex = 100;
-		container.append(this._stats.domElement);
+		container.appendChild(this._stats.domElement);
 		this._cameraP = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 15000);
 		this._cameraO = new OrthographicCamera(
 			-this._windowHalfX,
@@ -577,7 +578,7 @@ export default class BigBoard {
 	 * @private
 	 * @memberof BigBoard
 	 */
-	private exporterOBJ(): void {
+	public exporterOBJ(): void {
 		const exporter = new OBJExporter();
 		const groupCone = new Group();
 		const groupCurveShortHaul = new Group();
@@ -593,18 +594,22 @@ export default class BigBoard {
 		const blobCone = new Blob([exporter.parse(groupCone)], {
 			type: 'text/plain;charset=utf-8',
 		});
-		save(blobCone, 'sceneCones.obj');
 		const blobCurveShort = new Blob([exporter.parse(groupCurveShortHaul)], {
 			type: 'text/plain;charset=utf-8',
 		});
-		save(blobCurveShort, 'sceneCurvesShortHaul.obj');
 		const blobCurveLong = new Blob([exporter.parse(groupCurvesLongHaul)], {
 			type: 'text/plain;charset=utf-8',
 		});
-		save(blobCurveLong, 'sceneCurvesLongHaul.obj');
-		this._scene.add(groupCone);
-		this._scene.add(groupCurveShortHaul);
-		this._scene.add(groupCurvesLongHaul);
+		const zip = new jszip();
+		zip.file('sceneCones.obj', blobCone);
+		zip.file('sceneCurvesShortHaul.obj', blobCurveShort);
+		zip.file('sceneCurvesLongHaul.obj', blobCurveLong);
+		zip.generateAsync({ type: 'blob' }).then(function (content) {
+			saveAs(content, 'scene.zip');
+		});
+		// this._scene.add(groupCone);
+		// this._scene.add(groupCurveShortHaul);
+		// this._scene.add(groupCurvesLongHaul);
 	}
 
 	/**

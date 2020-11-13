@@ -33,7 +33,6 @@ let _standardParallel2: number = 45 * _deg2rad;
 let _heightRatio = 0;
 let _intrudedHeightRatio = 0;
 let _coneStep = 0;
-let _TWEEN_TIMING = 0;
 let _THREE_EARTH_RADIUS = 0;
 let _projectionInit: PROJECTION_ENUM = PROJECTION_ENUM.none;
 let _projectionEnd: PROJECTION_ENUM = PROJECTION_ENUM.none;
@@ -54,7 +53,6 @@ const _listeners: {
 	heightRatio: IEventListItem[];
 	intrudedHeightRatio: IEventListItem[];
 	coneStep: IEventListItem[];
-	TWEEN_TIMING: IEventListItem[];
 	referenceEquiRectangular: IEventListItem[];
 	THREE_EARTH_RADIUS: IEventListItem[];
 	projectionBegin: IEventListItem[];
@@ -67,7 +65,6 @@ const _listeners: {
 	heightRatio: [],
 	intrudedHeightRatio: [],
 	coneStep: [],
-	TWEEN_TIMING: [],
 	referenceEquiRectangular: [],
 	THREE_EARTH_RADIUS: [],
 	projectionBegin: [],
@@ -275,13 +272,6 @@ export const CONFIGURATION = {
 		_THREE_EARTH_RADIUS = value;
 		fireEvents('THREE_EARTH_RADIUS', value);
 	},
-	get TWEEN_TIMING(): number {
-		return _TWEEN_TIMING;
-	},
-	set TWEEN_TIMING(value: number) {
-		_TWEEN_TIMING = value;
-		fireEvents('TWEEN_TIMING', value);
-	},
 	get year(): string | number {
 		return _year;
 	},
@@ -355,5 +345,4 @@ export const CONFIGURATION = {
 CONFIGURATION.coneStep = 5 * CONFIGURATION.deg2rad;
 CONFIGURATION.heightRatio = 0.01;
 CONFIGURATION.intrudedHeightRatio = 0.6;
-CONFIGURATION.TWEEN_TIMING = 1000;
 CONFIGURATION.THREE_EARTH_RADIUS = 100;
