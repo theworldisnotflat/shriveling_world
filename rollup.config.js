@@ -280,25 +280,4 @@ export default {
         onwarn,
     },
 
-    serviceworker: {
-        input: config.serviceworker.input().replace(/\.js$/, '.ts'),
-        output: config.serviceworker.output(),
-        plugins: [
-            json(),
-            resolve(),
-            replace({
-                'process.browser': true,
-                'process.env.NODE_ENV': JSON.stringify(mode),
-            }),
-            modify({
-                find: /.__SHADERS_HERE__./,
-                replace: JSON.stringify(compileShaders())
-            }),
-            commonjs(),
-            typescript({ sourceMap: dev }), !dev && terser()
-        ],
-
-        preserveEntrySignatures: false,
-        onwarn,
-    }
 };

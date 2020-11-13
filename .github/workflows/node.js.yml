@@ -5,7 +5,7 @@ name: Node.js CI
 
 on:
     push:
-        branches: [sapper]
+        branches: [master]
 
 jobs:
     build:
@@ -27,4 +27,5 @@ jobs:
               uses: peaceiris/actions-gh-pages@v3
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
+                  external_repository: theworldisnotflat/shriveling_world_documentation
                   publish_dir: '__sapper__/export'

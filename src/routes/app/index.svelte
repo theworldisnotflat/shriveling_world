@@ -25,8 +25,7 @@
 				raw.arrayBuffer().then((buf) => new Uint8Array(buf))
 			);
 			const unzipped: IListFile[] = JSON.parse(new TextDecoder('utf-8').decode(inflate(zip)));
-			bigBoard.cleanAll();
-			void gui.filesToInsert(unzipped);
+			bigBoard.cleanAll(unzipped);
 		}
 	}
 	onMount(async () => {

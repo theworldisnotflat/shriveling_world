@@ -19,7 +19,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { OBJExporter } from 'three/examples/jsm/exporters/OBJExporter';
 import Stats from 'three/examples/js/libs/stats.min';
 import { prepareConfiguration } from './initThree';
-import { DataSetManager } from './datasetManager';
 import { ConeBoard } from '../cone/coneBoard';
 import { CountryBoard } from '../country/countryBoard';
 import { Merger } from './merger';
@@ -30,6 +29,7 @@ import type { CountryMeshShader } from '../country/countryMeshShader';
 import { GUI } from './guiDAT';
 import jszip from 'jszip/dist/jszip';
 import type * as GeoJSON from 'geojson';
+import type { IListFile } from '../definitions/project';
 
 /**
  * C'est la classe qui contrôle toute l'application: la liste des cônes, pays et
@@ -78,7 +78,7 @@ export default class BigBoard {
 	private _windowHalfX: number = window.innerWidth / 2;
 	private _windowHalfY: number = window.innerHeight / 2;
 	private _merger: Merger;
-	private _datasetManager: DataSetManager;
+	private _gui: GUI;
 
 	// Noeud ajout nom Ville
 	private _geometryText: Group;
@@ -91,7 +91,7 @@ export default class BigBoard {
 	constructor(element: HTMLElement, dat: HTMLElement) {
 		void prepareConfiguration().then(() => {
 			this._merger = new Merger();
-			const container = this._init(element);
+			this._init(element);
 			this.orthographique = true;
 
 			this.countryBoard = new CountryBoard(this._scene, this._cameraO);
@@ -100,8 +100,7 @@ export default class BigBoard {
 			CONFIGURATION.year = '2010';
 			this._showCitiesName = false;
 
-			const gui = new GUI(this, dat, this._merger);
-			this._datasetManager = new DataSetManager(this, gui);
+			this._gui = new GUI(this, dat, this._merger);
 			this._animate();
 		});
 	}
@@ -256,10 +255,11 @@ export default class BigBoard {
 		this.coneBoard.clean();
 	}
 
-	public cleanAll(): void {
+	public cleanAll(list: IListFile[]): void {
 		this.cleanCones();
 		this.cleanCountries();
 		this._merger.clear();
+		this._gui.filesToInsert(list);
 	}
 
 	/**
