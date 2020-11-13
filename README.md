@@ -1,104 +1,152 @@
-Shriveling the world
-=====================
+# sapper-template
 
-The  "shriveling_world" project aims at producing images of the global geographical time-space, using the third dimension, as in time-space relief maps.
-The word "shriveling" was introduced by Waldo Tobler in his comments of Mathis-L'Hostis time-space relief image, in order to describe the complex contraction process suggested by the model.
-A [scientific blog](https://timespace.hypotheses.org/) contains principles, reflections, references and images related to the project.
-
-# How to use
-
-## For users: first steps
-**Step #1**:The app runs in a browser from this adress:
-
-[Shriveling world](https://theworldisnotflat.github.io/shriveling_world_documentation/app/)
-
-**Step #2**: Once the app runs in the browser data is read by two ways:
-
-a. Cick on predefined dataset list on the left side of the broser window
-b. Introduce data in the app by grag'n'drop (see below)
-
-Attention: in any case data processing may take time, depending on the number of cities. So once 
-
-**Step #3**: enjoy! navigate around the threedimensional structure with mouse controls, define projection through interface, define desired control parameters through the interface on the right. Reload the page in the browser before changing dataset.
-
-## Introducing data in the application by drag'n'drop
+The default template for setting up a [Sapper](https://github.com/sveltejs/sapper) project. Can use either Rollup or webpack as bundler.
 
 
-Drag'n'drop the following geojson and csv files found in the folder datasets in the web app:
-- cities.csv
-- population.csv
-- transport_mode_code.csv
-- transport_mode_speed.csv
-- transport_network.csv
-- 110m_land_shrivel.geojson
-
-## Instructions for use
-Instructions for the application are provided in a lateral user interface.
-
-Export to gltf (.obj) file format is available (red button in the bottom). In order to import in Blender the file produced from the app, [a Blender plugin must be installed](https://github.com/ksons/gltf-blender-importer)
-
-Instructions to the application can also be entered in the console (F12) of the browser
-
-```shriveling.configuration.XXX=value```
-
-with XXX and value in the following range:
-
-- intrudedHeightRatio : sets the heigth of cones, in the range [0,1], a ratio of the earth radius
-
-For these other command lines an UI already exists
-- coneStep :  modifies the visual aspect of cones (default value is 15 degrees, a facet = 15°)
-- projectionInit : initial projection with values in in the following range :
-  - 'none' for a three dimensional unprojected representation
-  - 'equirectangular' or 1 for an equilateral flat representation
-  - 'Mercator' or 2 for a 2-dimensional Mercator
-- projectionEnd : the final projection with value as projectionBegin
-- projectionPercent: transition value between projectionBegin and projectionEnd. Value included in the range 0 to 100 included.
-- year: base year of the representation (value in the networks files)
-- pointsPerCurve=X where X is an integer between 1 and 199 included. This value influences the way curves are drawn. The value **zero** draws all straight lines, while the value **1** draws broken lines
-
-## Testing lengths and angles
-
-As the final output of the tool is, in the general case, an image, testing the distances and angles is a way to make sure the model is correct:
-- length of straight edges and links can be [measured with a ruler on the screen](https://timespace.hypotheses.org/115) or on a printed image
-- length of curves may be measured by means of a little string adjusted along the image and then measured with the ruler
-- measuring angles with [an on-line protractor tool](https://www.ginifab.com/feeds/angle_measurement/)
+## Getting started
 
 
+### Using `degit`
 
-## For developpers
+To create a new Sapper project based on Rollup locally, run
 
-### Requisites
-You need updated version of node.js, npm and nvm:
-- [node latest version](https://github.com/nodesource/distributions/blob/master/README.md#deb)
+```bash
+npx degit "sveltejs/sapper-template#rollup" my-app
+```
 
-- ```nvm install node ```
+For a webpack-based project, instead run
 
-Does not work with old version of nodejs (with version 4 does not work, with version 8 to 11 does)
+```bash
+npx degit "sveltejs/sapper-template#webpack" my-app
+```
 
+[`degit`](https://github.com/Rich-Harris/degit) is a scaffolding tool that lets you create a directory from a branch in a repository.
 
-### Configuration of your IDE
-
-In your IDE, need to install xo extension :
-
-- [vscode-linter-xo](https://github.com/SamVerschueren/vscode-linter-xo) for vscode
-- [linter-xo](https://github.com/xojs/atom-linter-xo) for atom
-
-
-### Compiling sources and launching the server
-First you need to download sources from this github page. Copy the folder on your machine.
-Go inside the application folder and open a terminal, execute the following lines, one by one:
-
-```npm i```  (update nodejs)
-
-```gulp```   (compile sources) or ``` gulp --testing --debug``` for development (faster, does not minify)
-
-```gulp server``` (launch server)
-
-```gulp doc``` (compile documentation)
-
-Then open in a browser this adress http://localhost:8080.
+Replace `my-app` with the path where you wish to create the project.
 
 
-# Road map
-- A [roadmap is maintained up to date here](https://github.com/theworldisnotflat/shriveling_world/wiki)
-- Development is [organised for the coming release](https://github.com/theworldisnotflat/shriveling_world/projects)
+### Using GitHub templates
+
+Alternatively, you can create the new project as a GitHub repository using GitHub's template feature.
+
+Go to either [sapper-template-rollup](https://github.com/sveltejs/sapper-template-rollup) or [sapper-template-webpack](https://github.com/sveltejs/sapper-template-webpack) and click on "Use this template" to create a new project repository initialized by the template.
+
+
+### Running the project
+
+Once you have created the project, install dependencies and run the project in development mode:
+
+```bash
+cd my-app
+npm install # or yarn
+npm run dev
+```
+
+This will start the development server on [localhost:3000](http://localhost:3000). Open it and click around.
+
+You now have a fully functional Sapper project! To get started developing, consult [sapper.svelte.dev](https://sapper.svelte.dev).
+
+### Using TypeScript
+
+By default, the template uses plain JavaScript. If you wish to use TypeScript instead, you need some changes to the project:
+
+ * Add `typescript` as well as typings as dependences in `package.json`
+ * Configure the bundler to use [`svelte-preprocess`](https://github.com/sveltejs/svelte-preprocess) and transpile the TypeScript code.
+ * Add a `tsconfig.json` file
+ * Update the project code to TypeScript
+
+The template comes with a script that will perform these changes for you by running
+
+```bash
+node scripts/setupTypeScript.js
+```
+
+`@sapper` dependencies are resolved through `src/node_modules/@sapper`, which is created during the build. You therefore need to run or build the project once to avoid warnings about missing dependencies.
+
+The script does not support webpack at the moment.
+
+## Directory structure
+
+Sapper expects to find two directories in the root of your project —  `src` and `static`.
+
+
+### src
+
+The [src](src) directory contains the entry points for your app — `client.js`, `server.js` and (optionally) a `service-worker.js` — along with a `template.html` file and a `routes` directory.
+
+
+#### src/routes
+
+This is the heart of your Sapper app. There are two kinds of routes — *pages*, and *server routes*.
+
+**Pages** are Svelte components written in `.svelte` files. When a user first visits the application, they will be served a server-rendered version of the route in question, plus some JavaScript that 'hydrates' the page and initialises a client-side router. From that point forward, navigating to other pages is handled entirely on the client for a fast, app-like feel. (Sapper will preload and cache the code for these subsequent pages, so that navigation is instantaneous.)
+
+**Server routes** are modules written in `.js` files, that export functions corresponding to HTTP methods. Each function receives Express `request` and `response` objects as arguments, plus a `next` function. This is useful for creating a JSON API, for example.
+
+There are three simple rules for naming the files that define your routes:
+
+* A file called `src/routes/about.svelte` corresponds to the `/about` route. A file called `src/routes/blog/[slug].svelte` corresponds to the `/blog/:slug` route, in which case `params.slug` is available to the route
+* The file `src/routes/index.svelte` (or `src/routes/index.js`) corresponds to the root of your app. `src/routes/about/index.svelte` is treated the same as `src/routes/about.svelte`.
+* Files and directories with a leading underscore do *not* create routes. This allows you to colocate helper modules and components with the routes that depend on them — for example you could have a file called `src/routes/_helpers/datetime.js` and it would *not* create a `/_helpers/datetime` route.
+
+
+#### src/node_modules/images
+
+Images added to `src/node_modules/images` can be imported into your code using `import 'images/<filename>'`. They will be given a dynamically generated filename containing a hash, allowing for efficient caching and serving the images on a CDN.
+
+See [`index.svelte`](src/routes/index.svelte) for an example.
+
+
+#### src/node_modules/@sapper
+
+This directory is managed by Sapper and generated when building. It contains all the code you import from `@sapper` modules.
+
+
+### static
+
+The [static](static) directory contains static assets that should be served publicly. Files in this directory will be available directly under the root URL, e.g. an `image.jpg` will be available as `/image.jpg`.
+
+The default [service-worker.js](src/service-worker.js) will preload and cache these files, by retrieving a list of `files` from the generated manifest:
+
+```js
+import { files } from '@sapper/service-worker';
+```
+
+If you have static files you do not want to cache, you should exclude them from this list after importing it (and before passing it to `cache.addAll`).
+
+Static files are served using [sirv](https://github.com/lukeed/sirv).
+
+
+## Bundler configuration
+
+Sapper uses Rollup or webpack to provide code-splitting and dynamic imports, as well as compiling your Svelte components. With webpack, it also provides hot module reloading. As long as you don't do anything daft, you can edit the configuration files to add whatever plugins you'd like.
+
+
+## Production mode and deployment
+
+To start a production version of your app, run `npm run build && npm start`. This will disable live reloading, and activate the appropriate bundler plugins.
+
+You can deploy your application to any environment that supports Node 10 or above. As an example, to deploy to [Vercel Now](https://vercel.com) when using `sapper export`, run these commands:
+
+```bash
+npm install -g vercel
+vercel
+```
+
+If your app can't be exported to a static site, you can use the [now-sapper](https://github.com/thgh/now-sapper) builder. You can find instructions on how to do so in its [README](https://github.com/thgh/now-sapper#basic-usage).
+
+
+## Using external components
+
+When using Svelte components installed from npm, such as [@sveltejs/svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list), Svelte needs the original component source (rather than any precompiled JavaScript that ships with the component). This allows the component to be rendered server-side, and also keeps your client-side app smaller.
+
+Because of that, it's essential that the bundler doesn't treat the package as an *external dependency*. You can either modify the `external` option under `server` in [rollup.config.js](rollup.config.js) or the `externals` option in [webpack.config.js](webpack.config.js), or simply install the package to `devDependencies` rather than `dependencies`, which will cause it to get bundled (and therefore compiled) with your app:
+
+```bash
+npm install -D @sveltejs/svelte-virtual-list
+```
+
+
+## Bugs and feedback
+
+Sapper is in early development, and may have the odd rough edge here and there. Please be vocal over on the [Sapper issue tracker](https://github.com/sveltejs/sapper/issues).

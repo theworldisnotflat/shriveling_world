@@ -1,21 +1,6 @@
-# https://git-scm.com/docs/gitignore
-# https://help.github.com/articles/ignoring-files
-# Example .gitignore files: https://github.com/github/gitignore
-node_modules
-typings
-dist
-temp
-example/javascript
-example/css
-.vscode
-.rpt2_cache
-declarations
-package-lock.json
-.Rproj.user
-.Rhistory
-documentation
-pages
-templates/blog/public
-templates/blog/content/documentation/
-templates/blog/themes
-history/
+.DS_Store
+/node_modules/
+/src/node_modules/@sapper/
+yarn-error.log
+/__sapper__/
+static

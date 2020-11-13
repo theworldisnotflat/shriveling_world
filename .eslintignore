@@ -1,4 +1,4 @@
 node_modules
 dist
 pages
-gulpfile.js
+rollup.config.js
