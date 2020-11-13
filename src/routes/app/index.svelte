@@ -52,7 +52,7 @@
 		cursor: pointer;
 	}
 	.dat {
-		top: 50px;
+		top: 0px;
 		z-index: 3;
 		position: absolute;
 		right: 0px;
@@ -61,10 +61,10 @@
 
 <Menu fixed={false}>
 	<div bind:this={board} class="app" />
-	<div class="dataset">
+	<div class="dataset" on:click={addSet}>
 		{#each datasets as dataset, i}
 			<div data-name={dataset}>{dataset}</div>
 		{/each}
 	</div>
-	<div class="dat" bind:this={dat} on:click={addSet} />
+	<div class="dat" bind:this={dat} />
 </Menu>
