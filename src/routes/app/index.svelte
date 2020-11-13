@@ -66,5 +66,5 @@
 			<div data-name={dataset}>{dataset}</div>
 		{/each}
 	</div>
-	<div class="dat" bind:this={dat} />
+	<div class="dat" bind:this={dat} on:click={addSet} />
 </Menu>
