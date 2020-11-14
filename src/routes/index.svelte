@@ -25,6 +25,3 @@
 <Menu fixed={false}>
 	<h1>Great success!</h1>
 </Menu>
-<svelte:head>
-	<title>Sapper project template</title>
-</svelte:head>
