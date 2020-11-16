@@ -14,5 +14,8 @@ package-lock.json
 .Rproj.user
 .Rhistory
 documentation
-.DS_Store
-
+pages
+templates/blog/public
+templates/blog/content/documentation/
+templates/blog/themes
+history/
