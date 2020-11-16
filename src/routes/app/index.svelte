@@ -45,14 +45,22 @@
 	}
 	.dataset {
 		position: absolute;
-		top: 50px;
+		top: 100px;
 		z-index: 3;
 		color: wheat;
 		text-shadow: 2px 2px 4px black;
 		cursor: pointer;
 	}
+	.dataset > div {
+		font-size: inherit;
+		transition: font-size 1s;
+	}
+	.dataset > div:hover {
+		font-size: x-large;
+		transition: font-size 1s;
+	}
 	.dat {
-		top: 0px;
+		top: 50px;
 		z-index: 3;
 		position: absolute;
 		right: 0px;

@@ -468,7 +468,7 @@ export default class BigBoard {
 		element.appendChild(container);
 		this._stats = new Stats();
 		this._stats.domElement.style.position = 'absolute';
-		this._stats.domElement.style.top = '0px';
+		this._stats.domElement.style.top = '50px';
 		this._stats.domElement.style.zIndex = 100;
 		container.appendChild(this._stats.domElement);
 		this._cameraP = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 15000);
