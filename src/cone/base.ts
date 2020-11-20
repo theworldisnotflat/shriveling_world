@@ -1,6 +1,6 @@
 'use strict';
-import {Mesh, Material, Geometry, BufferGeometry} from 'three';
-import {Cartographic} from '../common/utils';
+import { Mesh, Material, Geometry, BufferGeometry } from 'three';
+import { Cartographic } from '../common/utils';
 export abstract class PseudoCone extends Mesh {
 	public abstract otherProperties: any;
 	public abstract withLimits: boolean;

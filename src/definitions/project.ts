@@ -5,8 +5,8 @@
  * the [data model can be seen here](https://github.com/theworldisnotflat/shriveling_world/blob/master/model/modeles.png)
  * Explanations about the [terminology choices can be found here](https://timespace.hypotheses.org/177)
  */
-import {Cartographic} from '../common/utils';
-import {NEDLocal} from '../common/referential';
+import { Cartographic } from '../common/utils';
+import { NEDLocal } from '../common/referential';
 export interface ICountryTextureURL {
 	map: string;
 	specularMap: string;
@@ -85,7 +85,7 @@ export interface IComplexAlphaItem {
 	 * array is a clock in direction of the destination city and a slope
 	 * corresponding to the transport speed linking the two cities. This array can have zero item.
 	 */
-	tab: Array<{clock: number; alpha: number}>;
+	tab: Array<{ clock: number; alpha: number }>;
 }
 
 /**
@@ -104,7 +104,7 @@ export interface ILookupComplexAlpha {
  * Table of couples year-speed for each transport mode
  */
 export interface ILookupTranspModeSpeed {
-	[transpModeCode: string]: Array<{year: number; speed: number}>;
+	[transpModeCode: string]: Array<{ year: number; speed: number }>;
 }
 
 /**
@@ -168,7 +168,7 @@ export type sumUpType = 'number' | 'date' | 'string' | 'array' | 'object' | 'boo
 
 export interface ISumUpCriteriaItem {
 	type: sumUpType;
-	sumUp?: {max: Date | number; min: Date | number} | string[] | ISumUpCriteria;
+	sumUp?: { max: Date | number; min: Date | number } | string[] | ISumUpCriteria;
 }
 
 export interface ISumUpCriteria {
@@ -260,7 +260,7 @@ export interface IBBox {
 export interface IPseudoGeometry {
 	uv: ArrayBuffer;
 	index: ArrayBuffer;
-	vertices: {[projectionName: string]: ArrayBuffer};
+	vertices: { [projectionName: string]: ArrayBuffer };
 }
 
 export type IMergerState = 'missing' | 'ready' | 'pending' | 'complete';
@@ -315,7 +315,7 @@ export interface ILookupCurveList {
 	pointP: Cartographic;
 	pointQ: Cartographic;
 	middle: Cartographic;
-	speedRatio: {[transportName: string]: {[year: string]: number}};
+	speedRatio: { [transportName: string]: { [year: string]: number } };
 	theta: number;
 }
 /**
@@ -323,7 +323,7 @@ export interface ILookupCurveList {
  */
 export interface ILookupCurvesFromCity {
 	begin: ICityExtremityOfEdge;
-	list: {[cityCodeEnd: string]: ILookupCurveList};
+	list: { [cityCodeEnd: string]: ILookupCurveList };
 }
 /**
  * A curve and its associated graph edge has a [[cityCodeBegin]]

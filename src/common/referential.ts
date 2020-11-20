@@ -1,7 +1,7 @@
 'use strict';
-import {Cartographic, ZERO_CARTOGRAPHIC} from './utils';
-import {CONFIGURATION} from './configuration';
-import {INEDLocalGLSL} from '../definitions/project';
+import { Cartographic, ZERO_CARTOGRAPHIC } from './utils';
+import { CONFIGURATION } from './configuration';
+import { INEDLocalGLSL } from '../definitions/project';
 function Cartographic2ECEF(pos: Cartographic): Coordinate {
 	const radius = CONFIGURATION.earthRadiusMeters + pos.height;
 	return new Coordinate(

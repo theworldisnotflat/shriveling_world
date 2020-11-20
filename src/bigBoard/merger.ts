@@ -17,8 +17,8 @@
  */
 'use strict';
 import Papa from 'papaparse';
-import {NEDLocal} from '../common/referential';
-import {interpolator, Cartographic, reviver} from '../common/utils';
+import { NEDLocal } from '../common/referential';
+import { interpolator, Cartographic, reviver } from '../common/utils';
 import {
 	ITranspMode,
 	ICity,
@@ -34,7 +34,7 @@ import {
 	ILookupCurveList,
 	ILookupComplexAlpha,
 } from '../definitions/project';
-import {CONFIGURATION} from '../common/configuration';
+import { CONFIGURATION } from '../common/configuration';
 /**
  * Realises the merge of two tables base on an attribute. The key for the merge is renamed.
  * At the end of the process the recipient table is enriched.
@@ -61,11 +61,15 @@ function merger<U, V>(
 	let subGirl: V;
 	let subMother: U;
 	let attribute: string;
-	const lookupGirl: {[x: string]: V | V[]} = {};
+	const lookupGirl: { [x: string]: V | V[] } = {};
 	let lessThanOne = !forceArray;
 	for (const element of girl) {
 		subGirl = element;
-		if (subGirl.hasOwnProperty(girlProperty) && subGirl[girlProperty] !== undefined && subGirl[girlProperty] !== null) {
+		if (
+			subGirl.hasOwnProperty(girlProperty) &&
+			subGirl[girlProperty] !== undefined &&
+			subGirl[girlProperty] !== null
+		) {
 			attribute = subGirl[girlProperty].toString();
 			if (girlPropertyToRemove) {
 				delete subGirl[girlProperty];
@@ -108,12 +112,12 @@ function merger<U, V>(
 /**
  * Used for parsing data files with columns
  */
-const keyWords: Array<{name: string; words: string[]}> = [
-	{name: '_cities', words: ['cityCode', 'latitude', 'longitude', 'radius']},
-	{name: '_transportModeSpeed', words: ['transportModeCode', 'year', 'speedKPH']},
-	{name: '_transportModeCode', words: ['code', 'name', 'yearBegin', 'terrestrial']},
-	{name: '_transportNetwork', words: ['transportMode', 'idDes', 'idOri']},
-	{name: '_populations', words: ['cityCode']},
+const keyWords: Array<{ name: string; words: string[] }> = [
+	{ name: '_cities', words: ['cityCode', 'latitude', 'longitude', 'radius'] },
+	{ name: '_transportModeSpeed', words: ['transportModeCode', 'year', 'speedKPH'] },
+	{ name: '_transportModeCode', words: ['code', 'name', 'yearBegin', 'terrestrial'] },
+	{ name: '_transportNetwork', words: ['transportMode', 'idDes', 'idOri'] },
+	{ name: '_populations', words: ['cityCode'] },
 ];
 
 /**
@@ -125,7 +129,7 @@ const keyWords: Array<{name: string; words: string[]}> = [
 const thetaLimit = 2000 / (CONFIGURATION.earthRadiusMeters / 1000);
 let _minYear = 2000;
 let _maxYear = 1900;
-let _transportName: {curves: string[]; cones: string[]} = {curves: [], cones: []};
+let _transportName: { curves: string[]; cones: string[] } = { curves: [], cones: [] };
 const config: Papa.ParseConfig = {
 	header: true,
 	dynamicTyping: true,
@@ -164,7 +168,7 @@ function getCSV(text: string, isTransportModeCode = false): any {
  * @param {Cartographic} posB
  * @returns {{ middle: Cartographic, theta: number }}
  */
-function getTheMiddle(posA: Cartographic, posB: Cartographic): {middle: Cartographic; theta: number} {
+function getTheMiddle(posA: Cartographic, posB: Cartographic): { middle: Cartographic; theta: number } {
 	const theta = posA.exactDistance(posB);
 	const deltaLambda = posB.longitude - posA.longitude;
 	const cosPhi2 = Math.cos(posB.latitude);
@@ -176,7 +180,7 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic): {middle: Cartogra
 	const resultat = new Cartographic();
 	resultat.latitude = Math.atan2(sinPhi1 + sinPhi2, Math.sqrt((cosPhi1 + bx) * (cosPhi1 + bx) + by * by));
 	resultat.longitude = posA.longitude + Math.atan2(by, cosPhi1 + bx);
-	return {middle: resultat, theta};
+	return { middle: resultat, theta };
 }
 
 /**
@@ -251,17 +255,17 @@ function networkFromCities(
 	const actualYear = new Date().getFullYear();
 	let minYear = actualYear;
 	let maxYear = 0;
-	transpNetwork.forEach(item => {
+	transpNetwork.forEach((item) => {
 		if (minYear > item.yearBegin) {
 			minYear = item.yearBegin;
 		}
 	});
-	// Déterminer pour chaque type de transport la vitesse par an
+	// Déterminer pour chaque type de transport la vitesse maximale par an
 	// dans la fourchette + vitesse max par an de la fourchette OK
 	/**
-	 * [[ISpeedPerYear]] is a table of speed per [[year]]
+	 * [[ISpeedPerYear]] is the table of max speed per [[year]]
 	 */
-	interface ISpeedPerYear {
+	interface IMaxSpeedPerYear {
 		[year: string]: number;
 	}
 	/**
@@ -269,7 +273,7 @@ function networkFromCities(
 	 *
 	 * association table indicating the maximum available speed on a given year
 	 */
-	const maximumSpeed: ISpeedPerYear = {};
+	const maximumSpeed: IMaxSpeedPerYear = {};
 	/**
 	 * [[ITransportCodeItem]] has
 	 * * a [[speed]] and
@@ -283,7 +287,7 @@ function networkFromCities(
 	 * Interface décrivant pour une année fixée la vitesse du transport ainsi que
 	 * le ratio décrit dans l'[equation 1](http://bit.ly/2tLfehC) de la pente d'un cône
 	 */
-	interface ICoupleTransportAlpha {
+	interface ISpeedAlpha {
 		speed: number;
 		alpha?: number;
 	}
@@ -293,7 +297,7 @@ function networkFromCities(
 	 * la fenêtre temporelle décrite dans le fichier csv initial) du mode de transport.
 	 */
 	interface ITabSpeedPerYearPerTranspModeItem {
-		tabYearSpeed: {[year: string]: ICoupleTransportAlpha};
+		tabYearSpeed: { [year: string]: ISpeedAlpha };
 		name: string;
 		terrestrial: boolean;
 	}
@@ -314,13 +318,13 @@ function networkFromCities(
 		clock: number;
 	}
 	let roadCode: number;
-	_transportName = {curves: [], cones: []};
+	_transportName = { curves: [], cones: [] };
 	/**
 	 * Tableau associatif liant un mode de transport à un un objet de type [[ITabSpeedPerYearPerTranspModeItem]]
 	 *
 	 * association table linking a transpot mode to an object of type [[ITabSpeedPerYearPerTranspModeItem]]
 	 */
-	const speedPerTransportPerYear: {[transportCode: string]: ITabSpeedPerYearPerTranspModeItem} = {};
+	const speedPerTransportPerYear: { [transportCode: string]: ITabSpeedPerYearPerTranspModeItem } = {};
 	/**
 	 * For each transport mode:
 	 * * we dertermine if it is terrestrial (cones) or not (curve)
@@ -330,9 +334,12 @@ function networkFromCities(
 	 * for each year in the temporal scope an interpolated speed between
 	 * the two dates when the speed is known
 	 *
+	 * Atention: dataset MUST contain a mode named 'Road' that will define the slope of cones
+	 * cones is the geographic surface and the 'Road' speed is attached to this surface
+	 *
 	 * At the end of this loop [[speedPerTransportPerYear]] and [[maximumSpeed]] are populated
 	 */
-	transportModeCode.forEach(transportMode => {
+	transportModeCode.forEach((transportMode) => {
 		const transportCode = transportMode.code;
 		const name = transportMode.name;
 		if (name === 'Road') {
@@ -343,11 +350,11 @@ function networkFromCities(
 		const minYearTransport = Math.max(transportMode.yearBegin, minYear);
 		let maxYearTransport = transportMode.yearEnd === undefined ? actualYear : transportMode.yearEnd;
 		let tempTransportCodeTab: ITransportCodeItem[] = [];
-		const tabYearSpeed: {[year: string]: ICoupleTransportAlpha} = {};
+		const tabYearSpeed: { [year: string]: ISpeedAlpha } = {};
 		let tempMaxYear: number = transportMode.yearEnd;
 
-		transportMode.speeds.forEach(transportSpeed => {
-			tempTransportCodeTab.push({speed: transportSpeed.speedKPH, year: transportSpeed.year});
+		transportMode.speeds.forEach((transportSpeed) => {
+			tempTransportCodeTab.push({ speed: transportSpeed.speedKPH, year: transportSpeed.year });
 			if (maxYear < transportSpeed.year) {
 				maxYear = transportSpeed.year;
 			}
@@ -364,7 +371,7 @@ function networkFromCities(
 		let speed: number;
 		for (let year = minYearTransport; year <= maxYearTransport; year++) {
 			speed = interpolation(year);
-			tabYearSpeed[year] = {speed};
+			tabYearSpeed[year] = { speed };
 			if (maximumSpeed.hasOwnProperty(year)) {
 				if (maximumSpeed[year] < speed) {
 					maximumSpeed[year] = speed;
@@ -374,7 +381,7 @@ function networkFromCities(
 			}
 		}
 
-		speedPerTransportPerYear[transportCode] = {tabYearSpeed, name, terrestrial: transportMode.terrestrial};
+		speedPerTransportPerYear[transportCode] = { tabYearSpeed, name, terrestrial: transportMode.terrestrial };
 	});
 
 	_minYear = minYear;
@@ -405,9 +412,9 @@ function networkFromCities(
 	}
 
 	// Faire lookup des cartographic/referential par citycode. OK
-	const lookupPosition: {[cityCode: string]: NEDLocal} = {};
-	const lookupMiddle: {[cityCodeBegin: number]: {[cityCodeEnd: number]: ILookupCacheAnchorsEdgeCone}} = {};
-	cities.forEach(city => {
+	const lookupPosition: { [cityCode: string]: NEDLocal } = {};
+	const lookupMiddle: { [cityCodeBegin: number]: { [cityCodeEnd: number]: ILookupCacheAnchorsEdgeCone } } = {};
+	cities.forEach((city) => {
 		const position = new Cartographic(city.longitude, city.latitude, 0, false);
 		lookupPosition[city.cityCode] = new NEDLocal(position);
 	});
@@ -424,34 +431,34 @@ function networkFromCities(
 	 */
 	function cachedGetTheMiddle(begin: number, end: number): ILookupCacheAnchorsEdgeCone {
 		const res = <ILookupCacheAnchorsEdgeCone>{};
-		res.end = {cityCode: end, position: lookupPosition[end].cartoRef};
+		res.end = { cityCode: end, position: lookupPosition[end].cartoRef };
 		if (lookupMiddle.hasOwnProperty(begin)) {
 			if (!lookupMiddle[begin].hasOwnProperty(end)) {
-				const {middle, theta} = getTheMiddle(lookupPosition[begin].cartoRef, lookupPosition[end].cartoRef);
+				const { middle, theta } = getTheMiddle(lookupPosition[begin].cartoRef, lookupPosition[end].cartoRef);
 				const pointP = getTheMiddle(lookupPosition[begin].cartoRef, middle).middle;
 				const pointQ = getTheMiddle(middle, lookupPosition[end].cartoRef).middle;
 				let clock = lookupPosition[begin].getClock(lookupPosition[end].cartoRef);
-				lookupMiddle[begin][end] = {pointP, pointQ, middle, theta, clock};
+				lookupMiddle[begin][end] = { pointP, pointQ, middle, theta, clock };
 				if (!lookupMiddle.hasOwnProperty(end)) {
 					lookupMiddle[end] = {};
 				}
 
 				clock = lookupPosition[end].getClock(lookupPosition[begin].cartoRef);
-				lookupMiddle[end][begin] = {pointP: pointQ, pointQ: pointP, middle, theta, clock};
+				lookupMiddle[end][begin] = { pointP: pointQ, pointQ: pointP, middle, theta, clock };
 			}
 		} else {
-			const {middle, theta} = getTheMiddle(lookupPosition[begin].cartoRef, lookupPosition[end].cartoRef);
+			const { middle, theta } = getTheMiddle(lookupPosition[begin].cartoRef, lookupPosition[end].cartoRef);
 			const pointP = getTheMiddle(lookupPosition[begin].cartoRef, middle).middle;
 			const pointQ = getTheMiddle(middle, lookupPosition[end].cartoRef).middle;
 			let clock = lookupPosition[begin].getClock(lookupPosition[end].cartoRef);
 			lookupMiddle[begin] = {};
-			lookupMiddle[begin][end] = {pointP, pointQ, middle, theta, clock};
+			lookupMiddle[begin][end] = { pointP, pointQ, middle, theta, clock };
 			if (!lookupMiddle.hasOwnProperty(end)) {
 				lookupMiddle[end] = {};
 			}
 
 			clock = lookupPosition[end].getClock(lookupPosition[begin].cartoRef);
-			lookupMiddle[end][begin] = {pointP: pointQ, pointQ: pointP, middle, theta, clock};
+			lookupMiddle[end][begin] = { pointP: pointQ, pointQ: pointP, middle, theta, clock };
 		}
 
 		const cached = lookupMiddle[begin][end];
@@ -467,10 +474,10 @@ function networkFromCities(
 	// processedODs évite de dupliquer visuellement les lignes:
 	//  - génération de la ligne partant de cityA vers cityB
 	//  - pas de génération de la ligne partant de cityB vers cityA grâce à processedODs
-	const processedODs: {[begin: string]: {[end: string]: string[]}} = {};
+	const processedODs: { [begin: string]: { [end: string]: string[] } } = {};
 	// Second part of the function
 	// the main loop for each city
-	cities.forEach(city => {
+	cities.forEach((city) => {
 		const origCityCode = city.cityCode;
 		const referential = lookupPosition[origCityCode];
 		if (!processedODs.hasOwnProperty(origCityCode)) {
@@ -478,11 +485,11 @@ function networkFromCities(
 		}
 
 		if (referential instanceof NEDLocal) {
-			const startPoint: ICityExtremityOfEdge = {cityCode: origCityCode, position: referential.cartoRef};
+			const startPoint: ICityExtremityOfEdge = { cityCode: origCityCode, position: referential.cartoRef };
 			/**
 			 *  List of edges from the considered city (described by their destination cities)
 			 * */
-			const listOfCurves: {[cityCodeEnd: string]: ILookupCurveList} = {};
+			const listOfCurves: { [cityCodeEnd: string]: ILookupCurveList } = {};
 			// Let coneAlpha: ILookupConeAlpha = {};
 			const cone: ILookupComplexAlpha = {};
 			const destinationsWithModes: ILookupDestWithModes = {};
@@ -492,7 +499,7 @@ function networkFromCities(
 			let edgeTranspModeName: string;
 			let edgeTranspModeSpeed: ITabSpeedPerYearPerTranspModeItem;
 			if (city.edges.length === 0) {
-				city.edges.push({yearBegin: minYear, idDes: -Infinity, transportMode: roadCode});
+				city.edges.push({ yearBegin: minYear, idDes: -Infinity, transportMode: roadCode });
 			}
 
 			// For each edge incident to the city considered
@@ -513,7 +520,10 @@ function networkFromCities(
 				}
 
 				if (lookupPosition.hasOwnProperty(destCityCode)) {
-					const {end, middle, theta, pointP, pointQ, clock} = cachedGetTheMiddle(origCityCode, destCityCode);
+					const { end, middle, theta, pointP, pointQ, clock } = cachedGetTheMiddle(
+						origCityCode,
+						destCityCode
+					);
 					minYear = Math.min(edge.yearBegin, minYear);
 					maxYear = edge.yearEnd ? edge.yearEnd : maxYear;
 					edgeTranspModeName = edgeTranspModeSpeed.name;
@@ -538,11 +548,11 @@ function networkFromCities(
 							if (!cone.hasOwnProperty(year)) {
 								// Initialising  complex cone for a given city and year
 								const coneAlpha = speedPerTransportPerYear[roadCode].tabYearSpeed[year].alpha;
-								cone[year] = {coneAlpha, tab: []};
+								cone[year] = { coneAlpha, tab: [] };
 							}
 
 							alpha = edgeTranspModeSpeed.tabYearSpeed[year].alpha;
-							cone[year].tab.push({alpha, clock});
+							cone[year].tab.push({ alpha, clock });
 							destinationsWithModes[destCityCode][edgeTranspModeName].push({
 								year,
 								speed: edgeModeSpeed[year].speed,
@@ -629,7 +639,7 @@ function networkFromCities(
 				// Cas des villes sans destinations ou uniquement des transports type aérien
 				for (let year = minYear; year <= maxYear; year++) {
 					const coneAlpha = speedPerTransportPerYear[roadCode].tabYearSpeed[year].alpha;
-					cone[year] = {coneAlpha, tab: []};
+					cone[year] = { coneAlpha, tab: [] };
 				}
 			}
 
@@ -641,11 +651,11 @@ function networkFromCities(
 			};
 			if (Object.keys(listOfCurves).length > 0) {
 				// Retrieves edges info from origCityCode for curves generation
-				curvesData[origCityCode] = {begin: startPoint, list: listOfCurves};
+				curvesData[origCityCode] = { begin: startPoint, list: listOfCurves };
 			}
 		}
 	});
-	return {lookupCityNetwork: network, curvesData};
+	return { lookupCityNetwork: network, curvesData };
 }
 
 /**
@@ -702,7 +712,7 @@ export class Merger {
 		return _maxYear;
 	}
 
-	public get transportNames(): {curves: string[]; cones: string[]} {
+	public get transportNames(): { curves: string[]; cones: string[] } {
 		return _transportName;
 	}
 
@@ -742,7 +752,7 @@ export class Merger {
 			this[name] = [];
 			this[name].push(...getCSV(someString, name === '_transportModeCode'));
 			if (name === '_transportModeCode' || name === '_transportNetwork') {
-				(this[name] as IEdge[]).forEach(item => {
+				(this[name] as IEdge[]).forEach((item) => {
 					if (item.yearEnd === undefined || item.yearEnd === null || item.yearEnd.toString() === '') {
 						delete item.yearEnd;
 					}
@@ -755,7 +765,7 @@ export class Merger {
 
 	/**
 	 * The function [[merge]] will
-	 * * retrieve all from csv files
+	 * * retrieve all data from csv files
 	 * * introduce the data into tables:
 	 *   * [[cities]],
 	 *   * [[population]],
@@ -774,11 +784,14 @@ export class Merger {
 			const cities: ICity[] = JSON.parse(JSON.stringify(this._cities), reviver);
 			const population: IPopulation[] = JSON.parse(JSON.stringify(this._populations), reviver);
 			const transportModeCode: ITranspMode[] = JSON.parse(JSON.stringify(this._transportModeCode), reviver);
-			const transportModeSpeed: ITransportModeSpeed[] = JSON.parse(JSON.stringify(this._transportModeSpeed), reviver);
+			const transportModeSpeed: ITransportModeSpeed[] = JSON.parse(
+				JSON.stringify(this._transportModeSpeed),
+				reviver
+			);
 			const transportNetwork: IEdge[] = JSON.parse(JSON.stringify(this._transportNetwork), reviver);
 
 			// Linking tables to eachother
-			// merger(mother, girl, motherProp., girlProp., newName, forceArray, removeMotherProp., removeGirlProp.)
+			// merger(mother,               girl,        motherProp.,   girlProp.,      newName, forceArray, removeMotherProp., removeGirlProp.)
 			// will link transport modes and speed
 			merger(transportModeCode, transportModeSpeed, 'code', 'transportModeCode', 'speeds', true, true, false);
 			//    Merger(transportNetwork, transportModeCode, 'transportModeSpeed', 'code', 'transportDetails', false, false, false);
@@ -790,7 +803,8 @@ export class Merger {
 			merger(cities, transportNetwork, 'cityCode', 'idOri', 'edges', true, true, false);
 			// The main function that generates geometries (cones, curves) by exploring the subgraphs from cities
 			this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
-			// Console.log(this._edgesAndTranspModes);
+			// for input data reading debugging
+			console.log(this._edgesAndTranspModes);
 			this._state = 'missing';
 			this._checkState();
 		}

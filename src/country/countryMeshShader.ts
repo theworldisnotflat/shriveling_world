@@ -1,5 +1,5 @@
 'use strict';
-import {Point, SweepContext, IPointLike} from 'poly2tri';
+import { Point, SweepContext, IPointLike } from 'poly2tri';
 import {
 	Mesh,
 	InterleavedBuffer,
@@ -8,11 +8,11 @@ import {
 	BufferAttribute,
 	DynamicDrawUsage,
 } from 'three';
-import {CONFIGURATION} from '../common/configuration';
-import {Cartographic} from '../common/utils';
-import {IBBox, IMarkLimits} from '../definitions/project';
-import {GPUComputer} from '../common/gpuComputer';
-import {getShader} from '../shaders';
+import { CONFIGURATION } from '../common/configuration';
+import { Cartographic } from '../common/utils';
+import { IBBox, IMarkLimits } from '../definitions/project';
+import { GPUComputer } from '../common/gpuComputer';
+import { getShader } from '../shaders';
 
 interface IPreGeometry {
 	vertice: number[]; // Cartographic.toThreeGLSL()
@@ -35,7 +35,7 @@ let _ready = false;
 let _width: number;
 let _height = 1;
 
-const _gpgpu: {[x: string]: GPUComputer} = {};
+const _gpgpu: { [x: string]: GPUComputer } = {};
 
 function fullCleanArrays(): void {
 	_vertexArrayEntries = new Float32Array(0);
@@ -105,8 +105,8 @@ function cleanBoundaries(polygon: number[][]): number[][] {
 	let p: number[];
 	let q: number[];
 	let o: number[];
-	let a: {x: number; y: number};
-	let b: {x: number; y: number};
+	let a: { x: number; y: number };
+	let b: { x: number; y: number };
 	let dx: number;
 	let dy: number;
 	let d: number;
@@ -132,9 +132,12 @@ function cleanBoundaries(polygon: number[][]): number[][] {
 			o = polygon[(i - 1 + polygon.length) % polygon.length];
 			p = polygon[i];
 			q = polygon[(i + 1) % polygon.length];
-			a = {x: o[0] - p[0], y: o[1] - p[1]};
-			b = {x: q[0] - p[0], y: q[1] - p[1]};
-			if (Math.abs((a.x * b.x + a.y * b.y) / Math.sqrt((a.x * a.x + a.y * a.y) * (b.x * b.x + b.y * b.y))) > 1 - 1e-5) {
+			a = { x: o[0] - p[0], y: o[1] - p[1] };
+			b = { x: q[0] - p[0], y: q[1] - p[1] };
+			if (
+				Math.abs((a.x * b.x + a.y * b.y) / Math.sqrt((a.x * a.x + a.y * a.y) * (b.x * b.x + b.y * b.y))) >
+				1 - 1e-5
+			) {
 				polygon.splice(i, 1);
 				i = Math.max(-1, i - 2);
 				done = false;
@@ -182,7 +185,7 @@ function generateVertices(geometry: GeoJSON.MultiPolygon | GeoJSON.Polygon): IPr
 			coordinates = [[[[]]]];
 	}
 
-	return coordinates.map(polygonWithHoles => {
+	return coordinates.map((polygonWithHoles) => {
 		let steinerPoints: Point[];
 		const holes: Point[][] = [];
 		let contour: Point[];
@@ -190,9 +193,9 @@ function generateVertices(geometry: GeoJSON.MultiPolygon | GeoJSON.Polygon): IPr
 			const cleanedBoundaries = cleanBoundaries(polygon);
 			if (index === 0) {
 				steinerPoints = generateSteinerPointsFor(cleanedBoundaries);
-				contour = cleanedBoundaries.map(item => new Point(item[0], item[1]));
+				contour = cleanedBoundaries.map((item) => new Point(item[0], item[1]));
 			} else {
-				holes.push(cleanedBoundaries.map(item => new Point(item[0], item[1])));
+				holes.push(cleanedBoundaries.map((item) => new Point(item[0], item[1])));
 			}
 
 			return cleanedBoundaries;
@@ -223,12 +226,12 @@ function generateVertices(geometry: GeoJSON.MultiPolygon | GeoJSON.Polygon): IPr
 		}
 
 		const indexes: number[] = [];
-		triangles.forEach(triangle => indexes.push(...triangle.getPoints().map(t => findAndAddVertexIndex(t))));
+		triangles.forEach((triangle) => indexes.push(...triangle.getPoints().map((t) => findAndAddVertexIndex(t))));
 		// Index n'a que la surface inférieure!
-		const vertice = verticesPoly2Tri.map(v => new Cartographic(v.x, v.y, 0, false));
+		const vertice = verticesPoly2Tri.map((v) => new Cartographic(v.x, v.y, 0, false));
 		// Vertices n'a que la surface inférieure!
 		const uvs: number[] = [];
-		vertice.forEach(vertex =>
+		vertice.forEach((vertex) =>
 			uvs.push(vertex.longitude * CONFIGURATION.OVER_TWO_PI + 0.5, vertex.latitude * CONFIGURATION.OVER_PI + 0.5)
 		);
 
@@ -263,11 +266,11 @@ function generateVertices(geometry: GeoJSON.MultiPolygon | GeoJSON.Polygon): IPr
 			}
 		}
 
-		lateralIndexes.forEach(latindex => {
+		lateralIndexes.forEach((latindex) => {
 			indexes.push(latindex);
 		});
 		const tempVertice: number[] = [];
-		vertice.forEach(vertex => tempVertice.push(...vertex.toThreeGLSL()));
+		vertice.forEach((vertex) => tempVertice.push(...vertex.toThreeGLSL()));
 		const resultat: IPreGeometry = {
 			vertice: tempVertice,
 			extruded: {
@@ -276,7 +279,7 @@ function generateVertices(geometry: GeoJSON.MultiPolygon | GeoJSON.Polygon): IPr
 			},
 			uvs: new Float32Array(uvs),
 			indexes: new Uint16Array(indexes),
-			surfaceBoundary: contour.map(point => new Cartographic(point.x, point.y, 0, false)),
+			surfaceBoundary: contour.map((point) => new Cartographic(point.x, point.y, 0, false)),
 		};
 
 		return resultat;
@@ -285,7 +288,7 @@ function generateVertices(geometry: GeoJSON.MultiPolygon | GeoJSON.Polygon): IPr
 
 function uniqueOccurenceCounter(list: any[]): string {
 	const dictionnary = {};
-	list.forEach(item => {
+	list.forEach((item) => {
 		for (const att in item) {
 			if (item.hasOwnProperty(att)) {
 				if (!dictionnary.hasOwnProperty(att)) {
@@ -339,7 +342,7 @@ function maxRectangle(n: number): number[] {
 }
 
 function computation(): void {
-	const uniforms: {[x: string]: number | ArrayBufferView} = {};
+	const uniforms: { [x: string]: number | ArrayBufferView } = {};
 	uniforms.longueurMaxi = CONFIGURATION.extrudedHeight;
 	uniforms.threeRadius = CONFIGURATION.THREE_EARTH_RADIUS;
 	uniforms.earthRadius = CONFIGURATION.earthRadiusMeters;
@@ -350,14 +353,14 @@ function computation(): void {
 	uniforms.standardParallel1 = CONFIGURATION.standardParallel1;
 	uniforms.standardParallel2 = CONFIGURATION.standardParallel2;
 	_gpgpu.positions.updateUniforms(uniforms);
-	const options: {[x: string]: {src: ArrayBufferView; width: number; height: number; depth?: number}} = {
-		u_Positions: {src: _vertexArrayEntries, width: _width, height: _height},
+	const options: { [x: string]: { src: ArrayBufferView; width: number; height: number; depth?: number } } = {
+		u_Positions: { src: _vertexArrayEntries, width: _width, height: _height },
 	};
 	_gpgpu.positions.updateTextures(options);
 	const allPositions = _gpgpu.positions.calculate(_width, _height)[0];
 	let begin: number;
 	let end: number;
-	_countries.forEach(country => {
+	_countries.forEach((country) => {
 		begin = country.outputLimits.begin;
 		end = country.outputLimits.end;
 		country.setGeometry(allPositions.subarray(begin, end));
@@ -376,15 +379,17 @@ export class CountryMeshShader extends Mesh {
 		_ready = false;
 		_countries = [];
 		fullCleanArrays();
-		const promise = new Promise(resolve => {
+		const promise = new Promise((resolve) => {
 			if (uuid === undefined) {
 				void Promise.all([
-					GPUComputer.GPUComputerFactory(getShader('countryMeshShader', 'fragment'), {u_Positions: 'RGB32F'}, 1).then(
-						instance => {
-							_gpgpu.positions = instance;
-							return instance;
-						}
-					),
+					GPUComputer.GPUComputerFactory(
+						getShader('countryMeshShader', 'fragment'),
+						{ u_Positions: 'RGB32F' },
+						1
+					).then((instance) => {
+						_gpgpu.positions = instance;
+						return instance;
+					}),
 				]).then(() => {
 					uuid = CONFIGURATION.addEventListener(
 						'heightRatio intrudedHeightRatio referenceEquiRectangular THREE_EARTH_RADIUS ' +
@@ -395,7 +400,11 @@ export class CountryMeshShader extends Mesh {
 									case 'tick':
 										if (_dirty === true && _tickCount > 10) {
 											const options = {
-												u_Positions: {src: _vertexArrayEntries, width: _width, height: _height},
+												u_Positions: {
+													src: _vertexArrayEntries,
+													width: _width,
+													height: _height,
+												},
 											};
 											_gpgpu.positions.updateTextures(options);
 											computation();
@@ -423,25 +432,27 @@ export class CountryMeshShader extends Mesh {
 			fullCleanArrays();
 			const preMeshes: IPreMesh[] = [];
 			const uniqueProperties: any[] = [];
-			geoJson.features.forEach(feature => {
+			geoJson.features.forEach((feature) => {
 				const properties = feature.properties;
 				uniqueProperties.push(properties);
-				generateVertices(<GeoJSON.MultiPolygon | GeoJSON.Polygon>feature.geometry).forEach(geometry =>
-					preMeshes.push({geometry, properties})
+				generateVertices(<GeoJSON.MultiPolygon | GeoJSON.Polygon>feature.geometry).forEach((geometry) =>
+					preMeshes.push({ geometry, properties })
 				);
 			});
 			const mainProperty = uniqueOccurenceCounter(uniqueProperties);
 			let indexCount = 0;
 			let oldIndexCount = 0;
 			const vertexArrayEntries: number[] = [];
-			preMeshes.forEach(item => {
+			preMeshes.forEach((item) => {
 				oldIndexCount = indexCount;
 				indexCount += item.geometry.vertice.length / 3;
 				vertexArrayEntries.push(...item.geometry.vertice);
 				const extruded = item.geometry.extruded;
 				extruded.begin += oldIndexCount * 3;
 				extruded.end += oldIndexCount * 3;
-				_countries.push(new CountryMeshShader(item, mainProperty, {begin: oldIndexCount * 4, end: indexCount * 4}));
+				_countries.push(
+					new CountryMeshShader(item, mainProperty, { begin: oldIndexCount * 4, end: indexCount * 4 })
+				);
 			});
 
 			[_width, _height] = maxRectangle(vertexArrayEntries.length / 3);
@@ -460,7 +471,12 @@ export class CountryMeshShader extends Mesh {
 		const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(positionDelta), 4).setUsage(
 			DynamicDrawUsage
 		);
-		const interleavedBufferAttributePosition = new InterleavedBufferAttribute(interleavedBufferPosition, 3, 0, false);
+		const interleavedBufferAttributePosition = new InterleavedBufferAttribute(
+			interleavedBufferPosition,
+			3,
+			0,
+			false
+		);
 		const interleavedBufferNormal = new InterleavedBuffer(new Float32Array(positionDelta), 4).setUsage(
 			DynamicDrawUsage
 		);
@@ -483,7 +499,7 @@ export class CountryMeshShader extends Mesh {
 			boundary: preGeometry.surfaceBoundary,
 		};
 
-		this._boundaryBox.boundary.forEach(pos => {
+		this._boundaryBox.boundary.forEach((pos) => {
 			this._boundaryBox.minLong = Math.min(this._boundaryBox.minLong, pos.longitude);
 			this._boundaryBox.minLat = Math.min(this._boundaryBox.minLat, pos.latitude);
 			this._boundaryBox.maxLong = Math.max(this._boundaryBox.maxLong, pos.longitude);

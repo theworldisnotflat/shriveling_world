@@ -2,7 +2,7 @@ languageCode = "fr-fr"
 DefaultContentLanguage = "fr"
 title = "Shriveling world"
 theme = "techdoc"
-relativeURLs = "true"
+relativeURLs = "false"
 baseURL= "https://theworldisnotflat.github.io/shriveling_world_documentation/"
 [[menu.main]]
     name = "User documentation" #Name in the navigation bar

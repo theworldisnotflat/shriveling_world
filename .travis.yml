@@ -3,7 +3,7 @@ node_js:
  - "node"
 before_install:
   - npm install -g gulp-cli
-install: npm i
+install: npm i --legacy-peer-deps
 script:
   - gulp
 deploy:
