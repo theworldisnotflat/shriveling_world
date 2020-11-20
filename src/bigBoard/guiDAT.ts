@@ -257,10 +257,10 @@ export class GUI {
 		lightFolder.add(bigBoard.light.position, 'x', -100, 100, 1).onChange(() => bigBoard.helper.update());
 		lightFolder.add(bigBoard.light.position, 'y', -100, 100, 1).onChange(() => bigBoard.helper.update());
 		lightFolder.add(bigBoard.light.position, 'z', -100, 100, 1).onChange(() => bigBoard.helper.update());
-		lightFolder.add(bigBoard.light.shadow.mapSize, 'width',  0, 1000).step(1);
+		lightFolder.add(bigBoard.light.shadow.mapSize, 'width', 0, 1000).step(1);
 		lightFolder.add(bigBoard.light.shadow.mapSize, 'height', 0, 1000).step(1);
-		lightFolder.add(bigBoard.light.shadow.camera,  'near',   0, 1000).step(0.5);
-		lightFolder.add(bigBoard.light.shadow.camera,  'far',    0, 1000).step(1);
+		lightFolder.add(bigBoard.light.shadow.camera, 'near', 0, 1000).step(0.5);
+		lightFolder.add(bigBoard.light.shadow.camera, 'far', 0, 1000).step(1);
 
 		// Generalities
 		generalFolder = gui.addFolder('Generalities');
