@@ -225,7 +225,7 @@ const convertMD = async done => {
 const doc = series(
 	cleanTemp,
 	shell.task(
-		'npx typedoc --plugin typedoc-plugin-markdown --out temp --json temp/json.json  --readme README_DEVDOC.md  --name "shriveling world documentation" --ignoreCompilerErrors --hideGenerator --target ES6  src'
+		'npx typedoc --plugin typedoc-plugin-markdown --out temp --json temp/json.json  --readme /README_DEVDOC.md  --name "shriveling world documentation" --ignoreCompilerErrors --hideGenerator --target ES6  src'
 	),
 	convertMD
 );

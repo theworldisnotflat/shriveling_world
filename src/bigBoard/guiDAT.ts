@@ -322,7 +322,7 @@ export class GUI {
 		coneFolder.add(bigBoard.coneBoard, 'opacity', 0, 1).step(0.01);
 		coneFolder.addColor(conf, 'cones color').onChange((v: string) => {
 			const color = Number.parseInt(v.replace('#', ''), 16);
-			bigBoard.coneBoard.coneMeshCollection.forEach(cone => {
+			bigBoard.coneBoard.coneMeshCollection.forEach((cone) => {
 				const material = <MeshPhongMaterial>cone.material;
 				material.color.setHex(color);
 				material.emissive.setHex(color);
