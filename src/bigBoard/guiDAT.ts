@@ -338,7 +338,6 @@ export class GUI {
 		coneFolder.addColor(conf, 'cones color').onChange((v: string) => {
 			const color = Number.parseInt(v.replace('#', ''), 16);
 			bigBoard.coneBoard.coneMeshCollection.forEach(cone => {
-				console.log(cone);
 				const material = <MeshPhongMaterial>cone.material;
 				material.color.setHex(color);
 				material.emissive.setHex(color);
