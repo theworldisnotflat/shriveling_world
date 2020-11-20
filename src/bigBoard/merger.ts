@@ -263,7 +263,7 @@ function networkFromCities(
 	// Déterminer pour chaque type de transport la vitesse maximale par an
 	// dans la fourchette + vitesse max par an de la fourchette OK
 	/**
-	 * [[ISpeedPerYear]] is a table of speed per [[year]]
+	 * [[ISpeedPerYear]] is the table of max speed per [[year]]
 	 */
 	interface IMaxSpeedPerYear {
 		[year: string]: number;
