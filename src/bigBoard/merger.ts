@@ -260,12 +260,12 @@ function networkFromCities(
 			minYear = item.yearBegin;
 		}
 	});
-	// Déterminer pour chaque type de transport la vitesse par an
+	// Déterminer pour chaque type de transport la vitesse maximale par an
 	// dans la fourchette + vitesse max par an de la fourchette OK
 	/**
 	 * [[ISpeedPerYear]] is a table of speed per [[year]]
 	 */
-	interface ISpeedPerYear {
+	interface IMaxSpeedPerYear {
 		[year: string]: number;
 	}
 	/**
@@ -273,7 +273,7 @@ function networkFromCities(
 	 *
 	 * association table indicating the maximum available speed on a given year
 	 */
-	const maximumSpeed: ISpeedPerYear = {};
+	const maximumSpeed: IMaxSpeedPerYear = {};
 	/**
 	 * [[ITransportCodeItem]] has
 	 * * a [[speed]] and
@@ -287,7 +287,7 @@ function networkFromCities(
 	 * Interface décrivant pour une année fixée la vitesse du transport ainsi que
 	 * le ratio décrit dans l'[equation 1](http://bit.ly/2tLfehC) de la pente d'un cône
 	 */
-	interface ICoupleTransportAlpha {
+	interface ISpeedAlpha {
 		speed: number;
 		alpha?: number;
 	}
@@ -297,7 +297,7 @@ function networkFromCities(
 	 * la fenêtre temporelle décrite dans le fichier csv initial) du mode de transport.
 	 */
 	interface ITabSpeedPerYearPerTranspModeItem {
-		tabYearSpeed: { [year: string]: ICoupleTransportAlpha };
+		tabYearSpeed: { [year: string]: ISpeedAlpha };
 		name: string;
 		terrestrial: boolean;
 	}
@@ -334,6 +334,9 @@ function networkFromCities(
 	 * for each year in the temporal scope an interpolated speed between
 	 * the two dates when the speed is known
 	 *
+	 * Atention: dataset MUST contain a mode named 'Road' that will define the slope of cones
+	 * cones is the geographic surface and the 'Road' speed is attached to this surface
+	 *
 	 * At the end of this loop [[speedPerTransportPerYear]] and [[maximumSpeed]] are populated
 	 */
 	transportModeCode.forEach((transportMode) => {
@@ -347,7 +350,7 @@ function networkFromCities(
 		const minYearTransport = Math.max(transportMode.yearBegin, minYear);
 		let maxYearTransport = transportMode.yearEnd === undefined ? actualYear : transportMode.yearEnd;
 		let tempTransportCodeTab: ITransportCodeItem[] = [];
-		const tabYearSpeed: { [year: string]: ICoupleTransportAlpha } = {};
+		const tabYearSpeed: { [year: string]: ISpeedAlpha } = {};
 		let tempMaxYear: number = transportMode.yearEnd;
 
 		transportMode.speeds.forEach((transportSpeed) => {
@@ -762,7 +765,7 @@ export class Merger {
 
 	/**
 	 * The function [[merge]] will
-	 * * retrieve all from csv files
+	 * * retrieve all data from csv files
 	 * * introduce the data into tables:
 	 *   * [[cities]],
 	 *   * [[population]],
@@ -788,7 +791,7 @@ export class Merger {
 			const transportNetwork: IEdge[] = JSON.parse(JSON.stringify(this._transportNetwork), reviver);
 
 			// Linking tables to eachother
-			// merger(mother, girl, motherProp., girlProp., newName, forceArray, removeMotherProp., removeGirlProp.)
+			// merger(mother,               girl,        motherProp.,   girlProp.,      newName, forceArray, removeMotherProp., removeGirlProp.)
 			// will link transport modes and speed
 			merger(transportModeCode, transportModeSpeed, 'code', 'transportModeCode', 'speeds', true, true, false);
 			//    Merger(transportNetwork, transportModeCode, 'transportModeSpeed', 'code', 'transportDetails', false, false, false);
@@ -800,7 +803,8 @@ export class Merger {
 			merger(cities, transportNetwork, 'cityCode', 'idOri', 'edges', true, true, false);
 			// The main function that generates geometries (cones, curves) by exploring the subgraphs from cities
 			this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
-			// Console.log(this._edgesAndTranspModes);
+			// for input data reading debugging
+			console.log(this._edgesAndTranspModes);
 			this._state = 'missing';
 			this._checkState();
 		}
