@@ -188,8 +188,8 @@ export interface IPopulation {
  * * [[cityCode]]
  * * [[urbanAgglomeration]] is the name of the city
  * * [[radius]]: number; // for cases of cities in islands close to a continent
- * * [[populations]] for several years as provided in csv file 'population.csv'
- * * [[links]] is a table will be determined by scanning the [[ITransportNetwork]]
+ * * [[populations]] (optionnal) for several years as provided in csv file 'population.csv'
+ * * [[links]] (optionnal) is a table will be determined by scanning the [[ITransportNetwork]]
  */
 export interface ICity {
 	countryCode: number;
@@ -218,7 +218,7 @@ export interface ITransportModeSpeed {
  * * a [[name]],
  * * a [[code]],
  * * a [[yearBegin]],
- * * a [[yearEnd]],
+ * * a [[yearEnd]] (optionnal),
  * * can be [[terrestrial]] or not,
  * * and has a table of [[speeds]] that may change over years
  */
@@ -236,8 +236,8 @@ export interface ITranspMode {
  *
  * Each edge has
  * * a [[yearBegin]] and
- * * a [[yearEnd]]
- * * an origin [[idOri]]
+ * * a [[yearEnd]] (optionnal)
+ * * an origin [[idOri]] (optionnal)
  * * and  destination [[idDes]]
  * * a transport mode [[transportMode]]
  */

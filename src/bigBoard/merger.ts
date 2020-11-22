@@ -303,7 +303,7 @@ function networkFromCities(
 	}
 	/**
 	 * [[ILookupCacheAnchorsEdgeCone]] describes:
-	 * * an edge with an end middle, pointP
+	 * * an edge with an end (optionnal) middle, pointP
 	 *   at 1/4 anf pointQ at 3/4, as anchor points
 	 * * description of the cone with
 	 *   theta the angle between the two cities
