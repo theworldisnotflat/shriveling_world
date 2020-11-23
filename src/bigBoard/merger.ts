@@ -286,6 +286,9 @@ function networkFromCities(
 	/**
 	 * Interface décrivant pour une année fixée la vitesse du transport ainsi que
 	 * le ratio décrit dans l'[equation 1](http://bit.ly/2tLfehC) de la pente d'un cône
+	 *
+	 * Associating a speed to an alpha (cone slope)
+	 * as in [equation 1](http://bit.ly/2tLfehC)
 	 */
 	interface ISpeedAlpha {
 		speed: number;
@@ -297,7 +300,7 @@ function networkFromCities(
 	 * la fenêtre temporelle décrite dans le fichier csv initial) du mode de transport.
 	 */
 	interface ITabSpeedPerYearPerTranspModeItem {
-		tabYearSpeed: { [year: string]: ISpeedAlpha };
+		tabSpeedPerYear: { [year: string]: ISpeedAlpha };
 		name: string;
 		terrestrial: boolean;
 	}
@@ -350,7 +353,7 @@ function networkFromCities(
 		const minYearTransport = Math.max(transportMode.yearBegin, minYear);
 		let maxYearTransport = transportMode.yearEnd === undefined ? actualYear : transportMode.yearEnd;
 		let tempTransportCodeTab: ITransportCodeItem[] = [];
-		const tabYearSpeed: { [year: string]: ISpeedAlpha } = {};
+		const tabSpeedPerYear: { [year: string]: ISpeedAlpha } = {};
 		let tempMaxYear: number = transportMode.yearEnd;
 
 		transportMode.speeds.forEach((transportSpeed) => {
@@ -371,7 +374,7 @@ function networkFromCities(
 		let speed: number;
 		for (let year = minYearTransport; year <= maxYearTransport; year++) {
 			speed = interpolation(year);
-			tabYearSpeed[year] = { speed };
+			tabSpeedPerYear[year] = { speed };
 			if (maximumSpeed.hasOwnProperty(year)) {
 				if (maximumSpeed[year] < speed) {
 					maximumSpeed[year] = speed;
@@ -381,7 +384,7 @@ function networkFromCities(
 			}
 		}
 
-		speedPerTransportPerYear[transportCode] = { tabYearSpeed, name, terrestrial: transportMode.terrestrial };
+		speedPerTransportPerYear[transportCode] = { tabSpeedPerYear: tabSpeedPerYear, name, terrestrial: transportMode.terrestrial };
 	});
 
 	_minYear = minYear;
@@ -391,12 +394,12 @@ function networkFromCities(
 	for (const transportCode in speedPerTransportPerYear) {
 		// La condition sous entend que Road est du type terrestrial (attention dans fichier csv)
 		if (speedPerTransportPerYear[transportCode].terrestrial) {
-			const tabYearSpeed = speedPerTransportPerYear[transportCode].tabYearSpeed;
-			for (const year in tabYearSpeed) {
+			const tabSpedPerYear = speedPerTransportPerYear[transportCode].tabSpeedPerYear;
+			for (const year in tabSpedPerYear) {
 				if (maximumSpeed.hasOwnProperty(year)) {
 					// Then we affect the slope of cones
 					const maxSpeed = maximumSpeed[year];
-					const speedAmb = tabYearSpeed[year].speed;
+					const speedAmb = tabSpedPerYear[year].speed;
 					// This is [equation 1](http://bit.ly/2tLfehC)
 					// of the slope of the cone
 					// executed because transport mode [[isTerrestrial]]
@@ -405,7 +408,7 @@ function networkFromCities(
 						alpha += CONFIGURATION.TWO_PI;
 					}
 
-					tabYearSpeed[year].alpha = alpha;
+					tabSpedPerYear[year].alpha = alpha;
 				}
 			}
 		}
@@ -536,7 +539,7 @@ function networkFromCities(
 						destinationsWithModes[destCityCode][edgeTranspModeName] = [];
 					}
 
-					const edgeModeSpeed = edgeTranspModeSpeed.tabYearSpeed;
+					const edgeModeSpeed = edgeTranspModeSpeed.tabSpeedPerYear;
 					// To avoid visual duplication of curves!
 					const edgeToBeProcessed = !processedODs[origCityCode][destCityCode].includes(edgeTranspModeName);
 					processedODs[origCityCode][destCityCode].push(edgeTranspModeName);
@@ -547,11 +550,11 @@ function networkFromCities(
 							// We generate a cone and draw edges
 							if (!cone.hasOwnProperty(year)) {
 								// Initialising  complex cone for a given city and year
-								const coneAlpha = speedPerTransportPerYear[roadCode].tabYearSpeed[year].alpha;
+								const coneAlpha = speedPerTransportPerYear[roadCode].tabSpeedPerYear[year].alpha;
 								cone[year] = { coneAlpha, tab: [] };
 							}
 
-							alpha = edgeTranspModeSpeed.tabYearSpeed[year].alpha;
+							alpha = edgeTranspModeSpeed.tabSpeedPerYear[year].alpha;
 							cone[year].tab.push({ alpha, clock });
 							destinationsWithModes[destCityCode][edgeTranspModeName].push({
 								year,
@@ -638,7 +641,7 @@ function networkFromCities(
 			if (Object.keys(cone).length === 0) {
 				// Cas des villes sans destinations ou uniquement des transports type aérien
 				for (let year = minYear; year <= maxYear; year++) {
-					const coneAlpha = speedPerTransportPerYear[roadCode].tabYearSpeed[year].alpha;
+					const coneAlpha = speedPerTransportPerYear[roadCode].tabSpeedPerYear[year].alpha;
 					cone[year] = { coneAlpha, tab: [] };
 				}
 			}
