@@ -124,10 +124,11 @@ export interface ILookupDestWithModes {
 }
 
 /**
- * A city and its incident links in the network:
+ * A city and its incident edges in the network:
  * * a [[referential]] of coordinates in [[NEDLocal]]
  * * a table of transport modes and their alphas
  * * a list of destinations and associated transport modes
+ * forming the sub-graph edges (centred on the city)
  * * a table of [[origCityProperties]]
  */
 export interface ICityGraph {
@@ -140,7 +141,7 @@ export interface ICityGraph {
  * A [[ILookupCityGraph]] searches
  * * a cityCode
  * * and retrieves a piece of network [[ICityNetwork]] made of
- * * incident links of cityCode in the transport network
+ * * incident edges of cityCode in the transport network
  *
  * <uml>
  *     ILookupCityGraph<-ICityGraph
@@ -189,7 +190,7 @@ export interface IPopulation {
  * * [[urbanAgglomeration]] is the name of the city
  * * [[radius]]: number; // for cases of cities in islands close to a continent
  * * [[populations]] (optionnal) for several years as provided in csv file 'population.csv'
- * * [[links]] (optionnal) is a table will be determined by scanning the [[ITransportNetwork]]
+ * * [[edges]] (optionnal) is a table will be determined by scanning the [[ITransportNetwork]]
  */
 export interface ICity {
 	countryCode: number;
