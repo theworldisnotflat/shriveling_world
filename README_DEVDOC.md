@@ -5,6 +5,8 @@ This is the developper documentation of the project __ShrivelingWorld__
 
 __Components of the three-dimensional structure / Vocabulary of the project__:
 * the model is based on a [transport network] linking cities (see [conceptual frameworkfor geographical time-space representation](https://timespace.hypotheses.org/184))
+* the [data model can be seen here](https://github.com/theworldisnotflat/shriveling_world/blob/master/model/modeles7.png)
+* Explanations about the [terminology choices can be found here](https://timespace.hypotheses.org/177)
 * the [graph] representing this transport network is made of cities and [edges]
 * [edges] are the vertice of the [graph]; edges are only mathematical entities, not to be confounded with their graphical expression as [curves]
 * [curves] are the graphical objects representing the graph [edges]; in the model, curves may be
