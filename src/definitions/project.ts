@@ -2,7 +2,7 @@
  * Project.ts is where all definitions are enunciated
  * concerning data structuring in the project
  *
- * the [data model can be seen here](https://github.com/theworldisnotflat/shriveling_world/blob/master/model/modeles.png)
+ * the [data model can be seen here](https://github.com/theworldisnotflat/shriveling_world/blob/master/model/modeles7.png)
  * Explanations about the [terminology choices can be found here](https://timespace.hypotheses.org/177)
  */
 import { Cartographic } from '../common/utils';

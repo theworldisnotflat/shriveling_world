@@ -384,7 +384,11 @@ function networkFromCities(
 			}
 		}
 
-		speedPerTransportPerYear[transportCode] = { tabSpeedPerYear: tabSpeedPerYear, name, terrestrial: transportMode.terrestrial };
+		speedPerTransportPerYear[transportCode] = {
+			tabSpeedPerYear: tabSpeedPerYear,
+			name,
+			terrestrial: transportMode.terrestrial,
+		};
 	});
 
 	_minYear = minYear;
