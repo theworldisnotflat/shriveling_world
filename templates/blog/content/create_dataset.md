@@ -6,10 +6,10 @@
 
 According to the data model, _Shriveling world_ datasets are composed of five files:
 1. cities
-2. populations
-3. transport modes
-4. transport mode speed
-5. network
+2. population
+3. transport network
+4. transport modes
+5. transport mode speed
 
 The files describe a __graph__ modelling a transport network between cities with __speed__ as a key parameter.
 
