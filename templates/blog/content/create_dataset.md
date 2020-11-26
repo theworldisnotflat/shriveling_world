@@ -36,8 +36,8 @@ Algorithm for determining the variables _yearBegin_ and  _yearEnd_:
 
 Source file | Starting year for each mode | Ending year for each mode
 ----------|----------|----------
-_transport mode speed.csv_ | _yearBeginRoadMode_ = min(_year_(road)), _yearBeginFasterTransp1Mode_ = min(_year_(Transp1)), _yearBeginFasterTransp2Mode_ = min(_year_(Transp2)), etc.|  _yearEndRoadMode_= max(_year_(road)), _yearEndFasterTransp1Mode_ = max(_year_(Transp1)), _yearEndFasterTransp2Mode_ = max(_year_(Transp2)), etc.
-_transport network.csv_ | _yearBeginRoadNetwork_, _yearBeginFasterTransp1Network_, _yearBeginFasterTransp2Network_, etc.| _yearEndRoadNetwork_, _yearEndFasterTransp1Network_, _yearEndFasterTransp2Network_, etc.
+_transport mode speed.csv_ | _yearBeginRoadMode_ = min(_year<sub>road</sub>_), _yearBeginFasterTransp1Mode_ = min(_year<sub>Transp1</sub>_), _yearBeginFasterTransp2Mode_ = min(_year<sub>Transp2</sub>_), etc.|  _yearEndRoadMode_= max(_year<sub>road</sub>_), _yearEndFasterTransp1Mode_ = max(_year<sub>Transp1</sub>_), _yearEndFasterTransp2Mode_ = max(_year<sub>Transp2</sub>_), etc.
+_transport network.csv_ | _yearBeginRoadNetwork_ = min(_yearBegin<sub>road</sub>_), _yearBeginFasterTransp1Network_, _yearBeginFasterTransp2Network_, etc.| _yearEndRoadNetwork_ = max(_yearEnd<sub>road</sub>_), _yearEndFasterTransp1Network_, _yearEndFasterTransp2Network_, etc.
 
 _yearBeginRoad_ = min (_yearBeginRoadMode_, _yearBeginRoadNetwork_)
 _yearBeginFasterTransp1_ = min (_yearBeginFasterTransp1Mode_, _yearBeginFasterTransp1Network_)
