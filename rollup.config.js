@@ -158,9 +158,10 @@ const preparerStatic = (options = {}) => {
             console.log('dataset generation');
             zipper();
             copySync('./src/toStatic/', './static/');
+            copySync('./markdown/assets/', './static/assets/');
             console.log('documentation generation');
             execSync(`npx typedoc --plugin typedoc-neo-theme \
-            --out static/documentation --json static/documentation/json.json  \
+            --out static/documentation  \
             --readme none  --name "shriveling the world documentation" \
             --ignoreCompilerErrors --hideGenerator --target ES6  src/core\
             && cp -r static/documentation/* static && mv static/index.html static/documentation.html\

@@ -1,3 +1,9 @@
+<script context="module">
+	export async function preload() {
+		return this.redirect(302, 'marks/index');
+	}
+</script>
+
 <script>
 	import Menu from '../components/menu.svelte';
 </script>
