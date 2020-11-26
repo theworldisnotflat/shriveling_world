@@ -6,6 +6,8 @@ name: Node.js CI
 on:
     push:
         branches: [master, sapper]
+    pull_request:
+        branches: master
 
 jobs:
     build:
@@ -23,9 +25,16 @@ jobs:
                   node-version: ${{ matrix.node-version }}
             - run: npm i --legacy-peer-deps
             - run: npm run export
-            - name: Deploy
+            - name: full Deploy
+              if: ${{ github.event_name == 'pull_request' && github.repository == 'theworldisnotflat/shriveling_world'}}
               uses: peaceiris/actions-gh-pages@v3
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
-                  #   external_repository: theworldisnotflat/shriveling_world_documentation
+                  external_repository: theworldisnotflat/shriveling_world_documentation
+                  publish_dir: '__sapper__/export/shriveling_world'
+            - name: local Deploy
+              if: ${{ github.repository == 'kaktus40/shriveling_world' }}
+              uses: peaceiris/actions-gh-pages@v3
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
                   publish_dir: '__sapper__/export/shriveling_world'
