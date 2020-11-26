@@ -3,6 +3,7 @@
 ## Data model
 
 ![data model](https://github.com/theworldisnotflat/shriveling_world/blob/master/model/modeles7.png)
+
 According to the data model, _Shriveling world_ datasets are composed of five files:
 1. cities
 2. populations
