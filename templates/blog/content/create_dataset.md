@@ -29,7 +29,7 @@ Source | Rationale
 _transport mode speed.csv_ | to allow for comparing modes in general, e.g. road vs rail in the long term
 _transport network.csv_ | to allow for considering the growth of a transport network of a given speed, over time, e.g. the morphogenesis of the high-speed rail network
 
-#Algorithm for determining the historical time span
+##Algorithm for determining the historical time span
 
 Algorithm for determining the variables _yearBegin_ and  _yearEnd_:
 
