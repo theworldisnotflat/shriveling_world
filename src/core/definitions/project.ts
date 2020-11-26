@@ -2,7 +2,7 @@
  * Project.ts is where all definitions are enunciated
  * concerning data structuring in the project
  *
- * the [data model can be seen here](https://github.com/theworldisnotflat/shriveling_world/blob/master/model/modeles.png)
+ * the [data model can be seen here](https://github.com/theworldisnotflat/shriveling_world/blob/master/model/modeles7.png)
  * Explanations about the [terminology choices can be found here](https://timespace.hypotheses.org/177)
  */
 import type { Cartographic } from '../common/utils';
@@ -124,10 +124,11 @@ export interface ILookupDestWithModes {
 }
 
 /**
- * A city and its incident links in the network:
+ * A city and its incident edges in the network:
  * * a [[referential]] of coordinates in [[NEDLocal]]
  * * a table of transport modes and their alphas
  * * a list of destinations and associated transport modes
+ * forming the sub-graph edges (centred on the city)
  * * a table of [[origCityProperties]]
  */
 export interface ICityGraph {
@@ -140,7 +141,7 @@ export interface ICityGraph {
  * A [[ILookupCityGraph]] searches
  * * a cityCode
  * * and retrieves a piece of network [[ICityNetwork]] made of
- * * incident links of cityCode in the transport network
+ * * incident edges of cityCode in the transport network
  *
  * <uml>
  *     ILookupCityGraph<-ICityGraph
@@ -188,8 +189,8 @@ export interface IPopulation {
  * * [[cityCode]]
  * * [[urbanAgglomeration]] is the name of the city
  * * [[radius]]: number; // for cases of cities in islands close to a continent
- * * [[populations]] for several years as provided in csv file 'population.csv'
- * * [[links]] is a table will be determined by scanning the [[ITransportNetwork]]
+ * * [[populations]] (optionnal) for several years as provided in csv file 'population.csv'
+ * * [[edges]] (optionnal) is a table will be determined by scanning the [[ITransportNetwork]]
  */
 export interface ICity {
 	countryCode: number;
@@ -218,7 +219,7 @@ export interface ITransportModeSpeed {
  * * a [[name]],
  * * a [[code]],
  * * a [[yearBegin]],
- * * a [[yearEnd]],
+ * * a [[yearEnd]] (optionnal),
  * * can be [[terrestrial]] or not,
  * * and has a table of [[speeds]] that may change over years
  */
@@ -236,8 +237,8 @@ export interface ITranspMode {
  *
  * Each edge has
  * * a [[yearBegin]] and
- * * a [[yearEnd]]
- * * an origin [[idOri]]
+ * * a [[yearEnd]] (optionnal)
+ * * an origin [[idOri]] (optionnal)
  * * and  destination [[idDes]]
  * * a transport mode [[transportMode]]
  */
