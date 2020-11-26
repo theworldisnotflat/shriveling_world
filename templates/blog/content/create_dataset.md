@@ -13,9 +13,11 @@ According to the data model, _Shriveling world_ datasets are composed of five fi
 The files describe a __graph__ modelling a transport network between cities with __speed__ as a key parameter.
 
 ##A differential model
+
 The _Shriveling world_ model is by design __differential__, id est, it compares  the basic terrestrial road speed with the fastest available transport speed. This comparison of speed computes a ratio that will determine the slope of cones. Addressing the issue of the historical contraction of time-space due to the improvement of transport means, the  _Shriveling world_ model allows for considering different periods in time, years, different moments when the ratio is computed. The ratio is fixed for a given year.
 
 ##Historical time span
+
 The dataset will generate a _historical time span_ during which, for each year, a graphical representation may be built. This _historical time span_ considers the dates attached to the modes and network links but also the coexistece of road and other transport modes. This coexistence of transport modes is necessary to generate the cones slope, [as seen earlier](#a-differential-model). Hence the _historical time span_ is based on data provided about the year of opening and sometimes ending (e.g. supersonic aircraft) of the transport services, an on the period where __road speed and another faster transport mode speed__ are known.
 The _historical time span_ needs to fill in the variable _yearBegin_ and the variable _yearEnd_
 * _yearBegin_ will be the earliest year when the model can be computed
@@ -26,6 +28,8 @@ Source | Rationale
 ----------|----------
 _transport mode speed.csv_ | to allow for comparing modes in general, e.g. road vs rail in the long term
 _transport network.csv_ | to allow for considering the growth of a transport network of a given speed, over time, e.g. the morphogenesis of the high-speed rail network
+
+#Algorithm for determining the historical time span
 
 Algorithm for determining the variables _yearBegin_ and  _yearEnd_:
 
