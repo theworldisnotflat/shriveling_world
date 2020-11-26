@@ -1,26 +1,8 @@
 {
-  "compileOnSave": false,
-  "compilerOptions": {
-    "declaration": true,
-    "declarationDir": "declarations",
-    "target": "es6",
-    "removeComments": true,
-    "allowJs": false,
-    "module": "es6",
-    "pretty": false,
-    "outDir": "dist",
-    "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node",
-    "noImplicitAny": false,
-    "baseUrl": ".",
-  },
-  "exclude": [
-    "dist",
-    "node_modules",
-    "examples"
-  ],
-  "include": [
-    "src","IHM"
-  ]
-
-}
+		"extends": "@tsconfig/svelte/tsconfig.json",
+		"compilerOptions": {
+			"lib": ["DOM", "ES2017", "WebWorker"]
+		},
+		"include": ["src/**/*", "src/node_modules/**/*"],
+		"exclude": ["node_modules/**/**", "__sapper__/*", "static/*"]
+	}
