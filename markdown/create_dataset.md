@@ -2,7 +2,7 @@
 
 ## Data model
 
-![data model](https://github.com/theworldisnotflat/shriveling_world/blob/master/model/modeles7.png)
+![data model](assets/modeles7.png)
 
 According to the data model, _Shriveling world_ datasets are composed of five files:
 1. cities
@@ -48,3 +48,6 @@ _yearEndRoad_ = max (_yearEndRoadMode_, _yearEndRoadNetwork_)
 
 _yearBegin_ = max((_yearBeginRoad_), min(_yearBeginFasterTransp1_, _yearBeginFasterTransp2_, etc.))
 _yearEnd_ = min((_yearEndRoad_), max(_yearEndFasterTransp1_, _yearEndFasterTransp2_, etc.))
+
+## Mandatory data in the dataset
+The five files ust all be present
