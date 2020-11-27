@@ -1,1 +1,0 @@
-This id the developper documentation of the project __ShrivelingWorld__
