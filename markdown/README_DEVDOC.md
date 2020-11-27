@@ -1,9 +1,9 @@
-#Developper documentation of the project _Shriveling World_
+# Developper documentation of the project _Shriveling World_
 * The main function of the project is [merger](/classes/_bigboard_merger_.merger.html)
 * The main parameter of the model is [alpha] determining the slope of [cones] based on the ratio between [road] speed and the maximum available speed at the period considered
 * data structures of the project are defined as [interfaces] in the file: /definitions/project.ts
 
-##Components of the three-dimensional structure / Vocabulary of the project
+## Components of the three-dimensional structure / Vocabulary of the project
 * The model is based on a [transport network] linking cities (see [conceptual framework imagefor geographical time-space representation](https://timespace.hypotheses.org/184))
 * the [data model](https://github.com/theworldisnotflat/shriveling_world/blob/master/model/modeles7.png):
 ![data model](https://github.com/theworldisnotflat/shriveling_world/blob/master/model/modeles7.png)

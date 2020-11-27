@@ -114,7 +114,7 @@
 				<ul class="sub-menu" aria-label="submenu">
 					<li class="menu-item"><a href="#0">Basic Usage tutorial</a></li>
 					<li class="menu-item"><a href="#0">UI variables explanation</a></li>
-					<li class="menu-item"><a href="#0">Datasets explanation</a></li>
+					<li class="menu-item"><a href="marks/create_dataset">Dataset creation</a></li>
 					<li class="menu-item"><a href="#0">Blender tutorial</a></li>
 				</ul>
 			</li>
