@@ -4,6 +4,8 @@
 
 ![data model](assets/modeles7.png)
 
+## A system of five files
+
 According to the data model, _Shriveling world_ datasets are composed of five files:
 1. cities
 2. population
@@ -50,4 +52,4 @@ _yearBegin_ = max((_yearBeginRoad_), min(_yearBeginFasterTransp1_, _yearBeginFas
 _yearEnd_ = min((_yearEndRoad_), max(_yearEndFasterTransp1_, _yearEndFasterTransp2_, etc.))
 
 ## Mandatory data in the dataset
-The five files ust all be present
+The [five files](#-Aa-system-of-five-files) must all be present
