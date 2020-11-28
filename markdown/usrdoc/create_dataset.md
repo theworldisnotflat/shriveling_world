@@ -54,6 +54,9 @@ _yearEnd_ = min((_yearEndRoad_), max(_yearEndFasterTransp1_, _yearEndFasterTrans
 The transport related period should also be coherent with the dates of the city population data.
 
 ## Mandatory elements in the dataset
+
+General __good practices__ instructions
+
 * The [five files](#a-system-of-five-files) must all be present in the dataset
 * As shown in the [figure of the data model](#data-model) each file has optionnal and mandatory columns
   * mandatory columns must be populated completely, with no missing data
@@ -63,6 +66,10 @@ The transport related period should also be coherent with the dates of the city 
   * _transportMode_ code from the transport network file is linked to _code_ in the transport mode code file, and _transporModeCode_ in the transport mode speed file
 * text type: _countryName_, _urbanAgglomeration_, _name_ (of transport mode)
 * numeric type: _countryCode_, _cityCode_, _latitude_, _longitude_, etc
+
+Specific __critical__ instructions:
+* The file _transport mode_ __MUST__ contain a mode named 'Road' that will define the slope of cones
+
 
 ## Content of files columns
 
