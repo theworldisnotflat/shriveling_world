@@ -107,14 +107,14 @@
 					<li class="menu-item"><a href="#0">Help</a></li>
 				</ul>
 			</li>
-			<li class="menu-item"><a href="doc">Dev Docs</a></li>
+			<li class="menu-item"><a href="marks/devdoc/README_DEVDOC">Dev Docs</a></li>
 			<li class="menu-item" aria-haspopup="true">
 				<a href="#0">User Doc
 					<Icon icon={faCaretDown} /></a>
 				<ul class="sub-menu" aria-label="submenu">
 					<li class="menu-item"><a href="#0">Basic Usage tutorial</a></li>
 					<li class="menu-item"><a href="#0">UI variables explanation</a></li>
-					<li class="menu-item"><a href="marks/create_dataset">Dataset creation</a></li>
+					<li class="menu-item"><a href="marks/usrdoc/create_dataset">Dataset creation</a></li>
 					<li class="menu-item"><a href="#0">Blender tutorial</a></li>
 				</ul>
 			</li>

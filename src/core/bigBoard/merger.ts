@@ -674,7 +674,7 @@ function networkFromCities(
  *   * [[_transportModeCode]],
  *   * [[_transportNetwork]],
  *   * [[_state]] and
- *   * [[_linksAndTranspModes]]
+ *   * [[_edgesAndTranspModes]]
  *
  * This class will contain the function [[merge]]
  */
