@@ -8,17 +8,17 @@
 ## From a transport network between cities to a set of three-dimensional graphical objects
 The model is based on a transport network linking cities (see [conceptual framework for geographical time-space representation](https://timespace.hypotheses.org/184)). More explanations about the [terminology choices can be found here](https://timespace.hypotheses.org/177).
 Mathematical and graphical objects:
-* the graph representing this transport network is made of [cities](/interfaces/_definitions_project_.icity.html) and [edges](/interfaces/_definitions_project_.iedge.html) ([interfaces _IEdges_](/interfaces/_definitions_project_.iedge.html)). The graph can be accessed at the city level in the form of a sugraph cented on a given city: [interface _ICityGraph_](/interfaces/_definitions_project_.icitygraph.html)
-* [edges](/interfaces/_definitions_project_.iedge.html) are the vertice of the graph; edges are only mathematical entities, not to be confounded with their graphical expression as [curves]
-* [curves](/interfaces/_definitions_project_.ilookupcurvesfromcity.html) are the graphical objects representing the graph [edges](/interfaces/_definitions_project_.iedge.html); in the model, curves may be (depending on the value of the user defined parameter '_pointsPerCurve_')
+* the graph representing this transport network is made of [cities](/interfaces/_definitions_project_.icity.html) and [edges](/interfaces/_definitions_project_.iedge.html) ([interfaces _IEdges_](/interfaces/_definitions_project_.iedge.html)). The graph can be accessed at the city level in the form of a subgraph centred on a given city: [interface _ICityGraph_](/interfaces/_definitions_project_.icitygraph.html)
+* [edges](/interfaces/_definitions_project_.iedge.html) are the vertices of the graph; edges are only mathematical entities, not to be confounded with their graphical expression as [curves](/interfaces/_definitions_project_.ilookupcurvesfromcity.html)
+* [curves](/interfaces/_definitions_project_.ilookupcurvesfromcity.html) are the graphical objects representing the graph [edges](/interfaces/_definitions_project_.iedge.html); in the model, curves may be represented as (depending on the value of the user defined parameter '_pointsPerCurve_')
   * straigt lines, ('_pointsPerCurve_'=0)
   * broken lines, ('_pointsPerCurve_'=1)
   * geodesics or
   * three dimensional curves ('_pointsPerCurve_'>2)
 * [cones] are generated from an angle [alpha](/interfaces/_definitions_project_.icomplexalphaitem.html#conealpha) computed by comparing the (terrestrial) speed on the cone with the speed of the fastest tansport mode considered in the given period
-  * [cones] may have a constant and uniform slope based on a unique [alpha]
+  * [cones] may have a constant and uniform slope based on a unique [alpha](/interfaces/_definitions_project_.icomplexalphaitem.html#conealpha)
   * [cones] may have a different slope
-  * [cones] may have different slopes (complex alphas) if different terrestrial transport networks are considered (not yet  implemented)
+  * (not yet  implemented) [cones] may have different slopes (complex alphas) if different terrestrial transport networks are considered
 
 ## Data model
 The [data model](https://timespace.hypotheses.org/91):
