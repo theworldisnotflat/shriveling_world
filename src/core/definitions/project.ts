@@ -70,22 +70,28 @@ export interface ICartographic {
 }
 
 /**
- * An item grouping for a fixed year and a fixed origin city datas to generate
- * a complex cone the slope for road and slope for each
- * destination city (clock) using a terrestrial transport.
+ * * A cone is build around an origin city
+ * and a general slope computed from the differential speed of road
+ * * The geometry of the cone will depend on the values of transport
+ * speed that vary with the years
+ * * Complex alphas can also be generated with other faster modes
+ * * The geometry of the cone being built from a set of 'clocks'
+ * complex alphas will be generated from local alphas
+ * computed from edges to destination city
+ * using a terrestrial transport.
  */
-export interface IComplexAlphaItem {
+export interface IComplexAlphaCone {
 	/**
 	 * This property represents the slope of the road transport for the considered year.
 	 */
-	coneAlpha: number;
+	coneRoadAlpha: number;
 	/**
 	 * This property lists for the considered year and the considered origin city
 	 * each destination city using a terrestrial transport. Each item of this
 	 * array is a clock in direction of the destination city and a slope
 	 * corresponding to the transport speed linking the two cities. This array can have zero item.
 	 */
-	tab: Array<{ clock: number; alpha: number }>;
+	coneClocks: Array<{ clock: number; alpha: number }>;
 }
 
 /**
@@ -94,8 +100,8 @@ export interface IComplexAlphaItem {
  *
  * This slope (alpha) is determined by ![equation 1](http://bit.ly/2tLfehC)
  */
-export interface ILookupComplexAlpha {
-	[year: string]: IComplexAlphaItem;
+export interface ILookupComplexAlphaCone {
+	[year: string]: IComplexAlphaCone;
 }
 
 /**
@@ -133,7 +139,7 @@ export interface ILookupDestWithModes {
  */
 export interface ICityGraph {
 	referential: NEDLocal; // À inhiber dans forbiddenAttributes de coneMeshShader
-	cone: ILookupComplexAlpha; // À inhiber dans forbiddenAttributes de coneMeshShader
+	cone: ILookupComplexAlphaCone; // À inhiber dans forbiddenAttributes de coneMeshShader
 	destinationsWithModes: ILookupDestWithModes;
 	origCityProperties: ICity;
 }

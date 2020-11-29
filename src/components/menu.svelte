@@ -95,8 +95,8 @@
 				<a href="./">Shriveling the world
 					<Icon icon={faCaretDown} /></a>
 				<ul class="sub-menu" aria-label="submenu">
-					<li class="menu-item"><a href="#0">Blog</a></li>
-					<li class="menu-item"><a href="#0">github</a></li>
+					<li class="menu-item"><a href="https://timespace.hypotheses.org/">Blog</a></li>
+					<li class="menu-item"><a href="https://github.com/theworldisnotflat/shriveling_world">github</a></li>
 					<li class="menu-item"><a href="#0">other resources</a></li>
 				</ul>
 			</li>

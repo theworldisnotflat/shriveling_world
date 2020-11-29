@@ -21,7 +21,7 @@ The _Shriveling world_ model is by design __differential__, id est, it compares 
 
 ## Historical time span
 
-The dataset will generate a _historical time span_ during which, for each year, a graphical representation may be built. This _historical time span_ considers the dates attached to the modes and network links but also the coexistece of road and other transport modes. This coexistence of transport modes is necessary to generate the cones slope, [as seen earlier](#a-differential-model). Hence the _historical time span_ is based on data provided about the year of opening and sometimes ending (e.g. supersonic aircraft) of the transport services, an on the period where __road speed and another faster transport mode speed__ are known.
+The dataset will generate a _historical time span_ during which, for each year, a graphical representation may be built. This _historical time span_ considers the dates attached to the modes and network links but also the coexistence of road and other transport modes. This coexistence of transport modes is necessary to generate the cones slope, [as seen earlier](#a-differential-model). Hence the _historical time span_ is based on data provided about the year of opening and sometimes ending (e.g. supersonic aircraft) of the transport services, an on the period where __road speed and another faster transport mode speed__ are known.
 The _historical time span_ needs to fill in the variable _yearBegin_ and the variable _yearEnd_
 * _yearBegin_ will be the earliest year when the model can be computed
 * _yearEnd_ will be the latest year when the model can be computed
@@ -55,20 +55,23 @@ The transport related period should also be coherent with the dates of the city 
 
 ## Mandatory elements in the dataset
 
-General __good practices__ instructions
+General __common sense__ instructions
 
 * The [five files](#a-system-of-five-files) must all be present in the dataset
-* As shown in the [figure of the data model](#data-model) each file has optionnal and mandatory columns
+* As shown in the [figure of the data model](#data-model) each file has optional and mandatory columns
   * mandatory columns must be populated completely, with no missing data
-  * optionnal columns may be left empty or may be completely or partially populated
+  * optional columns may be left empty or may be completely or partially populated
+* Column names in files __MUST__ be rigorously respected
 * Id fields must be carefully populated because they connect files to each other:
   * _cityCode_ from the city file is linked to _iOri_ and _iDes_ in the network file
-  * _transportMode_ code from the transport network file is linked to _code_ in the transport mode code file, and _transporModeCode_ in the transport mode speed file
+  * _transportMode_ code from the transport network file is linked to _code_ in the transport mode code file, and _transportModeCode_ in the transport mode speed file
 * text type: _countryName_, _urbanAgglomeration_, _name_ (of transport mode)
 * numeric type: _countryCode_, _cityCode_, _latitude_, _longitude_, etc
 
 Specific __critical__ instructions:
-* The file _transport mode_ __MUST__ contain a mode named 'Road' that will define the slope of cones
+* The file [_transport mode_](#transport-mode-file) __MUST__ contain a mode named _Road_ that will define the slope of cones; cones is the geographic surface and the _Road_ speed is attached to this surface
+* For the same reason the file [_transport mode speed_](#transport-mode-speed-file) __MUST__ contain speed information for the mode _road_
+* The model being by design [differential](#a-differential-model), at least one other transport mode with a speed __MUST__ be described (in both files  [_transport mode_](#transport-mode-file) and [_transport mode speed_](#transport-mode-speed-file))
 
 
 ## Content of files columns
@@ -76,7 +79,7 @@ Specific __critical__ instructions:
 * (__to be checked__)The column order in files is not necessarily the same as proposed here.
 
 * Files are in CSV format produced with default export options from LibreOffice Calc.
-* __Column names must be rigorously respected__
+* Column names __MUST__ be rigorously respected
 
 ### Cities file
 
@@ -88,9 +91,9 @@ _cityCode_|number|yes|city unique id
 _urbanAgglomeration_|string|yes|agglomeration (city) name
 _latitude_|number|yes|numeric with comma, e.g. 35.55597
 _longitude_|number|yes|numeric with comma
-_radius_|number|no|cone radius for the case of islands located close to a coastal area devoid of cities, to avoid island cone overlapping in the coastal area, e.g. Canary Islands close to Marocco
-_yearMotorway_|number|no|in order to affect the slope of this cone (city) from this year, in a variant of the model that changes local cone slope according the connectivity to a faster network (even if not all surroundig space is experiencing this speed of transport)
-_yearHST_|number|no|same as previous, but here concerning High Spped Rail
+_radius_|number|no|cone radius for the case of islands located close to a coastal area devoid of cities, to avoid island cone overlapping in the coastal area, e.g. Canary Islands close to Maroc
+_yearMotorway_|number|no|in order to affect the slope of this cone (city) from this year, in a variant of the model that changes local cone slope according the connectivity to a faster network (even if not all surrounding space is experiencing this speed of transport)
+_yearHST_|number|no|same as previous, but here concerning High Speed Rail
 
 ### Population file
 Column name | Type | Mandatory | Comments
@@ -103,13 +106,13 @@ _population_|number|yes|in thousands inhabitants, at the agglomeration level rec
 The _transport network file_ describes the edges of the graph between the cities as nodes. See her for [a justification of the terminology choices](https://timespace.hypotheses.org/177).
 Column name | Type | Mandatory | Comments
 ----------|----------|-------------|-------------
-_yearBegin_|number|no|year of opening of the edge, infrastructure or service; if not populated, period _historical time span_ will be detemined from _transport mode code_ file data
+_yearBegin_|number|no|year of opening of the edge, infrastructure or service; if not populated, period _historical time span_ will be determined from _transport mode code_ file data
 _yearEnd_|number|no|may be used for a service no longer operated, e.g. supersonic commercial aircraft Concorde
 _idOri_|number|yes|id of origin city; direction (ori-des or des-ori) has no meaning in the model
 _idDes_|number|yes|id of destination city
 _transportMode_|number|yes|id of the transport mode
 
-For the sake of readability this file usually contains two optionnal columns of _oriName_ and _desName_.
+For the sake of readability this file usually contains two optional columns of _oriName_ and _desName_.
 
 ### Transport mode file
 Column name | Type | Mandatory | Comments
@@ -124,6 +127,6 @@ _yearEnd_|number|no|may be used for a service no longer operated, e.g. supersoni
 A given transport mode may experience an increase of speed, e.g. the five acceleration phases of China classical railways (non High Speed Rail) between 1997 and 2004
 Column name | Type | Mandatory | Comments
 ----------|----------|-------------|-------------
-_year_|number|yes|refering to a date when speed changed
+_year_|number|yes|referring to a date when speed changed
 _transportModeCode_|number|yes|id of transport mode
 _speedKPH_|number|yes|commercial average speed on the transport network

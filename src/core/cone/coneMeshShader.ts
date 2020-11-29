@@ -10,7 +10,7 @@ import {
 import { CONFIGURATION } from '../common/configuration';
 import { PseudoCone } from './base';
 import { Cartographic, interpolator, matchingBBox } from '../common/utils';
-import type { ILookupCityGraph, IBBox, ILookupComplexAlpha, IComplexAlphaItem } from '../definitions/project';
+import type { ILookupCityGraph, IBBox, ILookupComplexAlphaCone, IComplexAlphaCone } from '../definitions/project';
 import type { NEDLocal, Coordinate } from '../common/referential';
 import { getShader } from '../shaders';
 import { GPUComputer } from '../common/gpuComputer';
@@ -174,9 +174,9 @@ function regenerateFromConeStep(): void {
 
 /**
  * Function [[updateAlphas]] sets the alpha (fixing slopes) of cones according to year
- * and deals with cones that shouldnt be displayed
+ * and deals with cones that shouldn't be displayed
  *
- * will call function [[getcomplexAlpha]]
+ * will call function [[getComplexAlpha]]
  */
 function updateAlphas(): void {
 	const year = CONFIGURATION.year;
@@ -188,35 +188,35 @@ function updateAlphas(): void {
 	if (!_alphas.hasOwnProperty(year)) {
 		const temp = new Float32Array(_height * _width);
 		for (let i = 0; i < _height; i++) {
-			const complexAlpha = _cones[i].getcomplexAlpha(year);
-			const coneAlpha = complexAlpha.coneAlpha;
-			const alphaTab = [...complexAlpha.tab];
+			const complexAlpha = _cones[i].getComplexAlpha(year);
+			const coneRoadAlpha = complexAlpha.coneRoadAlpha;
+			const complexAlphaTab = [...complexAlpha.coneClocks];
 			let subAlphas: Float32Array;
-			const length = alphaTab.length;
+			const length = complexAlphaTab.length;
 			if (length === 0) {
 				// Il n'y a pas de destination avec un transport terrestre.
-				subAlphas = _clocks.map(() => coneAlpha);
+				subAlphas = _clocks.map(() => coneRoadAlpha);
 			} else {
 				const lastItem = { clock: 0, alpha: 0 };
-				lastItem.clock = alphaTab[length - 1].clock - twoPI;
-				lastItem.alpha = alphaTab[length - 1].alpha;
+				lastItem.clock = complexAlphaTab[length - 1].clock - twoPI;
+				lastItem.alpha = complexAlphaTab[length - 1].alpha;
 				const firstItem = { clock: 0, alpha: 0 };
-				firstItem.clock = alphaTab[0].clock + twoPI;
-				firstItem.alpha = alphaTab[0].alpha;
+				firstItem.clock = complexAlphaTab[0].clock + twoPI;
+				firstItem.alpha = complexAlphaTab[0].alpha;
 				// Ajout croisés des éléments extrêmes pour avoir un tableau débordant le domaine [0, 2PI].
-				alphaTab.push(firstItem);
-				alphaTab.splice(0, 0, lastItem);
+				complexAlphaTab.push(firstItem);
+				complexAlphaTab.splice(0, 0, lastItem);
 				for (let i = length + 1; i > 0; i--) {
-					clockA = alphaTab[i - 1].clock;
-					clockB = alphaTab[i].clock;
+					clockA = complexAlphaTab[i - 1].clock;
+					clockB = complexAlphaTab[i].clock;
 					if (clockB - clockA > ecartMinimum) {
 						// Ajout d'une pente de route quand
 						// l'écart d'azimut entre deux destinations est trop grande
-						alphaTab.splice(i, 0, { alpha: coneAlpha, clock: clockA + (clockB - clockA) / 2 });
+						complexAlphaTab.splice(i, 0, { alpha: coneRoadAlpha, clock: clockA + (clockB - clockA) / 2 });
 					}
 				}
 
-				interpol = interpolator(alphaTab, 'clock', 'alpha');
+				interpol = interpolator(complexAlphaTab, 'clock', 'alpha');
 				subAlphas = _clocks.map((clock) => interpol(clock));
 			}
 
@@ -289,7 +289,7 @@ export class ConeMeshShader extends PseudoCone {
 	private readonly _cityCode: string;
 	// Private _transportName: string;
 	private readonly _position: Cartographic;
-	private readonly _complexAlpha: ILookupComplexAlpha;
+	private readonly _complexAlpha: ILookupComplexAlphaCone;
 
 	/**
 	 * Will [[generateCones]] from [[cityNetwork]]
@@ -425,7 +425,7 @@ export class ConeMeshShader extends PseudoCone {
 	private constructor(
 		cityCode: string,
 		position: Cartographic,
-		terrestrialData: ILookupComplexAlpha,
+		terrestrialData: ILookupComplexAlphaCone,
 		properties: any
 	) {
 		const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(400 * 4 * 2), 4).setUsage(
@@ -497,7 +497,7 @@ export class ConeMeshShader extends PseudoCone {
 	 * Return a [[IComplexAlphaItem]] corresponding to a year for the city defined in this [[ConeMeshShader]]
 	 * @param year
 	 */
-	public getcomplexAlpha(year: string | number): IComplexAlphaItem {
+	public getComplexAlpha(year: string | number): IComplexAlphaCone {
 		return this._complexAlpha[year];
 	}
 

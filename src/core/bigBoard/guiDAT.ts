@@ -347,7 +347,7 @@ export class GUI {
 
 		// curves
 		aerialFolder = gui.addFolder('Curves');
-		aerialFolder.add(CONFIGURATION, 'pointsPerCurve', 0, 200).step(1).name('number of points');
+		aerialFolder.add(CONFIGURATION, 'pointsPerCurve', 0, 200).step(1).name('nb of points');
 		terresterialFolder = aerialFolder.addFolder('terrestrial modes');
 
 		// Pays /mise en exergue avec listen?
