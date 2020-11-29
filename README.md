@@ -14,8 +14,8 @@ A [scientific blog](https://timespace.hypotheses.org/) contains principles, refl
 
 **Step #2**: Once the app runs in the browser data is read by two ways:
 
-a. Cick on predefined dataset list on the left side of the broser window
-b. Introduce data in the app by grag'n'drop (see below)
+1. Cick on predefined dataset list on the left side of the broser window
+2. Introduce data in the app by grag'n'drop (see below)
 
 Attention: in any case data processing may take time, depending on the number of cities. So once
 
