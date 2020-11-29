@@ -562,8 +562,8 @@ function networkFromCities(
 								const coneAlpha = alphaPerTransportPerYear[roadCode].tabAlphaPerYear[year].alpha;
 								cone[year] = { coneAlpha: coneAlpha, coneClocks: [] };
 							}
-							//console.log(year);
-							//console.log(edgeTranspModeAlpha);
+							console.log(year);
+							console.log(edgeTranspModeAlpha);
 
 							alpha = edgeTranspModeAlpha.tabAlphaPerYear[year].alpha;
 							cone[year].coneClocks.push({ alpha, clock });
