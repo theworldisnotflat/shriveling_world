@@ -26,7 +26,7 @@ jobs:
             - run: npm i --legacy-peer-deps
             - run: npm run export
             - name: full Deploy
-              if: ${{ github.event_name == 'pull_request' && github.repository == 'theworldisnotflat/shriveling_world'}}
+              if: ${{ github.repository == 'theworldisnotflat/shriveling_world'}}
               uses: peaceiris/actions-gh-pages@v3
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
