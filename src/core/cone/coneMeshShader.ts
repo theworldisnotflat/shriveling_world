@@ -189,7 +189,7 @@ function updateAlphas(): void {
 		const temp = new Float32Array(_height * _width);
 		for (let i = 0; i < _height; i++) {
 			const complexAlpha = _cones[i].getComplexAlpha(year);
-			const coneRoadAlpha = complexAlpha.coneRoadAlpha;
+			const coneRoadAlpha = complexAlpha.coneAlpha;
 			const complexAlphaTab = [...complexAlpha.coneClocks];
 			let subAlphas: Float32Array;
 			const length = complexAlphaTab.length;

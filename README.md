@@ -12,14 +12,14 @@ A [scientific blog](https://timespace.hypotheses.org/) contains principles, refl
 
 [Shriveling world](https://theworldisnotflat.github.io/shriveling_world_documentation/)
 
-**Step #2**: Once the app runs in the browser data is read by two ways:
+**Step #2**: Once the app runs in the browser data is read by two alternative ways:
 
-a. Cick on predefined dataset list on the left side of the broser window
-b. Introduce data in the app by grag'n'drop (see below)
+1. Click on predefined dataset list on the left side of the browser window
+2. Introduce data in the app by drag'n'drop (see below)
 
-Attention: in any case data processing may take time, depending on the number of cities. So once
+Attention: in any case data processing may take time, depending on the number of cities and the performance of your own machine, CPU and GPU. So once clicked on the list of predefined datasets or drag'n'drop files, you have to wait for a few seconds
 
-**Step #3**: enjoy! navigate around the threedimensional structure with mouse controls, define projection through interface, define desired control parameters through the interface on the right. Reload the page in the browser before changing dataset.
+**Step #3**: enjoy! navigate around the three dimensional structure with mouse controls, define projection through interface, define desired control parameters through the interface on the right. Reload the page in the browser before changing dataset.
 
 ## Introducing data in the application by drag'n'drop
 
@@ -44,13 +44,13 @@ Instructions to the application can also be entered in the console (F12) of the 
 
 with XXX and value in the following range:
 
--   intrudedHeightRatio : sets the heigth of cones, in the range [0,1], a ratio of the earth radius
+-   intrudedHeightRatio : sets the height of cones, in the range [0,1], a ratio of the earth radius
 
 For these other command lines an UI already exists
 
 -   coneStep : modifies the visual aspect of cones (default value is 15 degrees, a facet = 15°)
 -   projectionInit : initial projection with values in in the following range :
-    -   'none' for a three dimensional unprojected representation
+    -   'none' for a three dimensional un-projected representation
     -   'equirectangular' or 1 for an equilateral flat representation
     -   'Mercator' or 2 for a 2-dimensional Mercator
 -   projectionEnd : the final projection with value as projectionBegin
