@@ -11,7 +11,7 @@
 	import { onMount } from 'svelte';
 	import Menu from '../../components/menu.svelte';
 	import { inflate } from 'pako/lib/inflate';
-	import type { IListFile } from '../../core/definitions/project';
+	import type { IListFile } from '../../application/definitions/project';
 	let bigBoard;
 	let board: HTMLElement;
 	let dat: HTMLElement;
@@ -29,7 +29,7 @@
 		}
 	}
 	onMount(async () => {
-		const BigBoard = (await import('../../core/bigBoard/bigBoard')).default;
+		const BigBoard = (await import('../../application/bigBoard/bigBoard')).default;
 		bigBoard = new BigBoard(board, dat);
 	});
 </script>

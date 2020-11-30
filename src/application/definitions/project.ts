@@ -2,7 +2,7 @@
  * Project.ts is where all definitions are enunciated
  * concerning data structuring in the project
  *
- * the [data model can be seen here](https://timespace.hypotheses.org/91)
+ * the [data model can be seen here](https://github.com/theworldisnotflat/shriveling_world/blob/master/model/modeles7.png)
  * Explanations about the [terminology choices can be found here](https://timespace.hypotheses.org/177)
  */
 import type { Cartographic } from '../common/utils';
@@ -70,46 +70,32 @@ export interface ICartographic {
 }
 
 /**
- * * A cone is build around an origin city
- * and a general slope computed from the differential speed of road
- * * road is the reference mode for he slope of cones, but the model
- * can also attribute the speed, and hence the slope of another faster
- * terrestrial transport mode for those cities connected to this network
- * (typically expressway or High Speed Rail)
- * * The geometry of the cone will depend on the value of the
- * speed of the fastest existing mode compared to road speed;
- * this ratio vary with the years
- * * Complex alphas can also be generated with other faster modes
- * * The geometry of the cone being built from a set of 'clocks',
- * complex alphas will be generated from local alphas
- * computed from edges to destination city
- * using a faster terrestrial transport.
+ * An item grouping for a fixed year and a fixed origin city datas to generate
+ * a complex cone the slope for road and slope for each
+ * destination city (clock) using a terrestrial transport.
  */
-export interface IComplexAlphaCone {
+export interface IComplexAlphaItem {
 	/**
-	 * This property represents the slope of the terrestrial transport,
-	 * usually road, for the considered year.
+	 * This property represents the slope of the road transport for the considered year.
 	 */
 	coneAlpha: number;
 	/**
 	 * This property lists for the considered year and the considered origin city
 	 * each destination city using a terrestrial transport. Each item of this
-	 * array is a [[clock]] in direction of the destination city and a slope
-	 * corresponding to the transport speed linking the two cities.
-	 * This array can have zero item.
+	 * array is a clock in direction of the destination city and a slope
+	 * corresponding to the transport speed linking the two cities. This array can have zero item.
 	 */
-	coneClocks: Array<{ clock: number; alpha: number }>;
+	tab: Array<{ clock: number; alpha: number }>;
 }
 
 /**
- * [[ILookupComplexAlphaCone]] is a lookup mapping for a given year the slope angle between earth surface
+ * It's a lookup mapping for a given year the slope angle between earth surface
  * and cone slope as cone radius is determined, it's the key parameter for cone geometries.
  *
- * This slope (alpha) is determined by this equation:
- * ![equation 1](http://bit.ly/2tLfehC)
+ * This slope (alpha) is determined by ![equation 1](http://bit.ly/2tLfehC)
  */
-export interface ILookupComplexAlphaCone {
-	[year: string]: IComplexAlphaCone;
+export interface ILookupComplexAlpha {
+	[year: string]: IComplexAlphaItem;
 }
 
 /**
@@ -147,7 +133,7 @@ export interface ILookupDestWithModes {
  */
 export interface ICityGraph {
 	referential: NEDLocal; // À inhiber dans forbiddenAttributes de coneMeshShader
-	cone: ILookupComplexAlphaCone; // À inhiber dans forbiddenAttributes de coneMeshShader
+	cone: ILookupComplexAlpha; // À inhiber dans forbiddenAttributes de coneMeshShader
 	destinationsWithModes: ILookupDestWithModes;
 	origCityProperties: ICity;
 }
