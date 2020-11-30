@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>shriveling the world documentation</title>
-	<meta name="description" content="Documentation for shriveling the world documentation">
+	<title>Shriveling world developer documentation</title>
+	<meta name="description" content="Documentation for Shriveling world developer documentation">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
 </head>
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="documentation.html" class="title">shriveling the world documentation</a>
+					<a href="documentation.html" class="title">Shriveling world developer documentation</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -53,50 +53,62 @@
 		<div class="container">
 			<ul class="tsd-breadcrumb">
 				<li>
-					<a href="documentation.html">Globals</a>
+					<a href="globals.html">Globals</a>
 				</li>
 			</ul>
-			<h1>shriveling the world documentation</h1>
+			<h1>Shriveling world developer documentation</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel-group tsd-index-group">
-				<h2>Index</h2>
-				<section class="tsd-panel tsd-index-panel">
-					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
-							<h3>Modules</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-module"><a href="modules/_bigboard_bigboard_.html" class="tsd-kind-icon">&quot;big<wbr>Board/big<wbr>Board&quot;</a></li>
-								<li class="tsd-kind-module"><a href="modules/_bigboard_guidat_.html" class="tsd-kind-icon">&quot;big<wbr>Board/guiDAT&quot;</a></li>
-								<li class="tsd-kind-module"><a href="modules/_bigboard_initthree_.html" class="tsd-kind-icon">&quot;big<wbr>Board/init<wbr>Three&quot;</a></li>
-								<li class="tsd-kind-module"><a href="modules/_bigboard_merger_.html" class="tsd-kind-icon">&quot;big<wbr>Board/merger&quot;</a></li>
-								<li class="tsd-kind-module"><a href="modules/_common_configuration_.html" class="tsd-kind-icon">&quot;common/configuration&quot;</a></li>
-								<li class="tsd-kind-module"><a href="modules/_common_gpucomputer_.html" class="tsd-kind-icon">&quot;common/gpu<wbr>Computer&quot;</a></li>
-								<li class="tsd-kind-module"><a href="modules/_common_referential_.html" class="tsd-kind-icon">&quot;common/referential&quot;</a></li>
-								<li class="tsd-kind-module"><a href="modules/_common_utils_.html" class="tsd-kind-icon">&quot;common/utils&quot;</a></li>
-								<li class="tsd-kind-module"><a href="modules/_cone_base_.html" class="tsd-kind-icon">&quot;cone/base&quot;</a></li>
-								<li class="tsd-kind-module"><a href="modules/_cone_coneboard_.html" class="tsd-kind-icon">&quot;cone/cone<wbr>Board&quot;</a></li>
-								<li class="tsd-kind-module"><a href="modules/_cone_conemeshshader_.html" class="tsd-kind-icon">&quot;cone/cone<wbr>Mesh<wbr>Shader&quot;</a></li>
-								<li class="tsd-kind-module"><a href="modules/_cone_curvemeshshader_.html" class="tsd-kind-icon">&quot;cone/curve<wbr>Mesh<wbr>Shader&quot;</a></li>
-								<li class="tsd-kind-module"><a href="modules/_country_countryboard_.html" class="tsd-kind-icon">&quot;country/country<wbr>Board&quot;</a></li>
-								<li class="tsd-kind-module"><a href="modules/_country_countrymeshshader_.html" class="tsd-kind-icon">&quot;country/country<wbr>Mesh<wbr>Shader&quot;</a></li>
-								<li class="tsd-kind-module"><a href="modules/_definitions_project_.html" class="tsd-kind-icon">&quot;definitions/project&quot;</a></li>
-								<li class="tsd-kind-module"><a href="modules/_shaders_.html" class="tsd-kind-icon">&quot;shaders&quot;</a></li>
-							</ul>
-						</section>
-					</div>
-				</section>
-			</section>
+			<div class="tsd-panel tsd-typography">
+				<ul>
+					<li>Data structures of the project are defined as <a href="https://www.typescriptlang.org/docs/handbook/interfaces.html">interfaces</a> in the <a href="/modules/_definitions_project_.html">module <em>project</em></a></li>
+					<li>The main variables of the project are defined in the <a href="/modules/_common_configuration_.html">module <em>configuration</em></a></li>
+					<li>The main functions of the project are in the <a href="/classes/_bigboard_merger_.merger.html">class <em>merger</em></a></li>
+					<li>GUI is dealt with in the <a href="/modules/_bigboard_guidat_.html">module <em>guiDAT</em></a></li>
+					<li>The main parameter of the model is <a href="/interfaces/_definitions_project_.icomplexalphaitem.html#conealpha">alpha</a> determining the slope of <a href="/interfaces/_definitions_project_.icomplexalphacone.html">cones</a> based on the ratio between [road] speed and the maximum available speed at the period considered</li>
+				</ul>
+				<a href="#from-a-transport-network-between-cities-to-a-set-of-three-dimensional-graphical-objects" id="from-a-transport-network-between-cities-to-a-set-of-three-dimensional-graphical-objects" style="color: inherit; text-decoration: none;">
+					<h2>From a transport network between cities to a set of three-dimensional graphical objects</h2>
+				</a>
+				<p>The model is based on a transport network linking cities (see <a href="https://timespace.hypotheses.org/184">conceptual framework for geographical time-space representation</a>). More explanations about the <a href="https://timespace.hypotheses.org/177">terminology choices can be found here</a>.
+				Mathematical and graphical objects:</p>
+				<ul>
+					<li>the graph representing this transport network is made of <a href="/interfaces/_definitions_project_.icity.html">cities</a> and <a href="/interfaces/_definitions_project_.iedge.html">edges</a> (<a href="/interfaces/_definitions_project_.iedge.html">interfaces <em>IEdges</em></a>). The graph can be accessed at the city level in the form of a subgraph centred on a given city: <a href="/interfaces/_definitions_project_.icitygraph.html">interface <em>ICityGraph</em></a>*.</li>
+					<li>The graph is explored for implementing the parameters of <a href="/interfaces/_definitions_project_.ilookupcurvesfromcity.html">curves</a> and [cones] in the <a href="/modules/_bigboard_merger_.html#networkfromcities">function <em>networkFromCities</em></a>, one of the most important of the project</li>
+					<li><a href="/interfaces/_definitions_project_.iedge.html">edges</a> are the vertices of the graph; edges are only mathematical entities, not to be confounded with their graphical expression as <a href="/interfaces/_definitions_project_.ilookupcurvesfromcity.html">curves</a></li>
+					<li><a href="/interfaces/_definitions_project_.ilookupcurvesfromcity.html">curves</a> are the graphical objects representing the graph <a href="/interfaces/_definitions_project_.iedge.html">edges</a>; in the model, curves may be represented as (depending on the value of the user defined parameter &#39;<em>pointsPerCurve</em>&#39;, accessed from the menu <em>Curves</em>, <em>nb of points</em>)<ul>
+							<li>straight lines, (&#39;<em>pointsPerCurve</em>&#39;=1)</li>
+							<li>broken lines as two segments with one intermediate point, (&#39;<em>pointsPerCurve</em>&#39;=2)</li>
+							<li>geodesics or</li>
+							<li>three dimensional curves approximating a Bézier curve (&#39;<em>pointsPerCurve</em>&#39;&gt;2, value higher than 50 recommended)<ul>
+									<li>in the case of the air mode, a rule based on a threshold on the length of links applies, see <a href="/modules/_bigboard_merger_.html#getmodelledspeed">function <em>getModelledSpeed</em></a></li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li><a href="/interfaces/_definitions_project_.icomplexalphacone.html">cones</a> are generated from an angle <a href="/interfaces/_definitions_project_.icomplexalphaitem.html#conealpha">alpha</a> computed by comparing the (terrestrial) speed on the cone with the speed of the fastest transport mode considered in the given period<ul>
+							<li><a href="/interfaces/_definitions_project_.icomplexalphacone.html">cones</a> may have a constant and uniform slope based on a unique <a href="/interfaces/_definitions_project_.icomplexalphaitem.html#conealpha">alpha</a></li>
+							<li><a href="/interfaces/_definitions_project_.icomplexalphacone.html">cones</a> may have a different slope</li>
+							<li>(not yet  implemented) <a href="/interfaces/_definitions_project_.icomplexalphacone.html">cones</a> may have different slopes (complex alphas) if different terrestrial transport networks are considered</li>
+						</ul>
+					</li>
+				</ul>
+				<a href="#data-model" id="data-model" style="color: inherit; text-decoration: none;">
+					<h2>Data model</h2>
+				</a>
+				<p>The <a href="https://timespace.hypotheses.org/91">data model</a>:
+				<img src="assets/modeles8.svg" alt="data model"></p>
+			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals current ">
-						<a href="documentation.html"><em>Globals</em></a>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_bigboard_bigboard_.html">&quot;big<wbr>Board/big<wbr>Board&quot;</a>
