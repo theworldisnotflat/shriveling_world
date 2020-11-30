@@ -31,7 +31,7 @@ const mode = process.env.NODE_ENV;
 const dev = mode === 'development';
 const legacy = !!process.env.SAPPER_LEGACY_BUILD;
 
-const shaderGlob = ['./src/core/shaders/**/*.frag', './src/core/shaders/**/*.vert'];
+const shaderGlob = ['./src/application/shaders/**/*.frag', './src/application/shaders/**/*.vert'];
 const datasetDestination = './static/datasets/';
 
 function commentStripper(contents) {
@@ -114,7 +114,7 @@ const compileShaders = () => {
         if (!shaders.hasOwnProperty(name)) {
             shaders[name] = {};
         }
-        shaders[name][typeShader] = commentStripper(glsl.compile(fileContent, { basedir: './src/core/shaders' }));
+        shaders[name][typeShader] = commentStripper(glsl.compile(fileContent, { basedir: './src/application/shaders' }));
     });
     return shaders;
 };
@@ -163,7 +163,7 @@ const preparerStatic = (options = {}) => {
             execSync(`npx typedoc --plugin typedoc-neo-theme \
             --out static/documentation  \
             --readme none  --name "shriveling the world documentation" \
-            --ignoreCompilerErrors --hideGenerator --target ES6  src/core\
+            --ignoreCompilerErrors --hideGenerator --target ES6  src/application\
             && cp -r static/documentation/* static && mv static/index.html static/documentation.html\
             && rm -Rf static/documentation`, { stdio: 'inherit' });
             console.log('update documentation');

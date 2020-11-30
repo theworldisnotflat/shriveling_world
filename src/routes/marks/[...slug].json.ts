@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import showdown from 'showdown';
+import type { request, ServerResponse } from 'http';
 
 const getPost = (fileName: string) => fs.readFileSync(path.resolve('markdown', `${fileName}.md`), 'utf-8');
 const converter = new showdown.Converter({
@@ -15,8 +16,8 @@ const converter = new showdown.Converter({
 });
 converter.setFlavor('github');
 
-export function get(req, res) {
-	const { slug } = req.params;
+export function get(req: typeof request, res: ServerResponse): void {
+	const { slug } = (<any>req).params;
 	const content = getPost(slug.join('/'));
 	const html = converter.makeHtml(content);
 	if (html) {
