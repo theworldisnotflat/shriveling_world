@@ -92,7 +92,7 @@
 	<nav class="menu" role="navigation" transition:slide={{ delay: 250, duration: 600 }}>
 		<ul>
 			<li class="menu-item" aria-haspopup="true">
-				<a href="./">Shriveling the world
+				<a href="./">Shriveling world
 					<Icon icon={faCaretDown} /></a>
 				<ul class="sub-menu" aria-label="submenu">
 					<li class="menu-item"><a href="https://timespace.hypotheses.org/">Blog</a></li>
@@ -101,13 +101,13 @@
 				</ul>
 			</li>
 			<li class="menu-item" aria-haspopup="true">
-				<a href="app">application
+				<a href="app">Application
 					<Icon icon={faCaretDown} /></a>
 				<ul class="sub-menu" aria-label="submenu">
 					<li class="menu-item"><a href="marks/usrdoc/basic_usage_tutorial">Help</a></li>
 				</ul>
 			</li>
-			<li class="menu-item"><a href="marks/devdoc/README_DEVDOC">Dev Docs</a></li>
+			<li class="menu-item"><a href="doc">Dev Doc</a></li>
 			<li class="menu-item" aria-haspopup="true">
 				<a href="#0">User Doc
 					<Icon icon={faCaretDown} /></a>

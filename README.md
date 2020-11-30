@@ -8,7 +8,7 @@ A [scientific blog](https://timespace.hypotheses.org/) contains principles, refl
 
 ## For users: first steps
 
-**Step #1**:The app runs in a browser from this adress:
+**Step #1**:The app runs in a browser from this address:
 
 [Shriveling world](https://theworldisnotflat.github.io/shriveling_world_documentation/)
 
@@ -56,7 +56,7 @@ For these other command lines an UI already exists
 -   projectionEnd : the final projection with value as projectionBegin
 -   projectionPercent: transition value between projectionBegin and projectionEnd. Value included in the range 0 to 100 included.
 -   year: base year of the representation (value in the networks files)
--   pointsPerCurve=X where X is an integer between 1 and 199 included. This value influences the way curves are drawn. The value **zero** draws all straight lines, while the value **1** draws broken lines
+-   pointsPerCurve=X where X is an integer between 1 and 199 included. This value influences the way curves are drawn. The value **1** draws all straight lines, while the value **1** draws broken lines
 
 ## Testing lengths and angles
 

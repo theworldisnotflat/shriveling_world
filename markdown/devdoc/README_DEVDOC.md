@@ -1,5 +1,3 @@
-# Developer documentation of the project _Shriveling World_
-* Access the [full list of modules and functions](doc) of the project _Shriveling world_
 * Data structures of the project are defined as [interfaces](https://www.typescriptlang.org/docs/handbook/interfaces.html) in the [module _project_](/modules/_definitions_project_.html)
 * The main variables of the project are defined in the [module _configuration_](/modules/_common_configuration_.html)
 * The main functions of the project are in the [class _merger_](/classes/_bigboard_merger_.merger.html)

@@ -162,7 +162,7 @@ const preparerStatic = (options = {}) => {
             console.log('documentation generation');
             execSync(`npx typedoc --plugin typedoc-neo-theme \
             --out static/documentation  \
-            --readme none  --name "shriveling the world documentation" \
+            --readme markdown/devdoc/README_DEVDOC.md  --name "Shriveling world developer documentation" \
             --ignoreCompilerErrors --hideGenerator --target ES6  src/application\
             && cp -r static/documentation/* static && mv static/index.html static/documentation.html\
             && rm -Rf static/documentation`, { stdio: 'inherit' });
