@@ -580,10 +580,12 @@ export default class BigBoard {
 	 */
 	public exporterOBJ(): void {
 		const exporter = new OBJExporter();
+		const groupCountry = new Group();
 		const groupCone = new Group();
 		const groupCurveShortHaul = new Group();
 		const groupCurvesLongHaul = new Group();
 		this.coneBoard.coneMeshCollection.forEach((cone) => groupCone.add(cone));
+		this.countryBoard.countryMeshCollection.forEach((country) => groupCountry.add(country));
 		this.coneBoard.curveCollection.forEach((curve) => {
 			if (curve.getTheta < 2000 / (CONFIGURATION.earthRadiusMeters / 1000)) {
 				groupCurveShortHaul.add(curve);
@@ -600,10 +602,14 @@ export default class BigBoard {
 		const blobCurveLong = new Blob([exporter.parse(groupCurvesLongHaul)], {
 			type: 'text/plain;charset=utf-8',
 		});
+		const blobCountry = new Blob([exporter.parse(groupCountry)], {
+			type: 'text/plain;charset=utf-8',
+		});
 		const zip = new jszip();
 		zip.file('sceneCones.obj', blobCone);
 		zip.file('sceneCurvesShortHaul.obj', blobCurveShort);
 		zip.file('sceneCurvesLongHaul.obj', blobCurveLong);
+		zip.file('country.obj', blobCountry);
 		zip.generateAsync({ type: 'blob' }).then(function (content) {
 			saveAs(content, 'scene.zip');
 		});
