@@ -7,7 +7,7 @@
 ## From a transport network between cities to a set of three-dimensional graphical objects
 The model is based on a transport network linking cities (see [conceptual framework for geographical time-space representation](https://timespace.hypotheses.org/184)). More explanations about the [terminology choices can be found here](https://timespace.hypotheses.org/177).
 Mathematical and graphical objects:
-* the graph representing this transport network is made of [cities](/interfaces/_definitions_project_.icity.html) and [edges](/interfaces/_definitions_project_.iedge.html) ([interfaces _IEdges_](/interfaces/_definitions_project_.iedge.html)). The graph can be accessed at the city level in the form of a subgraph centred on a given city: [interface _ICityGraph_](/interfaces/_definitions_project_.icitygraph.html)*.
+* the graph representing this transport network is made of [cities](/interfaces/_definitions_project_.icity.html) and [edges](/interfaces/_definitions_project_.iedge.html) ([interfaces _IEdges_](/interfaces/_definitions_project_.iedge.html)). The graph can be accessed at the city level in the form of a subgraph centred on a given city: [interface _ICityGraph_](/interfaces/_definitions_project_.icitygraph.html).
 * The graph is explored for implementing the parameters of [curves](/interfaces/_definitions_project_.ilookupcurvesfromcity.html) and [cones] in the [function _networkFromCities_](/modules/_bigboard_merger_.html#networkfromcities), one of the most important of the project
 * [edges](/interfaces/_definitions_project_.iedge.html) are the vertices of the graph; edges are only mathematical entities, not to be confounded with their graphical expression as [curves](/interfaces/_definitions_project_.ilookupcurvesfromcity.html)
 * [curves](/interfaces/_definitions_project_.ilookupcurvesfromcity.html) are the graphical objects representing the graph [edges](/interfaces/_definitions_project_.iedge.html); in the model, curves may be represented as (depending on the value of the user defined parameter '_pointsPerCurve_', accessed from the menu _Curves_, _nb of points_)
@@ -22,5 +22,5 @@ Mathematical and graphical objects:
   * (not yet  implemented) [cones](/interfaces/_definitions_project_.icomplexalphacone.html) may have different slopes (complex alphas) if different terrestrial transport networks are considered
 
 ## Data model
-The [data model](https://timespace.hypotheses.org/91):
+The [data model](https://timespace.hypotheses.org/91) of __Shriveling world__:
 ![data model](assets/modeles8.svg)
