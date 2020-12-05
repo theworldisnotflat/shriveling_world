@@ -65,10 +65,10 @@
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
 				<ul>
-					<li>Data structures of the project are defined as <a href="https://www.typescriptlang.org/docs/handbook/interfaces.html">interfaces</a> in the <a href="/modules/_definitions_project_.html">module <em>project</em></a></li>
-					<li>The main variables of the project are defined in the <a href="/modules/_common_configuration_.html">module <em>configuration</em></a></li>
-					<li>The main functions of the project are in the <a href="/classes/_bigboard_merger_.merger.html">class <em>merger</em></a></li>
-					<li>GUI is dealt with in the <a href="/modules/_bigboard_guidat_.html">module <em>guiDAT</em></a></li>
+					<li>Data structures of the project are defined as <a href="https://www.typescriptlang.org/docs/handbook/interfaces.html">interfaces</a> in the <a href="/modules/_definitions_project_.html">module <em>definitions/project</em></a></li>
+					<li>The main variables of the project are defined in the <a href="/modules/_common_configuration_.html">module <em>common/configuration</em></a></li>
+					<li>The main functions of the project are in the <a href="/classes/_bigboard_merger_.merger.html">class <em>bigBoard/merger</em></a></li>
+					<li>GUI is dealt with in the <a href="/modules/_bigboard_guidat_.html">module <em>bigBoard/guiDAT</em></a></li>
 					<li>The main parameter of the model is <a href="/interfaces/_definitions_project_.icomplexalphaitem.html#conealpha">alpha</a> determining the slope of <a href="/interfaces/_definitions_project_.icomplexalphacone.html">cones</a> based on the ratio between [road] speed and the maximum available speed at the period considered</li>
 				</ul>
 				<a href="#from-a-transport-network-between-cities-to-a-set-of-three-dimensional-graphical-objects" id="from-a-transport-network-between-cities-to-a-set-of-three-dimensional-graphical-objects" style="color: inherit; text-decoration: none;">
@@ -77,10 +77,10 @@
 				<p>The model is based on a transport network linking cities (see <a href="https://timespace.hypotheses.org/184">conceptual framework for geographical time-space representation</a>). More explanations about the <a href="https://timespace.hypotheses.org/177">terminology choices can be found here</a>.
 				Mathematical and graphical objects:</p>
 				<ul>
-					<li>the graph representing this transport network is made of <a href="/interfaces/_definitions_project_.icity.html">cities</a> and <a href="/interfaces/_definitions_project_.iedge.html">edges</a> (<a href="/interfaces/_definitions_project_.iedge.html">interfaces <em>IEdges</em></a>). The graph can be accessed at the city level in the form of a subgraph centred on a given city: <a href="/interfaces/_definitions_project_.icitygraph.html">interface <em>ICityGraph</em></a>.</li>
+					<li>The graph representing this transport network is made of <a href="/interfaces/_definitions_project_.icity.html">cities</a> and <a href="/interfaces/_definitions_project_.iedge.html">edges</a> (<a href="/interfaces/_definitions_project_.iedge.html">interfaces <em>IEdges</em></a>). The graph can be accessed at the city level in the form of a subgraph centred on a given city: <a href="/interfaces/_definitions_project_.icitygraph.html">interface <em>ICityGraph</em></a>.</li>
 					<li>The graph is explored for implementing the parameters of <a href="/interfaces/_definitions_project_.ilookupcurvesfromcity.html">curves</a> and [cones] in the <a href="/modules/_bigboard_merger_.html#networkfromcities">function <em>networkFromCities</em></a>, one of the most important of the project</li>
-					<li><a href="/interfaces/_definitions_project_.iedge.html">edges</a> are the vertices of the graph; edges are only mathematical entities, not to be confounded with their graphical expression as <a href="/interfaces/_definitions_project_.ilookupcurvesfromcity.html">curves</a></li>
-					<li><a href="/interfaces/_definitions_project_.ilookupcurvesfromcity.html">curves</a> are the graphical objects representing the graph <a href="/interfaces/_definitions_project_.iedge.html">edges</a>; in the model, curves may be represented as (depending on the value of the user defined parameter &#39;<em>pointsPerCurve</em>&#39;, accessed from the menu <em>Curves</em>, <em>nb of points</em>)<ul>
+					<li><a href="/interfaces/_definitions_project_.iedge.html">Edges</a> are the vertices of the graph; edges are only mathematical entities, not to be confounded with their graphical expression as <a href="/interfaces/_definitions_project_.ilookupcurvesfromcity.html">curves</a></li>
+					<li><a href="/interfaces/_definitions_project_.ilookupcurvesfromcity.html">Curves</a> are the graphical objects representing the graph <a href="/interfaces/_definitions_project_.iedge.html">edges</a>; in the model, curves may be represented as (depending on the value of the user defined parameter &#39;<em>pointsPerCurve</em>&#39;, accessed from the menu <em>Curves</em>, <em>nb of points</em>):<ul>
 							<li>straight lines, (&#39;<em>pointsPerCurve</em>&#39;=1)</li>
 							<li>broken lines as two segments with one intermediate point, (&#39;<em>pointsPerCurve</em>&#39;=2)</li>
 							<li>geodesics or</li>
@@ -90,9 +90,9 @@
 							</li>
 						</ul>
 					</li>
-					<li><a href="/interfaces/_definitions_project_.icomplexalphacone.html">cones</a> are generated from an angle <a href="/interfaces/_definitions_project_.icomplexalphaitem.html#conealpha">alpha</a> computed by comparing the (terrestrial) speed on the cone with the speed of the fastest transport mode considered in the given period<ul>
-							<li><a href="/interfaces/_definitions_project_.icomplexalphacone.html">cones</a> may have a constant and uniform slope based on a unique <a href="/interfaces/_definitions_project_.icomplexalphaitem.html#conealpha">alpha</a></li>
-							<li><a href="/interfaces/_definitions_project_.icomplexalphacone.html">cones</a> may have a different slope</li>
+					<li><a href="/interfaces/_definitions_project_.icomplexalphacone.html">Cones</a> are generated from an angle <a href="/interfaces/_definitions_project_.icomplexalphaitem.html#conealpha">alpha</a> computed by comparing the (terrestrial) speed on the cone with the speed of the fastest transport mode considered in the given period<ul>
+							<li><a href="/interfaces/_definitions_project_.icomplexalphacone.html">Cones</a> may have a constant and uniform slope based on a unique <a href="/interfaces/_definitions_project_.icomplexalphaitem.html#conealpha">alpha</a></li>
+							<li><a href="/interfaces/_definitions_project_.icomplexalphacone.html">Cones</a> may have a different slope</li>
 							<li>(not yet  implemented) <a href="/interfaces/_definitions_project_.icomplexalphacone.html">cones</a> may have different slopes (complex alphas) if different terrestrial transport networks are considered</li>
 						</ul>
 					</li>
