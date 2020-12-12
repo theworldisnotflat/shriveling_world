@@ -222,6 +222,8 @@ export interface ITransportModeSpeed {
  * * a [[yearEnd]] (optionnal),
  * * can be [[terrestrial]] or not,
  * * and has a table of [[speeds]] that may change over years
+ *
+ * If mode is 'terrestrial' the transport mode speed can affect the slope of cones
  */
 export interface ITranspMode {
 	name: string;

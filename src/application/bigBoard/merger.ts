@@ -330,14 +330,14 @@ function networkFromCities(
 	const speedPerTransportPerYear: { [transportCode: string]: ITabSpeedPerYearPerTranspModeItem } = {};
 	/**
 	 * For each transport mode:
-	 * * we dertermine if it is terrestrial (cones) or not (curve)
-	 * * the temporal scope of the transort mode
+	 * * we determine if it is terrestrial (cones) or not (curve)
+	 * * the temporal scope of the transport mode
 	 * * the table of speed of the considered transport modes.
 	 * the interpolation function used to populate the table returns
 	 * for each year in the temporal scope an interpolated speed between
 	 * the two dates when the speed is known
 	 *
-	 * Atention: dataset MUST contain a mode named 'Road' that will define the slope of cones
+	 * Attention: dataset MUST contain a mode named 'Road' that will define the slope of cones
 	 * cones is the geographic surface and the 'Road' speed is attached to this surface
 	 *
 	 * At the end of this loop [[speedPerTransportPerYear]] and [[maximumSpeed]] are populated
