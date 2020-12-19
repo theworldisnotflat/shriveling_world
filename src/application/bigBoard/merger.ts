@@ -351,10 +351,10 @@ function networkFromCities(
 
 		_transportName[transportMode.terrestrial ? 'cones' : 'curves'].push(name);
 		const minYearTransport = Math.max(transportMode.mYearBegin, minYear);
-		let maxYearTransport = transportMode.yearEnd === undefined ? actualYear : transportMode.yearEnd;
+		let maxYearTransport = transportMode.mYearEnd === undefined ? actualYear : transportMode.mYearEnd;
 		let tempTransportCodeTab: ITransportCodeItem[] = [];
 		const tabSpeedPerYear: { [year: string]: ISpeedAlpha } = {};
-		let tempMaxYear: number = transportMode.yearEnd;
+		let tempMaxYear: number = transportMode.mYearEnd;
 
 		transportMode.speeds.forEach((transportSpeed) => {
 			tempTransportCodeTab.push({ speed: transportSpeed.speedKPH, year: transportSpeed.year });
