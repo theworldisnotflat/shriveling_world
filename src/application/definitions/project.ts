@@ -240,15 +240,15 @@ export interface ITranspMode {
  * Each edge has
  * * a [[yearBegin]] and
  * * a [[yearEnd]] (optionnal)
- * * an origin [[idOri]] (optionnal)
- * * and  destination [[idDes]]
+ * * an origin [[cityCodeOri]] (optionnal)
+ * * and  destination [[cityCodeDes]]
  * * a transport mode [[transportMode]]
  */
 export interface IEdge {
 	yearBegin: number;
 	yearEnd?: number;
-	idOri?: number;
-	idDes: number;
+	cityCodeOri?: number;
+	cityCodeDes: number;
 	transportMode: number;
 }
 

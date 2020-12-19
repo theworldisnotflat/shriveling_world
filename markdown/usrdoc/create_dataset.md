@@ -64,7 +64,7 @@ General __common sense__ instructions
 * Column names in files __MUST__ be rigorously respected
 * Id fields must be carefully populated because they connect files to each other:
   * _cityCode_ from the city file is linked to _iOri_ and _iDes_ in the network file
-  * _transportMode_ code from the transport network file is linked to _code_ in the transport mode code file, and _transportModeCode_ in the transport mode speed file
+  * _transportModeCode_ code from the transport network file is linked to _code_ in the transport mode code file, and _transportModeCode_ in the transport mode speed file
 * text type: _countryName_, _urbanAgglomeration_, _name_ (of transport mode)
 * numeric type: _countryCode_, _cityCode_, _latitude_, _longitude_, etc
 
@@ -108,8 +108,8 @@ Column name | Type | Mandatory | Comments
 ----------|----------|-------------|-------------
 _yearBegin_|number|no|year of opening of the edge, infrastructure or service; if not populated, period _historical time span_ will be determined from _transport mode code_ file data
 _yearEnd_|number|no|may be used for a service no longer operated, e.g. supersonic commercial aircraft Concorde
-_idOri_|number|yes|id of origin city; direction (ori-des or des-ori) has no meaning in the model
-_idDes_|number|yes|id of destination city
+_cityCodeOri_|number|yes|id of origin city; direction (ori-des or des-ori) has no meaning in the model
+_cityCodeDes_|number|yes|id of destination city
 _transportMode_|number|yes|id of the transport mode
 
 For the sake of readability this file usually contains two optional columns of _oriName_ and _desName_.
