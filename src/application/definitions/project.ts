@@ -228,7 +228,7 @@ export interface ITransportModeSpeed {
 export interface ITranspMode {
 	name: string;
 	code: number;
-	yearBegin: number;
+	mYearBegin: number;
 	yearEnd?: number;
 	terrestrial: boolean; // If yes the transport mode speed can affect the slope of cones
 	speeds: ITransportModeSpeed[];

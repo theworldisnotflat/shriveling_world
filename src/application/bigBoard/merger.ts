@@ -115,7 +115,7 @@ function merger<U, V>(
 const keyWords: Array<{ name: string; words: string[] }> = [
 	{ name: '_cities', words: ['cityCode', 'latitude', 'longitude', 'radius'] },
 	{ name: '_transportModeSpeed', words: ['transportModeCode', 'year', 'speedKPH'] },
-	{ name: '_transportModeCode', words: ['code', 'name', 'yearBegin', 'terrestrial'] },
+	{ name: '_transportModeCode', words: ['code', 'name', 'mYearBegin', 'terrestrial'] },
 	{ name: '_transportNetwork', words: ['transportMode', 'idDes', 'idOri'] },
 	{ name: '_populations', words: ['cityCode'] },
 ];
@@ -350,7 +350,7 @@ function networkFromCities(
 		}
 
 		_transportName[transportMode.terrestrial ? 'cones' : 'curves'].push(name);
-		const minYearTransport = Math.max(transportMode.yearBegin, minYear);
+		const minYearTransport = Math.max(transportMode.mYearBegin, minYear);
 		let maxYearTransport = transportMode.yearEnd === undefined ? actualYear : transportMode.yearEnd;
 		let tempTransportCodeTab: ITransportCodeItem[] = [];
 		const tabSpeedPerYear: { [year: string]: ISpeedAlpha } = {};
