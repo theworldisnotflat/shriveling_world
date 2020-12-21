@@ -37,6 +37,11 @@ import type {
 import { CONFIGURATION } from '../common/configuration';
 import * as FileSaver from 'file-saver';
 import { ConeBoard } from '../cone/coneBoard';
+
+interface ICodeSpeedPerYear {
+	[code: string]: number;
+}
+let codeSpeedPerYear: ICodeSpeedPerYear = {};
 /**
  * Realizes the merge of two tables base on an attribute. The key for the merge is renamed.
  * At the end of the process the recipient table is enriched.
@@ -365,13 +370,30 @@ function networkFromCities(
 				maximumSpeed[year] = speed;
 			}
 		}
-
 		speedPerTransportPerYear[transportCode] = {
 			tabSpeedPerYear: tabSpeedPerYear,
 			name: modeName,
 			terrestrial: transpMode.terrestrial,
 		};
 	});
+	codeSpeedPerYear = {};
+	Object.keys(speedPerTransportPerYear).forEach((key) => {
+		let isExist = false;
+		console.log(speedPerTransportPerYear[key]);
+		Object.keys(speedPerTransportPerYear[key].tabSpeedPerYear).forEach((elem) => {
+			if (elem == CONFIGURATION.year) {
+				isExist = true;
+				codeSpeedPerYear[speedPerTransportPerYear[key].name] =
+					speedPerTransportPerYear[key].tabSpeedPerYear[CONFIGURATION.year].speed;
+				console.log(speedPerTransportPerYear[key].name);
+				console.log(speedPerTransportPerYear[key].tabSpeedPerYear[CONFIGURATION.year].speed);
+			}
+		});
+		console.log(isExist);
+	});
+	console.log(codeSpeedPerYear);
+	// Balayer speedPerTransportPerYear pour chaque mode de transport terrestre
+	// et compléter avec l'angle de la pente alpha en accord avec l'équation 1!
 	_firstYear = firstYear;
 	_lastYear = lastYear;
 
@@ -693,6 +715,9 @@ export class Merger {
 		return _transportName;
 	}
 
+	public get codeSpeedPerYear(): ICodeSpeedPerYear {
+		return codeSpeedPerYear;
+	}
 	public clear(): void {
 		this._cities = [];
 		this._populations = [];

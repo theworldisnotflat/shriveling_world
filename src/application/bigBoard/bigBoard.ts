@@ -30,6 +30,7 @@ import { GUI } from './guiDAT';
 import jszip from 'jszip/dist/jszip';
 import type * as GeoJSON from 'geojson';
 import type { IListFile } from '../definitions/project';
+import Moveable from 'moveable';
 
 /**
  * This class controls all the application:
@@ -250,6 +251,7 @@ export default class BigBoard {
 		this.cleanCountries();
 		this._merger.clear();
 		this._gui.filesToInsert(list);
+		this.addLegend();
 	}
 
 	/**
@@ -622,5 +624,66 @@ export default class BigBoard {
 		this._stats.update();
 		this._controls.update();
 		CONFIGURATION.tick();
+	}
+
+	public addLegend() {
+		// Adding Legend
+		const divs = document.querySelectorAll('.legend');
+		Array.from(divs).forEach((div) => div.remove());
+		const legend = document.createElement('canvas');
+		legend.id = 'legendID';
+		legend.className = 'legend';
+		const styleLegend = legend.style;
+		styleLegend.font = '14px/32px Arial, Halvetica, sans-serif';
+		styleLegend.zIndex = '1000';
+		styleLegend.position = 'absolute';
+		styleLegend.bottom = '3%';
+		styleLegend.right = '2%';
+		styleLegend.width = '100px';
+		styleLegend.height = '100px';
+		document.body.append(legend);
+		const ctx = legend.getContext('2d');
+		/** Const width = legend.width;
+		const height = legend.height;
+		console.log(ctx, width, height); */
+		ctx.beginPath();
+		ctx.moveTo(0, 1);
+		ctx.lineTo(300, 1);
+		ctx.lineTo(150, 150);
+		ctx.strokeStyle = '#0000FF';
+		ctx.lineWidth = 3;
+		ctx.closePath();
+		ctx.stroke();
+		const move = new Moveable(document.body, {
+			target: document.getElementById('legendID'),
+			draggable: true,
+			scalable: true,
+			resizable: true,
+			keepRatio: true,
+			rotatable: true,
+		});
+		move.on('drag', ({ target, transform }) => {
+			target.style.transform = transform;
+		});
+		move.on('resize', ({ target, width, height }) => {
+			target.style.width = width + 'px';
+			target.style.height = height + 'px';
+		});
+		move.on('rotate', ({ target, transform }) => {
+			target.style.transform = transform;
+		});
+		let title = '';
+		Object.keys(this._merger.codeSpeedPerYear).forEach((el) => {
+			console.log(el);
+			title += el + ' : ' + this._merger.codeSpeedPerYear[el] + ' Kph ' + '\n';
+		});
+
+		legend.addEventListener(
+			'mouseover',
+			function () {
+				legend.title = title;
+			},
+			false
+		);
 	}
 }
