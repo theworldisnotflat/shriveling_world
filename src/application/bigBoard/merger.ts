@@ -550,22 +550,53 @@ function networkFromCities(
 					processedODs[destCityCode][origCityCode].push(edgeTranspModeName);
 					// For each year the alpha will be computed
 					for (let year = minYear; year <= maxYear; year++) {
-						if (edgeTranspModeSpeed.terrestrial) {
-							// We generate a cone and draw edges
-							if (!cone.hasOwnProperty(year)) {
-								// Initialising  complex cone for a given city and year
-								const coneAlpha = speedPerTransportPerYear[roadCode].tabSpeedPerYear[year].alpha;
-								cone[year] = { coneAlpha, tab: [] };
-							}
+						if (edgeTranspModeSpeed.tabSpeedPerYear[year]) {
+							if (edgeTranspModeSpeed.terrestrial) {
+								// We generate a cone and draw edges
+								if (!cone.hasOwnProperty(year)) {
+									// Initialising  complex cone for a given city and year
+									const coneAlpha = speedPerTransportPerYear[roadCode].tabSpeedPerYear[year].alpha;
+									cone[year] = { coneAlpha, tab: [] };
+								}
 
-							alpha = edgeTranspModeSpeed.tabSpeedPerYear[year].alpha;
-							cone[year].tab.push({ alpha, clock });
-							destinationsWithModes[destCityCode][edgeTranspModeName].push({
-								year,
-								speed: edgeModeSpeed[year].speed,
-							});
-							if (edgeToBeProcessed) {
-								// Condition to avoid visual duplication of curves!
+								alpha = edgeTranspModeSpeed.tabSpeedPerYear[year].alpha;
+								cone[year].tab.push({ alpha, clock });
+								destinationsWithModes[destCityCode][edgeTranspModeName].push({
+									year,
+									speed: edgeModeSpeed[year].speed,
+								});
+								if (edgeToBeProcessed) {
+									// Condition to avoid visual duplication of curves!
+									const modelledSpeed = getModelledSpeed(
+										theta,
+										maximumSpeed[year],
+										edgeModeSpeed[year].speed,
+										edgeTranspModeSpeed.terrestrial
+									);
+									// The ratio linking the current speed and maxSpeed is
+									// computed according to this ![equation](http://bit.ly/2EejFpW)
+									const speedRatio = (maximumSpeed[year] * theta) / (2 * modelledSpeed);
+									if (!listOfCurves.hasOwnProperty(destCityCode)) {
+										listOfCurves[destCityCode] = <ILookupCurveList>{
+											end,
+											middle,
+											pointP,
+											pointQ,
+											theta,
+											speedRatio: {},
+										};
+									}
+
+									if (!listOfCurves[destCityCode].speedRatio.hasOwnProperty(edgeTranspModeName)) {
+										listOfCurves[destCityCode].speedRatio[edgeTranspModeName] = {};
+									}
+
+									listOfCurves[destCityCode].speedRatio[edgeTranspModeName][year] = speedRatio;
+								}
+							} else if (edgeToBeProcessed) {
+								// Case when edge transport mode is not terrestrial
+								// we will generate a curve for the edge
+								// Condition pour éviter de générer deux lignes visuellement identiques!
 								const modelledSpeed = getModelledSpeed(
 									theta,
 									maximumSpeed[year],
@@ -575,6 +606,13 @@ function networkFromCities(
 								// The ratio linking the current speed and maxSpeed is
 								// computed according to this ![equation](http://bit.ly/2EejFpW)
 								const speedRatio = (maximumSpeed[year] * theta) / (2 * modelledSpeed);
+								// Console.log('destCity', this._cities[destCityCode].urbanAgglomeration);
+								// console.log('origCity', this._cities[origCityCode].urbanAgglomeration);
+								// console.log('orig', city.urbanAgglomeration);
+								// console.log('mode', edgeTranspModeSpeed.name);
+								// console.log('theta km', (CONFIGURATION.earthRadiusMeters / 1000) * theta);
+								// console.log('edgeModeSpeed[year].speed', edgeModeSpeed[year].speed);
+								// console.log('modelledSpeed', modelledSpeed);
 								if (!listOfCurves.hasOwnProperty(destCityCode)) {
 									listOfCurves[destCityCode] = <ILookupCurveList>{
 										end,
@@ -592,42 +630,9 @@ function networkFromCities(
 
 								listOfCurves[destCityCode].speedRatio[edgeTranspModeName][year] = speedRatio;
 							}
-						} else if (edgeToBeProcessed) {
-							// Case when edge transport mode is not terrestrial
-							// we will generate a curve for the edge
-							// Condition pour éviter de générer deux lignes visuellement identiques!
-							const modelledSpeed = getModelledSpeed(
-								theta,
-								maximumSpeed[year],
-								edgeModeSpeed[year].speed,
-								edgeTranspModeSpeed.terrestrial
-							);
-							// The ratio linking the current speed and maxSpeed is
-							// computed according to this ![equation](http://bit.ly/2EejFpW)
-							const speedRatio = (maximumSpeed[year] * theta) / (2 * modelledSpeed);
-							// Console.log('destCity', this._cities[destCityCode].urbanAgglomeration);
-							// console.log('origCity', this._cities[origCityCode].urbanAgglomeration);
-							// console.log('orig', city.urbanAgglomeration);
-							// console.log('mode', edgeTranspModeSpeed.name);
-							// console.log('theta km', (CONFIGURATION.earthRadiusMeters / 1000) * theta);
-							// console.log('edgeModeSpeed[year].speed', edgeModeSpeed[year].speed);
-							// console.log('modelledSpeed', modelledSpeed);
-							if (!listOfCurves.hasOwnProperty(destCityCode)) {
-								listOfCurves[destCityCode] = <ILookupCurveList>{
-									end,
-									middle,
-									pointP,
-									pointQ,
-									theta,
-									speedRatio: {},
-								};
-							}
-
-							if (!listOfCurves[destCityCode].speedRatio.hasOwnProperty(edgeTranspModeName)) {
-								listOfCurves[destCityCode].speedRatio[edgeTranspModeName] = {};
-							}
-
-							listOfCurves[destCityCode].speedRatio[edgeTranspModeName][year] = speedRatio;
+						} else {
+							console.log(edgeTranspModeSpeed.tabSpeedPerYear[year]);
+							continue;
 						}
 					}
 				}
