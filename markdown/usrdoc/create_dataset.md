@@ -69,6 +69,13 @@ General __common sense__ instructions
 * numeric type: _countryCode_, _cityCode_, _latitude_, _longitude_, etc
 
 Specific __critical__ instructions:
+* File names __MUST__ contain the following strings:
+   * Cities file name __MUST__ contain the string "cities"
+   * Population file __MUST__ contain the string "population"
+   * Transport network file __MUST__ contain the string "transport_network"
+   * Transport modes file __MUST__ contain the string "transport_modes"
+   * Transport modes speed file __MUST__ contain the string "transport_mode_speed"
+
 * The file [_transport mode_](#transport-mode-file) __MUST__ contain a mode named _Road_ that will define the slope of cones; cones is the geographic surface and the _Road_ speed is attached to this surface
 * For the same reason the file [_transport mode speed_](#transport-mode-speed-file) __MUST__ contain speed information for the mode _road_
 * The model being by design [differential](#a-differential-model), at least one other transport mode with a speed __MUST__ be described (in both files  [_transport mode_](#transport-mode-file) and [_transport mode speed_](#transport-mode-speed-file))
