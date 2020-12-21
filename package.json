@@ -13,6 +13,7 @@
     "dependencies": {
         "check-peer-dependencies": "^4.0.0",
         "compression": "^1.7.1",
+        "moveable": "^0.21.1",
         "polka": "next",
         "sirv": "^1.0.10"
     },
