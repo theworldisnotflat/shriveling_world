@@ -92,30 +92,31 @@
 	<nav class="menu" role="navigation" transition:slide={{ delay: 250, duration: 600 }}>
 		<ul>
 			<li class="menu-item" aria-haspopup="true">
-				<a href="./">Shriveling the world
+				<a href="./">Shriveling world
 					<Icon icon={faCaretDown} /></a>
 				<ul class="sub-menu" aria-label="submenu">
-					<li class="menu-item"><a href="#0">Blog</a></li>
-					<li class="menu-item"><a href="#0">github</a></li>
+					<li class="menu-item"><a href="https://timespace.hypotheses.org/">Blog</a></li>
+					<li class="menu-item"><a href="https://github.com/theworldisnotflat/shriveling_world">github</a></li>
 					<li class="menu-item"><a href="#0">other resources</a></li>
 				</ul>
 			</li>
-			<li class="menu-item" aria-haspopup="true">
-				<a href="app">application
-					<Icon icon={faCaretDown} /></a>
-				<ul class="sub-menu" aria-label="submenu">
-					<li class="menu-item"><a href="#0">Help</a></li>
-				</ul>
-			</li>
-			<li class="menu-item"><a href="marks/devdoc/README_DEVDOC">Dev Docs</a></li>
+			<li class="menu-item"><a href="app">Application</a></li>
 			<li class="menu-item" aria-haspopup="true">
 				<a href="#0">User Doc
 					<Icon icon={faCaretDown} /></a>
 				<ul class="sub-menu" aria-label="submenu">
-					<li class="menu-item"><a href="#0">Basic Usage tutorial</a></li>
+					<li class="menu-item"><a href="marks/usrdoc/basic_usage_tutorial">Basic Usage tutorial</a></li>
 					<li class="menu-item"><a href="#0">UI variables explanation</a></li>
 					<li class="menu-item"><a href="marks/usrdoc/create_dataset">Dataset creation</a></li>
 					<li class="menu-item"><a href="#0">Blender tutorial</a></li>
+				</ul>
+			</li>
+			<li class="menu-item" aria-haspopup="true">
+				<a href="doc">Dev Doc
+					<Icon icon={faCaretDown} /></a>
+				<ul class="sub-menu" aria-label="submenu">
+					<li class="menu-item"><a href="marks/devdoc/dev_instructions">Developer instructions</a></li>
+					<li class="menu-item"><a href="doc">Developer documentation</a></li>
 				</ul>
 			</li>
 		</ul>

@@ -6,7 +6,6 @@ import type { IListFile } from '../definitions/project';
 import type BigBoard from './bigBoard';
 import { ConeMeshShader } from '../cone/coneMeshShader';
 import * as dat from 'dat.gui';
-import Tweakpane from '../../../node_modules/tweakpane/dist/tweakpane.min';
 import { CONFIGURATION } from '../common/configuration';
 
 let _filesData: IListFile[] = [];
@@ -228,17 +227,6 @@ export class GUI {
 	 */
 	private _initInteraction(container: HTMLElement): void {
 		const gui = new dat.GUI({ autoPlace: false });
-		// const pane = new Tweakpane();
-		// const PARAMS = {
-		// 	speed: 0.5,
-		// 	count: 10,
-		// };
-		// pane.addInput(PARAMS, 'speed');
-		// pane.addInput(PARAMS, 'count');
-
-		// pane.on('change', (value) => {
-		// 	console.log(PARAMS);
-		// });
 		container.appendChild(gui.domElement);
 		const bigBoard = this._bigBoard;
 		conf['light color'] = '#' + bigBoard.light.color.getHex().toString(16);
