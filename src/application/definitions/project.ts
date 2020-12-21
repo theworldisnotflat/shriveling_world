@@ -2,7 +2,7 @@
  * Project.ts is where all definitions are enunciated
  * concerning data structuring in the project
  *
- * the [data model can be seen here](https://timespace.hypotheses.org/91)
+ * the [data model can be seen here](https://github.com/theworldisnotflat/shriveling_world/blob/master/model/modeles7.png)
  * Explanations about the [terminology choices can be found here](https://timespace.hypotheses.org/177)
  */
 import type { Cartographic } from '../common/utils';
@@ -222,6 +222,8 @@ export interface ITransportModeSpeed {
  * * a [[yearEnd]] (optionnal),
  * * can be [[terrestrial]] or not,
  * * and has a table of [[speeds]] that may change over years
+ *
+ * If mode is 'terrestrial' the transport mode speed can affect the slope of cones
  */
 export interface ITranspMode {
 	name: string;
