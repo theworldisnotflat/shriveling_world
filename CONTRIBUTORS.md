@@ -5,7 +5,7 @@
   * Owner
 * **[Billel Helali](https://github.com/CodeInLight)**
   * Contributor
-  * maintenance, debugging
+  * development, debugging
   * Blender rendering
 * **[Nicolas Roelandt](https://github.com/Bakaniko)**
   * Contributor
