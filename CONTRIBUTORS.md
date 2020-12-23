@@ -4,14 +4,14 @@
 * **[Alain L'Hostis](https://github.com/theworldisnotflat)**
   * Owner
 * **[Billel Helali](https://github.com/CodeInLight)**
-  * Contributor
-  * maintenance, debugging
+  * Code contributor
+  * development, debugging
   * Blender rendering
 * **[Nicolas Roelandt](https://github.com/Bakaniko)**
-  * Contributor
+  * Code contributor
   * strategy and communication
 * **[Jeff Barbier](https://github.com/phbrbr)**
-  * Contributor
+  * Code contributor
   * import export debugging
   * graphic design
   * Blender rendering
@@ -20,5 +20,5 @@
 * **[Georges Mariano](https://github.com/JMR-uge)**
   * deployment
 * **[Fatima Fattouh](https://github.com/saamus)**
-  * Contributor
+  * Code contributor
   * development, debugging
