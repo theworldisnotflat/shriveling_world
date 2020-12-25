@@ -256,8 +256,8 @@ function networkFromCities(
 	let minYear = actualYear;
 	let maxYear = 0;
 	transpNetwork.forEach((item) => {
-		if (minYear > item.yearBegin) {
-			minYear = item.yearBegin;
+		if (minYear > item.eYearBegin) {
+			minYear = item.eYearBegin;
 		}
 	});
 	// Déterminer pour chaque type de transport la vitesse maximale par an
@@ -506,7 +506,7 @@ function networkFromCities(
 			let edgeTranspModeName: string;
 			let edgeTranspModeSpeed: ITabSpeedPerYearPerTranspModeItem;
 			if (city.edges.length === 0) {
-				city.edges.push({ yearBegin: minYear, cityCodeDes: -Infinity, transportMode: roadCode });
+				city.edges.push({ eYearBegin: minYear, cityCodeDes: -Infinity, transportMode: roadCode });
 			}
 
 			// For each edge incident to the city considered
@@ -531,8 +531,8 @@ function networkFromCities(
 						origCityCode,
 						destCityCode
 					);
-					minYear = Math.min(edge.yearBegin, minYear);
-					maxYear = edge.yearEnd ? edge.yearEnd : maxYear;
+					minYear = Math.min(edge.eYearBegin, minYear);
+					maxYear = edge.eYearEnd ? edge.eYearEnd : maxYear;
 					edgeTranspModeName = edgeTranspModeSpeed.name;
 					// Prepare tables
 					if (!destinationsWithModes.hasOwnProperty(destCityCode)) {
@@ -766,8 +766,8 @@ export class Merger {
 			this[name].push(...getCSV(someString, name === '_transportModeCode'));
 			if (name === '_transportModeCode' || name === '_transportNetwork') {
 				(this[name] as IEdge[]).forEach((item) => {
-					if (item.yearEnd === undefined || item.yearEnd === null || item.yearEnd.toString() === '') {
-						delete item.yearEnd;
+					if (item.eYearEnd === undefined || item.eYearEnd === null || item.eYearEnd.toString() === '') {
+						delete item.eYearEnd;
 					}
 				});
 			}

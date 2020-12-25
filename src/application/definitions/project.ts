@@ -238,15 +238,15 @@ export interface ITranspMode {
  * Here we find data of a graph edge in the [[IEdge]]
  *
  * Each edge has
- * * a [[yearBegin]] and
- * * a [[yearEnd]] (optionnal)
+ * * a [[eYearBegin]] and
+ * * a [[eYearEnd]] (optionnal)
  * * an origin [[cityCodeOri]] (optionnal)
  * * and  destination [[cityCodeDes]]
  * * a transport mode [[transportMode]]
  */
 export interface IEdge {
-	yearBegin: number;
-	yearEnd?: number;
+	eYearBegin: number;
+	eYearEnd?: number;
 	cityCodeOri?: number;
 	cityCodeDes: number;
 	transportMode: number;

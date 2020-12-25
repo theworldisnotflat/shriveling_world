@@ -1,4 +1,4 @@
-yearBegin,yearEnd,cityCodeOri,nameOri,cityCodeDes,nameDes,transportMode,length,notes
+eYearBegin,eYearEnd,cityCodeOri,nameOri,cityCodeDes,nameDes,transportMode,length,notes
 1977,2004,20985,Paris,23083,New York-Newark,11,,Concorde
 1977,2004,22860,London,23083,New York-Newark,11,,Concorde
 2010,2014,206167,Sydney,21957,Auckland,1,,air
