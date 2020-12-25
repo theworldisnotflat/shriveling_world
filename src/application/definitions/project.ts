@@ -218,7 +218,7 @@ export interface ITransportModeSpeed {
  * A transport mode has
  * * a [[name]],
  * * a [[code]],
- * * a [[yearBegin]],
+ * * a [[mYearBegin]],
  * * a [[yearEnd]] (optionnal),
  * * can be [[terrestrial]] or not,
  * * and has a table of [[speeds]] that may change over years
@@ -228,8 +228,8 @@ export interface ITransportModeSpeed {
 export interface ITranspMode {
 	name: string;
 	code: number;
-	yearBegin: number;
-	yearEnd?: number;
+	mYearBegin: number;
+	mYearEnd?: number;
 	terrestrial: boolean; // If yes the transport mode speed can affect the slope of cones
 	speeds: ITransportModeSpeed[];
 }
@@ -240,15 +240,15 @@ export interface ITranspMode {
  * Each edge has
  * * a [[yearBegin]] and
  * * a [[yearEnd]] (optionnal)
- * * an origin [[idOri]] (optionnal)
- * * and  destination [[idDes]]
+ * * an origin [[cityCodeOri]] (optionnal)
+ * * and  destination [[cityCodeDes]]
  * * a transport mode [[transportMode]]
  */
 export interface IEdge {
 	yearBegin: number;
 	yearEnd?: number;
-	idOri?: number;
-	idDes: number;
+	cityCodeOri?: number;
+	cityCodeDes: number;
 	transportMode: number;
 }
 

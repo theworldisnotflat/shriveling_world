@@ -1,4 +1,4 @@
-yearBegin,yearEnd,idOri,nameOri,idDes,nameDes,transportMode,length,notes
+yearBegin,yearEnd,cityCodeOri,nameOri,cityCodeDes,nameDes,transportMode,length,notes
 1977,2004,20985,Paris,23083,New York-Newark,11,,Concorde
 1977,2004,22860,London,23083,New York-Newark,11,,Concorde
 2010,2014,206167,Sydney,21957,Auckland,1,,air
@@ -4320,7 +4320,7 @@ yearBegin,yearEnd,idOri,nameOri,idDes,nameDes,transportMode,length,notes
 >>>>>>> 303fc427bd47ab876a0a085566ad03c4234f2139:datasets/Europe_1M_FUA/transport_network_1M_v15.csv
 2001,,20990,Rennes,20985,Paris,31,,HST
 1997,,20144,Bruxelles-Brussel,20969,Lille,31,,HST
-2002,,20144,Bruxelles-Brussel,204358,Köln (Cologne),31,,HST
+2002,,20144,Bruxelles-Brussel,204358,Kï¿½ln (Cologne),31,,HST
 2009,,20144,Bruxelles-Brussel,20142,Antwerpen,31,,HST
 2009,,21945,Rotterdam,20142,Antwerpen,31,,HST
 2009,,21945,Rotterdam,21930,Amsterdam,31,,HST

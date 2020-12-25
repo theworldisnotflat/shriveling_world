@@ -115,8 +115,8 @@ function merger<U, V>(
 const keyWords: Array<{ name: string; words: string[] }> = [
 	{ name: '_cities', words: ['cityCode', 'latitude', 'longitude', 'radius'] },
 	{ name: '_transportModeSpeed', words: ['transportModeCode', 'year', 'speedKPH'] },
-	{ name: '_transportModeCode', words: ['code', 'name', 'yearBegin', 'terrestrial'] },
-	{ name: '_transportNetwork', words: ['transportMode', 'idDes', 'idOri'] },
+	{ name: '_transportModeCode', words: ['code', 'name', 'mYearBegin', 'terrestrial'] },
+	{ name: '_transportNetwork', words: ['transportMode', 'cityCodeDes', 'cityCodeOri'] },
 	{ name: '_populations', words: ['cityCode'] },
 ];
 
@@ -350,11 +350,11 @@ function networkFromCities(
 		}
 
 		_transportName[transportMode.terrestrial ? 'cones' : 'curves'].push(name);
-		const minYearTransport = Math.max(transportMode.yearBegin, minYear);
-		let maxYearTransport = transportMode.yearEnd === undefined ? actualYear : transportMode.yearEnd;
+		const minYearTransport = Math.max(transportMode.mYearBegin, minYear);
+		let maxYearTransport = transportMode.mYearEnd === undefined ? actualYear : transportMode.mYearEnd;
 		let tempTransportCodeTab: ITransportCodeItem[] = [];
 		const tabSpeedPerYear: { [year: string]: ISpeedAlpha } = {};
-		let tempMaxYear: number = transportMode.yearEnd;
+		let tempMaxYear: number = transportMode.mYearEnd;
 
 		transportMode.speeds.forEach((transportSpeed) => {
 			tempTransportCodeTab.push({ speed: transportSpeed.speedKPH, year: transportSpeed.year });
@@ -506,13 +506,13 @@ function networkFromCities(
 			let edgeTranspModeName: string;
 			let edgeTranspModeSpeed: ITabSpeedPerYearPerTranspModeItem;
 			if (city.edges.length === 0) {
-				city.edges.push({ yearBegin: minYear, idDes: -Infinity, transportMode: roadCode });
+				city.edges.push({ yearBegin: minYear, cityCodeDes: -Infinity, transportMode: roadCode });
 			}
 
 			// For each edge incident to the city considered
 			for (let i = 0; i < city.edges.length; i++) {
 				edge = city.edges[i];
-				destCityCode = edge.idDes;
+				destCityCode = edge.cityCodeDes;
 				// EdgeTranspModeSpeed is the key parameter of the process
 				// it will be confronted to maximumSpeed[year]
 				edgeTranspModeSpeed = speedPerTransportPerYear[edge.transportMode];
@@ -810,9 +810,9 @@ export class Merger {
 			// will link cities with population.csv file table information
 			merger(cities, population, 'cityCode', 'cityCode', 'populations', false, true, false);
 			// Attach city information to ending city edge
-			merger(transportNetwork, cities, 'idDes', 'cityCode', 'destCityInfo', false, false, false);
+			merger(transportNetwork, cities, 'cityCodeDes', 'cityCode', 'destCityInfo', false, false, false);
 			// Generates subgraph from city considered as origin
-			merger(cities, transportNetwork, 'cityCode', 'idOri', 'edges', true, true, false);
+			merger(cities, transportNetwork, 'cityCode', 'cityCodeOri', 'edges', true, true, false);
 			// The main function that generates geometries (cones, curves) by exploring the subgraphs from cities
 			this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
 			// for input data reading debugging
