@@ -1,4 +1,4 @@
-eYearBegin,eYearEnd,cityCodeOri,nameOri,cityCodeDes,nameDes,transportMode,length,notes
+eYearBegin,eYearEnd,cityCodeOri,nameOri,cityCodeDes,nameDes,transportModeCode,length,notes
 1960,,160020, Lille,160100,Calais,6,0136.000,154
 1960,,160070, Paris,160210,Le-Mans,6,0203.000,230
 1960,,160220, Angers,160210,Le-Mans,6,0095.000,52

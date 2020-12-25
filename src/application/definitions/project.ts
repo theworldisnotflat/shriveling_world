@@ -242,14 +242,14 @@ export interface ITranspMode {
  * * a [[eYearEnd]] (optionnal)
  * * an origin [[cityCodeOri]] (optionnal)
  * * and  destination [[cityCodeDes]]
- * * a transport mode [[transportMode]]
+ * * a transport mode [[transportModeCode]]
  */
 export interface IEdge {
 	eYearBegin: number;
 	eYearEnd?: number;
-	cityCodeOri?: number;
+	cityCodeOri: number;
 	cityCodeDes: number;
-	transportMode: number;
+	transportModeCode: number;
 }
 
 export interface IBBox {

@@ -115,8 +115,8 @@ function merger<U, V>(
 const keyWords: Array<{ name: string; words: string[] }> = [
 	{ name: '_cities', words: ['cityCode', 'latitude', 'longitude', 'radius'] },
 	{ name: '_transportModeSpeed', words: ['transportModeCode', 'year', 'speedKPH'] },
-	{ name: '_transportModeCode', words: ['code', 'name', 'mYearBegin', 'terrestrial'] },
-	{ name: '_transportNetwork', words: ['transportMode', 'cityCodeDes', 'cityCodeOri'] },
+	{ name: '_transportMode', words: ['code', 'name', 'mYearBegin', 'terrestrial'] },
+	{ name: '_transportNetwork', words: ['transportModeCode', 'cityCodeDes', 'cityCodeOri'] },
 	{ name: '_populations', words: ['cityCode'] },
 ];
 
@@ -506,7 +506,7 @@ function networkFromCities(
 			let edgeTranspModeName: string;
 			let edgeTranspModeSpeed: ITabSpeedPerYearPerTranspModeItem;
 			if (city.edges.length === 0) {
-				city.edges.push({ eYearBegin: minYear, cityCodeDes: -Infinity, transportMode: roadCode });
+				city.edges.push({ eYearBegin: minYear, cityCodeDes: -Infinity, transportModeCode: roadCode });
 			}
 
 			// For each edge incident to the city considered
@@ -515,7 +515,7 @@ function networkFromCities(
 				destCityCode = edge.cityCodeDes;
 				// EdgeTranspModeSpeed is the key parameter of the process
 				// it will be confronted to maximumSpeed[year]
-				edgeTranspModeSpeed = speedPerTransportPerYear[edge.transportMode];
+				edgeTranspModeSpeed = speedPerTransportPerYear[edge.transportModeCode];
 				// Prepare tables
 				if (!processedODs.hasOwnProperty(destCityCode)) {
 					processedODs[destCityCode] = {};
@@ -677,7 +677,7 @@ function networkFromCities(
  *   * [[_cities]],
  *   * [[_populations]],
  *   * [[_transportModeSpeed]],
- *   * [[_transportModeCode]],
+ *   * [[_transportMode]],
  *   * [[_transportNetwork]],
  *   * [[_state]] and
  *   * [[_linksAndTranspModes]]
@@ -688,7 +688,7 @@ export class Merger {
 	private _cities: ICity[] = [];
 	private _populations: IPopulation[] = [];
 	private _transportModeSpeed: ITransportModeSpeed[] = [];
-	private _transportModeCode: ITranspMode[] = [];
+	private _transportMode: ITranspMode[] = [];
 	private _transportNetwork: IEdge[] = [];
 	private _state: IMergerState = 'missing';
 	private _edgesAndTranspModes: ILookupCurvesAndCityGraph = <ILookupCurvesAndCityGraph>{};
@@ -733,7 +733,7 @@ export class Merger {
 		this._cities = [];
 		this._populations = [];
 		this._transportModeSpeed = [];
-		this._transportModeCode = [];
+		this._transportMode = [];
 		this._transportNetwork = [];
 		this._edgesAndTranspModes = <ILookupCurvesAndCityGraph>{};
 		this._state = 'missing';
@@ -763,8 +763,8 @@ export class Merger {
 			throw new Error('scheme unknown');
 		} else {
 			this[name] = [];
-			this[name].push(...getCSV(someString, name === '_transportModeCode'));
-			if (name === '_transportModeCode' || name === '_transportNetwork') {
+			this[name].push(...getCSV(someString, name === '_transportMode'));
+			if (name === '_transportMode' || name === '_transportNetwork') {
 				(this[name] as IEdge[]).forEach((item) => {
 					if (item.eYearEnd === undefined || item.eYearEnd === null || item.eYearEnd.toString() === '') {
 						delete item.eYearEnd;
@@ -796,7 +796,7 @@ export class Merger {
 			// Csv parsing into tables
 			const cities: ICity[] = JSON.parse(JSON.stringify(this._cities), reviver);
 			const population: IPopulation[] = JSON.parse(JSON.stringify(this._populations), reviver);
-			const transportModeCode: ITranspMode[] = JSON.parse(JSON.stringify(this._transportModeCode), reviver);
+			const transportMode: ITranspMode[] = JSON.parse(JSON.stringify(this._transportMode), reviver);
 			const transportModeSpeed: ITransportModeSpeed[] = JSON.parse(
 				JSON.stringify(this._transportModeSpeed),
 				reviver
@@ -806,7 +806,7 @@ export class Merger {
 			// Linking tables to eachother
 			// merger(mother,               girl,        motherProp.,   girlProp.,      newName, forceArray, removeMotherProp., removeGirlProp.)
 			// will link transport modes and speed
-			merger(transportModeCode, transportModeSpeed, 'code', 'transportModeCode', 'speeds', true, true, false);
+			merger(transportMode, transportModeSpeed, 'code', 'transportModeCode', 'speeds', true, true, false);
 			//    Merger(transportNetwork, transportModeCode, 'transportModeSpeed', 'code', 'transportDetails', false, false, false);
 			// will link cities with population.csv file table information
 			merger(cities, population, 'cityCode', 'cityCode', 'populations', false, true, false);
@@ -815,7 +815,7 @@ export class Merger {
 			// Generates subgraph from city considered as origin
 			merger(cities, transportNetwork, 'cityCode', 'cityCodeOri', 'edges', true, true, false);
 			// The main function that generates geometries (cones, curves) by exploring the subgraphs from cities
-			this._edgesAndTranspModes = networkFromCities(transportModeCode, cities, transportNetwork);
+			this._edgesAndTranspModes = networkFromCities(transportMode, cities, transportNetwork);
 			// for input data reading debugging
 			console.log(this._edgesAndTranspModes);
 			this._state = 'missing';
@@ -830,7 +830,7 @@ export class Merger {
 				this._cities.length > 0 &&
 				this._populations.length > 0 &&
 				this._transportModeSpeed.length > 0 &&
-				this._transportModeCode.length > 0 &&
+				this._transportMode.length > 0 &&
 				this._transportNetwork.length > 0
 			) {
 				state = 'ready';
