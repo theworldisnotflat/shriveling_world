@@ -649,6 +649,7 @@ function networkFromCities(
 
 			if (Object.keys(cone).length === 0) {
 				// Cas des villes sans destinations ou uniquement des transports type aérien
+				console.log('speedPerTransportPerYear', speedPerTransportPerYear, minYear, maxYear);
 				for (let year = minYear; year <= maxYear; year++) {
 					const coneAlpha = speedPerTransportPerYear[roadCode].tabSpeedPerYear[year].alpha;
 					cone[year] = { coneAlpha, tab: [] };
