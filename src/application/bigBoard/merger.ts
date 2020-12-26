@@ -356,7 +356,7 @@ function networkFromCities(
 		const tabSpeedPerYear: { [year: string]: ISpeedAlpha } = {};
 		let tempMaxYear: number = transportMode.mYearEnd;
 
-		transportMode.speeds.forEach((transportSpeed) => {
+		transportMode.speedTab.forEach((transportSpeed) => {
 			tempTransportCodeTab.push({ speed: transportSpeed.speedKPH, year: transportSpeed.year });
 			if (maxYear < transportSpeed.year) {
 				maxYear = transportSpeed.year;
@@ -606,9 +606,9 @@ function networkFromCities(
 								// The ratio linking the current speed and maxSpeed is
 								// computed according to this ![equation](http://bit.ly/2EejFpW)
 								const speedRatio = (maximumSpeed[year] * theta) / (2 * modelledSpeed);
-								// Console.log('destCity', this._cities[destCityCode].urbanAgglomeration);
-								// console.log('origCity', this._cities[origCityCode].urbanAgglomeration);
-								// console.log('orig', city.urbanAgglomeration);
+								// Console.log('destCity', this._cities[destCityCode].cityName);
+								// console.log('origCity', this._cities[origCityCode].cityName);
+								// console.log('orig', city.cityName);
 								// console.log('mode', edgeTranspModeSpeed.name);
 								// console.log('theta km', (CONFIGURATION.earthRadiusMeters / 1000) * theta);
 								// console.log('edgeModeSpeed[year].speed', edgeModeSpeed[year].speed);
@@ -806,7 +806,7 @@ export class Merger {
 			// Linking tables to eachother
 			// merger(mother,               girl,        motherProp.,   girlProp.,      newName, forceArray, removeMotherProp., removeGirlProp.)
 			// will link transport modes and speed
-			merger(transportMode, transportModeSpeed, 'code', 'transportModeCode', 'speeds', true, true, false);
+			merger(transportMode, transportModeSpeed, 'code', 'transportModeCode', 'speedTab', true, true, false);
 			//    Merger(transportNetwork, transportModeCode, 'transportModeSpeed', 'code', 'transportDetails', false, false, false);
 			// will link cities with population.csv file table information
 			merger(cities, population, 'cityCode', 'cityCode', 'populations', false, true, false);

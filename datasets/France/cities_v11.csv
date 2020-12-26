@@ -1,4 +1,4 @@
-cityCode,index,countryCode,countryName,urbanAgglomeration,latitude,longitude,radius,yearMotorway,yearHST
+cityCode,index,countryCode,countryName,cityName,latitude,longitude,radius,yearMotorway,yearHST
 160010,1,250,France,Bordeaux,44.8367,-0.58107,,,
 160020,2,250,France,Lille,50.62821,3.06881,,,
 160030,3,250,France,Lyon,45.75917,4.82966,,,

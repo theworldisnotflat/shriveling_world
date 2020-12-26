@@ -1,4 +1,4 @@
-cityCode,index,countryCode,countryName,urbanAgglomeration,latitude,longitude,radius,yearMotorway,yearHST,Index,pop1950,pop1955,pop1960,pop1965,pop1970,pop1975,pop1980,pop1985,pop1990,pop1995,pop2000,pop2005,pop2010,pop2015,pop2020,pop2025,pop2030,nbOri,nbDes
+cityCode,index,countryCode,countryName,cityName,latitude,longitude,radius,yearMotorway,yearHST,Index,pop1950,pop1955,pop1960,pop1965,pop1970,pop1975,pop1980,pop1985,pop1990,pop1995,pop2000,pop2005,pop2010,pop2015,pop2020,pop2025,pop2030,nbOri,nbDes
 20107,42,40,Austria,Wien (Vienna),48.206443,16.370725,NA,NA,NA,42,1615,1621,1627,1624,1621,1583,1539,1535,1539,1544,1549,1641,1700,1753,1808,1878,1959,51,52
 20144,64,56,Belgium,Bruxelles-Brussel,50.846735,4.349919,NA,NA,1997,64,1415,1449,1485,1525,1568,1610,1654,1676,1695,1715,1792,1873,1958,2045,2115,2164,2203,29,30
 20327,132,100,Bulgaria,Sofia,42.69751,23.32415,NA,NA,NA,132,522,616,708,806,888,977,1074,1181,1191,1168,1128,1169,1200,1226,1241,1242,1230,9,8

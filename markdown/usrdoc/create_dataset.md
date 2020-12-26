@@ -2,7 +2,7 @@
 
 ## Data model
 
-![data model](assets/modeles8.svg 'data model')
+![data model](assets/data_model_v10.svg 'data model')
 
 ## A system of five files
 
@@ -92,9 +92,9 @@ Specific __critical__ instructions:
 
 Column name | Type | Mandatory | Comments
 ----------|----------|-------------|-------------
+_cityCode_|number|yes|city unique id
 _countryCode_ |number|yes|numeric code of country where city belongs
 _countryName_|string|yes|country name where city belongs
-_cityCode_|number|yes|city unique id
 _urbanAgglomeration_|string|yes|agglomeration (city) name
 _latitude_|number|yes|numeric with comma, e.g. 35.55597
 _longitude_|number|yes|numeric with comma

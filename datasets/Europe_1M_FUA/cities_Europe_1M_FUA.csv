@@ -1,4 +1,4 @@
-cityCode,index,countryCode,countryName,urbanAgglomeration,latitude,longitude,radius,yearMotorway,yearHST
+cityCode,index,countryCode,countryName,cityName,latitude,longitude,radius,yearMotorway,yearHST
 20107,42,40,Austria,Wien (Vienna),48.206443,16.370725,NA,NA,NA
 20348,60,112,Belarus,Minsk,53.9,27.56667,NA,NA,NA
 20142,63,56,Belgium,Antwerpen,51.21989,4.40346,NA,NA,NA
@@ -15,7 +15,7 @@ cityCode,index,countryCode,countryName,urbanAgglomeration,latitude,longitude,rad
 20952,650,250,France,Bordeaux,44.84044,-0.5805,NA,1981,2017
 20972,654,250,France,Lyon,45.74846,4.84671,NA,1970,1983
 21011,670,268,Georgia,Tbilisi,41.69411,44.83368,NA,NA,NA
-204371,689,276,Germany,München (Munich),48.137076,11.573377,NA,NA,NA
+204371,689,276,Germany,Mï¿½nchen (Munich),48.137076,11.573377,NA,NA,NA
 204376,690,276,Germany,Nurenberg,49.450418,11.075791,NA,NA,NA
 204397,691,276,Germany,Stuttgart,48.78232,9.17702,NA,NA,NA
 204296,671,276,Germany,Berlin,52.52437,13.41053,NA,NA,NA
@@ -25,10 +25,10 @@ cityCode,index,countryCode,countryName,urbanAgglomeration,latitude,longitude,rad
 204303,675,276,Germany,Bremen,53.07516,8.80777,NA,NA,NA
 204312,678,276,Germany,Duesseldorf,51.22172,6.77616,NA,NA,NA
 204332,681,276,Germany,Frankfurt am Main,50.11667,8.68333,NA,NA,NA
-204358,685,276,Germany,Köln (Cologne),50.93333,6.95,NA,NA,NA
+204358,685,276,Germany,Kï¿½ln (Cologne),50.93333,6.95,NA,NA,NA
 204316,680,276,Germany,Essen (Ruhr),51.45374,7.010388,NA,NA,NA
 204367,687,276,Germany,Mannheim,49.48833,8.46472,NA,NA,NA
-21113,697,300,Greece,Athi­nai (Athens),37.95342,23.74897,NA,NA,NA
+21113,697,300,Greece,Athiï¿½nai (Athens),37.95342,23.74897,NA,NA,NA
 21117,698,300,Greece,Thessaloniki,40.64028,22.94389,NA,NA,NA
 21138,707,348,Hungary,Budapest,47.49801,19.03991,NA,NA,NA
 21542,945,372,Ireland,Dublin,53.33306,-6.24889,NA,NA,NA
@@ -57,9 +57,9 @@ cityCode,index,countryCode,countryName,urbanAgglomeration,latitude,longitude,rad
 22556,1385,724,Spain,Palma,39.56939,2.65024,NA,NA,NA
 22562,1386,724,Spain,Sevilla,37.38241,-5.97613,NA,NA,NA
 22567,1387,724,Spain,Valencia,39.46975,-0.37739,NA,NA,NA
-22590,1399,752,Sweden,Göteborg,57.703161,11.966273,NA,NA,NA
+22590,1399,752,Sweden,Gï¿½teborg,57.703161,11.966273,NA,NA,NA
 22597,1400,752,Sweden,Stockholm,59.33258,18.0649,NA,NA,NA
-22606,1405,756,Switzerland,Zürich (Zurich),47.35785,8.50296,NA,NA,NA
+22606,1405,756,Switzerland,Zï¿½rich (Zurich),47.35785,8.50296,NA,NA,NA
 22802,1417,807,TFYR Macedonia,Skopje,42,21.43333,NA,NA,NA
 22647,1430,792,Turkey,Adana,37.00167,35.32889,NA,NA,NA
 22656,1431,792,Turkey,Ankara,39.91987,32.85427,NA,NA,NA

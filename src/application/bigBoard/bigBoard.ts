@@ -438,7 +438,7 @@ export default class BigBoard {
 			);
 			const population = pop.pop2020;
 			if (population > this._populations) {
-				const geometry = new TextGeometry(obj.urbanAgglomeration, CONFIGURATION.TEXT_GEOMETRY_OPTIONS);
+				const geometry = new TextGeometry(obj.cityName, CONFIGURATION.TEXT_GEOMETRY_OPTIONS);
 				mesh = new Mesh(geometry, CONFIGURATION.BASIC_TEXT_MATERIAL);
 				const cart = this._merger.edgesWithTranspModes.lookupCityNetwork[this.getMergerI.Cities[j].cityCode]
 					.referential.cartoRef;
