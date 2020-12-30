@@ -219,7 +219,7 @@ export interface ITransportModeSpeed {
  * * a [[name]],
  * * a [[code]],
  * * a [[mYearBegin]] mandatory
- * * a [[yearEnd]] (optional),
+ * * a [[mYearEnd]] (optional),
  * * can be [[terrestrial]] or not,
  * * and has a table of speeds [[speedTab]] that may change over years
  *

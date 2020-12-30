@@ -26,15 +26,66 @@ The _historical time span_ needs to fill in the variable _yearBegin_ and the var
 * _yearBegin_ will be the earliest year when the model can be computed
 * _yearEnd_ will be the latest year when the model can be computed
 
-There are two sources to determine this _historical time span_:
+There are three sources to determine this _historical time span_:
 Source file | Columns | Rationale
 ----------|----------|----
-_transport mode speed.csv_ |_mYearBegin_ _mYearEnd_| to allow for comparing modes in general, e.g. road vs rail in the long term
-_transport network.csv_ |_eYearBegin_ _eYearEnd_| to allow for considering the growth of a transport network of a given speed, over time, e.g. the morphogenesis of the high-speed rail network
+_transport_mode.csv_ |_mYearBegin_ _mYearEnd_| to allow for comparing modes in general, e.g. road vs rail in the long term
+_transport_network.csv_ |_eYearBegin_ _eYearEnd_| to allow for considering the growth of a transport network of a given speed, over time, e.g. the morphogenesis of the high-speed rail network
+_transport_mode_speed.csv_|_year_|speed data is central in the model; speed data over years found in this file should be consistent with the other year sources
 
 ## Algorithm for determining the historical time span
 
-Algorithm for determining the variables _yearBegin_ and  _yearEnd_:
+### Step #1 Computing basic variables at transport mode level
+
+At code run, a series of time variables attached to the transport mode are computed. At one point the following variables are known for each transport mode:
+
+Variable name | read/computed |formula| Comments
+----------|-----|-----|----
+_mYearBegin_|read in _transport_mode_ file||date of creation of the transport mode; may be empty but not recommended
+_mYearEnd_|read in _transport_mode_ file||usually empty, meaning the transport mode is still currently operated
+_minEYear_|computed|min(_eYearBegin_)|the earliest date present in the network file for the corresponding transport  mode; may be empty, in such case the relevant info comes from file _
+_maxEYear_|computed|max(_eYearEnd_)|Usually empty (exception is Concorde that stopped operations)
+_minSYear_|computed|min(_year_)|The earliest year in the _transport_mode_speed_ file
+_maxSYear_|computed|max(_year_)|The latest year in the _transport_mode_speed_ file
+
+
+### Step #2 Computing _yearBegin_ at transport mode level
+
+At this step the historical time span at transport mode level is computed.
+
+In a well formed dataset _mYearBegin_ should be the right starting date. As the model needs speed data, we need to check the existence of speed data from this date, hence considering _minSYear<sub>road</sub>_. Network data should be consistent with the [other data sources for the historical time span](#historical-time-span), and hence be considered when computing _yearBegin_. The equation becomes:
+
+_yearBegin<sub>road</sub>_ = max(_mYearBegin<sub>road</sub>_,   _minSYear<sub>road</sub>_,   _minEYear<sub>road</sub>_)
+
+In case _minEYear<sub>road</sub>_ is empty, there should be no impact. More generally any empty value should be ignored.
+
+The computation for _road_ described in steps #1 and #2 should be repeated for each transport mode accordingly.
+
+### Step #3 Computing _yearEnd_ at transport mode level
+
+ Any empty value should be ignored.
+
+_yearEnd<sub>road</sub>_ = min( _mYearEnd<sub>road</sub>_,   _maxSYear<sub>road</sub>_,   _maxEYear<sub>road</sub>_)
+
+
+The computation for _road_ described in steps #1 and #3 should be repeated for each transport mode accordingly.
+
+
+### Step #4 Compute the _Historical time span_
+
+
+Due to the  [differential nature of the model](#a-differential-model), _yearBegin_ should be indicated by the earliest year of operation among all the non road transport modes. In a typical, well formed dataset, one or several transport modes faster than road are described, typically expressway, high-speed rail or airlines. In this case the earliest date when the model can be computed is when one of these faster modes starts operations.
+
+_yearBegin_ = min(_yearBegin<sub>Transp1</sub>_, _yearBegin<sub>Transp2</sub>_, ...)
+
+Usually -- exception made of historical past dataset and prospective datasets -- the yearEnd should be the current year. In order to car for these two exceptions, we add the rule that if _yearEnd<sub>road</sub>_ is empty, it should be populated with _currentYear_ and otherwise untouched.
+
+1. _yearEnd_ = max(_yearEnd<sub>Transp1</sub>_, _yearEnd<sub>Transp2</sub>_, ...)
+2. if _yearEnd<sub>road</sub>_ is empty, then _yearEnd<sub>road</sub>_ = _currentYear_,
+
+This situation in the -- well formed dataset -- case where years for road are consistent with other modes years data, and hence: _yearBegin<sub>road</sub>_ <= _yearBegin_ AND _yearEnd<sub>road</sub>_ >= _yearEnd_
+
+<!-- Algorithm for determining the variables _yearBegin_ and  _yearEnd_:
 
 Source file | Starting year for each mode | Ending year for each mode
 ----------|----------|----------
@@ -51,7 +102,9 @@ _yearEndRoad_ = max (_yearEndRoadMode_, _yearEndRoadNetwork_)
 _yearBegin_ = max((_yearBeginRoad_), min(_yearBeginFasterTransp1_, _yearBeginFasterTransp2_, etc.))
 _yearEnd_ = min((_yearEndRoad_), max(_yearEndFasterTransp1_, _yearEndFasterTransp2_, etc.))
 
-The transport related period should also be coherent with the dates of the city population data.
+-->
+
+In addition, the transport related period should also be coherent with the dates of the city population data.
 
 ## Mandatory elements in the dataset
 
