@@ -210,7 +210,7 @@ export interface ICity {
  */
 export interface ITransportModeSpeed {
 	year: number;
-	transportModeCode?: number;
+	transportModeCode: number;
 	speedKPH: number;
 }
 
@@ -224,12 +224,14 @@ export interface ITransportModeSpeed {
  * * and has a table of speeds [[speedTab]] that may change over years
  *
  * If mode is 'terrestrial' the transport mode speed can affect the slope of cones
- * All the info before come from files ("transport_mode" and"transport_mode_speed")
+ * All the info before come from reading files ("transport_mode" and "transport_mode_speed")
  * The info below is computed in the code:
  * * [[minEYear]] and
  * * [[maxEYear]] are computed from info at
  * edge level in file "transport_network"
- */
+ * * [[minSYear]] and
+ * * [[maxSYear]] are computed from "transport_mode_speed" file
+ **/
 export interface ITranspMode {
 	name: string;
 	code: number;
@@ -237,8 +239,10 @@ export interface ITranspMode {
 	mYearEnd?: number;
 	terrestrial: boolean; // If yes the transport mode speed can affect the slope of cones
 	speedTab: ITransportModeSpeed[];
-	minEYear: number;
-	maxEYear: number;
+	minEYear?: number;
+	maxEYear?: number;
+	minSYear?: number;
+	maxSYear?: number;
 }
 
 /**
@@ -279,7 +283,7 @@ export interface IPseudoGeometry {
 export type IMergerState = 'missing' | 'ready' | 'pending' | 'complete';
 
 /**
- * * 'intrudedHeightRatio' heigth of the cone expressed in proportion to the earth radius
+ * * 'intrudedHeightRatio' height of the cone expressed in proportion to the earth radius
  * * 'coneStep' is the value in degree of the facet of the cone; low value means high definition of the geometry of cones
  */
 export type configurationObservableEvt =

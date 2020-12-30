@@ -27,10 +27,10 @@ The _historical time span_ needs to fill in the variable _yearBegin_ and the var
 * _yearEnd_ will be the latest year when the model can be computed
 
 There are two sources to determine this _historical time span_:
-Source | Rationale
-----------|----------
-_transport mode speed.csv_ | to allow for comparing modes in general, e.g. road vs rail in the long term
-_transport network.csv_ | to allow for considering the growth of a transport network of a given speed, over time, e.g. the morphogenesis of the high-speed rail network
+Source file | Columns | Rationale
+----------|----------|----
+_transport mode speed.csv_ |_mYearBegin_ _mYearEnd_| to allow for comparing modes in general, e.g. road vs rail in the long term
+_transport network.csv_ |_eYearBegin_ _eYearEnd_| to allow for considering the growth of a transport network of a given speed, over time, e.g. the morphogenesis of the high-speed rail network
 
 ## Algorithm for determining the historical time span
 
@@ -69,13 +69,6 @@ General __common sense__ instructions
 * numeric type: _countryCode_, _cityCode_, _latitude_, _longitude_, etc
 
 Specific __critical__ instructions:
-* File names __MUST__ contain the following strings:
-   * Cities file name __MUST__ contain the string "cities"
-   * Population file __MUST__ contain the string "population"
-   * Transport network file __MUST__ contain the string "transport_network"
-   * Transport modes file __MUST__ contain the string "transport_modes"
-   * Transport modes speed file __MUST__ contain the string "transport_mode_speed"
-
 * The file [_transport mode_](#transport-mode-file) __MUST__ contain a mode named _Road_ that will define the slope of cones; cones is the geographic surface and the _Road_ speed is attached to this surface
 * For the same reason the file [_transport mode speed_](#transport-mode-speed-file) __MUST__ contain speed information for the mode _road_
 * The model being by design [differential](#a-differential-model), at least one other transport mode with a speed __MUST__ be described (in both files  [_transport mode_](#transport-mode-file) and [_transport mode speed_](#transport-mode-speed-file))
@@ -93,9 +86,9 @@ Specific __critical__ instructions:
 Column name | Type | Mandatory | Comments
 ----------|----------|-------------|-------------
 _cityCode_|number|yes|city unique id
+_cityName_|string|yes|agglomeration (city) name
 _countryCode_ |number|yes|numeric code of country where city belongs
 _countryName_|string|yes|country name where city belongs
-_urbanAgglomeration_|string|yes|agglomeration (city) name
 _latitude_|number|yes|numeric with comma, e.g. 35.55597
 _longitude_|number|yes|numeric with comma
 _radius_|number|no|cone radius for the case of islands located close to a coastal area devoid of cities, to avoid island cone overlapping in the coastal area, e.g. Canary Islands close to Maroc
@@ -113,11 +106,11 @@ _population_|number|yes|in thousands inhabitants, at the agglomeration level rec
 The _transport network file_ describes the edges of the graph between the cities as nodes. See her for [a justification of the terminology choices](https://timespace.hypotheses.org/177).
 Column name | Type | Mandatory | Comments
 ----------|----------|-------------|-------------
-_yearBegin_|number|no|year of opening of the edge, infrastructure or service; if not populated, period _historical time span_ will be determined from _transport mode code_ file data
-_yearEnd_|number|no|may be used for a service no longer operated, e.g. supersonic commercial aircraft Concorde
 _cityCodeOri_|number|yes|id of origin city; direction (ori-des or des-ori) has no meaning in the model
 _cityCodeDes_|number|yes|id of destination city
-_transportMode_|number|yes|id of the transport mode
+_transportModeCode_|number|yes|id of the transport mode
+_eYearBegin_|number|no|year of opening of the edge, infrastructure or service; if not populated, the period _historical time span_ will be determined from _transport mode code_ file data
+_eYearEnd_|number|no|may be used for a service no longer operated, e.g. supersonic commercial aircraft Concorde
 
 For the sake of readability this file usually contains two optional columns of _oriName_ and _desName_.
 
@@ -126,12 +119,12 @@ Column name | Type | Mandatory | Comments
 ----------|----------|-------------|-------------
 _name_|string|yes|mode name
 _code_|number|yes|unique id of the transport mode
-_yearBegin_|number|yes|year of opening of the first infrastructure or service of the mode, e.g. High Speed Rail in 1964 between Tokyo and Osaka
-_yearEnd_|number|no|may be used for a service no longer operated, e.g. supersonic commercial aircraft Concorde between Paris and New-York started in 1977 and stopped operating in 2004
+_mYearBegin_|number|yes|year of opening of the first infrastructure or service of the mode, e.g. High Speed Rail in 1964 between Tokyo and Osaka
+_mYearEnd_|number|no|may be used for a service no longer operated, e.g. supersonic commercial aircraft Concorde between Paris and New-York started in 1977 and stopped operating in 2004
 
 
 ### Transport mode speed file
-A given transport mode may experience an increase of speed, e.g. the five acceleration phases of China classical railways (non High Speed Rail) between 1997 and 2004
+A given transport mode may experience an increase of speed over time, e.g. the five acceleration phases of China classical railways (non High Speed Rail) between 1997 and 2004
 Column name | Type | Mandatory | Comments
 ----------|----------|-------------|-------------
 _year_|number|yes|referring to a date when speed changed
