@@ -76,13 +76,22 @@
 						<ul>
 							<li>a <a href="_definitions_project_.itranspmode.html#name">name</a>,</li>
 							<li>a <a href="_definitions_project_.itranspmode.html#code">code</a>,</li>
-							<li>a <a href="_definitions_project_.itranspmode.html#myearbegin">mYearBegin</a>,</li>
-							<li>a [[yearEnd]] (optionnal),</li>
+							<li>a <a href="_definitions_project_.itranspmode.html#myearbegin">mYearBegin</a> mandatory</li>
+							<li>a [[yearEnd]] (optional),</li>
 							<li>can be <a href="_definitions_project_.itranspmode.html#terrestrial">terrestrial</a> or not,</li>
-							<li>and has a table of <a href="_definitions_project_.itranspmode.html#speeds">speeds</a> that may change over years</li>
+							<li>and has a table of speeds <a href="_definitions_project_.itranspmode.html#speedtab">speedTab</a> that may change over years</li>
 						</ul>
 					</div>
-					<p>If mode is &#39;terrestrial&#39; the transport mode speed can affect the slope of cones</p>
+					<p>If mode is &#39;terrestrial&#39; the transport mode speed can affect the slope of cones
+						All the info before come from reading files (&quot;transport_mode&quot; and &quot;transport_mode_speed&quot;)
+					The info below is computed in the code:</p>
+					<ul>
+						<li><a href="_definitions_project_.itranspmode.html#mineyear">minEYear</a> and</li>
+						<li><a href="_definitions_project_.itranspmode.html#maxeyear">maxEYear</a> are computed from info at
+						edge level in file &quot;transport_network&quot;</li>
+						<li><a href="_definitions_project_.itranspmode.html#minsyear">minSYear</a> and</li>
+						<li><a href="_definitions_project_.itranspmode.html#maxsyear">maxSYear</a> are computed from &quot;transport_mode_speed&quot; file</li>
+					</ul>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -103,8 +112,12 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.itranspmode.html#code" class="tsd-kind-icon">code</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.itranspmode.html#myearbegin" class="tsd-kind-icon">m<wbr>Year<wbr>Begin</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.itranspmode.html#myearend" class="tsd-kind-icon">m<wbr>Year<wbr>End</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.itranspmode.html#maxeyear" class="tsd-kind-icon">maxEYear</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.itranspmode.html#maxsyear" class="tsd-kind-icon">maxSYear</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.itranspmode.html#mineyear" class="tsd-kind-icon">minEYear</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.itranspmode.html#minsyear" class="tsd-kind-icon">minSYear</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.itranspmode.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.itranspmode.html#speeds" class="tsd-kind-icon">speeds</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.itranspmode.html#speedtab" class="tsd-kind-icon">speed<wbr>Tab</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.itranspmode.html#terrestrial" class="tsd-kind-icon">terrestrial</a></li>
 							</ul>
 						</section>
@@ -119,7 +132,7 @@
 					<div class="tsd-signature tsd-kind-icon">code<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1869608/src/application/definitions/project.ts#L230">src/application/definitions/project.ts:230</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2d54ed6/src/application/definitions/project.ts#L237">src/application/definitions/project.ts:237</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -129,7 +142,7 @@
 					<div class="tsd-signature tsd-kind-icon">m<wbr>Year<wbr>Begin<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1869608/src/application/definitions/project.ts#L231">src/application/definitions/project.ts:231</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2d54ed6/src/application/definitions/project.ts#L238">src/application/definitions/project.ts:238</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -139,7 +152,47 @@
 					<div class="tsd-signature tsd-kind-icon">m<wbr>Year<wbr>End<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1869608/src/application/definitions/project.ts#L232">src/application/definitions/project.ts:232</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2d54ed6/src/application/definitions/project.ts#L239">src/application/definitions/project.ts:239</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="maxeyear" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> maxEYear</h3>
+					<div class="tsd-signature tsd-kind-icon">maxEYear<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2d54ed6/src/application/definitions/project.ts#L243">src/application/definitions/project.ts:243</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="maxsyear" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> maxSYear</h3>
+					<div class="tsd-signature tsd-kind-icon">maxSYear<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2d54ed6/src/application/definitions/project.ts#L245">src/application/definitions/project.ts:245</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="mineyear" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> minEYear</h3>
+					<div class="tsd-signature tsd-kind-icon">minEYear<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2d54ed6/src/application/definitions/project.ts#L242">src/application/definitions/project.ts:242</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="minsyear" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> minSYear</h3>
+					<div class="tsd-signature tsd-kind-icon">minSYear<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2d54ed6/src/application/definitions/project.ts#L244">src/application/definitions/project.ts:244</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -149,17 +202,17 @@
 					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1869608/src/application/definitions/project.ts#L229">src/application/definitions/project.ts:229</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2d54ed6/src/application/definitions/project.ts#L236">src/application/definitions/project.ts:236</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="speeds" class="tsd-anchor"></a>
-					<h3>speeds</h3>
-					<div class="tsd-signature tsd-kind-icon">speeds<span class="tsd-signature-symbol">:</span> <a href="_definitions_project_.itransportmodespeed.html" class="tsd-signature-type">ITransportModeSpeed</a><span class="tsd-signature-symbol">[]</span></div>
+					<a name="speedtab" class="tsd-anchor"></a>
+					<h3>speed<wbr>Tab</h3>
+					<div class="tsd-signature tsd-kind-icon">speed<wbr>Tab<span class="tsd-signature-symbol">:</span> <a href="_definitions_project_.itransportmodespeed.html" class="tsd-signature-type">ITransportModeSpeed</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1869608/src/application/definitions/project.ts#L234">src/application/definitions/project.ts:234</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2d54ed6/src/application/definitions/project.ts#L241">src/application/definitions/project.ts:241</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -169,7 +222,7 @@
 					<div class="tsd-signature tsd-kind-icon">terrestrial<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1869608/src/application/definitions/project.ts#L233">src/application/definitions/project.ts:233</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2d54ed6/src/application/definitions/project.ts#L240">src/application/definitions/project.ts:240</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -329,10 +382,22 @@
 								<a href="_definitions_project_.itranspmode.html#myearend" class="tsd-kind-icon">m<wbr>Year<wbr>End</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_definitions_project_.itranspmode.html#maxeyear" class="tsd-kind-icon">maxEYear</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_definitions_project_.itranspmode.html#maxsyear" class="tsd-kind-icon">maxSYear</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_definitions_project_.itranspmode.html#mineyear" class="tsd-kind-icon">minEYear</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_definitions_project_.itranspmode.html#minsyear" class="tsd-kind-icon">minSYear</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_definitions_project_.itranspmode.html#name" class="tsd-kind-icon">name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_definitions_project_.itranspmode.html#speeds" class="tsd-kind-icon">speeds</a>
+								<a href="_definitions_project_.itranspmode.html#speedtab" class="tsd-kind-icon">speed<wbr>Tab</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_definitions_project_.itranspmode.html#terrestrial" class="tsd-kind-icon">terrestrial</a>
