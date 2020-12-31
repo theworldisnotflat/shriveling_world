@@ -98,11 +98,12 @@ export class GUI {
 		_filesData.push(...list);
 		let json: string;
 		_filesData.forEach((item) => {
-			const name = item.name.toLowerCase();
-			if (name.endsWith('.geojson')) {
+			const fileName = item.name.toLowerCase();
+			if (fileName.endsWith('.geojson')) {
 				json = item.text;
-			} else if (name.endsWith('.csv')) {
-				this._merger.add(item.text);
+			} else if (fileName.endsWith('.csv')) {
+				console.log(fileName);
+				this._merger.addFile(item.text);
 				if (bigBoard.state === 'ready') {
 					// This is when all processes are launched
 					this._merger.merge();

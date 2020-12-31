@@ -1,4 +1,4 @@
-cityCode,index,countryCode,countryName,urbanAgglomeration,latitude,longitude,radius,yearMotorway,yearHST,Index,pop1950,pop1955,pop1960,pop1965,pop1970,pop1975,pop1980,pop1985,pop1990,pop1995,pop2000,pop2005,pop2010,pop2015,pop2020,pop2025,pop2030,nbOri,nbDes
+cityCode,index,countryCode,countryName,cityName,latitude,longitude,radius,yearMotorway,yearHST,Index,pop1950,pop1955,pop1960,pop1965,pop1970,pop1975,pop1980,pop1985,pop1990,pop1995,pop2000,pop2005,pop2010,pop2015,pop2020,pop2025,pop2030,nbOri,nbDes
 20002,2,4,Afghanistan,Kabul,34.528887,69.17246,NA,NA,NA,2,171,221,285,369,472,674,978,1240,1549,1929,2401,2989,3722,4635,5722,6932,8280,NA,NA
 20006,8,12,Algeria,El Djazaïr  (Algiers),36.7525,3.04197,NA,NA,NA,8,516,623,872,1081,1281,1507,1621,1672,1797,1973,2141,2282,2432,2594,2835,3149,3405,3,4
 20049,13,24,Angola,Luanda,-8.83682,13.23432,NA,NA,NA,13,138,174,219,315,459,599,771,1018,1390,1899,2591,3533,4508,5506,6837,8567,10429,1,2

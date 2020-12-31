@@ -1,4 +1,4 @@
-cityCode,index,countryCode,countryName,urbanAgglomeration,latitude,longitude,radius,yearMotorway,yearHST,Index,pop1950,pop1955,pop1960,pop1965,pop1970,pop1975,pop1980,pop1985,pop1990,pop1995,pop2000,pop2005,pop2010,pop2015,pop2020,pop2025,pop2030,nbOri,nbDes
+cityCode,index,countryCode,countryName,cityName,latitude,longitude,radius,yearMotorway,yearHST,Index,pop1950,pop1955,pop1960,pop1965,pop1970,pop1975,pop1980,pop1985,pop1990,pop1995,pop2000,pop2005,pop2010,pop2015,pop2020,pop2025,pop2030,nbOri,nbDes
 20005,4,8,Albania,Tiranë (Tirana),41.3275,19.81889,NA,NA,NA,4,85,107,135,145,157,174,194,218,247,288,335,373,411,454,505,561,601,2,1
 20107,42,40,Austria,Wien (Vienna),48.206443,16.370725,NA,NA,NA,42,1615,1621,1627,1624,1621,1583,1539,1535,1539,1544,1549,1641,1700,1753,1808,1878,1959,51,52
 20142,63,56,Belgium,Antwerpen,51.21989,4.40346,NA,NA,NA,63,759,786,813,835,855,868,880,889,897,906,927,949,971,994,1016,1043,1068,NA,NA

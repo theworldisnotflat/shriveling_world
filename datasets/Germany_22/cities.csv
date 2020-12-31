@@ -1,4 +1,4 @@
-index,countryCode,countryName,cityCode,urbanAgglomeration,latitude,longitude,radius,yearMotorway,yearHST
+index,countryCode,countryName,cityCode,cityName,latitude,longitude,radius,yearMotorway,yearHST
 671,276,Germany,204296,Berlin,52.52437,13.41053,,,
 672,276,Germany,204297,Bielefeld,52.03333,8.53333,,,
 673,276,Germany,204298,Bochum,51.48333,7.21667,,,

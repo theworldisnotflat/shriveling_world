@@ -184,19 +184,19 @@ export interface IPopulation {
  * City interface
  *
  * Parameters attached to each city:
+ * * [[cityCode]]
  * * [[countryCode]]
  * * [[countryName]]
- * * [[cityCode]]
- * * [[urbanAgglomeration]] is the name of the city
+ * * [[cityName]] is the name of the city
  * * [[radius]]: number; // for cases of cities in islands close to a continent
- * * [[populations]] (optionnal) for several years as provided in csv file 'population.csv'
- * * [[edges]] (optionnal) is a table will be determined by scanning the [[ITransportNetwork]]
+ * * [[populations]] (optional) for several years as provided in csv file 'population.csv'
+ * * [[edges]] (optional) is a table will be determined by scanning the [[ITransportNetwork]]
  */
 export interface ICity {
+	cityCode: number;
 	countryCode: number;
 	countryName: string;
-	cityCode: number;
-	urbanAgglomeration: string;
+	cityName: string;
 	latitude: number;
 	longitude: number;
 	radius: number; // For cases of cities in islands close to a continent
@@ -210,7 +210,7 @@ export interface ICity {
  */
 export interface ITransportModeSpeed {
 	year: number;
-	transportModeCode?: number;
+	transportModeCode: number;
 	speedKPH: number;
 }
 
@@ -218,38 +218,52 @@ export interface ITransportModeSpeed {
  * A transport mode has
  * * a [[name]],
  * * a [[code]],
- * * a [[mYearBegin]],
- * * a [[yearEnd]] (optionnal),
+ * * a [[mYearBegin]] mandatory
+ * * a [[mYearEnd]] (optional),
  * * can be [[terrestrial]] or not,
- * * and has a table of [[speeds]] that may change over years
+ * * and has a table of speeds [[speedTab]] that may change over years
  *
  * If mode is 'terrestrial' the transport mode speed can affect the slope of cones
- */
+ * All the info before come from reading files ("transport_mode" and "transport_mode_speed")
+ * The info below is computed in the code:
+ * * [[minEYear]] and
+ * * [[maxEYear]] are computed from info at
+ * edge level in file "transport_network"
+ * * [[minSYear]] and
+ * * [[maxSYear]] are computed from "transport_mode_speed" file
+ **/
 export interface ITranspMode {
 	name: string;
 	code: number;
 	mYearBegin: number;
 	mYearEnd?: number;
 	terrestrial: boolean; // If yes the transport mode speed can affect the slope of cones
-	speeds: ITransportModeSpeed[];
+	speedTab: ITransportModeSpeed[];
+	minEYear?: number;
+	maxEYear?: number;
+	minSYear?: number;
+	maxSYear?: number;
 }
 
 /**
  * Here we find data of a graph edge in the [[IEdge]]
+ * All data here come from the "transport_network" file
  *
- * Each edge has
- * * a [[eYearBegin]] and
- * * a [[eYearEnd]] (optionnal)
- * * an origin [[cityCodeOri]] (optionnal)
+ * An edge is defined by:
+ * * an origin [[cityCodeOri]]
  * * and  destination [[cityCodeDes]]
  * * a transport mode [[transportModeCode]]
+ * Each edge can have zero, one or two
+ * dates attached:
+ * * a [[eYearBegin]] (optional) and
+ * * a [[eYearEnd]] (optional)
  */
 export interface IEdge {
-	eYearBegin: number;
-	eYearEnd?: number;
-	cityCodeOri: number;
+	cityCodeOri?: number;
 	cityCodeDes: number;
 	transportModeCode: number;
+	eYearBegin?: number;
+	eYearEnd?: number;
 }
 
 export interface IBBox {
@@ -269,7 +283,7 @@ export interface IPseudoGeometry {
 export type IMergerState = 'missing' | 'ready' | 'pending' | 'complete';
 
 /**
- * * 'intrudedHeightRatio' heigth of the cone expressed in proportion to the earth radius
+ * * 'intrudedHeightRatio' height of the cone expressed in proportion to the earth radius
  * * 'coneStep' is the value in degree of the facet of the cone; low value means high definition of the geometry of cones
  */
 export type configurationObservableEvt =

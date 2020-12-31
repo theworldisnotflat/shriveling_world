@@ -98,7 +98,7 @@ export class ConeBoard {
 			cones.forEach((cone) => {
 				// UpdateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
 				// add object name to cone
-				cone.name = cone.otherProperties.origCityProperties.urbanAgglomeration;
+				cone.name = cone.otherProperties.origCityProperties.cityName;
 				this.coneMeshCollection.push(cone);
 				cone.scale.setScalar(this._scale);
 				this._scene.add(cone);

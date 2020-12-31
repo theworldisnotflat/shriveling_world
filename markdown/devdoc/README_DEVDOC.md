@@ -23,4 +23,4 @@ Mathematical and graphical objects:
 
 ## Data model
 The [data model](https://timespace.hypotheses.org/91) of __Shriveling world__:
-![data model](assets/modeles8.svg)
+![data model](assets/data_model_v10.svg)
