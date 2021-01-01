@@ -262,32 +262,21 @@ function networkFromCities(
 		if (minYear > item.eYearBegin) {
 			minYear = item.eYearBegin;
 		}
-		transportMode.forEach((transpMode) => {
-			if (transpMode.code === item.transportModeCode) {
-				if (item.eYearBegin < transpMode.minEYear) {
-					transpMode.minEYear = item.eYearBegin;
-				}
-				if (item.eYearEnd > transpMode.maxEYear) {
-					transpMode.maxEYear = item.eYearEnd;
-				}
-			}
-		});
 	});
 	transportMode.forEach((transpMode) => {
-		transportModeSpeed.forEach((transpModeSpeed) => {
-			// console.log(transpModeSpeed, transpModeSpeed.transportModeCode, transpMode.code);
-			if (transpModeSpeed.transportModeCode === transpMode.code) {
-				console.log(transpMode, transpModeSpeed);
-				if (transpModeSpeed.year < transpMode.minSYear) {
-					transpMode.minSYear = transpModeSpeed.year;
-				}
-				if (transpModeSpeed.year > transpMode.maxSYear) {
-					transpMode.maxSYear = transpModeSpeed.year;
-				}
+		// transpMode.minSYear = transpMode.speedTab[0];
+		// console.log('eee', transpMode.minSYear, transpMode.speedTab[0]);
+		transpMode.speedTab.forEach((transpSpeed) => {
+			console.log(transpSpeed.year, transpMode.minSYear);
+			if (transpSpeed.year < transpMode.minSYear) {
+				transpMode.minSYear = transpSpeed.year;
+			}
+			if (transpSpeed.year > transpMode.maxSYear) {
+				transpMode.maxSYear = transpSpeed.year;
 			}
 		});
 	});
-	// console.log('transportModeCode', transportMode);
+	console.log('transportModeCode', transportMode);
 	// Déterminer pour chaque type de transport la vitesse maximale par an
 	// dans la fourchette + vitesse max par an de la fourchette OK
 	/**
@@ -395,7 +384,7 @@ function networkFromCities(
 
 			tempMaxYear = Math.max(tempMaxYear, transportSpeed.year);
 		});
-		console.log(minYearTransport, transpMode);
+		// console.log(minYearTransport, transpMode);
 		maxYearTransport = Math.max(maxYearTransport, tempMaxYear);
 		tempTransportCodeTab = tempTransportCodeTab.sort((a, b) => a.year - b.year);
 		const interpolation = interpolator(tempTransportCodeTab, 'year', 'speed', false); // Boolean à false pour interpoler au delà des limites!
@@ -841,11 +830,9 @@ export class Merger {
 			const transportNetwork: IEdge[] = JSON.parse(JSON.stringify(this._transportNetwork), reviver);
 
 			// Linking tables to eachother
-			// merger(mother,               girl,        motherProp.,   girlProp.,      newName, forceArray, removeMotherProp., removeGirlProp.)
+			// merger(mother,     girl,               motherProp., girlProp.,      newName, forceArray, removeMotherProp., removeGirlProp.)
 			// will link transport modes and speed
-			console.log('avant merger', transportMode, transportModeSpeed);
 			merger(transportMode, transportModeSpeed, 'code', 'transportModeCode', 'speedTab', true, true, false);
-			console.log('après merger', transportMode, transportModeSpeed);
 			//    Merger(transportNetwork, transportModeCode, 'transportModeSpeed', 'code', 'transportDetails', false, false, false);
 			// will link cities with population.csv file table information
 			merger(cities, population, 'cityCode', 'cityCode', 'populations', false, true, false);
