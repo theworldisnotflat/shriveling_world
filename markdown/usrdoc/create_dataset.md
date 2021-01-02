@@ -7,11 +7,11 @@
 ## A system of five files
 
 According to the data model, _Shriveling world_ datasets are composed of five files:
-1. cities
-2. population
-3. transport network
-4. transport modes
-5. transport mode speed
+1. [cities](#cities-file)
+2. [population](#population-file)
+3. [transport network](#transport-network-file)
+4. [transport modes](#transport-modes-file)
+5. [transport mode speed](#transport-mode-speed-file)
 
 The files describe a __graph__ modelling a transport network between cities with __speed__ as a key parameter. The content of the files is [described below](#content-of-files-columns).
 
@@ -48,42 +48,36 @@ _maxEYear_|computed|max(_eYearEnd_)|Usually empty (exception is Concorde that st
 _minSYear_|computed|min(_year_)|The earliest year in the _transport_mode_speed_ file
 _maxSYear_|computed|max(_year_)|The latest year in the _transport_mode_speed_ file
 
-
 ### Step #2 Computing _yearBegin_ at transport mode level
 
-At this step the historical time span at transport mode level is computed.
-
-In a well formed dataset _mYearBegin_ should be the right starting date. As the model needs speed data, we need to check the existence of speed data from this date, hence considering _minSYear<sub>road</sub>_. Network data should be consistent with the [other data sources for the historical time span](#historical-time-span), and hence be considered when computing _yearBegin_. The equation becomes:
+In a well formed dataset _mYearBegin<sub>road</sub>_ should be the right starting date. Nevertheless, as the model needs speed data, we need to check the existence of speed data from this date, hence considering _minSYear<sub>road</sub>_. Network data should be consistent with the [other data sources for the historical time span](#historical-time-span), and hence be considered when computing _yearBegin<sub>road</sub>_. The equation becomes:
 
 _yearBegin<sub>road</sub>_ = max(_mYearBegin<sub>road</sub>_,   _minSYear<sub>road</sub>_,   _minEYear<sub>road</sub>_)
 
-In case _minEYear<sub>road</sub>_ is empty, there should be no impact. More generally any empty value should be ignored.
+In case one or several _minEYear<sub>road</sub>_ values are empty, the variable _minEYear_ should have no influence on forming _yearBegin_.
 
 The computation for _road_ described in steps #1 and #2 should be repeated for each transport mode accordingly.
 
 ### Step #3 Computing _yearEnd_ at transport mode level
 
- Any empty value should be ignored.
+The formula is:
 
 _yearEnd<sub>road</sub>_ = min( _mYearEnd<sub>road</sub>_,   _maxSYear<sub>road</sub>_,   _maxEYear<sub>road</sub>_)
 
-
 The computation for _road_ described in steps #1 and #3 should be repeated for each transport mode accordingly.
-
 
 ### Step #4 Compute the _Historical time span_
 
-
-Due to the  [differential nature of the model](#a-differential-model), _yearBegin_ should be indicated by the earliest year of operation among all the non road transport modes. In a typical, well formed dataset, one or several transport modes faster than road are described, typically expressway, high-speed rail or airlines. In this case the earliest date when the model can be computed is when one of these faster modes starts operations.
+Due to the  [differential nature of the model](#a-differential-model), _yearBegin_ should be indicated by the earliest year of operation among all the non road transport modes. In a typical, well formed dataset, one or several transport modes faster than road are described, typically expressway, high-speed rail or airlines. In this case the earliest date when the model can be computed is when one of these faster modes starts operations, providing _yearBegin<sub>road</sub>_ is equal or earlier.
 
 _yearBegin_ = min(_yearBegin<sub>Transp1</sub>_, _yearBegin<sub>Transp2</sub>_, ...)
 
-Usually -- exception made of historical past dataset and prospective datasets -- the yearEnd should be the current year. In order to car for these two exceptions, we add the rule that if _yearEnd<sub>road</sub>_ is empty, it should be populated with _currentYear_ and otherwise untouched.
+Usually -- exception made of historical past datasets and prospective datasets -- _yearEnd_ should be the current year. In order to care for these two cases, we add the rule that if _yearEnd<sub>road</sub>_ is empty, it should be populated with _currentYear_ and otherwise untouched.
 
 1. _yearEnd_ = max(_yearEnd<sub>Transp1</sub>_, _yearEnd<sub>Transp2</sub>_, ...)
 2. if _yearEnd<sub>road</sub>_ is empty, then _yearEnd<sub>road</sub>_ = _currentYear_,
 
-This situation in the -- well formed dataset -- case where years for road are consistent with other modes years data, and hence: _yearBegin<sub>road</sub>_ <= _yearBegin_ AND _yearEnd<sub>road</sub>_ >= _yearEnd_
+These formulas apply in the -- well formed dataset -- case where years for road are consistent with other modes years data, and hence: _yearBegin<sub>road</sub>_ <= _yearBegin_ AND _yearEnd<sub>road</sub>_ >= _yearEnd_
 
 <!-- Algorithm for determining the variables _yearBegin_ and  _yearEnd_:
 
@@ -108,8 +102,8 @@ In addition, the transport related period should also be coherent with the dates
 
 ## Mandatory elements in the dataset
 
-General __common sense__ instructions
-
+General __common sense__ instructions:
+* Files are in CSV format produced with default export options from LibreOffice Calc.
 * The [five files](#a-system-of-five-files) must all be present in the dataset
 * As shown in the [figure of the data model](#data-model) each file has optional and mandatory columns
   * mandatory columns must be populated completely, with no missing data
@@ -129,10 +123,8 @@ Specific __critical__ instructions:
 
 ## Content of files columns
 
-* (__to be checked__)The column order in files is not necessarily the same as proposed here.
-
-* Files are in CSV format produced with default export options from LibreOffice Calc.
-* Column names __MUST__ be rigorously respected
+* The column order in files is not necessarily the same as proposed here.
+* Column names __MUST__ be rigorously respected since they are used to identify files at run time.
 
 ### Cities file
 

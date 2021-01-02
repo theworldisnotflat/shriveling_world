@@ -102,7 +102,6 @@ export class GUI {
 			if (fileName.endsWith('.geojson')) {
 				json = item.text;
 			} else if (fileName.endsWith('.csv')) {
-				console.log(fileName);
 				this._merger.addFile(item.text);
 				if (bigBoard.state === 'ready') {
 					// This is when all processes are launched
