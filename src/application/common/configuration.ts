@@ -108,10 +108,10 @@ export const CONFIGURATION = {
 	get OVER_TWO_PI(): number {
 		return _OVER_TWO_PI;
 	},
-	get highLitedMaterial(): MeshBasicMaterial {
+	get highLightedMaterial(): MeshBasicMaterial {
 		return _highLitedMaterial;
 	},
-	set highLitedMaterial(value: MeshBasicMaterial) {
+	set highLightedMaterial(value: MeshBasicMaterial) {
 		_highLitedMaterial = value;
 	},
 	get TEXT_GEOMETRY_OPTIONS(): TextGeometryParameters {

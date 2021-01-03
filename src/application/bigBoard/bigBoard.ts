@@ -22,7 +22,7 @@ import { prepareConfiguration } from './initThree';
 import { ConeBoard } from '../cone/coneBoard';
 import { CountryBoard } from '../country/countryBoard';
 import { Merger } from './merger';
-import type { IMergerState, ISumUpCriteria, ILookupCurvesAndCityGraph, ICriterias } from '../definitions/project';
+import type { IMergerState, ISumUpCriteria, ILookupCurvesAndCityGraph, ICriteria } from '../definitions/project';
 import { saveAs } from 'file-saver';
 import type { PseudoCone } from '../cone/base';
 import type { CountryMeshShader } from '../country/countryMeshShader';
@@ -224,6 +224,14 @@ export default class BigBoard {
 		this.coneBoard.withLimits = value;
 	}
 
+	get complexCones(): boolean {
+		return this.coneBoard.complexCones;
+	}
+
+	set complexCones(value: boolean) {
+		this.coneBoard.complexCones = value;
+	}
+
 	/**
 	 * Getter : Get the current state of the merger
 	 * @returns missing || ready || complete || pending
@@ -299,65 +307,65 @@ export default class BigBoard {
 	/**
 	 * Highlith countries @see contryBoard.highLight
 	 * @todo unused and irrelevant @see contryBoard.highLight
-	 * @param {ICriterias} criterias
+	 * @param {ICriteria} criterias
 	 * @param {boolean} [light=true]
 	 * @memberof BigBoard
 	 */
-	public highLightCountries(criterias: ICriterias, light = true): void {
+	public highLightCountries(criterias: ICriteria, light = true): void {
 		this.countryBoard.highLight(criterias, light);
 	}
 
 	/**
 	 * Highlight cones @see coneBoard.highLight
 	 * @todo unused and irrelevant @see coneBoard.highLight
-	 * @param {ICriterias} criterias
+	 * @param {ICriteria} criterias
 	 * @param {boolean} [light=true]
 	 * @memberof BigBoard
 	 */
-	public highLightCones(criterias: ICriterias, light = true): void {
+	public highLightCones(criterias: ICriteria, light = true): void {
 		this.coneBoard.highLight(criterias, light);
 	}
 
 	/**
 	 * Update the withlimit parameter value of all cones in the [[coneMeshCollection]]
 	 * @todo unused and irrelevant @see coneBoard.setLimits
-	 * @param {ICriterias} criterias
+	 * @param {ICriteria} criterias
 	 * @param {boolean} limit
 	 * @memberof BigBoard
 	 */
-	public setLimits(criterias: ICriterias, limit: boolean): void {
+	public setLimits(criterias: ICriteria, limit: boolean): void {
 		this.coneBoard.setLimits(criterias, limit);
 	}
 
 	/**
 	 * Show/Hide a countryMeshCollection
 	 * @todo unused and irrelevant @see contryBoard.showCriterias
-	 * @param {ICriterias} criterias
+	 * @param {ICriteria} criterias
 	 * @param {boolean} state
 	 * @memberof BigBoard
 	 */
-	public showCountriesCriterias(criterias: ICriterias, state: boolean): void {
+	public showCountriesCriterias(criterias: ICriteria, state: boolean): void {
 		this.countryBoard.showCriterias(criterias, state);
 	}
 
 	/**
 	 * Show/Hide a coneMeshCollection
 	 * @todo unused and irrelevant @see contryBoard.showCriterias
-	 * @param {ICriterias} criterias
+	 * @param {ICriteria} criterias
 	 * @param {boolean} state
 	 * @memberof BigBoard
 	 */
-	public showConesCriterias(criterias: ICriterias, state: boolean): void {
+	public showConesCriterias(criterias: ICriteria, state: boolean): void {
 		this.coneBoard.showCriterias(criterias, state);
 	}
 
 	/**
 	 * Get a contryMeshCollection with all contries verifying 'criterias'
-	 * @param {ICriterias} criterias
+	 * @param {ICriteria} criterias
 	 * @returns {CountryMeshShader[]}
 	 * @memberof BigBoard
 	 */
-	public getCountries(criterias: ICriterias): CountryMeshShader[] {
+	public getCountries(criterias: ICriteria): CountryMeshShader[] {
 		let resultat: CountryMeshShader[] = [];
 		if (this.countryBoard.show) {
 			resultat = this.countryBoard.searchMesh(criterias);
@@ -368,11 +376,11 @@ export default class BigBoard {
 
 	/**
 	 * Get a coneMeshCollection with all cones verifying 'criterias'
-	 * @param {ICriterias} criterias
+	 * @param {ICriteria} criterias
 	 * @returns {PseudoCone[]}
 	 * @memberof BigBoard
 	 */
-	public getCones(criterias: ICriterias): PseudoCone[] {
+	public getCones(criterias: ICriteria): PseudoCone[] {
 		let resultat: PseudoCone[] = [];
 		if (this.coneBoard.show) {
 			resultat = this.coneBoard.searchMesh(criterias);
@@ -383,11 +391,11 @@ export default class BigBoard {
 
 	/**
 	 * Extrude contriesMeshCollection  with criterias by a factor value
-	 * @param {ICriterias} criterias
+	 * @param {ICriteria} criterias
 	 * @param {number} [value]
 	 * @memberof BigBoard
 	 */
-	public extrude(criterias: ICriterias, value?: number): void {
+	public extrude(criterias: ICriteria, value?: number): void {
 		this.countryBoard.extrude(criterias, value);
 	}
 

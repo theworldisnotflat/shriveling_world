@@ -4,6 +4,7 @@ import type { Cartographic } from '../common/utils';
 export abstract class PseudoCone extends Mesh {
 	public abstract otherProperties: any;
 	public abstract withLimits: boolean;
+	public abstract complexCones: boolean;
 	public abstract readonly cartographicPosition: Cartographic;
 	public abstract readonly cityCode: string;
 	constructor(geometry?: Geometry | BufferGeometry, material?: Material) {

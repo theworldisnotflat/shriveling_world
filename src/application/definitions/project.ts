@@ -156,7 +156,7 @@ export interface IItemCriteria {
 	comparator?: '=' | '>' | '>=' | '<' | '<=' | '!=';
 }
 
-export interface ICriterias {
+export interface ICriteria {
 	[attribut: string]: IItemCriteria;
 }
 

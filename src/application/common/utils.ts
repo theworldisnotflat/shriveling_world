@@ -5,7 +5,7 @@ import type {
 	ICartographic,
 	ISumUpCriteria,
 	IItemCriteria,
-	ICriterias,
+	ICriteria,
 	IOrderAscendant,
 	IBBox,
 	IListFile,
@@ -351,9 +351,9 @@ function getObjectByString(objet: any, path: string): any {
 	return objet;
 }
 
-export function searchCriterias<T>(
+export function searchCriteria<T>(
 	collection: T[],
-	criterias: ICriterias,
+	criterias: ICriteria,
 	forbiddenAttributes: string[] = [],
 	child?: string
 ): T[] {

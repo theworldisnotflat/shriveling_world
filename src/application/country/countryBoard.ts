@@ -1,7 +1,7 @@
 'use strict';
-import { Scene, Camera, Raycaster, Mesh, Vector2, Material } from 'three';
-import { updateSumUpCriteria, Cartographic, searchCriterias } from '../common/utils';
-import type { ISumUpCriteria, ICriterias } from '../definitions/project';
+import { Scene, Camera, Raycaster as Raycaster, Mesh, Vector2, Material } from 'three';
+import { updateSumUpCriteria, Cartographic, searchCriteria as searchCriteria } from '../common/utils';
+import type { ISumUpCriteria, ICriteria as ICriteria } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
 import { CountryMeshShader } from './countryMeshShader';
 import type * as GeoJSON from 'geojson';
@@ -10,9 +10,9 @@ export class CountryBoard {
 	public ready = false;
 	private readonly _scene: Scene;
 	private readonly _camera: Camera;
-	private readonly _raycaster: Raycaster;
-	private _highlitedCriterias: ICriterias = {};
-	private _selectedMeshs: Mesh[] = [];
+	private readonly _rayCaster: Raycaster;
+	private _highlightedCriteria: ICriteria = {};
+	private _selectedMeshes: Mesh[] = [];
 	private _scale = 1;
 	private _show = true;
 	private _opacity = 1;
@@ -46,7 +46,7 @@ export class CountryBoard {
 	}
 
 	set scale(value: number) {
-		this._selectedMeshs.forEach((mesh) => {
+		this._selectedMeshes.forEach((mesh) => {
 			mesh.scale.setScalar(value);
 		});
 		this.countryMeshCollection.forEach((mesh) => {
@@ -75,7 +75,7 @@ export class CountryBoard {
 	public constructor(scene: Scene, camera: Camera) {
 		this._scene = scene;
 		this._camera = camera;
-		this._raycaster = new Raycaster();
+		this._rayCaster = new Raycaster();
 	}
 
 	public async add(geoJson: GeoJSON.FeatureCollection): Promise<void> {
@@ -98,7 +98,7 @@ export class CountryBoard {
 			this.countryMeshCollection.splice(i, 1);
 		}
 
-		this._selectedMeshs.forEach((mesh) => {
+		this._selectedMeshes.forEach((mesh) => {
 			mesh.visible = false;
 		});
 		this._sumUpProperties = {};
@@ -109,13 +109,13 @@ export class CountryBoard {
 		const mouse = new Vector2();
 		mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
 		mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-		this._raycaster.setFromCamera(mouse, this._camera);
-		const intersects = this._raycaster.intersectObjects(this.countryMeshCollection);
+		this._rayCaster.setFromCamera(mouse, this._camera);
+		const intersects = this._rayCaster.intersectObjects(this.countryMeshCollection);
 		if (intersects.length > 0) {
 			resultat = <CountryMeshShader>intersects[0].object;
 			this.highLight(resultat.otherProperties, highLight);
 		} else {
-			this._selectedMeshs.forEach((mesh) => {
+			this._selectedMeshes.forEach((mesh) => {
 				if (!Array.isArray(mesh.material)) {
 					mesh.material.visible = false;
 				}
@@ -125,8 +125,8 @@ export class CountryBoard {
 		return resultat;
 	}
 
-	public extrude(criterias: ICriterias, value: number): void {
-		this._selectedMeshs.forEach((mesh) => {
+	public extrude(criterias: ICriteria, value: number): void {
+		this._selectedMeshes.forEach((mesh) => {
 			mesh.visible = false;
 		});
 		this.searchMesh(criterias).forEach((mesh) => {
@@ -135,40 +135,40 @@ export class CountryBoard {
 		this._reHighLight();
 	}
 
-	public highLight(criterias: ICriterias, light: boolean): void {
-		if (criterias !== this._highlitedCriterias) {
-			this._highlitedCriterias = criterias;
-			this._selectedMeshs.forEach((mesh) => {
+	public highLight(criterias: ICriteria, light: boolean): void {
+		if (criterias !== this._highlightedCriteria) {
+			this._highlightedCriteria = criterias;
+			this._selectedMeshes.forEach((mesh) => {
 				this._scene.remove(mesh);
 			});
-			this._selectedMeshs = this.searchMesh(criterias).map((mesh) => {
+			this._selectedMeshes = this.searchMesh(criterias).map((mesh) => {
 				const geometry = mesh.geometry;
-				const out = new Mesh(geometry, CONFIGURATION.highLitedMaterial);
+				const out = new Mesh(geometry, CONFIGURATION.highLightedMaterial);
 				this._scene.add(out);
 				out.scale.setScalar(this._scale);
 				return out;
 			});
 		}
 
-		this._selectedMeshs.forEach((mesh) => {
+		this._selectedMeshes.forEach((mesh) => {
 			if (!Array.isArray(mesh.material)) {
 				mesh.material.visible = light;
 			}
 		});
 	}
 
-	public searchMesh(criterias: ICriterias | Cartographic, path = ''): CountryMeshShader[] {
+	public searchMesh(criterias: ICriteria | Cartographic, path = ''): CountryMeshShader[] {
 		let resultat: CountryMeshShader[];
 		if (criterias instanceof Cartographic) {
 			resultat = this.countryMeshCollection.filter((country) => country.isInside(criterias));
 		} else {
-			resultat = searchCriterias(this.countryMeshCollection, criterias, [], 'otherProperties.' + path);
+			resultat = searchCriteria(this.countryMeshCollection, criterias, [], 'otherProperties.' + path);
 		}
 
 		return resultat;
 	}
 
-	public showCriterias(criterias: ICriterias, state: boolean): void {
+	public showCriterias(criterias: ICriteria, state: boolean): void {
 		const realState = state && this._show;
 		this.searchMesh(criterias).forEach((country) => {
 			country.visible = realState;
@@ -176,15 +176,15 @@ export class CountryBoard {
 	}
 
 	private _reHighLight(): void {
-		if (this._selectedMeshs.length > 0) {
+		if (this._selectedMeshes.length > 0) {
 			let visible = false;
-			const temp = this._selectedMeshs[0].material;
+			const temp = this._selectedMeshes[0].material;
 			if (!Array.isArray(temp)) {
 				visible = temp.visible;
 			}
 
-			const criterias = this._highlitedCriterias;
-			this._highlitedCriterias = undefined;
+			const criterias = this._highlightedCriteria;
+			this._highlightedCriteria = undefined;
 			this.highLight(criterias, visible);
 		}
 	}
