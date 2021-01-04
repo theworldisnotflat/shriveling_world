@@ -436,15 +436,15 @@ export function DragNDrop(id: string | HTMLElement, callback: (list: IListFile[]
 }
 
 /**
- * Fonction permettant d'interpoler des valeurs numériques depuis un tableau
- * @param  normalizedBase tableau d'objets contenant un attribut numérique en
- * abscisses et un attribut numérique en ordonnées. Le tableau doit être
- * ordonnée selon l'attribut des abscisses
- * @param  xProperty nom de l'attribut correspondant aux abscisses.
- * @param  yProperty nom de l'attribut correspondant aux ordonnées.
- * @param  strongLimit indique si la fonction retournée extrapole hors des
- * limites du tablea fourni en paramètre..
- * @return  une fonction interpolant
+ * Function to interpolate numerical values from a given table
+ * @param  normalizedBase input table containing a numeric attribute
+ * in x and a numeric attribute in y. The table must be ordered
+ * according to x
+ * @param  xProperty
+ * @param  yProperty
+ * @param  strongLimit allow to extrapolate values beyond the limits
+ * of the input table
+ * @return  an interpolated function
  */
 export function interpolator<U>(
 	normalizedBase: U[],
@@ -495,7 +495,7 @@ export function interpolator<U>(
 			if (found) {
 				out = index < 0 ? 0 : normalizedBase[index][yProperty];
 			} else {
-				// Calcul du ratio
+				// computing ratio
 				out =
 					((normalizedBase[indMax][yProperty] - normalizedBase[indMin][yProperty]) *
 						(x - normalizedBase[indMin][xProperty])) /

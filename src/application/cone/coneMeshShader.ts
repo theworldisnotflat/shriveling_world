@@ -181,14 +181,14 @@ function regenerateFromConeStep(): void {
 function updateAlphas(): void {
 	const year = CONFIGURATION.year;
 	const twoPI = CONFIGURATION.TWO_PI;
-	const ecartMinimum = _discriminant * CONFIGURATION.coneStep;
+	const minimumGap = _discriminant * CONFIGURATION.coneStep;
 	let clockA: number;
 	let clockB: number;
 	let interpol: (x: number) => number;
 	if (!_alphas.hasOwnProperty(year)) {
 		const temp = new Float32Array(_height * _width);
 		for (let i = 0; i < _height; i++) {
-			const complexAlpha = _cones[i].getcomplexAlpha(year);
+			const complexAlpha = _cones[i].getComplexAlpha(year);
 			const coneAlpha = complexAlpha.coneRoadAlpha;
 			const alphaTab = [...complexAlpha.tab];
 			let subAlphas: Float32Array;
@@ -209,7 +209,7 @@ function updateAlphas(): void {
 				for (let i = length + 1; i > 0; i--) {
 					clockA = alphaTab[i - 1].clock;
 					clockB = alphaTab[i].clock;
-					if (clockB - clockA > ecartMinimum) {
+					if (clockB - clockA > minimumGap) {
 						// Ajout d'une pente de route quand
 						// l'écart d'azimut entre deux destinations est trop grande
 						alphaTab.splice(i, 0, { alpha: coneAlpha, clock: clockA + (clockB - clockA) / 2 });
@@ -515,7 +515,7 @@ export class ConeMeshShader extends PseudoCone {
 	 * Return a [[IComplexAlphaItem]] corresponding to a year for the city defined in this [[ConeMeshShader]]
 	 * @param year
 	 */
-	public getcomplexAlpha(year: string | number): IComplexAlphaItem {
+	public getComplexAlpha(year: string | number): IComplexAlphaItem {
 		return this._complexAlpha[year];
 	}
 

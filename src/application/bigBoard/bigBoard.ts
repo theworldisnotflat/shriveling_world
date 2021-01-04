@@ -32,9 +32,6 @@ import type * as GeoJSON from 'geojson';
 import type { IListFile } from '../definitions/project';
 
 /**
- * C'est la classe qui contrôle toute l'application: la liste des cônes, pays et
- * courbes ainsi que la scene THREE.JS + les commandes et le comportement...
- *
  * This class controls all the application:
  * * the list of [[_cones]],
  * * [[_countries]],
@@ -43,8 +40,6 @@ import type { IListFile } from '../definitions/project';
  */
 export default class BigBoard {
 	/**
-	 * La configuration de l'application accessible en statique!
-	 *
 	 * the configuration of the app, available in static
 	 */
 	public static configuration = CONFIGURATION;
@@ -52,14 +47,10 @@ export default class BigBoard {
 	public light: DirectionalLight;
 	public ambient: AmbientLight;
 	/**
-	 * Ensemble des cônes (un cône correspond à une ville et un mode de transport)
-	 *
 	 * set of cones: a [[_cone]] corresponds to a city and a mode of terrestrial transport
 	 */
 	public coneBoard: ConeBoard;
 	/**
-	 * Liste des pays générés depuis un fichier geojson
-	 *
 	 * list of countries generated from a geojson file
 	 */
 	public countryBoard: CountryBoard;
@@ -80,7 +71,6 @@ export default class BigBoard {
 	private _merger: Merger;
 	private _gui: GUI;
 
-	// Noeud ajout nom Ville
 	private _geometryText: Group;
 
 	/**
@@ -106,7 +96,7 @@ export default class BigBoard {
 	}
 
 	/**
-	 * Enable/Disable showCitiesName paramater in order to show/hide
+	 * Enable/Disable showCitiesName parameter in order to show/hide
 	 * cities names
 	 *
 	 * @memberof BigBoard
@@ -127,7 +117,7 @@ export default class BigBoard {
 	}
 
 	/**
-	 * Getter : Get scale parameter of the contries parameter
+	 * Getter : Get scale parameter of the countries parameter
 	 *
 	 * @type {number}
 	 * @memberof BigBoard
@@ -164,7 +154,7 @@ export default class BigBoard {
 	}
 
 	/**
-	 * Getter: Get show parameter of contries paramter
+	 * Getter: Get show parameter of countries paramter
 	 * @type {boolean}
 	 * @memberof BigBoard
 	 */
@@ -173,7 +163,7 @@ export default class BigBoard {
 	}
 
 	/**
-	 * Setter : Update the value of show paramater of contries parameter
+	 * Setter : Update the value of show parameter of countries parameter
 	 * @memberof BigBoard
 	 */
 	set showCountries(value: boolean) {

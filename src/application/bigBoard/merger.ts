@@ -41,14 +41,14 @@ import { ConeBoard } from '../cone/coneBoard';
  * Realizes the merge of two tables base on an attribute. The key for the merge is renamed.
  * At the end of the process the recipient table is enriched.
  *
- * @param mother le tableau d'objet receptacle du croisement/the recipient table
- * @param girl le tableau qui complète le tableau précédent/where additional data lies
- * @param motherProperty l'attribut du tableau mother sur lequel le croisement se fera/the property of the merge
- * @param girlProperty l'attribut du tableau girl sur lequel le croisement se fera/the property of the merge
- * @param newName le nom de l'attribut issu du croisement dans le tableau mother/
- * @param forceArray force l'attribut synthétique à être un tableau
- * @param girlPropertyToRemove indique si on doit retirer la propriété dans le tableau girl
- * @param motherPropertyToRemove indique si on doit retirer la propriété dans le tableau girl
+ * @param mother the recipient table
+ * @param girl where additional data lies
+ * @param motherProperty the mother attribute on which merge is realized
+ * @param girlProperty   the girl   attribute on which merge is realized
+ * @param newName name of the resulting attribute
+ * @param forceArray forces attribute to being a table
+ * @param girlPropertyToRemove
+ * @param motherPropertyToRemove
  */
 function merger<U, V>(
 	mother: U[],
@@ -308,9 +308,7 @@ function networkFromCities(
 		alpha?: number;
 	}
 	/**
-	 * Interface ayant pour attributs le nom du transport considéré et son tableau
-	 * de vitesses. Ce tableau associe à une année la vitesse (dans la limite de
-	 * la fenêtre temporelle décrite dans le fichier csv initial) du mode de transport.
+	 * Interface of a transport mode with table od speed
 	 */
 	interface ITabSpeedPerYearPerTranspModeItem {
 		tabSpeedPerYear: { [year: string]: ISpeedAlpha };
@@ -336,8 +334,6 @@ function networkFromCities(
 	let roadCode: number;
 	_transportName = { curves: [], cones: [] };
 	/**
-	 * Tableau associatif liant un mode de transport à un un objet de type [[ITabSpeedPerYearPerTranspModeItem]]
-	 *
 	 * association table linking a transport mode to an object of type [[ITabSpeedPerYearPerTranspModeItem]]
 	 */
 	const speedPerTransportPerYear: { [transportCode: string]: ITabSpeedPerYearPerTranspModeItem } = {};
@@ -385,7 +381,7 @@ function networkFromCities(
 		// console.log(minYearTransport, transpMode);
 		maxYearTransport = Math.max(maxYearTransport, tempMaxYear);
 		tempTransportCodeTab = tempTransportCodeTab.sort((a, b) => a.year - b.year);
-		const interpolation = interpolator(tempTransportCodeTab, 'year', 'speed', false); // Boolean à false pour interpoler au delà des limites!
+		const interpolation = interpolator(tempTransportCodeTab, 'year', 'speed', false); // Boolean at false to interpolate beyond limits!
 		let speed: number;
 		// will determine [maximumSpeed] for each year
 		for (let year = minYearTransport; year <= maxYearTransport; year++) {
@@ -435,7 +431,7 @@ function networkFromCities(
 		}
 	}
 
-	// Faire lookup des cartographic/referential par citycode. OK
+	// Faire lookup des cartographic/referential par cityCode. OK
 	const lookupPosition: { [cityCode: string]: NEDLocal } = {};
 	const lookupMiddle: { [cityCodeBegin: number]: { [cityCodeEnd: number]: ILookupCacheAnchorsEdgeCone } } = {};
 	cities.forEach((city) => {
@@ -495,9 +491,7 @@ function networkFromCities(
 	}
 
 	// ProcessedODs will contain the value of edgeTranspModeName for each existing edge (OD)
-	// processedODs évite de dupliquer visuellement les lignes:
-	//  - génération de la ligne partant de cityA vers cityB
-	//  - pas de génération de la ligne partant de cityB vers cityA grâce à processedODs
+	// processedODs avoids duplicating edges:
 	const processedODs: { [begin: string]: { [end: string]: string[] } } = {};
 	// Second part of the function
 	// the main loop for each city
@@ -661,9 +655,9 @@ function networkFromCities(
 				}
 			}
 
-			// À ce niveau, toutes les villes destinataires ont été balayées, il faut
-			// remettre dans l'ordre de clock le tableau générant les cônes complexes
-			// et insérer le résultat dans network et insérer les edgesData!
+			// At this stage all cities have been processed
+			// It is necessary to re-order the table of clocks to generate the complex cones
+			// and inserting the result in network and insert the edgeData
 			for (const yearC in cone) {
 				if (cone.hasOwnProperty(yearC)) {
 					cone[yearC].tab = cone[yearC].tab.sort((a, b) => a.clock - b.clock);
@@ -671,8 +665,8 @@ function networkFromCities(
 			}
 
 			if (Object.keys(cone).length === 0) {
-				// Cas des villes sans destinations ou uniquement des transports type aérien
-				// console.log('speedPerTransportPerYear', speedPerTransportPerYear, minYear, maxYear);
+				// The case of cities not being origin or destinations in the network
+				// or only by aerial mode
 				for (let year = minYear; year <= maxYear; year++) {
 					const coneAlpha = speedPerTransportPerYear[roadCode].tabSpeedPerYear[year].alpha;
 					cone[year] = { coneRoadAlpha: coneAlpha, tab: [] };
@@ -765,11 +759,11 @@ export class Merger {
 
 	/**
 	 * Connects a file read in the dataset folder
-	 * with the relevant datastructures of the code.
+	 * with the relevant data structures of the code.
 	 * A file type is identified through its headings:
 	 * the headings read are compared to a hard coded
 	 * headings list
-	 * Once datafile type is identfied, the parser
+	 * Once data file type is identified, the parser
 	 * is called with function [[getCSV]]
 	 * @param readString
 	 */
@@ -820,7 +814,7 @@ export class Merger {
 	 *   * [[_state]]
 	 * * link all these tables to each other
 	 * * execute the main process i.e. [[networkFromCities]]
-	 * * retrievec resulting data into [[_edgesAndTranspModes]]
+	 * * retrieve the resulting data into [[_edgesAndTranspModes]]
 	 */
 	public merge(): void {
 		if (this._state === 'ready') {
@@ -835,7 +829,7 @@ export class Merger {
 			);
 			const transportNetwork: IEdge[] = JSON.parse(JSON.stringify(this._transportNetwork), reviver);
 
-			// Linking tables to eachother
+			// Linking tables to each other
 			// merger(mother,     girl,               motherProp., girlProp.,      newName, forceArray, removeMotherProp., removeGirlProp.)
 			// will link transport modes and speed
 			merger(transportMode, transportModeSpeed, 'code', 'transportModeCode', 'speedTab', true, true, false);

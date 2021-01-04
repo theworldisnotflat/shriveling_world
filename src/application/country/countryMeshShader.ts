@@ -287,7 +287,7 @@ function generateVertices(geometry: GeoJSON.MultiPolygon | GeoJSON.Polygon): IPr
 	});
 }
 
-function uniqueOccurenceCounter(list: any[]): string {
+function uniqueCaseCounter(list: any[]): string {
 	const dictionary = {};
 	list.forEach((item) => {
 		for (const att in item) {
@@ -440,7 +440,7 @@ export class CountryMeshShader extends Mesh {
 					preMeshes.push({ geometry, properties })
 				);
 			});
-			const mainProperty = uniqueOccurenceCounter(uniqueProperties);
+			const mainProperty = uniqueCaseCounter(uniqueProperties);
 			let indexCount = 0;
 			let oldIndexCount = 0;
 			const vertexArrayEntries: number[] = [];
