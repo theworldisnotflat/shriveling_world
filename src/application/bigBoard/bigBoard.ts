@@ -207,7 +207,7 @@ export default class BigBoard {
 	}
 
 	/**
-	 * Getter : Get if the boundaries of the cones is limited by the contries
+	 * Getter : Get if the boundaries of the cones is limited by the countries
 	 * @type {boolean}
 	 * @memberof BigBoard
 	 */
@@ -216,7 +216,7 @@ export default class BigBoard {
 	}
 
 	/**
-	 * Setter : update the withlimits paramater of the cones paramaters
+	 * Setter : update the withlimits paramater of the cones parameters
 	 * if true the boundaries of cones will be limited by the boundaries of countries
 	 * @memberof BigBoard
 	 */

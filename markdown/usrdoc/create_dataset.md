@@ -118,6 +118,7 @@ General __common sense__ instructions:
 Specific __critical__ instructions:
 * The file [_transport mode_](#transport-mode-file) __MUST__ contain a mode named _Road_ that will define the slope of cones; cones is the geographic surface and the _Road_ speed is attached to this surface
 * For the same reason the file [_transport mode speed_](#transport-mode-speed-file) __MUST__ contain speed information for the mode _road_
+* The mode _road_ __MUST__ be _terrestrial_ (property _terrestrial_ = 1)
 * The model being by design [differential](#a-differential-model), at least one other transport mode with a speed __MUST__ be described (in both files  [_transport mode_](#transport-mode-file) and [_transport mode speed_](#transport-mode-speed-file))
 
 
