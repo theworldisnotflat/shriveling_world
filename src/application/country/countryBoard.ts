@@ -10,7 +10,7 @@ export class CountryBoard {
 	public ready = false;
 	private readonly _scene: Scene;
 	private readonly _camera: Camera;
-	private readonly _rayCaster: Raycaster;
+	private readonly _raycaster: Raycaster;
 	private _highlightedCriteria: ICriteria = {};
 	private _selectedMeshes: Mesh[] = [];
 	private _scale = 1;
@@ -55,7 +55,7 @@ export class CountryBoard {
 		this._scale = value;
 	}
 
-	get lookupCriterias(): ISumUpCriteria {
+	get lookupCriteria(): ISumUpCriteria {
 		return this._sumUpProperties;
 	}
 
@@ -75,7 +75,7 @@ export class CountryBoard {
 	public constructor(scene: Scene, camera: Camera) {
 		this._scene = scene;
 		this._camera = camera;
-		this._rayCaster = new Raycaster();
+		this._raycaster = new Raycaster();
 	}
 
 	public async add(geoJson: GeoJSON.FeatureCollection): Promise<void> {
@@ -105,15 +105,15 @@ export class CountryBoard {
 	}
 
 	public getMeshByMouse(event: MouseEvent, highLight = false): CountryMeshShader {
-		let resultat: CountryMeshShader;
+		let result: CountryMeshShader;
 		const mouse = new Vector2();
 		mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
 		mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-		this._rayCaster.setFromCamera(mouse, this._camera);
-		const intersects = this._rayCaster.intersectObjects(this.countryMeshCollection);
+		this._raycaster.setFromCamera(mouse, this._camera);
+		const intersects = this._raycaster.intersectObjects(this.countryMeshCollection);
 		if (intersects.length > 0) {
-			resultat = <CountryMeshShader>intersects[0].object;
-			this.highLight(resultat.otherProperties, highLight);
+			result = <CountryMeshShader>intersects[0].object;
+			this.highLight(result.otherProperties, highLight);
 		} else {
 			this._selectedMeshes.forEach((mesh) => {
 				if (!Array.isArray(mesh.material)) {
@@ -122,26 +122,26 @@ export class CountryBoard {
 			});
 		}
 
-		return resultat;
+		return result;
 	}
 
-	public extrude(criterias: ICriteria, value: number): void {
+	public extrude(criteria: ICriteria, value: number): void {
 		this._selectedMeshes.forEach((mesh) => {
 			mesh.visible = false;
 		});
-		this.searchMesh(criterias).forEach((mesh) => {
+		this.searchMesh(criteria).forEach((mesh) => {
 			mesh.extruded = value;
 		});
 		this._reHighLight();
 	}
 
-	public highLight(criterias: ICriteria, light: boolean): void {
-		if (criterias !== this._highlightedCriteria) {
-			this._highlightedCriteria = criterias;
+	public highLight(criteria: ICriteria, light: boolean): void {
+		if (criteria !== this._highlightedCriteria) {
+			this._highlightedCriteria = criteria;
 			this._selectedMeshes.forEach((mesh) => {
 				this._scene.remove(mesh);
 			});
-			this._selectedMeshes = this.searchMesh(criterias).map((mesh) => {
+			this._selectedMeshes = this.searchMesh(criteria).map((mesh) => {
 				const geometry = mesh.geometry;
 				const out = new Mesh(geometry, CONFIGURATION.highLightedMaterial);
 				this._scene.add(out);
@@ -168,7 +168,7 @@ export class CountryBoard {
 		return resultat;
 	}
 
-	public showCriterias(criterias: ICriteria, state: boolean): void {
+	public showCriteria(criterias: ICriteria, state: boolean): void {
 		const realState = state && this._show;
 		this.searchMesh(criterias).forEach((country) => {
 			country.visible = realState;

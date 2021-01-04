@@ -70,7 +70,7 @@ export class ConeBoard {
 		this._scale = value;
 	}
 
-	get lookupCriterias(): ISumUpCriteria {
+	get lookupCriteria(): ISumUpCriteria {
 		return this._sumUpProperties;
 	}
 
@@ -101,9 +101,9 @@ export class ConeBoard {
 	 */
 	public add(lookup: ILookupCurvesAndCityGraph): void {
 		this.clean();
-		const bboxes = this._countries.countryMeshCollection.map((country) => country.bbox);
+		const bBoxes = this._countries.countryMeshCollection.map((country) => country.bBox);
 		console.log(lookup.lookupCityNetwork);
-		void ConeMeshShader.generateCones(lookup.lookupCityNetwork, bboxes).then((cones) => {
+		void ConeMeshShader.generateCones(lookup.lookupCityNetwork, bBoxes).then((cones) => {
 			cones.forEach((cone) => {
 				// UpdateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
 				// add object name to cone
@@ -148,15 +148,15 @@ export class ConeBoard {
 	}
 
 	public getMeshByMouse(event: MouseEvent, highLight = false): PseudoCone {
-		let resultat: PseudoCone;
+		let result: PseudoCone;
 		const mouse = new Vector2();
 		mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
 		mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 		this._raycaster.setFromCamera(mouse, this._camera);
 		const intersects = this._raycaster.intersectObjects(this.coneMeshCollection);
 		if (intersects.length > 0) {
-			resultat = <PseudoCone>intersects[0].object;
-			this.highLight(resultat.otherProperties, highLight);
+			result = <PseudoCone>intersects[0].object;
+			this.highLight(result.otherProperties, highLight);
 		} else {
 			this._selectedMeshes.forEach((mesh) => {
 				if (!Array.isArray(mesh.material)) {
@@ -165,7 +165,7 @@ export class ConeBoard {
 			});
 		}
 
-		return resultat;
+		return result;
 	}
 
 	public setLimits(criteria: ICriteria, limit: boolean): void {
@@ -197,24 +197,19 @@ export class ConeBoard {
 	}
 
 	public searchMesh(criteria: ICriteria | Cartographic, path = ''): PseudoCone[] {
-		let resultat: PseudoCone[];
+		let result: PseudoCone[];
 		if (criteria instanceof Cartographic) {
-			resultat = this.coneMeshCollection.filter(
+			result = this.coneMeshCollection.filter(
 				(cone) => cone.cartographicPosition.approximateDistance(criteria) < 1e-13
 			);
 		} else {
-			resultat = searchCriteria(
-				this.coneMeshCollection,
-				criteria,
-				forbiddenAttributes,
-				'otherProperties.' + path
-			);
+			result = searchCriteria(this.coneMeshCollection, criteria, forbiddenAttributes, 'otherProperties.' + path);
 		}
 
-		return resultat;
+		return result;
 	}
 
-	public showCriterias(criteria: ICriteria, state: boolean): void {
+	public showCriteria(criteria: ICriteria, state: boolean): void {
 		const realState = state && this._show;
 		this.searchMesh(criteria).forEach((cone) => {
 			cone.visible = realState;
@@ -222,15 +217,15 @@ export class ConeBoard {
 	}
 
 	// Private _reHighLight(): void {
-	//     if (this._selectedMeshs.length > 0) {
+	//     if (this._selectedMeshes.length > 0) {
 	//         let visible = false;
-	//         let temp = this._selectedMeshs[0];
+	//         let temp = this._selectedMeshes[0];
 	//         if (!Array.isArray(temp.material)) {
 	//             visible = temp.material.visible;
 	//         }
-	//         let criterias = this._highlitedCriterias;
-	//         this._highlitedCriterias = undefined;
-	//         this.highLight(criterias, visible);
+	//         let criteria = this._highlightedCriteria;
+	//         this._highlightedCriteria = undefined;
+	//         this.highLight(criteria, visible);
 	//     }
 	// }
 }

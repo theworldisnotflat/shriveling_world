@@ -76,18 +76,18 @@ function localLimitsRaw(
 			allPoints.push(referential.cartographic2NED(position));
 		});
 	});
-	const resultat: Array<{ clock: number; distance: number }> = [];
+	const result: Array<{ clock: number; distance: number }> = [];
 	allPoints.forEach((pos) => {
 		const clook = Math.atan2(pos.y, pos.x);
 		const distance = Math.sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z);
-		resultat.push(
+		result.push(
 			{ clock: clook, distance },
 			{ clock: clook + CONFIGURATION.TWO_PI, distance },
 			{ clock: clook - CONFIGURATION.TWO_PI, distance }
 		);
 	});
-	resultat.sort((a, b) => a.clock - b.clock);
-	return resultat;
+	result.sort((a, b) => a.clock - b.clock);
+	return result;
 }
 
 /**
@@ -105,20 +105,20 @@ function localLimitsFunction(
 			result[clockClass] === undefined ? current.distance : Math.min(result[clockClass], current.distance);
 		return result;
 	}, {});
-	const temporaire: Array<{ clock: number; distance: number }> = [];
+	const temporary: Array<{ clock: number; distance: number }> = [];
 	for (const clockString in clockDistance) {
 		if (clockDistance.hasOwnProperty(clockString)) {
-			temporaire.push({ clock: Number.parseFloat(clockString), distance: clockDistance[clockString] });
+			temporary.push({ clock: Number.parseFloat(clockString), distance: clockDistance[clockString] });
 		}
 	}
 
-	return interpolator(temporaire, 'clock', 'distance');
+	return interpolator(temporary, 'clock', 'distance');
 }
 
 /**
  * Function [[regenerateFromConeStep]] when [[coneStep]] is modified
  *
- * [[clocks]] are unitary triangles that compose cones, the higher [[conestep]] the smaller clocks are
+ * [[clocks]] are unitary triangles that compose cones, the higher [[coneStep]] the smaller clocks are
  */
 function regenerateFromConeStep(): void {
 	const step = CONFIGURATION.coneStep;
@@ -307,9 +307,9 @@ export class ConeMeshShader extends PseudoCone {
 	/**
 	 * Will [[generateCones]] from [[cityGraph]]
 	 * @param lookup
-	 * @param bboxes
+	 * @param bBoxes
 	 */
-	public static async generateCones(lookup: ILookupCityGraph, bboxes: IBBox[]): Promise<ConeMeshShader[]> {
+	public static async generateCones(lookup: ILookupCityGraph, bBoxes: IBBox[]): Promise<ConeMeshShader[]> {
 		_ready = false;
 		_cones = [];
 		fullCleanArrays();
@@ -396,7 +396,7 @@ export class ConeMeshShader extends PseudoCone {
 				const referentialGLSL = cityTransport.referential.ned2ECEFMatrix;
 				const terrestrialData = cityTransport.cone;
 				_localLimitsLookup[cityCode] = localLimitsRaw(
-					matchingBBox(position, bboxes),
+					matchingBBox(position, bBoxes),
 					cityTransport.referential
 				);
 				const commonProperties = {};

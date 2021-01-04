@@ -38,7 +38,7 @@ let _projectionInit: PROJECTION_ENUM = PROJECTION_ENUM.none;
 let _projectionEnd: PROJECTION_ENUM = PROJECTION_ENUM.none;
 let _projectionPercent = 0;
 let _year: string | number = 1980;
-let _highLitedMaterial: MeshBasicMaterial;
+let _highLightedMaterial: MeshBasicMaterial;
 let _COUNTRY_MATERIAL: Material;
 let _BASIC_CONE_MATERIAL: Material;
 let _BASIC_TEXT_MATERIAL: MeshBasicMaterial;
@@ -109,10 +109,10 @@ export const CONFIGURATION = {
 		return _OVER_TWO_PI;
 	},
 	get highLightedMaterial(): MeshBasicMaterial {
-		return _highLitedMaterial;
+		return _highLightedMaterial;
 	},
 	set highLightedMaterial(value: MeshBasicMaterial) {
-		_highLitedMaterial = value;
+		_highLightedMaterial = value;
 	},
 	get TEXT_GEOMETRY_OPTIONS(): TextGeometryParameters {
 		return _TEXT_GEOMETRY_OPTIONS;

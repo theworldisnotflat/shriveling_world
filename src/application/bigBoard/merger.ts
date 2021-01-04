@@ -5,13 +5,13 @@
  * the functions that must run each time a parameter is modified
  * are located in the respective files for cones and links
  *
- * The general achitecture of the project is:
+ * The general architecture of the project is:
  * * merger with computing intensive functions used once
  * * shaders with functions fast to execute in interaction with the user
  * * display conversions where final computation occurs, including geographical projections
  *
  * The merger function itself realise a connection between data
- * read in csv files in a manner similar to a databse
+ * read in csv files in a manner similar to a database
  * so that the project can easily access any part of the input data
  *
  */
@@ -35,8 +35,10 @@ import type {
 	ILookupComplexAlpha,
 } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
+import { ConeBoard } from '../cone/coneBoard';
+
 /**
- * Realises the merge of two tables base on an attribute. The key for the merge is renamed.
+ * Realizes the merge of two tables base on an attribute. The key for the merge is renamed.
  * At the end of the process the recipient table is enriched.
  *
  * @param mother le tableau d'objet receptacle du croisement/the recipient table
@@ -179,10 +181,10 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic): { middle: Cartogr
 	const sinPhi1 = Math.sin(posA.latitude);
 	const bx = cosPhi2 * Math.cos(deltaLambda);
 	const by = cosPhi2 * Math.sin(deltaLambda);
-	const resultat = new Cartographic();
-	resultat.latitude = Math.atan2(sinPhi1 + sinPhi2, Math.sqrt((cosPhi1 + bx) * (cosPhi1 + bx) + by * by));
-	resultat.longitude = posA.longitude + Math.atan2(by, cosPhi1 + bx);
-	return { middle: resultat, theta };
+	const result = new Cartographic();
+	result.latitude = Math.atan2(sinPhi1 + sinPhi2, Math.sqrt((cosPhi1 + bx) * (cosPhi1 + bx) + by * by));
+	result.longitude = posA.longitude + Math.atan2(by, cosPhi1 + bx);
+	return { middle: result, theta };
 }
 
 /**
@@ -191,10 +193,10 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic): { middle: Cartogr
  * this modelled speed will be lower than the considered mode speed
  *
  * [[theta]] is the angle between the two cities
- * in the unprojected situation
+ * in the un-projected situation
  *
  * In the case of air links, two equations are used to determine
- * the [heigth of aerial links above the geodesic](http://bit.ly/2H4FOKw):
+ * the [height of aerial links above the geodesic](http://bit.ly/2H4FOKw):
  * * below the threshold limit:![below](http://bit.ly/2Xu3kGF)
  * * beyond the threshold limit: ![beyond](http://bit.ly/2EejFpW)
  * * the figure: ![2](http://bit.ly/2H4FOKw)
@@ -215,7 +217,7 @@ function getModelledSpeed(theta: number, speedMax: number, speed: number, terres
 		: // Aerial case
 		theta < thetaLimit
 		? // In the general case 2000 km / 750 kph (factor 0.375)
-		  // for Germany based on Hamburg-München route 600 km, 1h20 = 450 kph (factor 0.75)
+		  // for Germany based on Hamburg-Munich route 600 km, 1h20 = 450 kph (factor 0.75)
 		  // (CONFIGURATION.earthRadiusMeters / 1000) * theta * 0.375 :
 		  // ((CONFIGURATION.earthRadiusMeters / 1000) * theta * 450) / 600 :
 		  ((CONFIGURATION.earthRadiusMeters / 1000) * theta * 750) / 2000
@@ -253,8 +255,7 @@ function networkFromCities(
 ): ILookupCurvesAndCityGraph {
 	const network: ILookupCityGraph = {};
 	const curvesData: ILookupCurves = {};
-	// Déterminer la fourchette de temps considéré OK
-	// determine the 'historical time span'
+	// determining the 'historical time span'
 	const currentYear = new Date().getFullYear();
 	let minYear = currentYear;
 	let maxYear = 0;
@@ -263,6 +264,7 @@ function networkFromCities(
 			minYear = item.eYearBegin;
 		}
 	});
+	// transportMode.minSYear = transportMode.speedTab[0];
 	transportMode.forEach((transpMode) => {
 		// transpMode.minSYear = transpMode.speedTab[0];
 		// console.log('eee', transpMode.minSYear, transpMode.speedTab[0]);
@@ -277,8 +279,6 @@ function networkFromCities(
 		});
 	});
 	console.log('transportModeCode', transportMode);
-	// Déterminer pour chaque type de transport la vitesse maximale par an
-	// dans la fourchette + vitesse max par an de la fourchette OK
 	/**
 	 * [[ISpeedPerYear]] is the table of max speed per [[year]]
 	 */
@@ -300,9 +300,6 @@ function networkFromCities(
 		year: number;
 	}
 	/**
-	 * Interface décrivant pour une année fixée la vitesse du transport ainsi que
-	 * le ratio décrit dans l'[equation 1](http://bit.ly/2tLfehC) de la pente d'un cône
-	 *
 	 * Associating a speed to an alpha (cone slope)
 	 * as in [equation 1](http://bit.ly/2tLfehC)
 	 */
@@ -322,7 +319,7 @@ function networkFromCities(
 	}
 	/**
 	 * [[ILookupCacheAnchorsEdgeCone]] describes:
-	 * * an edge with an end (optionnal) middle, pointP
+	 * * an edge with an end (optional) middle, pointP
 	 *   at 1/4 anf pointQ at 3/4, as anchor points
 	 * * description of the cone with
 	 *   theta the angle between the two cities
@@ -575,15 +572,23 @@ function networkFromCities(
 							if (edgeTranspModeSpeed.terrestrial) {
 								// We generate a cone and draw edges
 								if (!cone.hasOwnProperty(year)) {
-									// Initialising  complex cone for a given city and year
+									// Initializing  complex cone for a given city and year
 									const coneRoadAlpha =
 										speedPerTransportPerYear[roadCode].tabSpeedPerYear[year].alpha;
 									cone[year] = { coneRoadAlpha: coneRoadAlpha, tab: [] };
 								}
 								// this is where simple cones based on Road speed
 								// or cones based on complex alphas will be built
-								alpha = edgeTranspModeSpeed.tabSpeedPerYear[year].alpha;
-								alpha = speedPerTransportPerYear[roadCode].tabSpeedPerYear[year].alpha;
+								console.log(
+									this.ConeBoard,
+									this.ConeBoard.complexCones(),
+									this.ConeBoard._complexCones
+								);
+								if (this.ConeBoard.complexCones()) {
+									alpha = edgeTranspModeSpeed.tabSpeedPerYear[year].alpha;
+								} else {
+									alpha = speedPerTransportPerYear[roadCode].tabSpeedPerYear[year].alpha;
+								}
 								cone[year].tab.push({ alpha, clock });
 								destinationsWithModes[destCityCode][edgeTranspModeName].push({
 									year,
@@ -620,7 +625,7 @@ function networkFromCities(
 							} else if (edgeToBeProcessed) {
 								// Case when edge transport mode is not terrestrial
 								// we will generate a curve for the edge
-								// Condition pour éviter de générer deux lignes visuellement identiques!
+								// condition to avoid duplicating curves
 								const modelledSpeed = getModelledSpeed(
 									theta,
 									maximumSpeed[year],
@@ -630,12 +635,6 @@ function networkFromCities(
 								// The ratio linking the current speed and maxSpeed is
 								// computed according to this ![equation](http://bit.ly/2EejFpW)
 								const speedRatio = (maximumSpeed[year] * theta) / (2 * modelledSpeed);
-								// Console.log('destCity', this._cities[destCityCode].cityName);
-								// console.log('origCity', this._cities[origCityCode].cityName);
-								// console.log('orig', city.cityName);
-								// console.log('mode', edgeTranspModeSpeed.name);
-								// console.log('theta km', (CONFIGURATION.earthRadiusMeters / 1000) * theta);
-								// console.log('edgeModeSpeed[year].speed', edgeModeSpeed[year].speed);
 								// console.log('modelledSpeed', modelledSpeed);
 								if (!listOfCurves.hasOwnProperty(destCityCode)) {
 									listOfCurves[destCityCode] = <ILookupCurveList>{
@@ -716,6 +715,7 @@ export class Merger {
 	private _transportNetwork: IEdge[] = [];
 	private _state: IMergerState = 'missing';
 	private _curvesAndCityGraph: ILookupCurvesAndCityGraph = <ILookupCurvesAndCityGraph>{};
+	// private _complexCones: boolean;
 
 	public get state(): IMergerState {
 		return this._state;

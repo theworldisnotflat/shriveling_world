@@ -70,7 +70,7 @@ export interface ICartographic {
 }
 
 /**
- * An item grouping for a fixed year and a fixed origin city datas to generate
+ * An item grouping for a fixed year and a fixed origin city data to generate
  * a complex cone the slope for road and slope for each
  * destination city (clock) using a terrestrial transport.
  */
@@ -157,7 +157,7 @@ export interface IItemCriteria {
 }
 
 export interface ICriteria {
-	[attribut: string]: IItemCriteria;
+	[attribute: string]: IItemCriteria;
 }
 
 export interface IOrderAscendant {
@@ -173,7 +173,7 @@ export interface ISumUpCriteriaItem {
 }
 
 export interface ISumUpCriteria {
-	[attribut: string]: ISumUpCriteriaItem;
+	[attribute: string]: ISumUpCriteriaItem;
 }
 
 export interface IPopulation {

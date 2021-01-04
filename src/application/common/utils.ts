@@ -23,28 +23,28 @@ export class Cartographic implements ICartographic {
 	}
 
 	public static exactDistance(pos1: Cartographic, pos2: Cartographic): number {
-		let resultat = Math.sin(pos1.latitude) * Math.sin(pos2.latitude);
-		resultat += Math.cos(pos1.latitude) * Math.cos(pos2.latitude) * Math.cos(pos2.longitude - pos1.longitude);
-		return Math.acos(resultat);
+		let result = Math.sin(pos1.latitude) * Math.sin(pos2.latitude);
+		result += Math.cos(pos1.latitude) * Math.cos(pos2.latitude) * Math.cos(pos2.longitude - pos1.longitude);
+		return Math.acos(result);
 	}
 
 	public static isInside(position: Cartographic, boundary: Cartographic[]): boolean {
 		let cn = 0; // The  crossing number counter
-		let iplus: number;
+		let iPlus: number;
 		const n = boundary.length;
 		// Loop through all edges of the polygon
 		for (let i = 0; i < n; i++) {
 			// Edge from V[i]  to V[i+1]
-			iplus = i === n - 1 ? 0 : i + 1;
+			iPlus = i === n - 1 ? 0 : i + 1;
 			if (
-				(boundary[i].latitude <= position.latitude && boundary[iplus].latitude > position.latitude) ||
-				(boundary[i].latitude > position.latitude && boundary[iplus].latitude <= position.latitude)
+				(boundary[i].latitude <= position.latitude && boundary[iPlus].latitude > position.latitude) ||
+				(boundary[i].latitude > position.latitude && boundary[iPlus].latitude <= position.latitude)
 			) {
 				const vt =
-					(position.latitude - boundary[i].latitude) / (boundary[iplus].latitude - boundary[i].latitude);
+					(position.latitude - boundary[i].latitude) / (boundary[iPlus].latitude - boundary[i].latitude);
 				if (
 					position.longitude <
-					boundary[i].longitude + vt * (boundary[iplus].longitude - boundary[i].longitude)
+					boundary[i].longitude + vt * (boundary[iPlus].longitude - boundary[i].longitude)
 				) {
 					cn++;
 				}
@@ -56,7 +56,7 @@ export class Cartographic implements ICartographic {
 
 	public static lerp(pos1: Cartographic, pos2: Cartographic, fractions: number[] = []): Cartographic[] {
 		const distance = Cartographic.exactDistance(pos1, pos2);
-		const resultat: Cartographic[] = [];
+		const result: Cartographic[] = [];
 		if (distance > 0) {
 			fractions.forEach((fraction) => {
 				const A = Math.sin((1 - fraction) * distance) / Math.sin(distance);
@@ -68,7 +68,7 @@ export class Cartographic implements ICartographic {
 					A * Math.cos(pos1.latitude) * Math.sin(pos1.longitude) +
 					B * Math.cos(pos2.latitude) * Math.sin(pos2.longitude);
 				const z = A * Math.sin(pos1.latitude) + B * Math.sin(pos2.latitude);
-				resultat.push(
+				result.push(
 					new Cartographic(
 						Math.atan2(z, Math.sqrt(x * x + y * y)),
 						Math.atan2(y, x),
@@ -78,7 +78,7 @@ export class Cartographic implements ICartographic {
 			});
 		}
 
-		return resultat;
+		return result;
 	}
 
 	public static direction(pos1: Cartographic, pos2: Cartographic): number {
@@ -125,7 +125,7 @@ export const ZERO_CARTOGRAPHIC = new Cartographic();
 
 Object.freeze(ZERO_CARTOGRAPHIC);
 
-function updateSumupCriteriaByDateOrNumber(subObject: { max: Date | number; min: Date | number }, temporary): void {
+function updateSumUpCriteriaByDateOrNumber(subObject: { max: Date | number; min: Date | number }, temporary): void {
 	const comparMin = compare(subObject.min, temporary, true);
 	const comparMax = compare(subObject.max, temporary, true);
 	if (comparMin > 0) {
@@ -137,7 +137,7 @@ function updateSumupCriteriaByDateOrNumber(subObject: { max: Date | number; min:
 	}
 }
 
-export function updateSumUpCriteria(sumup: ISumUpCriteria, properties: Record<string, unknown>): ISumUpCriteria {
+export function updateSumUpCriteria(sumUp: ISumUpCriteria, properties: Record<string, unknown>): ISumUpCriteria {
 	let temporary;
 	let typeofTemporary;
 	// Attention si properties est un tableau
@@ -146,41 +146,41 @@ export function updateSumUpCriteria(sumup: ISumUpCriteria, properties: Record<st
 			temporary = properties[attribute];
 			if (temporary !== undefined || temporary !== null) {
 				typeofTemporary = typeof temporary;
-				if (sumup.hasOwnProperty(attribute)) {
+				if (sumUp.hasOwnProperty(attribute)) {
 					switch (typeofTemporary) {
 						case 'string':
-							if (sumup[attribute].type === 'string') {
-								if (!(<string[]>sumup[attribute].sumUp).includes(temporary)) {
-									(<string[]>sumup[attribute].sumUp).push(temporary);
+							if (sumUp[attribute].type === 'string') {
+								if (!(<string[]>sumUp[attribute].sumUp).includes(temporary)) {
+									(<string[]>sumUp[attribute].sumUp).push(temporary);
 								}
 							} else {
-								sumup[attribute].type = 'undefined';
-								delete sumup[attribute].sumUp;
+								sumUp[attribute].type = 'undefined';
+								delete sumUp[attribute].sumUp;
 							}
 
 							break;
 						case 'object':
-							if (temporary instanceof Date && sumup[attribute].type === 'date') {
-								updateSumupCriteriaByDateOrNumber(
-									<{ max: Date; min: Date }>sumup[attribute].sumUp,
+							if (temporary instanceof Date && sumUp[attribute].type === 'date') {
+								updateSumUpCriteriaByDateOrNumber(
+									<{ max: Date; min: Date }>sumUp[attribute].sumUp,
 									temporary
 								);
-							} else if (Array.isArray(temporary) && sumup[attribute].type === 'array') {
+							} else if (Array.isArray(temporary) && sumUp[attribute].type === 'array') {
 								temporary.forEach((item) => {
-									updateSumUpCriteria(<ISumUpCriteria>sumup[attribute].sumUp, item);
+									updateSumUpCriteria(<ISumUpCriteria>sumUp[attribute].sumUp, item);
 								});
-							} else if (sumup[attribute].type === 'object') {
-								updateSumUpCriteria(<ISumUpCriteria>sumup[attribute].sumUp, temporary);
+							} else if (sumUp[attribute].type === 'object') {
+								updateSumUpCriteria(<ISumUpCriteria>sumUp[attribute].sumUp, temporary);
 							} else {
-								sumup[attribute].type = 'undefined';
-								delete sumup[attribute].sumUp;
+								sumUp[attribute].type = 'undefined';
+								delete sumUp[attribute].sumUp;
 							}
 
 							break;
 						case 'boolean':
-							if (sumup[attribute].type !== 'boolean') {
-								sumup[attribute].type = 'undefined';
-								delete sumup[attribute].sumUp;
+							if (sumUp[attribute].type !== 'boolean') {
+								sumUp[attribute].type = 'undefined';
+								delete sumUp[attribute].sumUp;
 							}
 
 							break;
@@ -189,14 +189,14 @@ export function updateSumUpCriteria(sumup: ISumUpCriteria, properties: Record<st
 						case 'function':
 							break;
 						case 'number':
-							if (sumup[attribute].type === 'number') {
-								updateSumupCriteriaByDateOrNumber(
-									<{ max: number; min: number }>sumup[attribute].sumUp,
+							if (sumUp[attribute].type === 'number') {
+								updateSumUpCriteriaByDateOrNumber(
+									<{ max: number; min: number }>sumUp[attribute].sumUp,
 									temporary
 								);
 							} else {
-								sumup[attribute].type = 'undefined';
-								delete sumup[attribute].sumUp;
+								sumUp[attribute].type = 'undefined';
+								delete sumUp[attribute].sumUp;
 							}
 
 							break;
@@ -205,32 +205,32 @@ export function updateSumUpCriteria(sumup: ISumUpCriteria, properties: Record<st
 				} else {
 					switch (typeofTemporary) {
 						case 'string':
-							sumup[attribute] = { type: 'string', sumUp: [] };
-							(<string[]>sumup[attribute].sumUp).push(temporary);
+							sumUp[attribute] = { type: 'string', sumUp: [] };
+							(<string[]>sumUp[attribute].sumUp).push(temporary);
 							break;
 						case 'object':
 							if (temporary instanceof Date) {
-								sumup[attribute] = { type: 'date', sumUp: { max: temporary, min: temporary } };
+								sumUp[attribute] = { type: 'date', sumUp: { max: temporary, min: temporary } };
 							} else if (Array.isArray(temporary)) {
-								sumup[attribute] = { type: 'array', sumUp: {} };
+								sumUp[attribute] = { type: 'array', sumUp: {} };
 								temporary.forEach((item) => {
-									updateSumUpCriteria(<ISumUpCriteria>sumup[attribute].sumUp, item);
+									updateSumUpCriteria(<ISumUpCriteria>sumUp[attribute].sumUp, item);
 								});
 							} else {
-								sumup[attribute] = { type: 'object', sumUp: {} };
-								updateSumUpCriteria(<ISumUpCriteria>sumup[attribute].sumUp, temporary);
+								sumUp[attribute] = { type: 'object', sumUp: {} };
+								updateSumUpCriteria(<ISumUpCriteria>sumUp[attribute].sumUp, temporary);
 							}
 
 							break;
 						case 'boolean':
-							sumup[attribute] = { type: 'boolean' };
+							sumUp[attribute] = { type: 'boolean' };
 							break;
 						case 'symbol':
 							break;
 						case 'function':
 							break;
 						case 'number':
-							sumup[attribute] = { type: 'number', sumUp: { max: temporary, min: temporary } };
+							sumUp[attribute] = { type: 'number', sumUp: { max: temporary, min: temporary } };
 							break;
 						default:
 					}
@@ -239,11 +239,11 @@ export function updateSumUpCriteria(sumup: ISumUpCriteria, properties: Record<st
 		}
 	}
 
-	return sumup;
+	return sumUp;
 }
 
 function compare(ob1: any, ob2: any, ascendant: boolean): number {
-	let resultat = 0;
+	let result = 0;
 	if (ob1 === undefined || ob1 === null) {
 		ob1 = '';
 	}
@@ -255,97 +255,97 @@ function compare(ob1: any, ob2: any, ascendant: boolean): number {
 	const ob1Float = Number.parseFloat(ob1);
 	const ob2Float = Number.parseFloat(ob2);
 	if (ob1 instanceof Date && ob2 instanceof Date) {
-		resultat = ob1.getTime() - ob2.getTime();
+		result = ob1.getTime() - ob2.getTime();
 	} else if (
 		!Number.isNaN(ob1Float) &&
 		!Number.isNaN(ob2Float) &&
 		ob1.length === ob1Float.toString().length &&
 		ob2.length === ob2Float.toString().length
 	) {
-		resultat = ob1Float - ob2Float;
+		result = ob1Float - ob2Float;
 	} else {
 		const ob1String = ob1.toString().toLowerCase();
 		const ob2String = ob2.toString().toLowerCase();
 		if (ob1String === ob2String) {
-			resultat = 0;
+			result = 0;
 		} else if (ob1String > ob2String) {
-			resultat = 1;
+			result = 1;
 		} else {
-			resultat = -1;
+			result = -1;
 		}
 	}
 
 	if (!ascendant) {
-		resultat = -resultat;
+		result = -result;
 	}
 
-	return resultat;
+	return result;
 }
 
 function compareItemCriteria(value: any, itemCriteria: IItemCriteria): boolean {
-	let resultat = false;
+	let result = false;
 	if (Array.isArray(value)) {
 		value.forEach((item) => {
-			resultat = resultat || compareItemCriteria(item, itemCriteria);
+			result = result || compareItemCriteria(item, itemCriteria);
 		});
 	} else {
 		const comparison = compare(value, itemCriteria.value, true);
 		const comparator = itemCriteria.comparator;
 		if (comparator === '>') {
 			if (comparison > 0) {
-				resultat = true;
+				result = true;
 			}
 		} else if (comparator === '>=') {
 			if (comparison >= 0) {
-				resultat = true;
+				result = true;
 			}
 		} else if (comparator === '<') {
 			if (comparison < 0) {
-				resultat = true;
+				result = true;
 			}
 		} else if (comparator === '<=') {
 			if (comparison <= 0) {
-				resultat = true;
+				result = true;
 			}
 		} else if (comparator === '!=') {
 			if (comparison !== 0) {
-				resultat = true;
+				result = true;
 			}
 		} else if (comparison === 0) {
-			resultat = true;
+			result = true;
 		}
 	}
 
-	return resultat;
+	return result;
 }
 
 function getObjectByString(objet: any, path: string): any {
 	path = path.replace(/\[(\w+|\*)]/g, '.$1'); // Convert indexes to properties
 	path = path.replace(/^\./, ''); // Strip a leading dot
 	const tab = path.split('.');
-	let subAttribut = tab.shift();
+	let subAttribute = tab.shift();
 	let finished = false;
-	while (subAttribut !== undefined && !finished && objet !== undefined) {
-		if (subAttribut === '') {
+	while (subAttribute !== undefined && !finished && objet !== undefined) {
+		if (subAttribute === '') {
 			// Nothing
-		} else if (subAttribut === '*') {
+		} else if (subAttribute === '*') {
 			const subPath = tab.join('.');
 			if (Array.isArray(objet)) {
 				objet = objet.map((item) => getObjectByString(item, subPath));
 				finished = true;
 			} else if (typeof objet === 'object' && !(objet instanceof Date)) {
-				objet = Object.getOwnPropertyNames(objet).map((attributName) =>
-					getObjectByString(objet[attributName], subPath)
+				objet = Object.getOwnPropertyNames(objet).map((attributeName) =>
+					getObjectByString(objet[attributeName], subPath)
 				);
 				finished = true;
 			}
-		} else if (subAttribut in objet) {
-			objet = objet[subAttribut];
+		} else if (subAttribute in objet) {
+			objet = objet[subAttribute];
 		} else {
 			objet = undefined;
 		}
 
-		subAttribut = tab.shift();
+		subAttribute = tab.shift();
 	}
 
 	return objet;
@@ -353,25 +353,25 @@ function getObjectByString(objet: any, path: string): any {
 
 export function searchCriteria<T>(
 	collection: T[],
-	criterias: ICriteria,
+	criteria: ICriteria,
 	forbiddenAttributes: string[] = [],
 	child?: string
 ): T[] {
-	const criteriasKey = Object.keys(criterias);
+	const criteriaKey = Object.keys(criteria);
 	const regex = new RegExp('(' + forbiddenAttributes.join('|') + ')', 'g');
 	function megaFilter(item: T): boolean {
 		let found = true;
 		let foundedObject: any;
 		const out: any = child === undefined ? item : getObjectByString(item, child);
-		let attribut: string;
-		for (let i = 0; i < criteriasKey.length && found; i++) {
-			attribut = criteriasKey[i];
-			if (regex.exec(attribut) === null) {
-				foundedObject = getObjectByString(out, attribut);
+		let attribute: string;
+		for (let i = 0; i < criteriaKey.length && found; i++) {
+			attribute = criteriaKey[i];
+			if (regex.exec(attribute) === null) {
+				foundedObject = getObjectByString(out, attribute);
 				if (foundedObject === undefined) {
 					found = false;
 				} else {
-					found = found && compareItemCriteria(foundedObject, criterias[attribut]);
+					found = found && compareItemCriteria(foundedObject, criteria[attribute]);
 				}
 			}
 		}
@@ -384,24 +384,24 @@ export function searchCriteria<T>(
 
 export function orderCriteria<T>(collection: T[], criteriaOrder: IOrderAscendant[] = []): T[] {
 	function megaSorter(item1: T, item2: T): number {
-		let resultat = 0;
+		let result = 0;
 		let orderAscendant: IOrderAscendant;
-		for (let i = 0; i < criteriaOrder.length && resultat === 0; i++) {
+		for (let i = 0; i < criteriaOrder.length && result === 0; i++) {
 			orderAscendant = criteriaOrder[i];
-			resultat = compare(
+			result = compare(
 				item1[orderAscendant.attribute],
 				item2[orderAscendant.attribute],
 				orderAscendant.ascendant
 			);
 		}
 
-		return resultat;
+		return result;
 	}
 
 	return collection.sort(megaSorter);
 }
 
-export function DragnDrop(id: string | HTMLElement, callback: (list: IListFile[]) => void, scope: unknown): void {
+export function DragNDrop(id: string | HTMLElement, callback: (list: IListFile[]) => void, scope: unknown): void {
 	const container = typeof id === 'string' ? document.querySelector('#' + id) : id;
 	if (container === null) {
 		throw new Error('not an HTML Element');
@@ -453,11 +453,11 @@ export function interpolator<U>(
 	strongLimit = false
 ): (x: number) => number {
 	const length = normalizedBase.length;
-	let resultat: (x?: number) => number = () => 0;
+	let result: (x?: number) => number = () => 0;
 	if (length === 1) {
-		resultat = () => normalizedBase[0][yProperty];
+		result = () => normalizedBase[0][yProperty];
 	} else {
-		resultat = (x: number) => {
+		result = (x: number) => {
 			let indMin = 0;
 			let indMax = length - 1;
 			let index = Math.floor(length / 2);
@@ -507,14 +507,14 @@ export function interpolator<U>(
 		};
 	}
 
-	return resultat;
+	return result;
 }
 
 const iso8601RegExp = /(\d{4}-[01]\d-[0-3]\dT[0-2](?:\d:[0-5]){2}\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2](?:\d:[0-5]){2}\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))/;
 
 // To use for JSON.parse
 export const reviver: any = <U>(_key: string, value: any): U | any => {
-	const resultat: any | U = value;
+	const result: any | U = value;
 
 	if (typeof value === 'string') {
 		const temporary = value.replace(' ', '');
@@ -523,20 +523,20 @@ export const reviver: any = <U>(_key: string, value: any): U | any => {
 		}
 	}
 
-	return resultat;
+	return result;
 };
 
-export function matchingBBox(pos: Cartographic, bboxes: IBBox[]): Cartographic[][] {
-	return bboxes
+export function matchingBBox(pos: Cartographic, bBoxes: IBBox[]): Cartographic[][] {
+	return bBoxes
 		.filter(
-			(bboxe) =>
-				pos.latitude >= bboxe.minLat &&
-				pos.latitude <= bboxe.maxLat &&
-				pos.longitude >= bboxe.minLong &&
-				pos.longitude <= bboxe.maxLong &&
-				Cartographic.isInside(pos, bboxe.boundary)
+			(bBox) =>
+				pos.latitude >= bBox.minLat &&
+				pos.latitude <= bBox.maxLat &&
+				pos.longitude >= bBox.minLong &&
+				pos.longitude <= bBox.maxLong &&
+				Cartographic.isInside(pos, bBox.boundary)
 		)
-		.map((bboxe) => bboxe.boundary);
+		.map((bBox) => bBox.boundary);
 }
 
 export function getLocalLimits(
@@ -562,24 +562,24 @@ export function getLocalLimits(
 				result[clockClass] === undefined ? current.distance : Math.min(result[clockClass], current.distance);
 			return result;
 		}, {});
-	const resultat: Array<{ clock: number; distance: number }> = [];
+	const result: Array<{ clock: number; distance: number }> = [];
 	for (const clockString in clockDistance) {
 		if (clockDistance.hasOwnProperty(clockString)) {
-			resultat.push({ clock: Number.parseFloat(clockString), distance: clockDistance[clockString] });
+			result.push({ clock: Number.parseFloat(clockString), distance: clockDistance[clockString] });
 		}
 	}
 
-	const length = resultat.length;
+	const length = result.length;
 	let temporary;
 	for (let i = 0; i < length; i++) {
-		temporary = resultat[i];
-		resultat.push(
+		temporary = result[i];
+		result.push(
 			{ clock: temporary.clock - CONFIGURATION.TWO_PI, distance: temporary.distance },
 			{ clock: temporary.clock + CONFIGURATION.TWO_PI, distance: temporary.distance }
 		);
 	}
 
-	return resultat.sort((a, b) => a.clock - b.clock);
+	return result.sort((a, b) => a.clock - b.clock);
 }
 
 const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
