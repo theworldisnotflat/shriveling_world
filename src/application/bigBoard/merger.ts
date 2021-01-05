@@ -627,11 +627,7 @@ function networkFromCities(
 								}
 								// this is where simple cones based on Road speed
 								// or cones based on complex alphas will be built
-								console.log(
-									this.ConeBoard,
-									this.ConeBoard.complexCones(),
-									this.ConeBoard._complexCones
-								);
+								//console.log(this.ConeBoard,this.ConeBoard.complexCones(),this.ConeBoard._complexCones);
 								//if (this.ConeBoard.complexCones()) {
 								//	alpha = edgeTranspModeSpeed.tabSpeedPerYear[year].alpha;
 								//} else {
