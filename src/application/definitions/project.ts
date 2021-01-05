@@ -231,6 +231,8 @@ export interface ITransportModeSpeed {
  * edge level in file "transport_network"
  * * [[minSYear]] and
  * * [[maxSYear]] are computed from "transport_mode_speed" file
+ * * [[yearBegin]] and
+ * * [[yearEnd]] are computed from previous values
  **/
 export interface ITranspMode {
 	name: string;
@@ -243,6 +245,8 @@ export interface ITranspMode {
 	maxEYear?: number;
 	minSYear?: number;
 	maxSYear?: number;
+	yearBegin?: number;
+	yearEnd?: number;
 }
 
 /**

@@ -383,14 +383,31 @@ function networkFromCities(
 			}
 		});
 	});
-	let yearBeginRoad: number;
+
 	transportMode.forEach((transpMode) => {
-		if (transpMode.code === roadCode) {
-			yearBeginRoad = Math.min(transpMode.mYearBegin, transpMode.minSYear, transpMode.minEYear);
-			console.log(transpMode.mYearBegin, transpMode.minSYear, transpMode.minEYear);
-		}
+		transpMode.yearBegin = Math.min(
+			transpMode.mYearBegin === null ? Infinity : transpMode.mYearBegin,
+			transpMode.minSYear === null ? Infinity : transpMode.minSYear,
+			transpMode.minEYear === null ? Infinity : transpMode.minEYear
+		);
+		transpMode.yearEnd = Math.max(
+			transpMode.mYearEnd === null ? -Infinity : transpMode.mYearEnd,
+			transpMode.maxSYear === null ? -Infinity : transpMode.maxSYear,
+			transpMode.maxEYear === null ? -Infinity : transpMode.maxEYear
+		);
 	});
-	console.log('yearBeginRoad', yearBeginRoad, transportMode);
+	let yearBeginModel = Infinity;
+	let yearEndModel = -Infinity;
+	transportMode.forEach((transpMode) => {
+		if (transpMode.code !== roadCode) {
+			if (transpMode.yearBegin < yearBeginModel) yearBeginModel = transpMode.yearBegin;
+			if (transpMode.yearEnd > yearEndModel) {
+				yearEndModel = transpMode.yearEnd;
+			}
+		}
+		console.log(transpMode.name, transpMode.yearBegin, transpMode.yearEnd);
+	});
+	console.log('yearBeginModel', yearBeginModel, yearEndModel, transportMode);
 
 	transportMode.forEach((transpMode) => {
 		const transportCode = transpMode.code;
