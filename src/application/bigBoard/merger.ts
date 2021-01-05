@@ -1,9 +1,9 @@
 /**
  * In merger we put the functions used only once
  * which are CPU/GPU intensive functions
- * and which compute the geometry of cones and links.
- * the functions that must run each time a parameter is modified
- * are located in the respective files for cones and links
+ * and which compute the geometry of cones and edges.
+ * The functions that must run each time a parameter is modified
+ * are located in the respective files for cones and edges
  *
  * The general architecture of the project is:
  * * merger with computing intensive functions used once
@@ -264,21 +264,7 @@ function networkFromCities(
 			minYear = item.eYearBegin;
 		}
 	});
-	// transportMode.minSYear = transportMode.speedTab[0];
-	transportMode.forEach((transpMode) => {
-		// transpMode.minSYear = transpMode.speedTab[0];
-		// console.log('eee', transpMode.minSYear, transpMode.speedTab[0]);
-		transpMode.speedTab.forEach((transpSpeed) => {
-			console.log(transpSpeed.year, transpMode.minSYear);
-			if (transpSpeed.year < transpMode.minSYear) {
-				transpMode.minSYear = transpSpeed.year;
-			}
-			if (transpSpeed.year > transpMode.maxSYear) {
-				transpMode.maxSYear = transpSpeed.year;
-			}
-		});
-	});
-	console.log('transportModeCode', transportMode);
+
 	/**
 	 * [[ISpeedPerYear]] is the table of max speed per [[year]]
 	 */
@@ -352,14 +338,65 @@ function networkFromCities(
 	 *
 	 * At the end of this loop [[speedPerTransportPerYear]] and [[maximumSpeed]] are populated
 	 */
+
 	transportMode.forEach((transpMode) => {
 		const transportCode = transpMode.code;
-		const name = transpMode.name;
-		if (name === 'Road') {
+		const modeName = transpMode.name;
+		if (modeName === 'Road') {
 			roadCode = transportCode;
 		}
+	});
+	transportMode.forEach((transpMode) => {
+		// initializing the variables
+		transpMode.minSYear = transpMode.speedTab[0].year;
+		transpMode.maxSYear = transpMode.speedTab[0].year;
+		transpMode.speedTab.forEach((transpSpeed) => {
+			if (transpSpeed.year < transpMode.minSYear) {
+				transpMode.minSYear = transpSpeed.year;
+			}
+			if (transpSpeed.year > transpMode.maxSYear) {
+				transpMode.maxSYear = transpSpeed.year;
+			}
+		});
+		transpMode.minEYear = null;
+		transpMode.maxEYear = null;
+		transpNetwork.forEach((edge) => {
+			if (edge.transportModeCode === transpMode.code) {
+				if (edge.eYearBegin !== undefined) {
+					if (transpMode.minEYear === null) {
+						transpMode.minEYear = edge.eYearBegin;
+					} else {
+						if (transpMode.minEYear > edge.eYearBegin) {
+							transpMode.minEYear = edge.eYearBegin;
+						}
+					}
+				}
+				if (edge.eYearEnd !== undefined) {
+					if (transpMode.maxEYear === null) {
+						transpMode.maxEYear = edge.eYearEnd;
+					} else {
+						if (transpMode.maxEYear < edge.eYearEnd) {
+							transpMode.maxEYear = edge.eYearEnd;
+						}
+					}
+				}
+			}
+		});
+	});
+	let yearBeginRoad: number;
+	transportMode.forEach((transpMode) => {
+		if (transpMode.code === roadCode) {
+			yearBeginRoad = Math.min(transpMode.mYearBegin, transpMode.minSYear, transpMode.minEYear);
+			console.log(transpMode.mYearBegin, transpMode.minSYear, transpMode.minEYear);
+		}
+	});
+	console.log('yearBeginRoad', yearBeginRoad, transportMode);
 
-		_transportName[transpMode.terrestrial ? 'cones' : 'curves'].push(name);
+	transportMode.forEach((transpMode) => {
+		const transportCode = transpMode.code;
+		const modeName = transpMode.name;
+
+		_transportName[transpMode.terrestrial ? 'cones' : 'curves'].push(modeName);
 		const minYearTransport = Math.max(transpMode.mYearBegin, minYear);
 		let maxYearTransport = transpMode.mYearEnd === undefined ? currentYear : transpMode.mYearEnd;
 		let tempTransportCodeTab: ITransportCodeItem[] = [];
@@ -398,7 +435,7 @@ function networkFromCities(
 
 		speedPerTransportPerYear[transportCode] = {
 			tabSpeedPerYear: tabSpeedPerYear,
-			name,
+			name: modeName,
 			terrestrial: transpMode.terrestrial,
 		};
 	});
@@ -578,11 +615,11 @@ function networkFromCities(
 									this.ConeBoard.complexCones(),
 									this.ConeBoard._complexCones
 								);
-								if (this.ConeBoard.complexCones()) {
-									alpha = edgeTranspModeSpeed.tabSpeedPerYear[year].alpha;
-								} else {
-									alpha = speedPerTransportPerYear[roadCode].tabSpeedPerYear[year].alpha;
-								}
+								//if (this.ConeBoard.complexCones()) {
+								//	alpha = edgeTranspModeSpeed.tabSpeedPerYear[year].alpha;
+								//} else {
+								alpha = speedPerTransportPerYear[roadCode].tabSpeedPerYear[year].alpha;
+								//}
 								cone[year].tab.push({ alpha, clock });
 								destinationsWithModes[destCityCode][edgeTranspModeName].push({
 									year,
