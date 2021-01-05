@@ -445,7 +445,7 @@ function networkFromCities(
 	 * of edges between cities (the order of cities has no importance)
 	 *
 	 * @param  begin starting city code
-	 * @param  end   ending city code
+	 * @param  end   ending   city code
 	 * @return returns the result of the computation with the two cities as input
 	 * (opening theta, points P Q and midpoint)
 	 */
