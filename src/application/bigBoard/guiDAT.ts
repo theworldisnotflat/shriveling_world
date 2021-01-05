@@ -209,7 +209,7 @@ export class GUI {
 				years.min(this._merger.minYear).max(this._merger.maxYear).updateDisplay();
 				bigBoard.coneBoard.add(this._merger.conesAndCurvesData);
 				// This._merger.clear();
-				const sizeText = generalFolder.add(bigBoard, '_sizetext', 0, 2).name('taille du texte').step(0.1);
+				const sizeText = generalFolder.add(bigBoard, '_sizeText', 0, 2).name('taille du texte').step(0.1);
 				sizeText.onChange(() => bigBoard.rescaleText());
 				generalFolder.addColor(conf, 'text color').onChange((v: string) => {
 					const color = Number.parseInt(v.replace('#', ''), 16);

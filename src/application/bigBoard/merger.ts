@@ -119,7 +119,7 @@ function merger<U, V>(
 const hardCodedHeadings: Array<{ fileName: string; headings: string[] }> = [
 	{ fileName: '_cities', headings: ['cityCode', 'latitude', 'longitude', 'radius'] },
 	{ fileName: '_transportModeSpeed', headings: ['transportModeCode', 'year', 'speedKPH'] },
-	{ fileName: '_transportMode', headings: ['code', 'name', 'mYearBegin', 'terrestrial'] },
+	{ fileName: '_transportMode', headings: ['code', 'name', 'terrestrial'] },
 	{ fileName: '_transportNetwork', headings: ['transportModeCode', 'cityCodeDes', 'cityCodeOri'] },
 	{ fileName: '_populations', headings: ['cityCode'] },
 ];
@@ -386,12 +386,12 @@ function networkFromCities(
 
 	transportMode.forEach((transpMode) => {
 		transpMode.yearBegin = Math.min(
-			transpMode.mYearBegin === null ? Infinity : transpMode.mYearBegin,
+			//transpMode.mYearBegin === null ? Infinity : transpMode.mYearBegin,
 			transpMode.minSYear === null ? Infinity : transpMode.minSYear,
 			transpMode.minEYear === null ? Infinity : transpMode.minEYear
 		);
 		transpMode.yearEnd = Math.max(
-			transpMode.mYearEnd === null ? -Infinity : transpMode.mYearEnd,
+			//transpMode.mYearEnd === null ? -Infinity : transpMode.mYearEnd,
 			transpMode.maxSYear === null ? -Infinity : transpMode.maxSYear,
 			transpMode.maxEYear === null ? -Infinity : transpMode.maxEYear
 		);
