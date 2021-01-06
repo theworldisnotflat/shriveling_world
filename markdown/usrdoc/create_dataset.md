@@ -26,10 +26,9 @@ The _historical time span_ needs to fill in the variable _yearBegin_ and the var
 * _yearBegin_ will be the earliest year when the model can be computed
 * _yearEnd_ will be the latest year when the model can be computed
 
-There are three sources to determine this _historical time span_:
+There are two sources to determine this _historical time span_:
 Source file | Columns | Rationale
 ----------|----------|----
-_transport_mode.csv_ |_mYearBegin_ _mYearEnd_| to allow for comparing modes in general, e.g. road vs rail in the long term
 _transport_network.csv_ |_eYearBegin_ _eYearEnd_| to allow for considering the growth of a transport network of a given speed, over time, e.g. the morphogenesis of the high-speed rail network
 _transport_mode_speed.csv_|_year_|speed data is central in the model; speed data over years found in this file should be consistent with the other year sources
 
@@ -39,20 +38,18 @@ _transport_mode_speed.csv_|_year_|speed data is central in the model; speed data
 
 At code run, a series of time variables attached to the transport mode are computed. At one point the following variables are known for each transport mode:
 
-Variable name | read/computed |formula| Comments
-----------|-----|-----|----
-_mYearBegin_|read in _transport_mode_ file||date of creation of the transport mode; may be empty but not recommended
-_mYearEnd_|read in _transport_mode_ file||usually empty, meaning the transport mode is still currently operated
-_minEYear_|computed|min(_eYearBegin_)|the earliest date present in the network file for the corresponding transport  mode; may be empty, in such case the relevant info comes from file _
-_maxEYear_|computed|max(_eYearEnd_)|Usually empty (exception is Concorde that stopped operations)
-_minSYear_|computed|min(_year_)|The earliest year in the _transport_mode_speed_ file
-_maxSYear_|computed|max(_year_)|The latest year in the _transport_mode_speed_ file
+Variable name |formula| Comments
+----------|----------|----
+_minEYear_|min(_eYearBegin_)|the earliest date present in the network file for the corresponding transport  mode; may be empty, in such case the relevant info comes from _transport_network_ file
+_maxEYear_|max(_eYearEnd_)|Usually empty (exception is Concorde that stopped operations)
+_minSYear_|min(_year_)|The earliest year in the _transport_mode_speed_ file
+_maxSYear_|max(_year_)|The latest year in the _transport_mode_speed_ file
 
 ### Step #2 Computing _yearBegin_ at transport mode level
 
-In a well formed dataset _mYearBegin<sub>road</sub>_ should be the right starting date. Nevertheless, as the model needs speed data, we need to check the existence of speed data from this date, hence considering _minSYear<sub>road</sub>_. Network data should be consistent with the [other data sources for the historical time span](#historical-time-span), and hence be considered when computing _yearBegin<sub>road</sub>_. The equation becomes:
+A valid period for the model has an operating network and speed data. The period of operation of the network can be determined at edge level in the _transport_network_, while speed data comes as a table of _year_ and _speed_. Network data should be consistent with the [other data sources for the historical time span](#historical-time-span), and hence be considered when computing _yearBegin<sub>road</sub>_. The equation becomes:
 
-_yearBegin<sub>road</sub>_ = max(_mYearBegin<sub>road</sub>_,   _minSYear<sub>road</sub>_,   _minEYear<sub>road</sub>_)
+_yearBegin<sub>road</sub>_ = max(_minSYear<sub>road</sub>_,   _minEYear<sub>road</sub>_)
 
 In case one or several _minEYear<sub>road</sub>_ values are empty, the variable _minEYear_ should have no influence on forming _yearBegin_.
 
@@ -62,7 +59,7 @@ The computation for _road_ described in steps #1 and #2 should be repeated for e
 
 The formula is:
 
-_yearEnd<sub>road</sub>_ = min( _mYearEnd<sub>road</sub>_,   _maxSYear<sub>road</sub>_,   _maxEYear<sub>road</sub>_)
+_yearEnd<sub>road</sub>_ = min(  _maxSYear<sub>road</sub>_,   _maxEYear<sub>road</sub>_)
 
 The computation for _road_ described in steps #1 and #3 should be repeated for each transport mode accordingly.
 
@@ -155,8 +152,8 @@ Column name | Type | Mandatory | Comments
 _cityCodeOri_|number|yes|id of origin city; direction (ori-des or des-ori) has no meaning in the model
 _cityCodeDes_|number|yes|id of destination city
 _transportModeCode_|number|yes|id of the transport mode
-_eYearBegin_|number|no|year of opening of the edge, infrastructure or service; if not populated, the period _historical time span_ will be determined from _transport mode code_ file data
-_eYearEnd_|number|no|may be used for a service no longer operated, e.g. supersonic commercial aircraft Concorde
+_eYearBegin_|number|no|year of opening of the edge, infrastructure or service, e.g. High Speed Rail in 1964 between Tokyo and Osaka; if not populated, the period _historical time span_ will be determined from _transport mode code_ file data
+_eYearEnd_|number|no|may be used for a service no longer operated, e.g. supersonic commercial aircraft Concorde between Paris and New-York started in 1977 and stopped operating in 2004
 
 For the sake of readability this file usually contains two optional columns of _oriName_ and _desName_.
 
@@ -165,9 +162,6 @@ Column name | Type | Mandatory | Comments
 ----------|----------|-------------|-------------
 _name_|string|yes|mode name
 _code_|number|yes|unique id of the transport mode
-_mYearBegin_|number|yes|year of opening of the first infrastructure or service of the mode, e.g. High Speed Rail in 1964 between Tokyo and Osaka
-_mYearEnd_|number|no|may be used for a service no longer operated, e.g. supersonic commercial aircraft Concorde between Paris and New-York started in 1977 and stopped operating in 2004
-
 
 ### Transport mode speed file
 A given transport mode may experience an increase of speed over time, e.g. the five acceleration phases of China classical railways (non High Speed Rail) between 1997 and 2004

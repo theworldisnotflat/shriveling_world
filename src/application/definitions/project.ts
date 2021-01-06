@@ -218,8 +218,6 @@ export interface ITransportModeSpeed {
  * A transport mode has
  * * a [[name]],
  * * a [[code]],
- * * a [[mYearBegin]] mandatory
- * * a [[mYearEnd]] (optional),
  * * can be [[terrestrial]] or not,
  * * and has a table of speeds [[speedTab]] that may change over years
  *
@@ -227,8 +225,7 @@ export interface ITransportModeSpeed {
  * All the info before come from reading files ("transport_mode" and "transport_mode_speed")
  * The info below is computed in the code:
  * * [[minEYear]] and
- * * [[maxEYear]] are computed from info at
- * edge level in file "transport_network"
+ * * [[maxEYear]] are computed from info at edge level in file "transport_network"
  * * [[minSYear]] and
  * * [[maxSYear]] are computed from "transport_mode_speed" file
  * * [[yearBegin]] and
@@ -237,8 +234,6 @@ export interface ITransportModeSpeed {
 export interface ITranspMode {
 	name: string;
 	code: number;
-	mYearBegin?: number;
-	mYearEnd?: number;
 	terrestrial: boolean; // If yes the transport mode speed can affect the slope of cones
 	speedTab: ITransportModeSpeed[];
 	minEYear?: number;

@@ -386,12 +386,10 @@ function networkFromCities(
 
 	transportMode.forEach((transpMode) => {
 		transpMode.yearBegin = Math.min(
-			//transpMode.mYearBegin === null ? Infinity : transpMode.mYearBegin,
 			transpMode.minSYear === null ? Infinity : transpMode.minSYear,
 			transpMode.minEYear === null ? Infinity : transpMode.minEYear
 		);
 		transpMode.yearEnd = Math.max(
-			//transpMode.mYearEnd === null ? -Infinity : transpMode.mYearEnd,
 			transpMode.maxSYear === null ? -Infinity : transpMode.maxSYear,
 			transpMode.maxEYear === null ? -Infinity : transpMode.maxEYear
 		);
@@ -414,11 +412,11 @@ function networkFromCities(
 		const modeName = transpMode.name;
 
 		_transportName[transpMode.terrestrial ? 'cones' : 'curves'].push(modeName);
-		const minYearTransport = Math.max(transpMode.mYearBegin, minYear);
-		let maxYearTransport = transpMode.mYearEnd === undefined ? currentYear : transpMode.mYearEnd;
+		const minYearTransport = Math.max(transpMode.yearBegin, minYear);
+		let maxYearTransport = transpMode.yearEnd === undefined ? currentYear : transpMode.yearEnd;
 		let tempTransportCodeTab: ITransportCodeItem[] = [];
 		const tabSpeedPerYear: { [year: string]: ISpeedAlpha } = {};
-		let tempMaxYear: number = transpMode.mYearEnd;
+		let tempMaxYear: number = transpMode.yearEnd;
 
 		transpMode.speedTab.forEach((transportSpeed) => {
 			tempTransportCodeTab.push({ speed: transportSpeed.speedKPH, year: transportSpeed.year });
