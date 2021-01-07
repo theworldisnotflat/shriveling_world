@@ -1,4 +1,4 @@
-name,code,yearBegin,yearEnd,terrestrial
+name,code,mYearBegin,mYearEnd,terrestrial
 Supersonic,11,1980,2004,0
 Aircraft,1,1920,,0
 Train,3,1920,,1

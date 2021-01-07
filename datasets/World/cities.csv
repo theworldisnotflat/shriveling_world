@@ -1,4 +1,4 @@
-index,countryCode,countryName,cityCode,urbanAgglomeration,latitude,longitude,radius,yearMotorway,yearHST
+index,countryCode,countryName,cityCode,cityName,latitude,longitude,radius,yearMotorway,yearHST
 567,344, China Hong Kong SAR,21137,Hong Kong,22.279588,114.188697,,,
 1,4,Afghanistan,20001,Herat,34.34817,62.19967,,,
 2,4,Afghanistan,20002,Kabul,34.528887,69.17246,,,

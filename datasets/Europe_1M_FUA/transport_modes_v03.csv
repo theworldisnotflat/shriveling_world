@@ -1,4 +1,4 @@
-name,code,yearBegin,yearEnd,terrestrial
+name,code,mYearBegin,mYearEnd,terrestrial
 Aircraft,1,1920,,0
 Train,3,1835,,1
 HST,31,1960,,1

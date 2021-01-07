@@ -108,7 +108,7 @@
 					<li class="menu-item"><a href="marks/usrdoc/basic_usage_tutorial">Basic Usage tutorial</a></li>
 					<li class="menu-item"><a href="#0">UI variables explanation</a></li>
 					<li class="menu-item"><a href="marks/usrdoc/create_dataset">Dataset creation</a></li>
-					<li class="menu-item"><a href="#0">Blender tutorial</a></li>
+					<li class="menu-item"><a href="marks/usrdoc/blender_tutorial">Blender tutorial</a></li>
 				</ul>
 			</li>
 			<li class="menu-item" aria-haspopup="true">

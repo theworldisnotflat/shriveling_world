@@ -1,4 +1,4 @@
-cityCode,index,countryCode,countryName,urbanAgglomeration,latitude,longitude,radius,yearMotorway,yearHST,Index,pop1950,pop1955,pop1960,pop1965,pop1970,pop1975,pop1980,pop1985,pop1990,pop1995,pop2000,pop2005,pop2010,pop2015,pop2020,pop2025,pop2030,nbOri,nbDes
+cityCode,index,countryCode,countryName,cityName,latitude,longitude,radius,yearMotorway,yearHST,Index,pop1950,pop1955,pop1960,pop1965,pop1970,pop1975,pop1980,pop1985,pop1990,pop1995,pop2000,pop2005,pop2010,pop2015,pop2020,pop2025,pop2030,nbOri,nbDes
 20460,181,156,China,Baotou,40.65222,109.82222,NA,NA,NA,181,104,190,347,608,754,801,835,912,1044,1212,1406,1574,1757,1957,2154,2346,2495,1,1
 20464,185,156,China,Beijing,39.9075,116.39723,NA,NA,2008,185,1671,2365,3900,4582,4426,4828,5366,6017,6788,8305,10162,12813,16190,20384,24201,26494,27706,44,46
 20471,194,156,China,Changchun,43.882494,125.293964,NA,NA,NA,194,765,922,1111,1314,1255,1426,1655,1909,2192,2446,2730,3041,3387,3762,4130,4480,4742,7,7

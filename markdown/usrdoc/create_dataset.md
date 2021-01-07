@@ -2,16 +2,16 @@
 
 ## Data model
 
-![data model](assets/modeles8.svg 'data model')
+![data model](assets/data_model_v10.svg 'data model')
 
 ## A system of five files
 
 According to the data model, _Shriveling world_ datasets are composed of five files:
-1. cities
-2. population
-3. transport network
-4. transport modes
-5. transport mode speed
+1. [cities](#cities-file)
+2. [population](#population-file)
+3. [transport network](#transport-network-file)
+4. [transport modes](#transport-modes-file)
+5. [transport mode speed](#transport-mode-speed-file)
 
 The files describe a __graph__ modelling a transport network between cities with __speed__ as a key parameter. The content of the files is [described below](#content-of-files-columns).
 
@@ -26,15 +26,60 @@ The _historical time span_ needs to fill in the variable _yearBegin_ and the var
 * _yearBegin_ will be the earliest year when the model can be computed
 * _yearEnd_ will be the latest year when the model can be computed
 
-There are two sources to determine this _historical time span_:
-Source | Rationale
-----------|----------
-_transport mode speed.csv_ | to allow for comparing modes in general, e.g. road vs rail in the long term
-_transport network.csv_ | to allow for considering the growth of a transport network of a given speed, over time, e.g. the morphogenesis of the high-speed rail network
+There are three sources to determine this _historical time span_:
+Source file | Columns | Rationale
+----------|----------|----
+_transport_mode.csv_ |_mYearBegin_ _mYearEnd_| to allow for comparing modes in general, e.g. road vs rail in the long term
+_transport_network.csv_ |_eYearBegin_ _eYearEnd_| to allow for considering the growth of a transport network of a given speed, over time, e.g. the morphogenesis of the high-speed rail network
+_transport_mode_speed.csv_|_year_|speed data is central in the model; speed data over years found in this file should be consistent with the other year sources
 
 ## Algorithm for determining the historical time span
 
-Algorithm for determining the variables _yearBegin_ and  _yearEnd_:
+### Step #1 Computing basic variables at transport mode level
+
+At code run, a series of time variables attached to the transport mode are computed. At one point the following variables are known for each transport mode:
+
+Variable name | read/computed |formula| Comments
+----------|-----|-----|----
+_mYearBegin_|read in _transport_mode_ file||date of creation of the transport mode; may be empty but not recommended
+_mYearEnd_|read in _transport_mode_ file||usually empty, meaning the transport mode is still currently operated
+_minEYear_|computed|min(_eYearBegin_)|the earliest date present in the network file for the corresponding transport  mode; may be empty, in such case the relevant info comes from file _
+_maxEYear_|computed|max(_eYearEnd_)|Usually empty (exception is Concorde that stopped operations)
+_minSYear_|computed|min(_year_)|The earliest year in the _transport_mode_speed_ file
+_maxSYear_|computed|max(_year_)|The latest year in the _transport_mode_speed_ file
+
+### Step #2 Computing _yearBegin_ at transport mode level
+
+In a well formed dataset _mYearBegin<sub>road</sub>_ should be the right starting date. Nevertheless, as the model needs speed data, we need to check the existence of speed data from this date, hence considering _minSYear<sub>road</sub>_. Network data should be consistent with the [other data sources for the historical time span](#historical-time-span), and hence be considered when computing _yearBegin<sub>road</sub>_. The equation becomes:
+
+_yearBegin<sub>road</sub>_ = max(_mYearBegin<sub>road</sub>_,   _minSYear<sub>road</sub>_,   _minEYear<sub>road</sub>_)
+
+In case one or several _minEYear<sub>road</sub>_ values are empty, the variable _minEYear_ should have no influence on forming _yearBegin_.
+
+The computation for _road_ described in steps #1 and #2 should be repeated for each transport mode accordingly.
+
+### Step #3 Computing _yearEnd_ at transport mode level
+
+The formula is:
+
+_yearEnd<sub>road</sub>_ = min( _mYearEnd<sub>road</sub>_,   _maxSYear<sub>road</sub>_,   _maxEYear<sub>road</sub>_)
+
+The computation for _road_ described in steps #1 and #3 should be repeated for each transport mode accordingly.
+
+### Step #4 Compute the _Historical time span_
+
+Due to the  [differential nature of the model](#a-differential-model), _yearBegin_ should be indicated by the earliest year of operation among all the non road transport modes. In a typical, well formed dataset, one or several transport modes faster than road are described, typically expressway, high-speed rail or airlines. In this case the earliest date when the model can be computed is when one of these faster modes starts operations, providing _yearBegin<sub>road</sub>_ is equal or earlier.
+
+_yearBegin_ = min(_yearBegin<sub>Transp1</sub>_, _yearBegin<sub>Transp2</sub>_, ...)
+
+Usually -- exception made of historical past datasets and prospective datasets -- _yearEnd_ should be the current year. In order to care for these two cases, we add the rule that if _yearEnd<sub>road</sub>_ is empty, it should be populated with _currentYear_ and otherwise untouched.
+
+1. _yearEnd_ = max(_yearEnd<sub>Transp1</sub>_, _yearEnd<sub>Transp2</sub>_, ...)
+2. if _yearEnd<sub>road</sub>_ is empty, then _yearEnd<sub>road</sub>_ = _currentYear_,
+
+These formulas apply in the -- well formed dataset -- case where years for road are consistent with other modes years data, and hence: _yearBegin<sub>road</sub>_ <= _yearBegin_ AND _yearEnd<sub>road</sub>_ >= _yearEnd_
+
+<!-- Algorithm for determining the variables _yearBegin_ and  _yearEnd_:
 
 Source file | Starting year for each mode | Ending year for each mode
 ----------|----------|----------
@@ -51,12 +96,14 @@ _yearEndRoad_ = max (_yearEndRoadMode_, _yearEndRoadNetwork_)
 _yearBegin_ = max((_yearBeginRoad_), min(_yearBeginFasterTransp1_, _yearBeginFasterTransp2_, etc.))
 _yearEnd_ = min((_yearEndRoad_), max(_yearEndFasterTransp1_, _yearEndFasterTransp2_, etc.))
 
-The transport related period should also be coherent with the dates of the city population data.
+-->
+
+In addition, the transport related period should also be coherent with the dates of the city population data.
 
 ## Mandatory elements in the dataset
 
-General __common sense__ instructions
-
+General __common sense__ instructions:
+* Files are in CSV format produced with default export options from LibreOffice Calc.
 * The [five files](#a-system-of-five-files) must all be present in the dataset
 * As shown in the [figure of the data model](#data-model) each file has optional and mandatory columns
   * mandatory columns must be populated completely, with no missing data
@@ -64,31 +111,30 @@ General __common sense__ instructions
 * Column names in files __MUST__ be rigorously respected
 * Id fields must be carefully populated because they connect files to each other:
   * _cityCode_ from the city file is linked to _iOri_ and _iDes_ in the network file
-  * _transportMode_ code from the transport network file is linked to _code_ in the transport mode code file, and _transportModeCode_ in the transport mode speed file
+  * _transportModeCode_ code from the transport network file is linked to _code_ in the transport mode code file, and _transportModeCode_ in the transport mode speed file
 * text type: _countryName_, _urbanAgglomeration_, _name_ (of transport mode)
 * numeric type: _countryCode_, _cityCode_, _latitude_, _longitude_, etc
 
 Specific __critical__ instructions:
 * The file [_transport mode_](#transport-mode-file) __MUST__ contain a mode named _Road_ that will define the slope of cones; cones is the geographic surface and the _Road_ speed is attached to this surface
 * For the same reason the file [_transport mode speed_](#transport-mode-speed-file) __MUST__ contain speed information for the mode _road_
+* The mode _road_ __MUST__ be _terrestrial_ (property _terrestrial_ = 1)
 * The model being by design [differential](#a-differential-model), at least one other transport mode with a speed __MUST__ be described (in both files  [_transport mode_](#transport-mode-file) and [_transport mode speed_](#transport-mode-speed-file))
 
 
 ## Content of files columns
 
-* (__to be checked__)The column order in files is not necessarily the same as proposed here.
-
-* Files are in CSV format produced with default export options from LibreOffice Calc.
-* Column names __MUST__ be rigorously respected
+* The column order in files is not necessarily the same as proposed here.
+* Column names __MUST__ be rigorously respected since they are used to identify files at run time.
 
 ### Cities file
 
 Column name | Type | Mandatory | Comments
 ----------|----------|-------------|-------------
+_cityCode_|number|yes|city unique id
+_cityName_|string|yes|agglomeration (city) name
 _countryCode_ |number|yes|numeric code of country where city belongs
 _countryName_|string|yes|country name where city belongs
-_cityCode_|number|yes|city unique id
-_urbanAgglomeration_|string|yes|agglomeration (city) name
 _latitude_|number|yes|numeric with comma, e.g. 35.55597
 _longitude_|number|yes|numeric with comma
 _radius_|number|no|cone radius for the case of islands located close to a coastal area devoid of cities, to avoid island cone overlapping in the coastal area, e.g. Canary Islands close to Maroc
@@ -106,11 +152,11 @@ _population_|number|yes|in thousands inhabitants, at the agglomeration level rec
 The _transport network file_ describes the edges of the graph between the cities as nodes. See her for [a justification of the terminology choices](https://timespace.hypotheses.org/177).
 Column name | Type | Mandatory | Comments
 ----------|----------|-------------|-------------
-_yearBegin_|number|no|year of opening of the edge, infrastructure or service; if not populated, period _historical time span_ will be determined from _transport mode code_ file data
-_yearEnd_|number|no|may be used for a service no longer operated, e.g. supersonic commercial aircraft Concorde
-_idOri_|number|yes|id of origin city; direction (ori-des or des-ori) has no meaning in the model
-_idDes_|number|yes|id of destination city
-_transportMode_|number|yes|id of the transport mode
+_cityCodeOri_|number|yes|id of origin city; direction (ori-des or des-ori) has no meaning in the model
+_cityCodeDes_|number|yes|id of destination city
+_transportModeCode_|number|yes|id of the transport mode
+_eYearBegin_|number|no|year of opening of the edge, infrastructure or service; if not populated, the period _historical time span_ will be determined from _transport mode code_ file data
+_eYearEnd_|number|no|may be used for a service no longer operated, e.g. supersonic commercial aircraft Concorde
 
 For the sake of readability this file usually contains two optional columns of _oriName_ and _desName_.
 
@@ -119,12 +165,12 @@ Column name | Type | Mandatory | Comments
 ----------|----------|-------------|-------------
 _name_|string|yes|mode name
 _code_|number|yes|unique id of the transport mode
-_yearBegin_|number|yes|year of opening of the first infrastructure or service of the mode, e.g. High Speed Rail in 1964 between Tokyo and Osaka
-_yearEnd_|number|no|may be used for a service no longer operated, e.g. supersonic commercial aircraft Concorde between Paris and New-York started in 1977 and stopped operating in 2004
+_mYearBegin_|number|yes|year of opening of the first infrastructure or service of the mode, e.g. High Speed Rail in 1964 between Tokyo and Osaka
+_mYearEnd_|number|no|may be used for a service no longer operated, e.g. supersonic commercial aircraft Concorde between Paris and New-York started in 1977 and stopped operating in 2004
 
 
 ### Transport mode speed file
-A given transport mode may experience an increase of speed, e.g. the five acceleration phases of China classical railways (non High Speed Rail) between 1997 and 2004
+A given transport mode may experience an increase of speed over time, e.g. the five acceleration phases of China classical railways (non High Speed Rail) between 1997 and 2004
 Column name | Type | Mandatory | Comments
 ----------|----------|-------------|-------------
 _year_|number|yes|referring to a date when speed changed

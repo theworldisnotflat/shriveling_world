@@ -1,4 +1,4 @@
-index,countryCode,countryName,cityCode,urbanAgglomeration,latitude,longitude,radius,yearMotorway,yearHST
+index,countryCode,countryName,cityCode,cityName,latitude,longitude,radius,yearMotorway,yearHST
 983,392,Japan,204583,Chukyo M.M.A. (Nagoya),35.18147,136.90641,,,1964
 987,392,Japan,206459,Kinki M.M.A. (Osaka),34.675834,135.553823,,,1964
 998,392,Japan,206156,Shizuoka-Hamamatsu M.M.A.,34.9769,138.3831,,,1964

@@ -174,9 +174,9 @@ function regenerateFromConeStep(): void {
 
 /**
  * Function [[updateAlphas]] sets the alpha (fixing slopes) of cones according to year
- * and deals with cones that shouldnt be displayed
+ * and deals with cones that shouldn't be displayed
  *
- * will call function [[getcomplexAlpha]]
+ * will call function [[getComplexAlpha]]
  */
 function updateAlphas(): void {
 	const year = CONFIGURATION.year;
@@ -189,7 +189,7 @@ function updateAlphas(): void {
 		const temp = new Float32Array(_height * _width);
 		for (let i = 0; i < _height; i++) {
 			const complexAlpha = _cones[i].getcomplexAlpha(year);
-			const coneAlpha = complexAlpha.coneAlpha;
+			const coneAlpha = complexAlpha.coneRoadAlpha;
 			const alphaTab = [...complexAlpha.tab];
 			let subAlphas: Float32Array;
 			const length = alphaTab.length;
