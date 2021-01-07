@@ -2,7 +2,7 @@
 
 ## Data model
 
-![data model](assets/data_model_v10.svg 'data model')
+![data model](assets/data_model_v11.svg 'data model')
 
 ## A system of five files
 

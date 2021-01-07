@@ -383,15 +383,16 @@ function networkFromCities(
 			}
 		});
 	});
-
+	// transport mode: range of operation AND available speed data
+	console.log('avant', transportMode);
 	transportMode.forEach((transpMode) => {
-		transpMode.yearBegin = Math.min(
-			transpMode.minSYear === null ? Infinity : transpMode.minSYear,
-			transpMode.minEYear === null ? Infinity : transpMode.minEYear
+		transpMode.yearBegin = Math.max(
+			transpMode.minSYear === null ? -Infinity : transpMode.minSYear,
+			transpMode.minEYear === null ? -Infinity : transpMode.minEYear
 		);
-		transpMode.yearEnd = Math.max(
-			transpMode.maxSYear === null ? -Infinity : transpMode.maxSYear,
-			transpMode.maxEYear === null ? -Infinity : transpMode.maxEYear
+		transpMode.yearEnd = Math.min(
+			transpMode.maxSYear === null ? Infinity : transpMode.maxSYear,
+			transpMode.maxEYear === null ? Infinity : transpMode.maxEYear
 		);
 	});
 	let yearBeginModel = Infinity;
@@ -399,13 +400,11 @@ function networkFromCities(
 	transportMode.forEach((transpMode) => {
 		if (transpMode.code !== roadCode) {
 			if (transpMode.yearBegin < yearBeginModel) yearBeginModel = transpMode.yearBegin;
-			if (transpMode.yearEnd > yearEndModel) {
-				yearEndModel = transpMode.yearEnd;
-			}
+			if (transpMode.yearEnd > yearEndModel) yearEndModel = transpMode.yearEnd;
 		}
-		console.log(transpMode.name, transpMode.yearBegin, transpMode.yearEnd);
+		//console.log(transpMode.name, transpMode.yearBegin, transpMode.yearEnd);
 	});
-	console.log('yearBeginModel', yearBeginModel, yearEndModel, transportMode);
+	console.log('time span', yearBeginModel, yearEndModel, transportMode);
 
 	transportMode.forEach((transpMode) => {
 		const transportCode = transpMode.code;
@@ -455,6 +454,8 @@ function networkFromCities(
 		};
 	});
 
+	minYear = yearBeginModel;
+	maxYear = yearEndModel;
 	_minYear = minYear;
 	_maxYear = maxYear;
 	// loop on transport modes to determine [alpha]
@@ -696,7 +697,6 @@ function networkFromCities(
 								listOfCurves[destCityCode].speedRatio[edgeTranspModeName][year] = speedRatio;
 							}
 						} else {
-							console.log(edgeTranspModeSpeed.tabSpeedPerYear[year]);
 							continue;
 						}
 					}
@@ -711,13 +711,13 @@ function networkFromCities(
 					cone[yearC].tab = cone[yearC].tab.sort((a, b) => a.clock - b.clock);
 				}
 			}
-
+			// console.log(roadCode, speedPerTransportPerYear[roadCode]);
 			if (Object.keys(cone).length === 0) {
 				// The case of cities not being origin or destinations in the network
 				// or only by aerial mode
 				for (let year = minYear; year <= maxYear; year++) {
-					const coneAlpha = speedPerTransportPerYear[roadCode].tabSpeedPerYear[year].alpha;
-					cone[year] = { coneRoadAlpha: coneAlpha, tab: [] };
+					const coneRoadAlpha = speedPerTransportPerYear[roadCode].tabSpeedPerYear[year].alpha;
+					cone[year] = { coneRoadAlpha: coneRoadAlpha, tab: [] };
 				}
 			}
 
