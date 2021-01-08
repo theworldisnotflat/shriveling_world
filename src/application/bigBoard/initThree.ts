@@ -18,7 +18,7 @@ export async function prepareConfiguration(): Promise<void> {
 			map: new CanvasTexture(canvas),
 			flatShading: true,
 		});
-		CONFIGURATION.highLitedMaterial = new MeshBasicMaterial({
+		CONFIGURATION.highLightedMaterial = new MeshBasicMaterial({
 			color: 0xebdede,
 			transparent: true,
 			opacity: 0.5,

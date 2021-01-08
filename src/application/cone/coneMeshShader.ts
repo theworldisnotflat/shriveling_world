@@ -76,18 +76,18 @@ function localLimitsRaw(
 			allPoints.push(referential.cartographic2NED(position));
 		});
 	});
-	const resultat: Array<{ clock: number; distance: number }> = [];
+	const result: Array<{ clock: number; distance: number }> = [];
 	allPoints.forEach((pos) => {
 		const clook = Math.atan2(pos.y, pos.x);
 		const distance = Math.sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z);
-		resultat.push(
+		result.push(
 			{ clock: clook, distance },
 			{ clock: clook + CONFIGURATION.TWO_PI, distance },
 			{ clock: clook - CONFIGURATION.TWO_PI, distance }
 		);
 	});
-	resultat.sort((a, b) => a.clock - b.clock);
-	return resultat;
+	result.sort((a, b) => a.clock - b.clock);
+	return result;
 }
 
 /**
@@ -105,20 +105,20 @@ function localLimitsFunction(
 			result[clockClass] === undefined ? current.distance : Math.min(result[clockClass], current.distance);
 		return result;
 	}, {});
-	const temporaire: Array<{ clock: number; distance: number }> = [];
+	const temporary: Array<{ clock: number; distance: number }> = [];
 	for (const clockString in clockDistance) {
 		if (clockDistance.hasOwnProperty(clockString)) {
-			temporaire.push({ clock: Number.parseFloat(clockString), distance: clockDistance[clockString] });
+			temporary.push({ clock: Number.parseFloat(clockString), distance: clockDistance[clockString] });
 		}
 	}
 
-	return interpolator(temporaire, 'clock', 'distance');
+	return interpolator(temporary, 'clock', 'distance');
 }
 
 /**
  * Function [[regenerateFromConeStep]] when [[coneStep]] is modified
  *
- * [[clocks]] are unitary triangles that compose cones, the higher [[conestep]] the smaller clocks are
+ * [[clocks]] are unitary triangles that compose cones, the higher [[coneStep]] the smaller clocks are
  */
 function regenerateFromConeStep(): void {
 	const step = CONFIGURATION.coneStep;
@@ -181,14 +181,14 @@ function regenerateFromConeStep(): void {
 function updateAlphas(): void {
 	const year = CONFIGURATION.year;
 	const twoPI = CONFIGURATION.TWO_PI;
-	const ecartMinimum = _discriminant * CONFIGURATION.coneStep;
+	const minimumGap = _discriminant * CONFIGURATION.coneStep;
 	let clockA: number;
 	let clockB: number;
 	let interpol: (x: number) => number;
 	if (!_alphas.hasOwnProperty(year)) {
 		const temp = new Float32Array(_height * _width);
 		for (let i = 0; i < _height; i++) {
-			const complexAlpha = _cones[i].getcomplexAlpha(year);
+			const complexAlpha = _cones[i].getComplexAlpha(year);
 			const coneAlpha = complexAlpha.coneRoadAlpha;
 			const alphaTab = [...complexAlpha.tab];
 			let subAlphas: Float32Array;
@@ -209,7 +209,7 @@ function updateAlphas(): void {
 				for (let i = length + 1; i > 0; i--) {
 					clockA = alphaTab[i - 1].clock;
 					clockB = alphaTab[i].clock;
-					if (clockB - clockA > ecartMinimum) {
+					if (clockB - clockA > minimumGap) {
 						// Ajout d'une pente de route quand
 						// l'écart d'azimut entre deux destinations est trop grande
 						alphaTab.splice(i, 0, { alpha: coneAlpha, clock: clockA + (clockB - clockA) / 2 });
@@ -243,6 +243,18 @@ function updateWithLimits(): void {
 
 	const options = {
 		u_withLimits: { src: withLimits, width: 1, height: _height },
+	};
+	_gpgpu.positions.updateTextures(options);
+}
+
+function updateComplexCones(): void {
+	const complexCones = new Float32Array(_height);
+	for (let i = 0; i < _height; i++) {
+		complexCones[i] = _cones[i].complexCones ? 1 : 0;
+	}
+
+	const options = {
+		u_complexCones: { src: complexCones, width: 1, height: _height },
 	};
 	_gpgpu.positions.updateTextures(options);
 }
@@ -286,17 +298,18 @@ function computation(): void {
 export class ConeMeshShader extends PseudoCone {
 	public otherProperties: any;
 	private _withLimits: boolean;
+	private _complexCones: boolean;
 	private readonly _cityCode: string;
 	// Private _transportName: string;
 	private readonly _position: Cartographic;
 	private readonly _complexAlpha: ILookupComplexAlpha;
 
 	/**
-	 * Will [[generateCones]] from [[cityNetwork]]
+	 * Will [[generateCones]] from [[cityGraph]]
 	 * @param lookup
-	 * @param bboxes
+	 * @param bBoxes
 	 */
-	public static async generateCones(lookup: ILookupCityGraph, bboxes: IBBox[]): Promise<ConeMeshShader[]> {
+	public static async generateCones(lookup: ILookupCityGraph, bBoxes: IBBox[]): Promise<ConeMeshShader[]> {
 		_ready = false;
 		_cones = [];
 		fullCleanArrays();
@@ -334,16 +347,19 @@ export class ConeMeshShader extends PseudoCone {
 										regenerateFromConeStep();
 										updateAlphas();
 										updateWithLimits();
+										updateComplexCones();
 										computation();
 										break;
 									case 'year':
 										updateAlphas();
 										updateWithLimits();
+										updateComplexCones();
 										computation();
 										break;
 									case 'tick':
 										if (_dirtyLimits && _tickCount > 10) {
 											updateWithLimits();
+											updateComplexCones();
 											computation();
 											_tickCount = 0;
 											_dirtyLimits = false;
@@ -380,7 +396,7 @@ export class ConeMeshShader extends PseudoCone {
 				const referentialGLSL = cityTransport.referential.ned2ECEFMatrix;
 				const terrestrialData = cityTransport.cone;
 				_localLimitsLookup[cityCode] = localLimitsRaw(
-					matchingBBox(position, bboxes),
+					matchingBBox(position, bBoxes),
 					cityTransport.referential
 				);
 				const commonProperties = {};
@@ -410,6 +426,7 @@ export class ConeMeshShader extends PseudoCone {
 		regenerateFromConeStep();
 		updateAlphas();
 		updateWithLimits();
+		updateComplexCones();
 		computation();
 		_ready = true;
 		return [..._cones];
@@ -451,6 +468,7 @@ export class ConeMeshShader extends PseudoCone {
 		this.otherProperties = properties;
 		this._complexAlpha = terrestrialData;
 		this._withLimits = true;
+		this._complexCones = false;
 		this.visible = true;
 		this.castShadow = true;
 		// This.receiveShadow = true;
@@ -497,7 +515,7 @@ export class ConeMeshShader extends PseudoCone {
 	 * Return a [[IComplexAlphaItem]] corresponding to a year for the city defined in this [[ConeMeshShader]]
 	 * @param year
 	 */
-	public getcomplexAlpha(year: string | number): IComplexAlphaItem {
+	public getComplexAlpha(year: string | number): IComplexAlphaItem {
 		return this._complexAlpha[year];
 	}
 
@@ -517,6 +535,16 @@ export class ConeMeshShader extends PseudoCone {
 		if (value !== this._withLimits) {
 			_dirtyLimits = true;
 			this._withLimits = value;
+		}
+	}
+
+	get complexCones(): boolean {
+		return this._complexCones;
+	}
+
+	set complexCones(value: boolean) {
+		if (value !== this._complexCones) {
+			this._complexCones = value;
 		}
 	}
 }

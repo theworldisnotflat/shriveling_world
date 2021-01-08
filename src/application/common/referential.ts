@@ -46,11 +46,11 @@ export class Coordinate {
 		return result;
 	}
 
-	public static scalar(vec1: Coordinate, coef: number, result?: Coordinate): Coordinate {
+	public static scalar(vec1: Coordinate, coefficient: number, result?: Coordinate): Coordinate {
 		result = result instanceof Coordinate ? result : new Coordinate();
-		result.x = vec1.x * coef;
-		result.y = vec1.y * coef;
-		result.z = vec1.z * coef;
+		result.x = vec1.x * coefficient;
+		result.y = vec1.y * coefficient;
+		result.z = vec1.z * coefficient;
 		return result;
 	}
 
@@ -95,8 +95,8 @@ export class Coordinate {
 		return Coordinate.multiplyVector(this, vec2, result);
 	}
 
-	public scalar(coef: number, result?: Coordinate): Coordinate {
-		return Coordinate.scalar(this, coef, result);
+	public scalar(coefficient: number, result?: Coordinate): Coordinate {
+		return Coordinate.scalar(this, coefficient, result);
 	}
 
 	public add(vec2: Coordinate, result?: Coordinate): Coordinate {

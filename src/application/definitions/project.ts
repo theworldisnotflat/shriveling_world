@@ -70,7 +70,7 @@ export interface ICartographic {
 }
 
 /**
- * An item grouping for a fixed year and a fixed origin city datas to generate
+ * An item grouping for a fixed year and a fixed origin city data to generate
  * a complex cone the slope for road and slope for each
  * destination city (clock) using a terrestrial transport.
  */
@@ -156,8 +156,8 @@ export interface IItemCriteria {
 	comparator?: '=' | '>' | '>=' | '<' | '<=' | '!=';
 }
 
-export interface ICriterias {
-	[attribut: string]: IItemCriteria;
+export interface ICriteria {
+	[attribute: string]: IItemCriteria;
 }
 
 export interface IOrderAscendant {
@@ -173,7 +173,7 @@ export interface ISumUpCriteriaItem {
 }
 
 export interface ISumUpCriteria {
-	[attribut: string]: ISumUpCriteriaItem;
+	[attribute: string]: ISumUpCriteriaItem;
 }
 
 export interface IPopulation {
@@ -218,8 +218,6 @@ export interface ITransportModeSpeed {
  * A transport mode has
  * * a [[name]],
  * * a [[code]],
- * * a [[mYearBegin]] mandatory
- * * a [[mYearEnd]] (optional),
  * * can be [[terrestrial]] or not,
  * * and has a table of speeds [[speedTab]] that may change over years
  *
@@ -227,22 +225,23 @@ export interface ITransportModeSpeed {
  * All the info before come from reading files ("transport_mode" and "transport_mode_speed")
  * The info below is computed in the code:
  * * [[minEYear]] and
- * * [[maxEYear]] are computed from info at
- * edge level in file "transport_network"
+ * * [[maxEYear]] are computed from info at edge level in file "transport_network"
  * * [[minSYear]] and
  * * [[maxSYear]] are computed from "transport_mode_speed" file
+ * * [[yearBegin]] and
+ * * [[yearEnd]] are computed from previous values
  **/
 export interface ITranspMode {
 	name: string;
 	code: number;
-	mYearBegin: number;
-	mYearEnd?: number;
 	terrestrial: boolean; // If yes the transport mode speed can affect the slope of cones
 	speedTab: ITransportModeSpeed[];
 	minEYear?: number;
 	maxEYear?: number;
 	minSYear?: number;
 	maxSYear?: number;
+	yearBegin?: number;
+	yearEnd?: number;
 }
 
 /**
