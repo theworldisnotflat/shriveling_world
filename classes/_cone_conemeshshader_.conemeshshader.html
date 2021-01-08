@@ -104,6 +104,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_cone_conemeshshader_.conemeshshader.html#_citycode" class="tsd-kind-icon">_city<wbr>Code</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_cone_conemeshshader_.conemeshshader.html#_complexalpha" class="tsd-kind-icon">_complex<wbr>Alpha</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_cone_conemeshshader_.conemeshshader.html#_complexcones" class="tsd-kind-icon">_complex<wbr>Cones</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_cone_conemeshshader_.conemeshshader.html#_position" class="tsd-kind-icon">_position</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_cone_conemeshshader_.conemeshshader.html#_withlimits" class="tsd-kind-icon">_with<wbr>Limits</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_cone_conemeshshader_.conemeshshader.html#animations" class="tsd-kind-icon">animations</a></li>
@@ -151,6 +152,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite"><a href="_cone_conemeshshader_.conemeshshader.html#cartographicposition" class="tsd-kind-icon">cartographic<wbr>Position</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite"><a href="_cone_conemeshshader_.conemeshshader.html#citycode" class="tsd-kind-icon">city<wbr>Code</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-overwrite"><a href="_cone_conemeshshader_.conemeshshader.html#complexcones" class="tsd-kind-icon">complex<wbr>Cones</a></li>
 								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-overwrite"><a href="_cone_conemeshshader_.conemeshshader.html#withlimits" class="tsd-kind-icon">with<wbr>Limits</a></li>
 								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-static"><a href="_cone_conemeshshader_.conemeshshader.html#discriminant" class="tsd-kind-icon">discriminant</a></li>
 							</ul>
@@ -168,6 +170,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_cone_conemeshshader_.conemeshshader.html#copy" class="tsd-kind-icon">copy</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_cone_conemeshshader_.conemeshshader.html#dispatchevent" class="tsd-kind-icon">dispatch<wbr>Event</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_cone_conemeshshader_.conemeshshader.html#dispose" class="tsd-kind-icon">dispose</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_cone_conemeshshader_.conemeshshader.html#getcomplexalpha" class="tsd-kind-icon">get<wbr>Complex<wbr>Alpha</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_cone_conemeshshader_.conemeshshader.html#getobjectbyid" class="tsd-kind-icon">get<wbr>Object<wbr>ById</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_cone_conemeshshader_.conemeshshader.html#getobjectbyname" class="tsd-kind-icon">get<wbr>Object<wbr>ByName</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_cone_conemeshshader_.conemeshshader.html#getobjectbyproperty" class="tsd-kind-icon">get<wbr>Object<wbr>ByProperty</a></li>
@@ -175,7 +178,6 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_cone_conemeshshader_.conemeshshader.html#getworldposition" class="tsd-kind-icon">get<wbr>World<wbr>Position</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_cone_conemeshshader_.conemeshshader.html#getworldquaternion" class="tsd-kind-icon">get<wbr>World<wbr>Quaternion</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_cone_conemeshshader_.conemeshshader.html#getworldscale" class="tsd-kind-icon">get<wbr>World<wbr>Scale</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_cone_conemeshshader_.conemeshshader.html#getcomplexalpha" class="tsd-kind-icon">getcomplex<wbr>Alpha</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_cone_conemeshshader_.conemeshshader.html#haseventlistener" class="tsd-kind-icon">has<wbr>Event<wbr>Listener</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_cone_conemeshshader_.conemeshshader.html#localtoworld" class="tsd-kind-icon">local<wbr>ToWorld</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_cone_conemeshshader_.conemeshshader.html#lookat" class="tsd-kind-icon">look<wbr>At</a></li>
@@ -224,7 +226,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_cone_base_.pseudocone.html">PseudoCone</a>.<a href="_cone_base_.pseudocone.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/8c4aded/src/application/cone/coneMeshShader.ts#L416">src/application/cone/coneMeshShader.ts:416</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/62a181e/src/application/cone/coneMeshShader.ts#L433">src/application/cone/coneMeshShader.ts:433</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -269,7 +271,7 @@
 					<div class="tsd-signature tsd-kind-icon">_city<wbr>Code<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/8c4aded/src/application/cone/coneMeshShader.ts#L289">src/application/cone/coneMeshShader.ts:289</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/62a181e/src/application/cone/coneMeshShader.ts#L302">src/application/cone/coneMeshShader.ts:302</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -279,7 +281,17 @@
 					<div class="tsd-signature tsd-kind-icon">_complex<wbr>Alpha<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_definitions_project_.ilookupcomplexalpha.html" class="tsd-signature-type">ILookupComplexAlpha</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/8c4aded/src/application/cone/coneMeshShader.ts#L292">src/application/cone/coneMeshShader.ts:292</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/62a181e/src/application/cone/coneMeshShader.ts#L305">src/application/cone/coneMeshShader.ts:305</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_complexcones" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _complex<wbr>Cones</h3>
+					<div class="tsd-signature tsd-kind-icon">_complex<wbr>Cones<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/62a181e/src/application/cone/coneMeshShader.ts#L301">src/application/cone/coneMeshShader.ts:301</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -289,7 +301,7 @@
 					<div class="tsd-signature tsd-kind-icon">_position<span class="tsd-signature-symbol">:</span> <a href="_common_utils_.cartographic.html" class="tsd-signature-type">Cartographic</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/8c4aded/src/application/cone/coneMeshShader.ts#L291">src/application/cone/coneMeshShader.ts:291</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/62a181e/src/application/cone/coneMeshShader.ts#L304">src/application/cone/coneMeshShader.ts:304</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -299,7 +311,7 @@
 					<div class="tsd-signature tsd-kind-icon">_with<wbr>Limits<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/8c4aded/src/application/cone/coneMeshShader.ts#L288">src/application/cone/coneMeshShader.ts:288</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/62a181e/src/application/cone/coneMeshShader.ts#L300">src/application/cone/coneMeshShader.ts:300</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -788,7 +800,7 @@
 					<aside class="tsd-sources">
 						<p>Overrides <a href="_cone_base_.pseudocone.html">PseudoCone</a>.<a href="_cone_base_.pseudocone.html#otherproperties">otherProperties</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/8c4aded/src/application/cone/coneMeshShader.ts#L287">src/application/cone/coneMeshShader.ts:287</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/62a181e/src/application/cone/coneMeshShader.ts#L299">src/application/cone/coneMeshShader.ts:299</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -1069,7 +1081,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_cone_base_.pseudocone.html">PseudoCone</a>.<a href="_cone_base_.pseudocone.html#cartographicposition">cartographicPosition</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/8c4aded/src/application/cone/coneMeshShader.ts#L508">src/application/cone/coneMeshShader.ts:508</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/62a181e/src/application/cone/coneMeshShader.ts#L526">src/application/cone/coneMeshShader.ts:526</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="_common_utils_.cartographic.html" class="tsd-signature-type">Cartographic</a></h4>
@@ -1087,10 +1099,44 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_cone_base_.pseudocone.html">PseudoCone</a>.<a href="_cone_base_.pseudocone.html#citycode">cityCode</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/8c4aded/src/application/cone/coneMeshShader.ts#L504">src/application/cone/coneMeshShader.ts:504</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/62a181e/src/application/cone/coneMeshShader.ts#L522">src/application/cone/coneMeshShader.ts:522</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class tsd-is-overwrite">
+					<a name="complexcones" class="tsd-anchor"></a>
+					<h3>complex<wbr>Cones</h3>
+					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> complexCones<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> complexCones<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="_cone_base_.pseudocone.html">PseudoCone</a>.<a href="_cone_base_.pseudocone.html#complexcones">complexCones</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/62a181e/src/application/cone/coneMeshShader.ts#L541">src/application/cone/coneMeshShader.ts:541</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="_cone_base_.pseudocone.html">PseudoCone</a>.<a href="_cone_base_.pseudocone.html#complexcones">complexCones</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/62a181e/src/application/cone/coneMeshShader.ts#L545">src/application/cone/coneMeshShader.ts:545</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -1106,7 +1152,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_cone_base_.pseudocone.html">PseudoCone</a>.<a href="_cone_base_.pseudocone.html#withlimits">withLimits</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/8c4aded/src/application/cone/coneMeshShader.ts#L512">src/application/cone/coneMeshShader.ts:512</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/62a181e/src/application/cone/coneMeshShader.ts#L530">src/application/cone/coneMeshShader.ts:530</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -1115,7 +1161,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_cone_base_.pseudocone.html">PseudoCone</a>.<a href="_cone_base_.pseudocone.html#withlimits">withLimits</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/8c4aded/src/application/cone/coneMeshShader.ts#L516">src/application/cone/coneMeshShader.ts:516</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/62a181e/src/application/cone/coneMeshShader.ts#L534">src/application/cone/coneMeshShader.ts:534</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1139,7 +1185,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/8c4aded/src/application/cone/coneMeshShader.ts#L459">src/application/cone/coneMeshShader.ts:459</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/62a181e/src/application/cone/coneMeshShader.ts#L477">src/application/cone/coneMeshShader.ts:477</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -1147,7 +1193,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/8c4aded/src/application/cone/coneMeshShader.ts#L463">src/application/cone/coneMeshShader.ts:463</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/62a181e/src/application/cone/coneMeshShader.ts#L481">src/application/cone/coneMeshShader.ts:481</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1456,10 +1502,40 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_cone_base_.pseudocone.html">PseudoCone</a>.<a href="_cone_base_.pseudocone.html#dispose">dispose</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/8c4aded/src/application/cone/coneMeshShader.ts#L470">src/application/cone/coneMeshShader.ts:470</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/62a181e/src/application/cone/coneMeshShader.ts#L488">src/application/cone/coneMeshShader.ts:488</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getcomplexalpha" class="tsd-anchor"></a>
+					<h3>get<wbr>Complex<wbr>Alpha</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Complex<wbr>Alpha<span class="tsd-signature-symbol">(</span>year<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_definitions_project_.icomplexalphaitem.html" class="tsd-signature-type">IComplexAlphaItem</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/62a181e/src/application/cone/coneMeshShader.ts#L518">src/application/cone/coneMeshShader.ts:518</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Return a <a href="../interfaces/_definitions_project_.icomplexalphaitem.html">IComplexAlphaItem</a> corresponding to a year for the city defined in this <a href="_cone_conemeshshader_.conemeshshader.html">ConeMeshShader</a></p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>year: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_definitions_project_.icomplexalphaitem.html" class="tsd-signature-type">IComplexAlphaItem</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -1647,36 +1723,6 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Vector3</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="getcomplexalpha" class="tsd-anchor"></a>
-					<h3>getcomplex<wbr>Alpha</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">getcomplex<wbr>Alpha<span class="tsd-signature-symbol">(</span>year<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_definitions_project_.icomplexalphaitem.html" class="tsd-signature-type">IComplexAlphaItem</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/8c4aded/src/application/cone/coneMeshShader.ts#L500">src/application/cone/coneMeshShader.ts:500</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Return a <a href="../interfaces/_definitions_project_.icomplexalphaitem.html">IComplexAlphaItem</a> corresponding to a year for the city defined in this <a href="_cone_conemeshshader_.conemeshshader.html">ConeMeshShader</a></p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>year: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
-									<div class="tsd-comment tsd-typography">
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_definitions_project_.icomplexalphaitem.html" class="tsd-signature-type">IComplexAlphaItem</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -2089,7 +2135,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/8c4aded/src/application/cone/coneMeshShader.ts#L477">src/application/cone/coneMeshShader.ts:477</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/62a181e/src/application/cone/coneMeshShader.ts#L495">src/application/cone/coneMeshShader.ts:495</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2637,18 +2683,18 @@
 					<a name="generatecones" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> generate<wbr>Cones</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">generate<wbr>Cones<span class="tsd-signature-symbol">(</span>lookup<span class="tsd-signature-symbol">: </span><a href="../interfaces/_definitions_project_.ilookupcitygraph.html" class="tsd-signature-type">ILookupCityGraph</a>, bboxes<span class="tsd-signature-symbol">: </span><a href="../interfaces/_definitions_project_.ibbox.html" class="tsd-signature-type">IBBox</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="_cone_conemeshshader_.conemeshshader.html" class="tsd-signature-type">ConeMeshShader</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">generate<wbr>Cones<span class="tsd-signature-symbol">(</span>lookup<span class="tsd-signature-symbol">: </span><a href="../interfaces/_definitions_project_.ilookupcitygraph.html" class="tsd-signature-type">ILookupCityGraph</a>, bBoxes<span class="tsd-signature-symbol">: </span><a href="../interfaces/_definitions_project_.ibbox.html" class="tsd-signature-type">IBBox</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="_cone_conemeshshader_.conemeshshader.html" class="tsd-signature-type">ConeMeshShader</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/8c4aded/src/application/cone/coneMeshShader.ts#L299">src/application/cone/coneMeshShader.ts:299</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/62a181e/src/application/cone/coneMeshShader.ts#L312">src/application/cone/coneMeshShader.ts:312</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Will <a href="_cone_conemeshshader_.conemeshshader.html#generatecones">generateCones</a> from [[cityNetwork]]</p>
+									<p>Will <a href="_cone_conemeshshader_.conemeshshader.html#generatecones">generateCones</a> from [[cityGraph]]</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -2657,7 +2703,7 @@
 									<h5>lookup: <a href="../interfaces/_definitions_project_.ilookupcitygraph.html" class="tsd-signature-type">ILookupCityGraph</a></h5>
 								</li>
 								<li>
-									<h5>bboxes: <a href="../interfaces/_definitions_project_.ibbox.html" class="tsd-signature-type">IBBox</a><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>bBoxes: <a href="../interfaces/_definitions_project_.ibbox.html" class="tsd-signature-type">IBBox</a><span class="tsd-signature-symbol">[]</span></h5>
 									<div class="tsd-comment tsd-typography">
 									</div>
 								</li>
@@ -2739,6 +2785,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_cone_conemeshshader_.conemeshshader.html#_complexalpha" class="tsd-kind-icon">_complex<wbr>Alpha</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_cone_conemeshshader_.conemeshshader.html#_complexcones" class="tsd-kind-icon">_complex<wbr>Cones</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_cone_conemeshshader_.conemeshshader.html#_position" class="tsd-kind-icon">_position</a>
@@ -2867,6 +2916,9 @@
 								<a href="_cone_conemeshshader_.conemeshshader.html#citycode" class="tsd-kind-icon">city<wbr>Code</a>
 							</li>
 							<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-overwrite">
+								<a href="_cone_conemeshshader_.conemeshshader.html#complexcones" class="tsd-kind-icon">complex<wbr>Cones</a>
+							</li>
+							<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_cone_conemeshshader_.conemeshshader.html#withlimits" class="tsd-kind-icon">with<wbr>Limits</a>
 							</li>
 							<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-static">
@@ -2902,6 +2954,9 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_cone_conemeshshader_.conemeshshader.html#dispose" class="tsd-kind-icon">dispose</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_cone_conemeshshader_.conemeshshader.html#getcomplexalpha" class="tsd-kind-icon">get<wbr>Complex<wbr>Alpha</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="_cone_conemeshshader_.conemeshshader.html#getobjectbyid" class="tsd-kind-icon">get<wbr>Object<wbr>ById</a>
 							</li>
@@ -2922,9 +2977,6 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="_cone_conemeshshader_.conemeshshader.html#getworldscale" class="tsd-kind-icon">get<wbr>World<wbr>Scale</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_cone_conemeshshader_.conemeshshader.html#getcomplexalpha" class="tsd-kind-icon">getcomplex<wbr>Alpha</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="_cone_conemeshshader_.conemeshshader.html#haseventlistener" class="tsd-kind-icon">has<wbr>Event<wbr>Listener</a>
@@ -3085,6 +3137,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
 						<a href="../modules/_cone_conemeshshader_.html#updatealphas" class="tsd-kind-icon">update<wbr>Alphas</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<a href="../modules/_cone_conemeshshader_.html#updatecomplexcones" class="tsd-kind-icon">update<wbr>Complex<wbr>Cones</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
 						<a href="../modules/_cone_conemeshshader_.html#updatewithlimits" class="tsd-kind-icon">update<wbr>With<wbr>Limits</a>
