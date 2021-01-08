@@ -796,8 +796,7 @@ export class Merger {
 	 * Connects a file read in the dataset folder
 	 * with the relevant data structures of the code.
 	 * A file type is identified through its headings:
-	 * the headings read are compared to a hard coded
-	 * headings list
+	 * the headings read are compared to a hard coded headings list
 	 * Once data file type is identified, the parser
 	 * is called with function [[getCSV]]
 	 * @param readString
