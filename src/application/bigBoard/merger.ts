@@ -384,7 +384,6 @@ function networkFromCities(
 		});
 	});
 	// transport mode: range of operation AND available speed data
-	console.log('avant', transportMode);
 	transportMode.forEach((transpMode) => {
 		transpMode.yearBegin = Math.max(
 			transpMode.minSYear === null ? -Infinity : transpMode.minSYear,
@@ -405,32 +404,23 @@ function networkFromCities(
 		//console.log(transpMode.name, transpMode.yearBegin, transpMode.yearEnd);
 	});
 	console.log('time span', yearBeginModel, yearEndModel, transportMode);
+	minYear = yearBeginModel;
+	maxYear = yearEndModel;
 
+	// will compute for each year the maximumSpeed and
+	// for each transport mode a table of speed
 	transportMode.forEach((transpMode) => {
 		const transportCode = transpMode.code;
 		const modeName = transpMode.name;
 
 		_transportName[transpMode.terrestrial ? 'cones' : 'curves'].push(modeName);
-		const minYearTransport = Math.max(transpMode.yearBegin, minYear);
-		let maxYearTransport = transpMode.yearEnd === undefined ? currentYear : transpMode.yearEnd;
+		const minYearTransport = transpMode.yearBegin; // Math.max(transpMode.yearBegin, minYear);
+		const maxYearTransport = transpMode.yearEnd; // === undefined ? currentYear : transpMode.yearEnd;
 		let tempTransportCodeTab: ITransportCodeItem[] = [];
 		const tabSpeedPerYear: { [year: string]: ISpeedAlpha } = {};
-		let tempMaxYear: number = transpMode.yearEnd;
-
 		transpMode.speedTab.forEach((transportSpeed) => {
 			tempTransportCodeTab.push({ speed: transportSpeed.speedKPH, year: transportSpeed.year });
-			if (maxYear < transportSpeed.year) {
-				maxYear = transportSpeed.year;
-			}
-
-			if (tempMaxYear === undefined) {
-				tempMaxYear = transportSpeed.year;
-			}
-
-			tempMaxYear = Math.max(tempMaxYear, transportSpeed.year);
 		});
-		// console.log(minYearTransport, transpMode);
-		maxYearTransport = Math.max(maxYearTransport, tempMaxYear);
 		tempTransportCodeTab = tempTransportCodeTab.sort((a, b) => a.year - b.year);
 		const interpolation = interpolator(tempTransportCodeTab, 'year', 'speed', false); // Boolean at false to interpolate beyond limits!
 		let speed: number;
@@ -453,13 +443,12 @@ function networkFromCities(
 			terrestrial: transpMode.terrestrial,
 		};
 	});
-
-	minYear = yearBeginModel;
-	maxYear = yearEndModel;
+	console.log(speedPerTransportPerYear);
 	_minYear = minYear;
 	_maxYear = maxYear;
+
 	// loop on transport modes to determine [alpha]
-	// using maximumSpeed and road Speed
+	// using maximumSpeed and mode Speed
 	// based on [equation 1](http://bit.ly/2tLfehC)
 	for (const transportCode in speedPerTransportPerYear) {
 		// the code assumes that the 'Road' mode is terrestrial

@@ -152,8 +152,8 @@ Column name | Type | Mandatory | Comments
 _cityCodeOri_|number|yes|id of origin city; direction (ori-des or des-ori) has no meaning in the model
 _cityCodeDes_|number|yes|id of destination city
 _transportModeCode_|number|yes|id of the transport mode
-_eYearBegin_|number|no|year of opening of the edge, infrastructure or service, e.g. High Speed Rail in 1964 between Tokyo and Osaka; if not populated, the period _historical time span_ will be determined from _transport mode code_ file data
-_eYearEnd_|number|no|may be used for a service no longer operated, e.g. supersonic commercial aircraft Concorde between Paris and New-York started in 1977 and stopped operating in 2004
+_eYearBegin_|number|no|year of opening of the edge, infrastructure or service, e.g. High Speed Rail in 1964 between Tokyo and Osaka; if _eYearBegin_ is not populated( even only one single edge) , the period _historical time span_ will be determined from the variable _year_ in the _transport speed_ file
+_eYearEnd_|number|no|may be used for a service no longer operated, e.g. supersonic commercial aircraft Concorde between Paris and New-York started in 1977 and stopped operating in 2004; if _eYearEnd_ not populated (even only one single edge), the period _historical time span_ will be determined from the variable _year_ in the _transport speed_ file
 
 For the sake of readability this file usually contains two optional columns of _oriName_ and _desName_.
 
