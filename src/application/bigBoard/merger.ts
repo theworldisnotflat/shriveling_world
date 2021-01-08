@@ -443,36 +443,29 @@ function networkFromCities(
 			terrestrial: transpMode.terrestrial,
 		};
 	});
-	console.log(speedPerTransportPerYear);
 	_minYear = minYear;
 	_maxYear = maxYear;
 
 	// loop on transport modes to determine [alpha]
-	// using maximumSpeed and mode Speed
-	// based on [equation 1](http://bit.ly/2tLfehC)
+	// using maximumSpeed and mode Speed based on [equation 1](http://bit.ly/2tLfehC)
 	for (const transportCode in speedPerTransportPerYear) {
-		// the code assumes that the 'Road' mode is terrestrial
-		if (speedPerTransportPerYear[transportCode].terrestrial) {
-			const tabSpedPerYear = speedPerTransportPerYear[transportCode].tabSpeedPerYear;
-			for (const year in tabSpedPerYear) {
-				if (maximumSpeed.hasOwnProperty(year)) {
-					// Then we affect the slope of cones
-					const maxSpeed = maximumSpeed[year];
-					const speedAmb = tabSpedPerYear[year].speed;
-					// This is [equation 1](http://bit.ly/2tLfehC)
-					// of the slope of the cone
-					// executed because transport mode [[isTerrestrial]]
-					let alpha = Math.atan(Math.sqrt((maxSpeed / speedAmb) * (maxSpeed / speedAmb) - 1));
-					if (alpha < 0) {
-						alpha += CONFIGURATION.TWO_PI;
-					}
-
-					tabSpedPerYear[year].alpha = alpha;
+		const tabSpedPerYear = speedPerTransportPerYear[transportCode].tabSpeedPerYear;
+		for (const year in tabSpedPerYear) {
+			if (maximumSpeed.hasOwnProperty(year)) {
+				const maxSpeed = maximumSpeed[year];
+				const speedAmb = tabSpedPerYear[year].speed;
+				// This is [equation 1](http://bit.ly/2tLfehC)
+				// of the slope of the cone
+				let alpha = Math.atan(Math.sqrt((maxSpeed / speedAmb) * (maxSpeed / speedAmb) - 1));
+				if (alpha < 0) {
+					alpha += CONFIGURATION.TWO_PI;
 				}
+
+				tabSpedPerYear[year].alpha = alpha;
 			}
 		}
 	}
-
+	console.log('speedTab', speedPerTransportPerYear);
 	// Faire lookup des cartographic/referential par cityCode. OK
 	const lookupPosition: { [cityCode: string]: NEDLocal } = {};
 	const lookupMiddle: { [cityCodeBegin: number]: { [cityCodeEnd: number]: ILookupCacheAnchorsEdgeCone } } = {};
@@ -700,7 +693,7 @@ function networkFromCities(
 					cone[yearC].tab = cone[yearC].tab.sort((a, b) => a.clock - b.clock);
 				}
 			}
-			// console.log(roadCode, speedPerTransportPerYear[roadCode]);
+			//console.log(roadCode, speedPerTransportPerYear[roadCode]);
 			if (Object.keys(cone).length === 0) {
 				// The case of cities not being origin or destinations in the network
 				// or only by aerial mode
