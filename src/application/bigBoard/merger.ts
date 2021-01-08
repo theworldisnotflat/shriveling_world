@@ -339,6 +339,7 @@ function networkFromCities(
 	 * At the end of this loop [[speedPerTransportPerYear]] and [[maximumSpeed]] are populated
 	 */
 
+	// identifying Road in the dataset
 	transportMode.forEach((transpMode) => {
 		const transportCode = transpMode.code;
 		const modeName = transpMode.name;
@@ -346,6 +347,8 @@ function networkFromCities(
 			roadCode = transportCode;
 		}
 	});
+
+	// computing transport mode time span variables
 	transportMode.forEach((transpMode) => {
 		// initializing the variables
 		transpMode.minSYear = transpMode.speedTab[0].year;
@@ -383,7 +386,9 @@ function networkFromCities(
 			}
 		});
 	});
-	// transport mode: range of operation AND available speed data
+
+	// computing the valid time span of transport modes considering:
+	// range of operation AND available speed data
 	transportMode.forEach((transpMode) => {
 		transpMode.yearBegin = Math.max(
 			transpMode.minSYear === null ? -Infinity : transpMode.minSYear,
@@ -394,18 +399,25 @@ function networkFromCities(
 			transpMode.maxEYear === null ? Infinity : transpMode.maxEYear
 		);
 	});
-	let yearBeginModel = Infinity;
-	let yearEndModel = -Infinity;
+
+	// computing the historical time span of the model
+	minYear = Infinity;
+	maxYear = -Infinity;
 	transportMode.forEach((transpMode) => {
 		if (transpMode.code !== roadCode) {
-			if (transpMode.yearBegin < yearBeginModel) yearBeginModel = transpMode.yearBegin;
-			if (transpMode.yearEnd > yearEndModel) yearEndModel = transpMode.yearEnd;
+			if (transpMode.yearBegin < minYear) minYear = transpMode.yearBegin;
+			if (transpMode.yearEnd > maxYear) maxYear = transpMode.yearEnd;
 		}
-		//console.log(transpMode.name, transpMode.yearBegin, transpMode.yearEnd);
 	});
-	console.log('time span', yearBeginModel, yearEndModel, transportMode);
-	minYear = yearBeginModel;
-	maxYear = yearEndModel;
+
+	// unlikely case when road times are not consistent
+	transportMode.forEach((transpMode) => {
+		if (transpMode.code === roadCode) {
+			if (transpMode.yearBegin > minYear) minYear = transpMode.yearBegin;
+			if (transpMode.yearEnd < maxYear) maxYear = transpMode.yearEnd;
+		}
+	});
+	console.log('time span', minYear, maxYear, transportMode);
 
 	// will compute for each year the maximumSpeed and
 	// for each transport mode a table of speed
@@ -414,8 +426,8 @@ function networkFromCities(
 		const modeName = transpMode.name;
 
 		_transportName[transpMode.terrestrial ? 'cones' : 'curves'].push(modeName);
-		const minYearTransport = transpMode.yearBegin; // Math.max(transpMode.yearBegin, minYear);
-		const maxYearTransport = transpMode.yearEnd; // === undefined ? currentYear : transpMode.yearEnd;
+		const minYearTransport = transpMode.yearBegin;
+		const maxYearTransport = transpMode.yearEnd;
 		let tempTransportCodeTab: ITransportCodeItem[] = [];
 		const tabSpeedPerYear: { [year: string]: ISpeedAlpha } = {};
 		transpMode.speedTab.forEach((transportSpeed) => {
@@ -424,7 +436,6 @@ function networkFromCities(
 		tempTransportCodeTab = tempTransportCodeTab.sort((a, b) => a.year - b.year);
 		const interpolation = interpolator(tempTransportCodeTab, 'year', 'speed', false); // Boolean at false to interpolate beyond limits!
 		let speed: number;
-		// will determine [maximumSpeed] for each year
 		for (let year = minYearTransport; year <= maxYearTransport; year++) {
 			speed = interpolation(year);
 			tabSpeedPerYear[year] = { speed };
@@ -446,7 +457,7 @@ function networkFromCities(
 	_minYear = minYear;
 	_maxYear = maxYear;
 
-	// loop on transport modes to determine [alpha]
+	// for each transport mode, for each year determine [alpha]
 	// using maximumSpeed and mode Speed based on [equation 1](http://bit.ly/2tLfehC)
 	for (const transportCode in speedPerTransportPerYear) {
 		const tabSpedPerYear = speedPerTransportPerYear[transportCode].tabSpeedPerYear;
@@ -454,8 +465,6 @@ function networkFromCities(
 			if (maximumSpeed.hasOwnProperty(year)) {
 				const maxSpeed = maximumSpeed[year];
 				const speedAmb = tabSpedPerYear[year].speed;
-				// This is [equation 1](http://bit.ly/2tLfehC)
-				// of the slope of the cone
 				let alpha = Math.atan(Math.sqrt((maxSpeed / speedAmb) * (maxSpeed / speedAmb) - 1));
 				if (alpha < 0) {
 					alpha += CONFIGURATION.TWO_PI;
@@ -465,7 +474,6 @@ function networkFromCities(
 			}
 		}
 	}
-	console.log('speedTab', speedPerTransportPerYear);
 	// Faire lookup des cartographic/referential par cityCode. OK
 	const lookupPosition: { [cityCode: string]: NEDLocal } = {};
 	const lookupMiddle: { [cityCodeBegin: number]: { [cityCodeEnd: number]: ILookupCacheAnchorsEdgeCone } } = {};
@@ -577,8 +585,6 @@ function networkFromCities(
 						origCityCode,
 						destCityCode
 					);
-					minYear = Math.min(edge.eYearBegin, minYear);
-					maxYear = edge.eYearEnd ? edge.eYearEnd : maxYear;
 					edgeTranspModeName = edgeTranspModeSpeed.name;
 					// Prepare tables
 					if (!destinationsWithModes.hasOwnProperty(destCityCode)) {
@@ -594,8 +600,7 @@ function networkFromCities(
 					const edgeToBeProcessed = !processedODs[origCityCode][destCityCode].includes(edgeTranspModeName);
 					processedODs[origCityCode][destCityCode].push(edgeTranspModeName);
 					processedODs[destCityCode][origCityCode].push(edgeTranspModeName);
-					// For each year the alpha will be computed
-					console.log(minYear, maxYear);
+					// For each year the alpha will be retrieved
 					for (let year = minYear; year <= maxYear; year++) {
 						if (edgeTranspModeSpeed.tabSpeedPerYear[year]) {
 							if (edgeTranspModeSpeed.terrestrial) {
@@ -873,7 +878,7 @@ export class Merger {
 			// The main function that generates geometries (cones, curves) by exploring the subgraphs from cities
 			this._curvesAndCityGraph = networkFromCities(transportMode, cities, transportNetwork, transportModeSpeed);
 			// for input data reading debugging
-			console.log(this._curvesAndCityGraph);
+			console.log('curves & cityGraph', this._curvesAndCityGraph);
 			this._state = 'missing';
 			this._checkState();
 		}
