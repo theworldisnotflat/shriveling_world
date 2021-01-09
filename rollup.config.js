@@ -162,8 +162,9 @@ const preparerStatic = (options = {}) => {
             console.log('documentation generation');
             execSync(`npx typedoc --plugin typedoc-neo-theme \
             --out static/documentation  \
+            --externalPattern node_module\
             --readme markdown/devdoc/README_DEVDOC.md  --name "Shriveling world developer documentation" \
-            --ignoreCompilerErrors --hideGenerator --target ES6  src/application\
+            --hideGenerator  src/application/bigBoard/bigBoard.ts\
             && cp -r static/documentation/* static && mv static/index.html static/documentation.html\
             && rm -Rf static/documentation`, { stdio: 'inherit' });
             console.log('update documentation');
@@ -203,10 +204,11 @@ export default {
                 replace: JSON.stringify(compileShaders())
             }),
             svelte({
-                dev,
-                hydratable: true,
                 preprocess: sveltePreprocess(),
-                emitCss: true
+                compilerOptions: {
+                    dev,
+                    hydratable: true
+                }
             }),
             url({
                 sourceDir: path.resolve(__dirname, 'src/node_modules/images'),
@@ -259,10 +261,13 @@ export default {
                 replace: JSON.stringify(compileShaders())
             }),
             svelte({
-                generate: 'ssr',
-                hydratable: true,
                 preprocess: sveltePreprocess(),
-                dev
+                compilerOptions: {
+                    dev,
+                    generate: 'ssr',
+                    hydratable: true
+                },
+                emitCss: false
             }),
             url({
                 sourceDir: path.resolve(__dirname, 'src/node_modules/images'),
@@ -280,5 +285,21 @@ export default {
         preserveEntrySignatures: 'strict',
         onwarn,
     },
+    serviceworker: {
+        input: config.serviceworker.input().replace(/\.js$/, '.ts'),
+        output: config.serviceworker.output(),
+        plugins: [
+            resolve(),
+            replace({
+                'process.browser': true,
+                'process.env.NODE_ENV': JSON.stringify(mode)
+            }),
+            commonjs(),
+            typescript({ sourceMap: dev }), !dev && terser()
+        ],
+
+        preserveEntrySignatures: false,
+        onwarn,
+    }
 
 };
