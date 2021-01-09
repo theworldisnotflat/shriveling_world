@@ -10,7 +10,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import Menu from '../../components/menu.svelte';
-	import { inflate } from 'pako/lib/inflate';
+	import { inflate } from 'pako';
 	import type { IListFile } from '../../application/definitions/project';
 	let bigBoard;
 	let board: HTMLElement;
