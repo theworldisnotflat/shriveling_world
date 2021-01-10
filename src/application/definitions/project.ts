@@ -28,6 +28,12 @@ export enum PROJECTION_ENUM {
 	conicEquidistant = 6,
 }
 
+export enum CONESSHAPE_ENUM {
+	basedOnRoad = 0,
+	basedOnFastestTerrestrialMode = 1,
+	complex = 3,
+}
+
 export type internalFormatType =
 	| 'R8'
 	| 'R32F'
@@ -294,6 +300,7 @@ export type configurationObservableEvt =
 	| 'THREE_EARTH_RADIUS'
 	| 'projectionBegin'
 	| 'projectionEnd'
+	| 'conesShape'
 	| 'projectionPercent'
 	| 'year'
 	| 'tick';

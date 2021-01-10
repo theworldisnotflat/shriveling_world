@@ -36,7 +36,6 @@ import type {
 } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
 import { ConeBoard } from '../cone/coneBoard';
-
 /**
  * Realizes the merge of two tables base on an attribute. The key for the merge is renamed.
  * At the end of the process the recipient table is enriched.
@@ -613,7 +612,7 @@ function networkFromCities(
 								}
 								// this is where simple cones based on Road speed
 								// or cones based on complex alphas will be built
-								//console.log(this.ConeBoard,this.ConeBoard.complexCones(),this.ConeBoard._complexCones);
+								console.log(this); // , this.BigBoard.complexCones()); //,this.ConeBoard._complexCones);
 								//if (this.ConeBoard.complexCones()) {
 								//	alpha = edgeTranspModeSpeed.tabSpeedPerYear[year].alpha;
 								//} else {

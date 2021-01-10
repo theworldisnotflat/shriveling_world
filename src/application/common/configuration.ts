@@ -8,6 +8,7 @@ import type { TextGeometryParameters } from 'three/src/geometries/TextBufferGeom
 import { generateUUID } from './utils';
 import {
 	PROJECTION_ENUM,
+	CONESSHAPE_ENUM,
 	ICountryTextureURL,
 	ICartographic,
 	configurationObservableEvt,
@@ -36,6 +37,7 @@ let _coneStep = 0;
 let _THREE_EARTH_RADIUS = 0;
 let _projectionInit: PROJECTION_ENUM = PROJECTION_ENUM.none;
 let _projectionEnd: PROJECTION_ENUM = PROJECTION_ENUM.none;
+let _conesShape: CONESSHAPE_ENUM = CONESSHAPE_ENUM.basedOnRoad;
 let _projectionPercent = 0;
 let _year: string | number = 1980;
 let _highLightedMaterial: MeshBasicMaterial;
@@ -300,6 +302,13 @@ export const CONFIGURATION = {
 	set projectionEnd(value: PROJECTION_ENUM) {
 		_projectionEnd = value;
 		fireEvents('projectionEnd', _projectionEnd);
+	},
+	get conesShape(): CONESSHAPE_ENUM {
+		return _conesShape;
+	},
+	set conesShape(value: CONESSHAPE_ENUM) {
+		_conesShape = value;
+		fireEvents('conesShape', _conesShape);
 	},
 	/**
 	 * Move from [[projectionInit]] to [[projectionEnd]]

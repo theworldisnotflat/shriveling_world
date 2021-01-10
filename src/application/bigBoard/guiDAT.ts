@@ -31,6 +31,11 @@ let conf = {
 		'Van Der Grinten': 5,
 		'conic equidistant': 6,
 	},
+	conesShape: {
+		'based on road': 0,
+		'based on the fastest terrestrial mode': 1,
+		complex: 3,
+	},
 	'transport type': '',
 	'cones color': '#',
 	'cones transparency': 0,
@@ -67,6 +72,11 @@ export class GUI {
 				Eckert: 4,
 				'Van Der Grinten': 5,
 				'conic equidistant': 6,
+			},
+			conesShape: {
+				'based on road': 0,
+				'based on the fastest terrestrial mode': 1,
+				complex: 3,
 			},
 			'transport type': '',
 			'cones color': '#' + (<any>CONFIGURATION.BASIC_CONE_MATERIAL).color.getHex().toString(16),
@@ -323,6 +333,7 @@ export class GUI {
 		coneFolder.add(bigBoard, 'complexCones').onChange((value: boolean) => {
 			conf['complex cones'] = value;
 		});
+		coneFolder.add(CONFIGURATION, 'conesShape', conf.conesShape).name('shape of cones');
 		coneFolder.add(bigBoard.coneBoard, 'opacity', 0, 1).step(0.01);
 		coneFolder.addColor(conf, 'cones color').onChange((v: string) => {
 			const color = Number.parseInt(v.replace('#', ''), 16);
