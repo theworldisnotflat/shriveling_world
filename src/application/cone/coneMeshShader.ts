@@ -11,6 +11,7 @@ import { CONFIGURATION } from '../common/configuration';
 import { PseudoCone } from './base';
 import { Cartographic, interpolator, matchingBBox } from '../common/utils';
 import type { ILookupCityGraph, IBBox, ILookupComplexAlpha, IComplexAlphaItem } from '../definitions/project';
+import { CONESSHAPE_ENUM } from '../definitions/project';
 import type { NEDLocal, Coordinate } from '../common/referential';
 import { getShader } from '../shaders';
 import { GPUComputer } from '../common/gpuComputer';
@@ -182,6 +183,8 @@ function updateAlphas(): void {
 	const year = CONFIGURATION.year;
 	const twoPI = CONFIGURATION.TWO_PI;
 	const minimumGap = _discriminant * CONFIGURATION.coneStep;
+	const conesForm = CONESSHAPE_ENUM.basedOnRoad;
+	console.log(conesForm);
 	let clockA: number;
 	let clockB: number;
 	let interpol: (x: number) => number;
@@ -324,7 +327,7 @@ export class ConeMeshShader extends PseudoCone {
 				]).then(() => {
 					uuid = CONFIGURATION.addEventListener(
 						'heightRatio intrudedHeightRatio coneStep  referenceEquiRectangular THREE_EARTH_RADIUS ' +
-							'projectionBegin projectionEnd projectionPercent year tick',
+							'projectionBegin projectionEnd projectionPercent year tick conesShape',
 						(name: string) => {
 							if (_ready) {
 								switch (name) {
@@ -357,6 +360,7 @@ export class ConeMeshShader extends PseudoCone {
 										computation();
 										break;
 									case 'conesShape':
+										updateAlphas();
 										computation();
 										break;
 									default:

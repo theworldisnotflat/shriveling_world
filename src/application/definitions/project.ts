@@ -31,7 +31,7 @@ export enum PROJECTION_ENUM {
 export enum CONESSHAPE_ENUM {
 	basedOnRoad = 0,
 	basedOnFastestTerrestrialMode = 1,
-	complex = 3,
+	complex = 2,
 }
 
 export type internalFormatType =

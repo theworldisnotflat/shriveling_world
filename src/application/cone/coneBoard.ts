@@ -92,8 +92,8 @@ export class ConeBoard {
 	 */
 	public add(lookup: ILookupCurvesAndCityGraph): void {
 		this.clean();
-		const bBoxes = this._countries.countryMeshCollection.map((country) => country.bBox);
 		console.log('city network', lookup.lookupCityNetwork);
+		const bBoxes = this._countries.countryMeshCollection.map((country) => country.bBox);
 		void ConeMeshShader.generateCones(lookup.lookupCityNetwork, bBoxes).then((cones) => {
 			cones.forEach((cone) => {
 				// UpdateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
