@@ -247,18 +247,6 @@ function updateWithLimits(): void {
 	_gpgpu.positions.updateTextures(options);
 }
 
-function updateComplexCones(): void {
-	const complexCones = new Float32Array(_height);
-	for (let i = 0; i < _height; i++) {
-		complexCones[i] = _cones[i].complexCones ? 1 : 0;
-	}
-
-	const options = {
-		u_complexCones: { src: complexCones, width: 1, height: _height },
-	};
-	_gpgpu.positions.updateTextures(options);
-}
-
 function computation(): void {
 	const uniforms: { [x: string]: number | ArrayBufferView } = {};
 	uniforms.longueurMaxi = CONFIGURATION.extrudedHeight;
@@ -299,7 +287,6 @@ function computation(): void {
 export class ConeMeshShader extends PseudoCone {
 	public otherProperties: any;
 	private _withLimits: boolean;
-	private _complexCones: boolean;
 	private readonly _cityCode: string;
 	// Private _transportName: string;
 	private readonly _position: Cartographic;
@@ -348,19 +335,16 @@ export class ConeMeshShader extends PseudoCone {
 										regenerateFromConeStep();
 										updateAlphas();
 										updateWithLimits();
-										updateComplexCones();
 										computation();
 										break;
 									case 'year':
 										updateAlphas();
 										updateWithLimits();
-										updateComplexCones();
 										computation();
 										break;
 									case 'tick':
 										if (_dirtyLimits && _tickCount > 10) {
 											updateWithLimits();
-											updateComplexCones();
 											computation();
 											_tickCount = 0;
 											_dirtyLimits = false;
@@ -430,7 +414,6 @@ export class ConeMeshShader extends PseudoCone {
 		regenerateFromConeStep();
 		updateAlphas();
 		updateWithLimits();
-		updateComplexCones();
 		computation();
 		_ready = true;
 		return [..._cones];
@@ -472,7 +455,6 @@ export class ConeMeshShader extends PseudoCone {
 		this.otherProperties = properties;
 		this._complexAlpha = terrestrialData;
 		this._withLimits = true;
-		this._complexCones = false;
 		this.visible = true;
 		this.castShadow = true;
 		// This.receiveShadow = true;
@@ -539,16 +521,6 @@ export class ConeMeshShader extends PseudoCone {
 		if (value !== this._withLimits) {
 			_dirtyLimits = true;
 			this._withLimits = value;
-		}
-	}
-
-	get complexCones(): boolean {
-		return this._complexCones;
-	}
-
-	set complexCones(value: boolean) {
-		if (value !== this._complexCones) {
-			this._complexCones = value;
 		}
 	}
 }

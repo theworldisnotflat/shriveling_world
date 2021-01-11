@@ -612,8 +612,8 @@ function networkFromCities(
 								}
 								// this is where simple cones based on Road speed
 								// or cones based on complex alphas will be built
-								console.log(this); // , this.BigBoard.complexCones()); //,this.ConeBoard._complexCones);
-								//if (this.ConeBoard.complexCones()) {
+								console.log(this);
+								//if (complex cones) {
 								//	alpha = edgeTranspModeSpeed.tabSpeedPerYear[year].alpha;
 								//} else {
 								alpha = speedPerTransportPerYear[roadCode].tabSpeedPerYear[year].alpha;
@@ -743,7 +743,6 @@ export class Merger {
 	private _transportNetwork: IEdge[] = [];
 	private _state: IMergerState = 'missing';
 	private _curvesAndCityGraph: ILookupCurvesAndCityGraph = <ILookupCurvesAndCityGraph>{};
-	// private _complexCones: boolean;
 
 	public get state(): IMergerState {
 		return this._state;

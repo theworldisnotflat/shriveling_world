@@ -330,9 +330,6 @@ export class GUI {
 		coneFolder.add(bigBoard, 'withLimits').onChange((value: boolean) => {
 			conf['with limits'] = value;
 		});
-		coneFolder.add(bigBoard, 'complexCones').onChange((value: boolean) => {
-			conf['complex cones'] = value;
-		});
 		coneFolder.add(CONFIGURATION, 'conesShape', conf.conesShape).name('shape of cones');
 		coneFolder.add(bigBoard.coneBoard, 'opacity', 0, 1).step(0.01);
 		coneFolder.addColor(conf, 'cones color').onChange((v: string) => {
