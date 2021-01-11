@@ -85,7 +85,7 @@ export interface IConeAnglesItem {
 	 * This property represents the slope of the road transport for the considered year.
 	 */
 	coneRoadAlpha: number;
-	// angle of the non-road fast terrestrial mode linked to the city
+	// angle of the non-road fastest terrestrial mode linked to the city
 	coneFastTerrModeAlpha: number;
 	/**
 	 * This property lists for the considered year and the considered origin city
