@@ -32,7 +32,7 @@ import type {
 	ILookupCurves,
 	ICityExtremityOfEdge,
 	ILookupCurveList,
-	ILookupComplexAlpha,
+	ILookupConeAngles,
 } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
 import { ConeBoard } from '../cone/coneBoard';
@@ -551,7 +551,7 @@ function networkFromCities(
 			 * */
 			const listOfCurves: { [cityCodeEnd: string]: ILookupCurveList } = {};
 			// Let coneAlpha: ILookupConeAlpha = {};
-			const cone: ILookupComplexAlpha = {};
+			const cone: ILookupConeAngles = {};
 			const destinationsWithModes: ILookupDestWithModes = {};
 			let destCityCode: number;
 			let edge: IEdge;

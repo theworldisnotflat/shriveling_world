@@ -80,11 +80,13 @@ export interface ICartographic {
  * a complex cone the slope for road and slope for each
  * destination city (clock) using a terrestrial transport.
  */
-export interface IComplexAlphaItem {
+export interface IConeAnglesItem {
 	/**
 	 * This property represents the slope of the road transport for the considered year.
 	 */
 	coneRoadAlpha: number;
+	// angle of the non-road fast terrestrial mode linked to the city
+	coneFastTerrModeAlpha: number;
 	/**
 	 * This property lists for the considered year and the considered origin city
 	 * each destination city using a terrestrial transport. Each item of this
@@ -100,8 +102,8 @@ export interface IComplexAlphaItem {
  *
  * This slope (alpha) is determined by ![equation 1](http://bit.ly/2tLfehC)
  */
-export interface ILookupComplexAlpha {
-	[year: string]: IComplexAlphaItem;
+export interface ILookupConeAngles {
+	[year: string]: IConeAnglesItem;
 }
 
 /**
@@ -139,7 +141,7 @@ export interface ILookupDestWithModes {
  */
 export interface ICityGraph {
 	referential: NEDLocal; // À inhiber dans forbiddenAttributes de coneMeshShader
-	cone: ILookupComplexAlpha; // À inhiber dans forbiddenAttributes de coneMeshShader
+	cone: ILookupConeAngles; // À inhiber dans forbiddenAttributes de coneMeshShader
 	destinationsWithModes: ILookupDestWithModes;
 	origCityProperties: ICity;
 }
