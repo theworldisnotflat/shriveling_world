@@ -188,7 +188,7 @@ function updateConesAlphas(): void {
 	const year = CONFIGURATION.year;
 	const twoPI = CONFIGURATION.TWO_PI;
 	const minimumGap = _discriminant * CONFIGURATION.coneStep;
-	const conesForm = CONESSHAPE_ENUM.basedOnRoad;
+	const conesForm = CONESSHAPE_ENUM.basedOnFastestTerrestrialMode;
 	console.log(conesForm);
 	let clockA: number;
 	let clockB: number;
@@ -198,14 +198,21 @@ function updateConesAlphas(): void {
 		for (let i = 0; i < _height; i++) {
 			const coneAngles = _cones[i].getConeAngles(year);
 			const coneRoadAlpha = coneAngles.coneRoadAlpha;
+			const coneFastTerrModeAlpha = coneAngles.coneFastTerrModeAlpha;
 			const alphaTab = [...coneAngles.tab];
 			let subAlphas: Float32Array;
 			const length = alphaTab.length;
-			console.log(alphaTab);
+			console.log('alphaTab', alphaTab);
+			// if basedOnRoads then:
+			// subAlphas = _clocks.map(() => coneRoadAlpha);
+			//else:
 			if (length === 0) {
-				// Il n'y a pas de destination avec un transport terrestre.
+				// this city (cone) has no connection with terrestrial modes in the network
 				subAlphas = _clocks.map(() => coneRoadAlpha);
 			} else {
+				// if basedOnFastestTerrestrialMode then
+				// subAlphas = _clocks.map(() => coneFastTerrModeAlpha);
+				// else if 'complex' then:
 				const lastItem = { clock: 0, alpha: 0 };
 				lastItem.clock = alphaTab[length - 1].clock - twoPI;
 				lastItem.alpha = alphaTab[length - 1].alpha;
