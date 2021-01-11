@@ -63,6 +63,7 @@ const _listeners: {
 	year: IEventListItem[];
 	tick: IEventListItem[];
 	pointsPerCurve: IEventListItem[];
+	conesShape: IEventListItem[];
 } = {
 	heightRatio: [],
 	intrudedHeightRatio: [],
@@ -75,6 +76,7 @@ const _listeners: {
 	year: [],
 	tick: [],
 	pointsPerCurve: [],
+	conesShape: [],
 };
 function fireEvents(attribute: configurationObservableEvt, value: any): void {
 	if (_listeners.hasOwnProperty(attribute)) {
