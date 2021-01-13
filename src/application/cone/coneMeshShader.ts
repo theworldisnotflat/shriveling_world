@@ -188,11 +188,35 @@ function updateConesAlphas(): void {
 	const year = CONFIGURATION.year;
 	const twoPI = CONFIGURATION.TWO_PI;
 	const minimumGap = _discriminant * CONFIGURATION.coneStep;
-	const conesForm = CONESSHAPE_ENUM.basedOnFastestTerrestrialMode;
-	console.log(conesForm);
 	let clockA: number;
 	let clockB: number;
 	let interpol: (x: number) => number;
+	// switch statement
+	switch (+CONFIGURATION.conesShape) {
+		case CONESSHAPE_ENUM.basedOnRoad:
+			console.log('Switch : basedOnRoad', CONFIGURATION.conesShape);
+			break;
+		case CONESSHAPE_ENUM.basedOnFastestTerrestrialMode:
+			console.log('Switch : basedOnFastestTerrestrialMode', CONFIGURATION.conesShape);
+			break;
+		case CONESSHAPE_ENUM.complex:
+			console.log('SWitch : complex', CONFIGURATION.conesShape);
+			break;
+		default:
+			console.log('default switch');
+	}
+	// if statement
+
+	if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.basedOnRoad) {
+		console.log('IF : basedOnRoad', CONFIGURATION.conesShape);
+	}
+	if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.basedOnFastestTerrestrialMode) {
+		console.log('IF : basedOnFastestTerrestrialMode', CONFIGURATION.conesShape);
+	}
+	if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.complex) {
+		console.log('IF : complex', CONFIGURATION.conesShape);
+	}
+
 	if (!_alphas.hasOwnProperty(year)) {
 		const temp = new Float32Array(_height * _width);
 		for (let i = 0; i < _height; i++) {
@@ -202,7 +226,7 @@ function updateConesAlphas(): void {
 			const alphaTab = [...coneAngles.tab];
 			let subAlphas: Float32Array;
 			const length = alphaTab.length;
-			console.log('alphaTab', alphaTab);
+			// console.log('alphaTab', alphaTab);
 			// if basedOnRoads then:
 			// subAlphas = _clocks.map(() => coneRoadAlpha);
 			//else:

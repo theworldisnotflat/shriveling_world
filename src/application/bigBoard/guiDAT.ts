@@ -34,7 +34,7 @@ let conf = {
 	conesShape: {
 		'based on road': 0,
 		'based on the fastest terrestrial mode': 1,
-		complex: 3,
+		complex: 2,
 	},
 	'transport type': '',
 	'cones color': '#',
@@ -76,7 +76,7 @@ export class GUI {
 			conesShape: {
 				'based on road': 0,
 				'based on the fastest terrestrial mode': 1,
-				complex: 3,
+				complex: 2,
 			},
 			'transport type': '',
 			'cones color': '#' + (<any>CONFIGURATION.BASIC_CONE_MATERIAL).color.getHex().toString(16),
@@ -330,7 +330,13 @@ export class GUI {
 		coneFolder.add(bigBoard, 'withLimits').onChange((value: boolean) => {
 			conf['with limits'] = value;
 		});
-		coneFolder.add(CONFIGURATION, 'conesShape', conf.conesShape).name('shape of cones');
+		coneFolder
+			.add(CONFIGURATION, 'conesShape', conf.conesShape)
+			.name('shape of cones')
+			.onChange((v: number) => {
+				CONFIGURATION.conesShape = v;
+				console.log('la valeur sélectionnée : ', v);
+			});
 		coneFolder.add(bigBoard.coneBoard, 'opacity', 0, 1).step(0.01);
 		coneFolder.addColor(conf, 'cones color').onChange((v: string) => {
 			const color = Number.parseInt(v.replace('#', ''), 16);
