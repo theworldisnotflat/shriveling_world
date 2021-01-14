@@ -551,7 +551,7 @@ function networkFromCities(
 			 * */
 			const listOfCurves: { [cityCodeEnd: string]: ILookupCurveList } = {};
 			// Let coneAlpha: ILookupConeAlpha = {};
-			const cone: ILookupConeAngles = {};
+			const coneAngles: ILookupConeAngles = {};
 			const destinationsWithModes: ILookupDestWithModes = {};
 			let destCityCode: number;
 			let edge: IEdge;
@@ -604,21 +604,20 @@ function networkFromCities(
 						if (edgeTranspModeSpeed.tabSpeedPerYear[year]) {
 							if (edgeTranspModeSpeed.terrestrial) {
 								// We generate a cone and draw edges
-								if (!cone.hasOwnProperty(year)) {
+								if (!coneAngles.hasOwnProperty(year)) {
 									// Initializing  complex cone for a given city and year
 									const coneRoadAlpha =
 										speedPerTransportPerYear[roadCode].tabSpeedPerYear[year].alpha;
-									cone[year] = { coneRoadAlpha: coneRoadAlpha, tab: [] };
+									const coneFastTerrModeAlpha = 10; //juste pour tester
+									coneAngles[year] = {
+										coneRoadAlpha: coneRoadAlpha,
+										coneFastTerrModeAlpha: coneFastTerrModeAlpha,
+										tab: [],
+									};
 								}
-								// this is where simple cones based on Road speed
-								// or cones based on complex alphas will be built
-								console.log(this);
-								//if (complex cones) {
-								//	alpha = edgeTranspModeSpeed.tabSpeedPerYear[year].alpha;
-								//} else {
-								alpha = speedPerTransportPerYear[roadCode].tabSpeedPerYear[year].alpha;
-								//}
-								cone[year].tab.push({ alpha, clock });
+
+								alpha = edgeTranspModeSpeed.tabSpeedPerYear[year].alpha;
+								coneAngles[year].tab.push({ alpha, clock });
 								destinationsWithModes[destCityCode][edgeTranspModeName].push({
 									year,
 									speed: edgeModeSpeed[year].speed,
@@ -692,24 +691,24 @@ function networkFromCities(
 			// At this stage all cities have been processed
 			// It is necessary to re-order the table of clocks to generate the complex cones
 			// and inserting the result in network and insert the edgeData
-			for (const yearC in cone) {
-				if (cone.hasOwnProperty(yearC)) {
-					cone[yearC].tab = cone[yearC].tab.sort((a, b) => a.clock - b.clock);
+			for (const yearC in coneAngles) {
+				if (coneAngles.hasOwnProperty(yearC)) {
+					coneAngles[yearC].tab = coneAngles[yearC].tab.sort((a, b) => a.clock - b.clock);
 				}
 			}
 			//console.log(roadCode, speedPerTransportPerYear[roadCode]);
-			if (Object.keys(cone).length === 0) {
+			if (Object.keys(coneAngles).length === 0) {
 				// The case of cities not being origin or destinations in the network
 				// or only by aerial mode
 				for (let year = minYear; year <= maxYear; year++) {
 					const coneRoadAlpha = speedPerTransportPerYear[roadCode].tabSpeedPerYear[year].alpha;
-					cone[year] = { coneRoadAlpha: coneRoadAlpha, tab: [] };
+					coneAngles[year] = { coneRoadAlpha: coneRoadAlpha, coneFastTerrModeAlpha: null, tab: [] };
 				}
 			}
 
 			network[origCityCode] = {
 				referential,
-				cone,
+				cone: coneAngles,
 				destinationsWithModes,
 				origCityProperties: city,
 			};
