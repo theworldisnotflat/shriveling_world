@@ -177,6 +177,7 @@ export class GUI {
 						curveOpacity.onChange(curveListener);
 					});
 					// Adding terrestrial networks
+					console.log('Adding terrestrial network');
 					this._merger.transportNames.cones.forEach((transportName) => {
 						const folder = terrestrialFolder.addFolder(transportName);
 						terrestrialControllersList.push(folder);
@@ -198,6 +199,7 @@ export class GUI {
 						curveColor.onChange(curveListener);
 						const curveOpacity = folder.add(conf, 'curve transparency', 0, 1, 0.01).name('transparency');
 						curveOpacity.onChange(curveListener);
+						console.log('ici');
 					});
 				}
 
@@ -207,6 +209,7 @@ export class GUI {
 			if (bigBoard.countryBoard.ready && bigBoard.state === 'complete') {
 				flagTransportDone = false;
 				years.min(this._merger.minYear).max(this._merger.maxYear).updateDisplay();
+				console.log('guiDAT', this._merger.conesAndCurvesData);
 				bigBoard.coneBoard.add(this._merger.conesAndCurvesData);
 				// This._merger.clear();
 				const sizeText = generalFolder.add(bigBoard, '_sizeText', 0, 2).name('taille du texte').step(0.1);
