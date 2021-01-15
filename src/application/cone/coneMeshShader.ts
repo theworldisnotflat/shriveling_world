@@ -191,8 +191,8 @@ function updateConesAlphas(): void {
 	let clockA: number;
 	let clockB: number;
 	let interpol: (x: number) => number;
-
 	if (!_alphas.hasOwnProperty(year)) {
+		console.log('_alphas', _alphas);
 		const temp = new Float32Array(_height * _width);
 		for (let i = 0; i < _height; i++) {
 			const coneAngles = _cones[i].getConeAngles(year);
@@ -201,46 +201,44 @@ function updateConesAlphas(): void {
 			const alphaTab = [...coneAngles.tab];
 			let subAlphas: Float32Array;
 			const length = alphaTab.length;
-			// console.log('alphaTab', alphaTab);
-			if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.basedOnRoad) {
+			if (length === 0) {
+				// this city (cone) has no connection with other terrestrial modes in the network
 				subAlphas = _clocks.map(() => coneRoadAlpha);
+				console.log('length', length);
+			} else if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.basedOnRoad) {
+				subAlphas = _clocks.map(() => coneRoadAlpha);
+				console.log('CONFIGURATION.conesShape:', CONFIGURATION.conesShape);
 			} else {
-				if (length === 0) {
-					// this city (cone) has no connection with other terrestrial modes in the network
-					subAlphas = _clocks.map(() => coneRoadAlpha);
-				} else {
-					if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.basedOnFastestTerrestrialMode) {
-						subAlphas = _clocks.map(() => coneFastTerrModeAlpha);
-					} else {
-						if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.complex) {
-							console.log('complexe');
-							const lastItem = { clock: 0, alpha: 0 };
-							lastItem.clock = alphaTab[length - 1].clock - twoPI;
-							lastItem.alpha = alphaTab[length - 1].alpha;
-							const firstItem = { clock: 0, alpha: 0 };
-							firstItem.clock = alphaTab[0].clock + twoPI;
-							firstItem.alpha = alphaTab[0].alpha;
-							// Ajout croisés des éléments extrêmes pour avoir un tableau débordant le domaine [0, 2PI].
-							alphaTab.push(firstItem);
-							alphaTab.splice(0, 0, lastItem);
-							for (let i = length + 1; i > 0; i--) {
-								clockA = alphaTab[i - 1].clock;
-								clockB = alphaTab[i].clock;
-								if (clockB - clockA > minimumGap) {
-									// Ajout d'une pente de route quand
-									// l'écart d'azimut entre deux destinations est trop grande
-									alphaTab.splice(i, 0, {
-										alpha: coneRoadAlpha,
-										clock: clockA + (clockB - clockA) / 2,
-									});
-								}
-							}
+				if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.basedOnFastestTerrestrialMode) {
+					console.log('CONFIGURATION.conesShape:', CONFIGURATION.conesShape);
+					subAlphas = _clocks.map(() => coneFastTerrModeAlpha);
+				} else if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.complex) {
+					console.log('CONFIGURATION.conesShape:', CONFIGURATION.conesShape);
+					const lastItem = { clock: 0, alpha: 0 };
+					lastItem.clock = alphaTab[length - 1].clock - twoPI;
+					lastItem.alpha = alphaTab[length - 1].alpha;
+					const firstItem = { clock: 0, alpha: 0 };
+					firstItem.clock = alphaTab[0].clock + twoPI;
+					firstItem.alpha = alphaTab[0].alpha;
+					// Ajout croisés des éléments extrêmes pour avoir un tableau débordant le domaine [0, 2PI].
+					alphaTab.push(firstItem);
+					alphaTab.splice(0, 0, lastItem);
+					for (let i = length + 1; i > 0; i--) {
+						clockA = alphaTab[i - 1].clock;
+						clockB = alphaTab[i].clock;
+						if (clockB - clockA > minimumGap) {
+							// Ajout d'une pente de route quand
+							// l'écart d'azimut entre deux destinations est trop grande
+							alphaTab.splice(i, 0, {
+								alpha: coneRoadAlpha,
+								clock: clockA + (clockB - clockA) / 2,
+							});
 						}
 					}
-
-					interpol = interpolator(alphaTab, 'clock', 'alpha');
-					subAlphas = _clocks.map((clock) => interpol(clock));
 				}
+
+				interpol = interpolator(alphaTab, 'clock', 'alpha');
+				subAlphas = _clocks.map((clock) => interpol(clock));
 			}
 
 			temp.set(subAlphas, i * _width);
@@ -380,7 +378,8 @@ export class ConeMeshShader extends PseudoCone {
 										computation();
 										break;
 									case 'conesShape':
-										regenerateFromConeStep();
+										_alphas = {};
+										//regenerateFromConeStep();
 										updateConesAlphas();
 										updateWithLimits();
 										computation();

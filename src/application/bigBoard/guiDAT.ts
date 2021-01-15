@@ -2,7 +2,7 @@
 import type { LineBasicMaterial, MeshPhongMaterial } from 'three';
 import type { Merger } from './merger';
 import { DragNDrop as DragNDrop } from '../common/utils';
-import type { IListFile } from '../definitions/project';
+import type { IListFile, CONESSHAPE_ENUM } from '../definitions/project';
 import type BigBoard from './bigBoard';
 import { ConeMeshShader } from '../cone/coneMeshShader';
 import * as dat from 'dat.gui';
@@ -333,8 +333,9 @@ export class GUI {
 		coneFolder
 			.add(CONFIGURATION, 'conesShape', conf.conesShape)
 			.name('shape of cones')
-			.onChange((v: number) => {
+			.onChange((v: CONESSHAPE_ENUM) => {
 				CONFIGURATION.conesShape = v;
+				console.log(CONFIGURATION.conesShape);
 				console.log('la valeur sélectionnée : ', v);
 			});
 		coneFolder.add(bigBoard.coneBoard, 'opacity', 0, 1).step(0.01);
