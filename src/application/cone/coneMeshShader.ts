@@ -379,7 +379,6 @@ export class ConeMeshShader extends PseudoCone {
 										break;
 									case 'conesShape':
 										_alphas = {};
-										//regenerateFromConeStep();
 										updateConesAlphas();
 										updateWithLimits();
 										computation();

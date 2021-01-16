@@ -558,10 +558,14 @@ function networkFromCities(
 			let alpha: number; // for complex alpha cones
 			let edgeTranspModeName: string;
 			let edgeTranspModeSpeed: ITabSpeedPerYearPerTranspModeItem;
-			if (city.edges.length === 0) {
-				city.edges.push({ eYearBegin: minYear, cityCodeDes: -Infinity, transportModeCode: roadCode });
-			}
 
+			//if (city.edges.length === 0) {
+			if (city.inEdges.length === 0 && city.outEdges.length === 0) {
+				city.edges.push({ eYearBegin: minYear, cityCodeDes: -Infinity, transportModeCode: roadCode });
+			} else {
+				city.edges.push(...city.inEdges);
+				city.edges.push(...city.outEdges);
+			}
 			// For each edge incident to the city considered
 			for (let i = 0; i < city.edges.length; i++) {
 				edge = city.edges[i];
@@ -599,16 +603,16 @@ function networkFromCities(
 					const edgeToBeProcessed = !processedODs[origCityCode][destCityCode].includes(edgeTranspModeName);
 					processedODs[origCityCode][destCityCode].push(edgeTranspModeName);
 					processedODs[destCityCode][origCityCode].push(edgeTranspModeName);
-					// For each year the alpha will be retrieved
+					// For each year the cone angles will be retrieved
 					for (let year = minYear; year <= maxYear; year++) {
 						if (edgeTranspModeSpeed.tabSpeedPerYear[year]) {
 							if (edgeTranspModeSpeed.terrestrial) {
-								// We generate a cone and draw edges
 								if (!coneAngles.hasOwnProperty(year)) {
-									// Initializing  complex cone for a given city and year
 									const coneRoadAlpha =
 										speedPerTransportPerYear[roadCode].tabSpeedPerYear[year].alpha;
-									const coneFastTerrModeAlpha = 10; //juste pour tester
+									const coneFastTerrModeAlpha =
+										speedPerTransportPerYear[edge.transportModeCode].tabSpeedPerYear[year].alpha;
+									console.log(year, edge.transportModeCode, coneFastTerrModeAlpha);
 									coneAngles[year] = {
 										coneRoadAlpha: coneRoadAlpha,
 										coneFastTerrModeAlpha: coneFastTerrModeAlpha,
@@ -867,10 +871,13 @@ export class Merger {
 			//    Merger(transportNetwork, transportModeCode, 'transportModeSpeed', 'code', 'transportDetails', false, false, false);
 			// will link cities with population.csv file table information
 			merger(cities, population, 'cityCode', 'cityCode', 'populations', false, true, false);
-			// Attach city information to ending city edge
+			// Attach city information to starting and ending city edge
+			merger(transportNetwork, cities, 'cityCodeOri', 'cityCode', 'origCityInfo', false, false, false); //added line
 			merger(transportNetwork, cities, 'cityCodeDes', 'cityCode', 'destCityInfo', false, false, false);
-			// Generates subgraph from city considered as origin
-			merger(cities, transportNetwork, 'cityCode', 'cityCodeOri', 'edges', true, true, false);
+			// Generates subgraph from city considered as origin and as destination
+			//merger(cities, transportNetwork, 'cityCode', 'cityCodeOri', 'edges', true, true, false);
+			merger(cities, transportNetwork, 'cityCode', 'cityCodeOri', 'outEdges', true, false, false);
+			merger(cities, transportNetwork, 'cityCode', 'cityCodeDes', 'inEdges', true, false, false); //added line
 			// The main function that generates geometries (cones, curves) by exploring the subgraphs from cities
 			this._curvesAndCityGraph = networkFromCities(transportMode, cities, transportNetwork, transportModeSpeed);
 			// for input data reading debugging

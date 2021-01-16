@@ -146,10 +146,10 @@ _year_|number|yes|year of census period
 _population_|number|yes|in thousands inhabitants, at the agglomeration level recommended, e.g. as in UN World Urban Prospect database
 
 ### Transport network file
-The _transport network file_ describes the edges of the graph between the cities as nodes. See her for [a justification of the terminology choices](https://timespace.hypotheses.org/177).
+The _transport network file_ describes the edges of the graph between the cities as nodes.  A line in the _transport network file_ describes the existence of an infrastructure or a bi-directional transport service between two cities. See here for [a justification of the terminology choices](https://timespace.hypotheses.org/177).
 Column name | Type | Mandatory | Comments
 ----------|----------|-------------|-------------
-_cityCodeOri_|number|yes|id of origin city; direction (ori-des or des-ori) has no meaning in the model
+_cityCodeOri_|number|yes|id of origin city; direction (ori-des or des-ori) has no meaning in the model. A line in the network file marks the existence of an infrastructure or a bi-directional transport service between two cities.
 _cityCodeDes_|number|yes|id of destination city
 _transportModeCode_|number|yes|id of the transport mode
 _eYearBegin_|number|no|year of opening of the edge, infrastructure or service, e.g. High Speed Rail in 1964 between Tokyo and Osaka; if _eYearBegin_ is not populated( even only one single edge) , the period _historical time span_ will be determined from the variable _year_ in the _transport speed_ file

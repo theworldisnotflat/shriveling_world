@@ -209,6 +209,8 @@ export interface ICity {
 	longitude: number;
 	radius: number; // For cases of cities in islands close to a continent
 	populations?: IPopulation;
+	outEdges?: IEdge[];
+	inEdges?: IEdge[];
 	edges?: IEdge[];
 }
 
