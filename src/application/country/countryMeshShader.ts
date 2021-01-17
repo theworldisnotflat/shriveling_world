@@ -16,8 +16,8 @@ import { getShader } from '../shaders';
 import type * as GeoJSON from 'geojson';
 
 interface IPreGeometry {
-	vertice: number[]; // Cartographic.toThreeGLSL()
-	extruded: IMarkLimits; // Position des extruded dans la propriété vertice
+	vertices: number[]; // Cartographic.toThreeGLSL()
+	extruded: IMarkLimits; // Position des extruded dans la propriété vertices
 	uvs: Float32Array; // Uvs des vertices
 	indexes: Uint16Array; // Index des vertices!!
 	surfaceBoundary: Cartographic[];
@@ -47,15 +47,15 @@ fullCleanArrays();
 
 function cnPnPolyIsIn(P: number[], V: number[][]): boolean {
 	let cn = 0; // The  crossing number counter
-	let iplus: number;
+	let iPlus: number;
 	const n = V.length;
 	// Loop through all edges of the polygon
 	for (let i = 0; i < n; i++) {
 		// Edge from V[i]  to V[i+1]
-		iplus = i === n - 1 ? 0 : i + 1;
-		if ((V[i][1] <= P[1] && V[iplus][1] > P[1]) || (V[i][1] > P[1] && V[iplus][1] <= P[1])) {
-			const vt = (P[1] - V[i][1]) / (V[iplus][1] - V[i][1]);
-			if (P[0] < V[i][0] + vt * (V[iplus][0] - V[i][0])) {
+		iPlus = i === n - 1 ? 0 : i + 1;
+		if ((V[i][1] <= P[1] && V[iPlus][1] > P[1]) || (V[i][1] > P[1] && V[iPlus][1] <= P[1])) {
+			const vt = (P[1] - V[i][1]) / (V[iPlus][1] - V[i][1]);
+			if (P[0] < V[i][0] + vt * (V[iPlus][0] - V[i][0])) {
 				cn++;
 			}
 		}
@@ -65,39 +65,39 @@ function cnPnPolyIsIn(P: number[], V: number[][]): boolean {
 }
 
 function generateSteinerPointsFor(poly: number[][]): Point[] {
-	const resultat: Point[] = [];
+	const result: Point[] = [];
 	if (poly.length > 2) {
 		const discriminant = 3;
 		let minx = Infinity;
-		let maxx = -Infinity;
-		let miny = Infinity;
-		let maxy = -Infinity;
+		let maxX = -Infinity;
+		let minY = Infinity;
+		let maxY = -Infinity;
 
 		let i: number;
 		for (i = 0; i < poly.length; i++) {
 			const p = poly[i];
 			minx = Math.min(minx, p[0]);
-			miny = Math.min(miny, p[1]);
-			maxx = Math.max(maxx, p[0]);
-			maxy = Math.max(maxy, p[1]);
+			minY = Math.min(minY, p[1]);
+			maxX = Math.max(maxX, p[0]);
+			maxY = Math.max(maxY, p[1]);
 		}
 
 		let temp: number[];
 		let fx: number;
 		let fy: number;
-		for (let x = minx; x < maxx; x += discriminant) {
-			for (let y = miny; y < maxy; y += discriminant) {
+		for (let x = minx; x < maxX; x += discriminant) {
+			for (let y = minY; y < maxY; y += discriminant) {
 				fx = x + ((0.5 - Math.random()) / 2) * discriminant;
 				fy = y + ((0.5 - Math.random()) / 2) * discriminant;
 				temp = [fx, fy];
 				if (cnPnPolyIsIn(temp, poly)) {
-					resultat.push(new Point(fx, fy));
+					result.push(new Point(fx, fy));
 				}
 			}
 		}
 	}
 
-	return resultat;
+	return result;
 }
 
 function cleanBoundaries(polygon: number[][]): number[][] {
@@ -202,11 +202,11 @@ function generateVertices(geometry: GeoJSON.MultiPolygon | GeoJSON.Polygon): IPr
 			return cleanedBoundaries;
 		});
 
-		const swctx = new SweepContext(contour);
-		swctx.addHoles(holes);
-		swctx.addPoints(steinerPoints);
-		swctx.triangulate();
-		const triangles = swctx.getTriangles();
+		const swCtX = new SweepContext(contour);
+		swCtX.addHoles(holes);
+		swCtX.addPoints(steinerPoints);
+		swCtX.triangulate();
+		const triangles = swCtX.getTriangles();
 		const verticesPoly2Tri: IPointLike[] = [];
 
 		function findAndAddVertexIndex(p: IPointLike): number {
@@ -229,20 +229,20 @@ function generateVertices(geometry: GeoJSON.MultiPolygon | GeoJSON.Polygon): IPr
 		const indexes: number[] = [];
 		triangles.forEach((triangle) => indexes.push(...triangle.getPoints().map((t) => findAndAddVertexIndex(t))));
 		// Index n'a que la surface inférieure!
-		const vertice = verticesPoly2Tri.map((v) => new Cartographic(v.x, v.y, 0, false));
+		const vertices = verticesPoly2Tri.map((v) => new Cartographic(v.x, v.y, 0, false));
 		// Vertices n'a que la surface inférieure!
 		const uvs: number[] = [];
-		vertice.forEach((vertex) =>
+		vertices.forEach((vertex) =>
 			uvs.push(vertex.longitude * CONFIGURATION.OVER_TWO_PI + 0.5, vertex.latitude * CONFIGURATION.OVER_PI + 0.5)
 		);
 
-		const verticePerSurfaceCount = vertice.length;
+		const verticesPerSurfaceCount = vertices.length;
 		const indexesPerSurfaceCount = indexes.length;
 		// Peuplement de la seconde surface
-		for (let i = 0; i < verticePerSurfaceCount; i++) {
-			const carto = vertice[i].clone();
+		for (let i = 0; i < verticesPerSurfaceCount; i++) {
+			const carto = vertices[i].clone();
 			carto.height = CONFIGURATION.hatHeight;
-			vertice.push(carto);
+			vertices.push(carto);
 			uvs.push(carto.longitude * CONFIGURATION.OVER_TWO_PI + 0.5, carto.latitude * CONFIGURATION.OVER_PI + 0.5);
 		}
 
@@ -253,9 +253,9 @@ function generateVertices(geometry: GeoJSON.MultiPolygon | GeoJSON.Polygon): IPr
 		let ibn: number;
 		for (let i = 0; i < indexesPerSurfaceCount; i += 3) {
 			indexes.push(
-				indexes[i] + verticePerSurfaceCount,
-				indexes[i + 1] + verticePerSurfaceCount,
-				indexes[i + 2] + verticePerSurfaceCount
+				indexes[i] + verticesPerSurfaceCount,
+				indexes[i + 1] + verticesPerSurfaceCount,
+				indexes[i + 2] + verticesPerSurfaceCount
 			);
 			// Triangles latéraux!
 			for (let j = 0; j < 3; j++) {
@@ -267,43 +267,43 @@ function generateVertices(geometry: GeoJSON.MultiPolygon | GeoJSON.Polygon): IPr
 			}
 		}
 
-		lateralIndexes.forEach((latindex) => {
-			indexes.push(latindex);
+		lateralIndexes.forEach((latIndex) => {
+			indexes.push(latIndex);
 		});
-		const tempVertice: number[] = [];
-		vertice.forEach((vertex) => tempVertice.push(...vertex.toThreeGLSL()));
-		const resultat: IPreGeometry = {
-			vertice: tempVertice,
+		const tempVertex: number[] = [];
+		vertices.forEach((vertex) => tempVertex.push(...vertex.toThreeGLSL()));
+		const result: IPreGeometry = {
+			vertices: tempVertex,
 			extruded: {
-				begin: verticePerSurfaceCount * 3,
-				end: verticePerSurfaceCount * 6,
+				begin: verticesPerSurfaceCount * 3,
+				end: verticesPerSurfaceCount * 6,
 			},
 			uvs: new Float32Array(uvs),
 			indexes: new Uint16Array(indexes),
 			surfaceBoundary: contour.map((point) => new Cartographic(point.x, point.y, 0, false)),
 		};
 
-		return resultat;
+		return result;
 	});
 }
 
-function uniqueOccurenceCounter(list: any[]): string {
-	const dictionnary = {};
+function uniqueCaseCounter(list: any[]): string {
+	const dictionary = {};
 	list.forEach((item) => {
 		for (const att in item) {
 			if (item.hasOwnProperty(att)) {
-				if (!dictionnary.hasOwnProperty(att)) {
-					dictionnary[att] = [];
+				if (!dictionary.hasOwnProperty(att)) {
+					dictionary[att] = [];
 				}
 
-				if (dictionnary[att].includes(item[att])) {
-					dictionnary[att].push(item[att]);
+				if (dictionary[att].includes(item[att])) {
+					dictionary[att].push(item[att]);
 				}
 			}
 		}
 	});
 
-	return Object.keys(dictionnary).sort((a, b) => dictionnary[b].length - dictionnary[a].length)[0];
+	return Object.keys(dictionary).sort((a, b) => dictionary[b].length - dictionary[a].length)[0];
 }
 
 function maxRectangle(n: number): number[] {
@@ -440,14 +440,14 @@ export class CountryMeshShader extends Mesh {
 					preMeshes.push({ geometry, properties })
 				);
 			});
-			const mainProperty = uniqueOccurenceCounter(uniqueProperties);
+			const mainProperty = uniqueCaseCounter(uniqueProperties);
 			let indexCount = 0;
 			let oldIndexCount = 0;
 			const vertexArrayEntries: number[] = [];
 			preMeshes.forEach((item) => {
 				oldIndexCount = indexCount;
-				indexCount += item.geometry.vertice.length / 3;
-				vertexArrayEntries.push(...item.geometry.vertice);
+				indexCount += item.geometry.vertices.length / 3;
+				vertexArrayEntries.push(...item.geometry.vertices);
 				const extruded = item.geometry.extruded;
 				extruded.begin += oldIndexCount * 3;
 				extruded.end += oldIndexCount * 3;
@@ -515,7 +515,7 @@ export class CountryMeshShader extends Mesh {
 		this.receiveShadow = true;
 	}
 
-	public get bbox(): IBBox {
+	public get bBox(): IBBox {
 		return this._boundaryBox;
 	}
 
@@ -543,17 +543,17 @@ export class CountryMeshShader extends Mesh {
 	}
 
 	public isInside(pos: Cartographic): boolean {
-		let resultat = false;
+		let result = false;
 		if (
 			pos.latitude >= this._boundaryBox.minLat &&
 			pos.latitude <= this._boundaryBox.maxLat &&
 			pos.longitude >= this._boundaryBox.minLong &&
 			pos.longitude <= this._boundaryBox.maxLong
 		) {
-			resultat = Cartographic.isInside(pos, this._boundaryBox.boundary);
+			result = Cartographic.isInside(pos, this._boundaryBox.boundary);
 		}
 
-		return resultat;
+		return result;
 	}
 
 	public setGeometry(positions: Float32Array): void {

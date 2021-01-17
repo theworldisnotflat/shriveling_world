@@ -1,7 +1,7 @@
 'use strict';
 import type { LineBasicMaterial, MeshPhongMaterial } from 'three';
 import type { Merger } from './merger';
-import { DragnDrop } from '../common/utils';
+import { DragNDrop as DragNDrop } from '../common/utils';
 import type { IListFile } from '../definitions/project';
 import type BigBoard from './bigBoard';
 import { ConeMeshShader } from '../cone/coneMeshShader';
@@ -11,11 +11,11 @@ import { CONFIGURATION } from '../common/configuration';
 let _filesData: IListFile[] = [];
 const countryControllersList: dat.GUI[] = [];
 const aerialControllersList: dat.GUI[] = [];
-let terresterialFolder: dat.GUI;
+let terrestrialFolder: dat.GUI;
 const terrestrialControllersList: dat.GUI[] = [];
 let flagTransportDone = false;
 let countryFolder: dat.GUI;
-let annees: dat.GUIController;
+let years: dat.GUIController;
 let generalFolder: dat.GUI;
 let aerialFolder: dat.GUI;
 let coneFolder: dat.GUI;
@@ -83,7 +83,7 @@ export class GUI {
 			'standard parrallel 1': CONFIGURATION.standardParallel1 * CONFIGURATION.rad2deg,
 			'standard parrallel 2': CONFIGURATION.standardParallel2 * CONFIGURATION.rad2deg,
 			'with limits': true,
-			exportCountry: bigBoard.orthographique,
+			exportCountry: bigBoard.orthographic,
 		};
 		this._initInteraction(container);
 	}
@@ -118,18 +118,18 @@ export class GUI {
 							countryFolder.removeFolder(subGui);
 						}
 
-						const synonymes: string[] = [];
+						const synonyms: string[] = [];
 						bigBoard.countryBoard.countryMeshCollection
 							.sort((a, b) => a.mainName.localeCompare(b.mainName))
 							.forEach((country) => {
 								let countryName = country.mainName;
 								let i = -1;
-								while (synonymes.includes(countryName)) {
+								while (synonyms.includes(countryName)) {
 									i++;
 									countryName = country.mainName + i;
 								}
 
-								synonymes.push(countryName);
+								synonyms.push(countryName);
 								const folder = countryFolder.addFolder(countryName);
 								folder.add(country, 'extruded', -100, 100).step(1).listen();
 								folder.add(country, 'visible').listen();
@@ -147,7 +147,7 @@ export class GUI {
 					flagTransportDone = true;
 					while (terrestrialControllersList.length > 0) {
 						const subGui = terrestrialControllersList.pop();
-						terresterialFolder.removeFolder(subGui);
+						terrestrialFolder.removeFolder(subGui);
 					}
 
 					while (aerialControllersList.length > 0) {
@@ -178,7 +178,7 @@ export class GUI {
 					});
 					// Adding terrestrial networks
 					this._merger.transportNames.cones.forEach((transportName) => {
-						const folder = terresterialFolder.addFolder(transportName);
+						const folder = terrestrialFolder.addFolder(transportName);
 						terrestrialControllersList.push(folder);
 
 						function curveListener(): void {
@@ -206,10 +206,10 @@ export class GUI {
 		]).then(() => {
 			if (bigBoard.countryBoard.ready && bigBoard.state === 'complete') {
 				flagTransportDone = false;
-				annees.min(this._merger.minYear).max(this._merger.maxYear).updateDisplay();
+				years.min(this._merger.minYear).max(this._merger.maxYear).updateDisplay();
 				bigBoard.coneBoard.add(this._merger.conesAndCurvesData);
 				// This._merger.clear();
-				const sizeText = generalFolder.add(bigBoard, '_sizetext', 0, 2).name('taille du texte').step(0.1);
+				const sizeText = generalFolder.add(bigBoard, '_sizeText', 0, 2).name('taille du texte').step(0.1);
 				sizeText.onChange(() => bigBoard.rescaleText());
 				generalFolder.addColor(conf, 'text color').onChange((v: string) => {
 					const color = Number.parseInt(v.replace('#', ''), 16);
@@ -232,7 +232,7 @@ export class GUI {
 		conf['light color'] = '#' + bigBoard.light.color.getHex().toString(16);
 		conf.intensity = bigBoard.light.intensity;
 		conf['ambient color'] = '#' + bigBoard.ambient.color.getHex().toString(16);
-		conf.exportCountry = bigBoard.orthographique;
+		conf.exportCountry = bigBoard.orthographic;
 
 		// Light
 		const lightFolder = gui.addFolder('Light');
@@ -292,20 +292,20 @@ export class GUI {
 		projectionFolder.add(CONFIGURATION, 'projectionInit', conf.projection).name('initial projection');
 		projectionFolder.add(CONFIGURATION, 'projectionEnd', conf.projection).name('final projection');
 		projectionFolder.add(CONFIGURATION, 'percentProjection', 0, 100).step(1).name('transition projection');
-		annees = generalFolder.add(conf, 'year', 1930, 2030).step(1);
-		annees.onChange((v: string | number) => {
+		years = generalFolder.add(conf, 'year', 1930, 2030).step(1);
+		years.onChange((v: string | number) => {
 			CONFIGURATION.year = v;
 		});
 
-		// Toggle Camera Orthographic/Perspectiv View
-		const swapView = projectionFolder.add(bigBoard, 'orthographique');
+		// Toggle Camera Orthographic/Perspective View
+		const swapView = projectionFolder.add(bigBoard, 'orthographic');
 		swapView.onChange(() => {
-			bigBoard.orthographique = !bigBoard.orthographique;
+			bigBoard.orthographic = !bigBoard.orthographic;
 		});
 		generalFolder
 			.add(bigBoard, '_showCitiesName')
 			.name('Show Cities name')
-			.onChange(() => bigBoard.showCitiesName()); // Bigboard to parameter
+			.onChange(() => bigBoard.showCitiesName()); // BigBoard to parameter
 
 		// cones
 		coneFolder = gui.addFolder('Cones');
@@ -320,6 +320,9 @@ export class GUI {
 		coneFolder.add(bigBoard, 'withLimits').onChange((value: boolean) => {
 			conf['with limits'] = value;
 		});
+		coneFolder.add(bigBoard, 'complexCones').onChange((value: boolean) => {
+			conf['complex cones'] = value;
+		});
 		coneFolder.add(bigBoard.coneBoard, 'opacity', 0, 1).step(0.01);
 		coneFolder.addColor(conf, 'cones color').onChange((v: string) => {
 			const color = Number.parseInt(v.replace('#', ''), 16);
@@ -329,14 +332,14 @@ export class GUI {
 				material.emissive.setHex(color);
 			});
 		});
-		// Let terresterialFolder = coneFolder.addFolder('configurations spécifiques');
+		// Let terrestrialFolder = coneFolder.addFolder('configurations spécifiques');
 		// let terrestrialControllersList: dat.GUI[] = [];
 		// let flagTransportDone = false;
 
 		// curves
 		aerialFolder = gui.addFolder('Curves');
 		aerialFolder.add(CONFIGURATION, 'pointsPerCurve', 0, 200).step(1).name('number of points');
-		terresterialFolder = aerialFolder.addFolder('terrestrial modes');
+		terrestrialFolder = aerialFolder.addFolder('terrestrial modes');
 
 		// Pays /mise en exergue avec listen?
 		// countries / highlight with listen?
@@ -348,8 +351,8 @@ export class GUI {
 			.add(conf, 'exportCountry')
 			.name('Export with continent')
 			.onChange(() => {
-				bigBoard.orthographique = !bigBoard.orthographique;
+				bigBoard.orthographic = !bigBoard.orthographic;
 			});
-		DragnDrop(container, this.filesToInsert, this);
+		DragNDrop(container, this.filesToInsert, this);
 	}
 }
