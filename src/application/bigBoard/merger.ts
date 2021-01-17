@@ -861,18 +861,23 @@ export class Merger {
 
 			// Linking tables to each other
 			// merger(mother,     girl,               motherProp., girlProp.,      newName, forceArray, removeMotherProp., removeGirlProp.)
-			// will link transport modes and speed
 			merger(transportMode, transportModeSpeed, 'code', 'transportModeCode', 'speedTab', true, true, false);
-			//    Merger(transportNetwork, transportModeCode, 'transportModeSpeed', 'code', 'transportDetails', false, false, false);
-			// will link cities with population.csv file table information
 			merger(cities, population, 'cityCode', 'cityCode', 'populations', false, true, false);
 			// Attach city information to starting and ending city edge
-			merger(transportNetwork, cities, 'cityCodeOri', 'cityCode', 'origCityInfo', false, false, false); //added line
+			merger(transportNetwork, cities, 'cityCodeOri', 'cityCode', 'origCityInfo', false, false, false);
 			merger(transportNetwork, cities, 'cityCodeDes', 'cityCode', 'destCityInfo', false, false, false);
+			// cleaning up transportNetwork = remove edges with one or zero extremities in the 'cities' list
+			for (let i = 0; i < transportNetwork.length; i++) {
+				if (
+					cities.findIndex((c) => c.cityCode == transportNetwork[i].cityCodeOri) === -1 ||
+					cities.findIndex((c) => c.cityCode == transportNetwork[i].cityCodeDes) === -1
+				) {
+					transportNetwork.splice(i--, 1);
+				}
+			}
 			// Generates subgraph from city considered as origin and as destination
-			//merger(cities, transportNetwork, 'cityCode', 'cityCodeOri', 'edges', true, true, false);
 			merger(cities, transportNetwork, 'cityCode', 'cityCodeOri', 'outEdges', true, false, false);
-			merger(cities, transportNetwork, 'cityCode', 'cityCodeDes', 'inEdges', true, false, false); //added line
+			merger(cities, transportNetwork, 'cityCode', 'cityCodeDes', 'inEdges', true, false, false);
 			// The main function that generates geometries (cones, curves) by exploring the subgraphs from cities
 			this._curvesAndCityGraph = networkFromCities(transportMode, cities, transportNetwork, transportModeSpeed);
 			// for input data reading debugging
