@@ -61,6 +61,7 @@ const _listeners: {
 	year: IEventListItem[];
 	tick: IEventListItem[];
 	pointsPerCurve: IEventListItem[];
+	modeSelected: IEventListItem[];
 } = {
 	heightRatio: [],
 	intrudedHeightRatio: [],
@@ -73,6 +74,7 @@ const _listeners: {
 	year: [],
 	tick: [],
 	pointsPerCurve: [],
+	modeSelected: [],
 };
 function fireEvents(attribute: configurationObservableEvt, value: any): void {
 	if (_listeners.hasOwnProperty(attribute)) {
@@ -162,6 +164,12 @@ export const CONFIGURATION = {
 			_pointsPerCurve = value;
 			fireEvents('pointsPerCurve', value);
 		}
+	},
+	get modeSelected(): boolean {
+		return this.CONFIGURATION.modeSelected;
+	},
+	set modeSelected(value: boolean) {
+		this.CONFIGURATION.modeSelected = value;
 	},
 	/**
 	 * Continents shapefile is used to 'cut' cones in order to
