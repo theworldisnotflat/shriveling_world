@@ -2712,8 +2712,8 @@ eYearBegin,eYearEnd,cityCodeOri,nameOri,cityCodeDes,nameDes,transportModeCode,le
 2010,2014,21671,Tokyo,21611,Asahikawa,1,,air
 2010,2014,21671,Tokyo,204581,Sapporo,1,,air
 2010,2014,21671,Tokyo,204586,Kitakyushu-Fukuoka M.M.A.,1,,air
-2010,2014,21671,Tokyo,206459,Kinki M.M.A. (Osaka),1,,air
-2010,2014,21671,Tokyo,206459,Kinki M.M.A. (Osaka),1,,air
+1930,,21671,Tokyo,206459,Kinki M.M.A. (Osaka),1,,air
+1930,,21671,Tokyo,206459,Kinki M.M.A. (Osaka),1,,air
 2010,2014,21671,Tokyo,21655,Oita,1,,air
 2010,2014,21671,Tokyo,21649,Naha,1,,air
 2010,2014,21671,Tokyo,21656,Okayama,1,,air
