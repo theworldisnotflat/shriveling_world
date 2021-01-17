@@ -42,6 +42,7 @@ let conf = {
 	'curve color': '#',
 	'text color': '#',
 	'curve transparency': 0,
+	'transport mode selected': true,
 	'light color': '#',
 	intensity: 0,
 	'ambient color': '#',
@@ -84,6 +85,7 @@ export class GUI {
 			'curve color': '#' + CONFIGURATION.BASIC_LINE_MATERIAL.color.getHex().toString(16),
 			'text color': '#' + CONFIGURATION.BASIC_TEXT_MATERIAL.color.getHex().toString(16),
 			'curve transparency': CONFIGURATION.BASIC_LINE_MATERIAL.opacity,
+			'transport mode selected': true,
 			'light color': '#' + bigBoard.light.color.getHex().toString(16),
 			intensity: bigBoard.light.intensity,
 			'ambient color': '#' + bigBoard.ambient.color.getHex().toString(16),
@@ -185,6 +187,10 @@ export class GUI {
 						curveColor.onChange(curveListener);
 						const curveOpacity = folder.add(conf, 'curve transparency', 0, 1, 0.01).name('transparency');
 						curveOpacity.onChange(curveListener);
+						const modeSelected = folder.add(conf, 'modeSelected').onChange((value: boolean) => {
+							conf['transport mode selected'] = value;
+						});
+						// modeSelected.onChange(curveListener);
 					});
 					// Adding terrestrial networks
 					console.log('Adding terrestrial network');
@@ -195,6 +201,7 @@ export class GUI {
 						function curveListener(): void {
 							const opacity = <number>curveOpacity.getValue();
 							const color = Number.parseInt(curveColor.getValue().replace('#', ''), 16);
+							//const transpModeSelected=
 
 							bigBoard.coneBoard.curveCollection
 								.filter((curve) => transportName === curve.transportName)

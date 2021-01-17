@@ -167,6 +167,12 @@ export const CONFIGURATION = {
 			fireEvents('pointsPerCurve', value);
 		}
 	},
+	get modeSelected(): boolean {
+		return this.CONFIGURATION.modeSelected;
+	},
+	set modeSelected(value: boolean) {
+		this.CONFIGURATION.modeSelected = value;
+	},
 	/**
 	 * Continents shapefile is used to 'cut' cones in order to
 	 * produce a more readable image/map
