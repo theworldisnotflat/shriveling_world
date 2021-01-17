@@ -2719,11 +2719,11 @@ eYearBegin,eYearEnd,cityCodeOri,nameOri,cityCodeDes,nameDes,transportModeCode,le
 2010,2014,21671,Tokyo,21656,Okayama,1,,air
 2010,2014,21758,Seoul,21671,Tokyo,1,,air
 2010,2014,206459,Kinki M.M.A. (Osaka),204586,Kitakyushu-Fukuoka M.M.A.,1,,air
-2010,2014,206459,Kinki M.M.A. (Osaka),21671,Tokyo,1,,air
+1930,,206459,Kinki M.M.A. (Osaka),21671,Tokyo,1,,air
 2010,2014,206459,Kinki M.M.A. (Osaka),21633,Kumamoto,1,,air
 2010,2014,206459,Kinki M.M.A. (Osaka),21626,Kagoshima,1,,air
 2010,2014,206459,Kinki M.M.A. (Osaka),21640,Matsuyama,1,,air
-2010,2014,206459,Kinki M.M.A. (Osaka),21671,Tokyo,1,,air
+1930,,206459,Kinki M.M.A. (Osaka),21671,Tokyo,1,,air
 2010,2014,206459,Kinki M.M.A. (Osaka),21649,Naha,1,,air
 2010,2014,21633,Kumamoto,206459,Kinki M.M.A. (Osaka),1,,air
 2010,2014,21626,Kagoshima,206459,Kinki M.M.A. (Osaka),1,,air
