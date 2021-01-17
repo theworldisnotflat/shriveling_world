@@ -535,9 +535,8 @@ function networkFromCities(
 	// ProcessedODs will contain the value of edgeTranspModeName for each existing edge (OD)
 	// processedODs avoids duplicating edges:
 	const processedODs: { [begin: string]: { [end: string]: string[] } } = {};
-	// Second part of the function
-	// the main loop for each city
 	cities.forEach((city) => {
+		console.log(city);
 		const origCityCode = city.cityCode;
 		const referential = lookupPosition[origCityCode];
 		if (!processedODs.hasOwnProperty(origCityCode)) {
@@ -547,10 +546,9 @@ function networkFromCities(
 		if (referential instanceof NEDLocal) {
 			const startPoint: ICityExtremityOfEdge = { cityCode: origCityCode, position: referential.cartoRef };
 			/**
-			 *  List of edges from the considered city (described by their destination cities)
+			 *  List of curves from the considered city (described by their destination cities)
 			 * */
 			const listOfCurves: { [cityCodeEnd: string]: ILookupCurveList } = {};
-			// Let coneAlpha: ILookupConeAlpha = {};
 			const coneAngles: ILookupConeAngles = {};
 			const destinationsWithModes: ILookupDestWithModes = {};
 			let destCityCode: number;
@@ -558,13 +556,11 @@ function networkFromCities(
 			let alpha: number; // for complex alpha cones
 			let edgeTranspModeName: string;
 			let edgeTranspModeSpeed: ITabSpeedPerYearPerTranspModeItem;
-
-			//if (city.edges.length === 0) {
+			city.edges = [];
 			if (city.inEdges.length === 0 && city.outEdges.length === 0) {
 				city.edges.push({ eYearBegin: minYear, cityCodeDes: -Infinity, transportModeCode: roadCode });
 			} else {
-				city.edges.push(...city.inEdges);
-				city.edges.push(...city.outEdges);
+				city.edges = [...city.inEdges, ...city.outEdges];
 			}
 			// For each edge incident to the city considered
 			for (let i = 0; i < city.edges.length; i++) {
@@ -599,7 +595,6 @@ function networkFromCities(
 					}
 
 					const edgeModeSpeed = edgeTranspModeSpeed.tabSpeedPerYear;
-					// To avoid visual duplication of curves!
 					const edgeToBeProcessed = !processedODs[origCityCode][destCityCode].includes(edgeTranspModeName);
 					processedODs[origCityCode][destCityCode].push(edgeTranspModeName);
 					processedODs[destCityCode][origCityCode].push(edgeTranspModeName);

@@ -335,8 +335,6 @@ export class GUI {
 			.name('shape of cones')
 			.onChange((v: CONESSHAPE_ENUM) => {
 				CONFIGURATION.conesShape = v;
-				console.log(CONFIGURATION.conesShape);
-				console.log('la valeur sélectionnée : ', v);
 			});
 		coneFolder.add(bigBoard.coneBoard, 'opacity', 0, 1).step(0.01);
 		coneFolder.addColor(conf, 'cones color').onChange((v: string) => {
