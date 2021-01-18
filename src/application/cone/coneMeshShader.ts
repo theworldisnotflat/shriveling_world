@@ -193,43 +193,63 @@ function updateConesAlphas(): void {
 	let interpol: (x: number) => number;
 	if (!_alphas.hasOwnProperty(year)) {
 		console.log('_alphas', _alphas);
-		const temp = new Float32Array(_height * _width);
+		const tempAlphas = new Float32Array(_height * _width);
 		for (let i = 0; i < _height; i++) {
 			const coneAngles = _cones[i].getConeAngles(year);
 			const coneRoadAlpha = coneAngles.coneRoadAlpha;
 			const coneFastTerrModeAlpha = coneAngles.coneFastTerrModeAlpha;
-			const alphaTab = [...coneAngles.tab];
+			const coneAnglesTab = [...coneAngles.tab];
 			let subAlphas: Float32Array;
-			const length = alphaTab.length;
+			const length = coneAnglesTab.length;
 			if (length === 0) {
 				// this city (cone) has no connection with other terrestrial modes in the network
+				// whatever the choice, cone wil remain simple, based on road speed
 				subAlphas = _clocks.map(() => coneRoadAlpha);
-				console.log('length', length);
+				console.log(_cones[i].cityCode, 'length', length);
 			} else if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.basedOnRoad) {
+				// all the cones are simple with unique road slope (for a given year)
 				subAlphas = _clocks.map(() => coneRoadAlpha);
-				console.log('CONFIGURATION.conesShape:', CONFIGURATION.conesShape);
+				console.log(_cones[i].cityCode, 'CONFIGURATION.conesShape:', CONFIGURATION.conesShape);
 			} else {
 				if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.basedOnFastestTerrestrialMode) {
-					console.log('CONFIGURATION.conesShape:', CONFIGURATION.conesShape);
+					// when an edge of a faster than road terrestrial (not aerial) mode
+					// touches the city, the cone slope gets the slope value attached to this mode
+					console.log(
+						_cones[i].cityCode,
+						'CONFIGURATION.conesShape:',
+						CONFIGURATION.conesShape,
+						coneFastTerrModeAlpha
+					);
 					subAlphas = _clocks.map(() => coneFastTerrModeAlpha);
 				} else if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.complex) {
-					console.log('CONFIGURATION.conesShape:', CONFIGURATION.conesShape);
+					// cones will be deformed locally by edges with
+					// a 'faster than road terrestrial mode'
+					console.log(
+						_cones[i].cityCode,
+						'CONFIGURATION.conesShape:',
+						CONFIGURATION.conesShape,
+						'road',
+						coneRoadAlpha,
+						'fast',
+						coneFastTerrModeAlpha,
+						coneAnglesTab
+					);
 					const lastItem = { clock: 0, alpha: 0 };
-					lastItem.clock = alphaTab[length - 1].clock - twoPI;
-					lastItem.alpha = alphaTab[length - 1].alpha;
+					lastItem.clock = coneAnglesTab[length - 1].clock - twoPI;
+					lastItem.alpha = coneAnglesTab[length - 1].alpha;
 					const firstItem = { clock: 0, alpha: 0 };
-					firstItem.clock = alphaTab[0].clock + twoPI;
-					firstItem.alpha = alphaTab[0].alpha;
-					// Ajout croisés des éléments extrêmes pour avoir un tableau débordant le domaine [0, 2PI].
-					alphaTab.push(firstItem);
-					alphaTab.splice(0, 0, lastItem);
+					firstItem.clock = coneAnglesTab[0].clock + twoPI;
+					firstItem.alpha = coneAnglesTab[0].alpha;
+					// adding the extreme elements in order to produce a table with overlap beyond [0, 2PI]
+					coneAnglesTab.push(firstItem);
+					coneAnglesTab.splice(0, 0, lastItem);
 					for (let i = length + 1; i > 0; i--) {
-						clockA = alphaTab[i - 1].clock;
-						clockB = alphaTab[i].clock;
+						clockA = coneAnglesTab[i - 1].clock;
+						clockB = coneAnglesTab[i].clock;
 						if (clockB - clockA > minimumGap) {
-							// Ajout d'une pente de route quand
-							// l'écart d'azimut entre deux destinations est trop grande
-							alphaTab.splice(i, 0, {
+							// adding a road slope when
+							// the gap between two destination cities is too wide
+							coneAnglesTab.splice(i, 0, {
 								alpha: coneRoadAlpha,
 								clock: clockA + (clockB - clockA) / 2,
 							});
@@ -237,14 +257,14 @@ function updateConesAlphas(): void {
 					}
 				}
 
-				interpol = interpolator(alphaTab, 'clock', 'alpha');
+				interpol = interpolator(coneAnglesTab, 'clock', 'alpha');
 				subAlphas = _clocks.map((clock) => interpol(clock));
 			}
 
-			temp.set(subAlphas, i * _width);
+			tempAlphas.set(subAlphas, i * _width);
 		}
 
-		_alphas[year] = temp;
+		_alphas[year] = tempAlphas;
 	}
 
 	const options = {

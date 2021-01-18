@@ -216,7 +216,7 @@ export class GUI {
 		]).then(() => {
 			if (bigBoard.countryBoard.ready && bigBoard.state === 'complete') {
 				flagTransportDone = false;
-				years.min(this._merger.minYear).max(this._merger.maxYear).updateDisplay();
+				years.min(this._merger.firstYear).max(this._merger.lastYear).updateDisplay();
 				bigBoard.coneBoard.add(this._merger.conesAndCurvesData);
 				// This._merger.clear();
 				const sizeText = generalFolder.add(bigBoard, '_sizeText', 0, 2).name('taille du texte').step(0.1);
