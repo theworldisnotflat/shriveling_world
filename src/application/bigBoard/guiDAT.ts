@@ -110,7 +110,7 @@ export class GUI {
 			}
 		});
 		void Promise.all([
-			new Promise((resolve) => {
+			new Promise<void>((resolve) => {
 				if (!bigBoard.countryBoard.ready && json !== undefined) {
 					void bigBoard.countryBoard.add(JSON.parse(json)).then(() => {
 						while (countryControllersList.length > 0) {
@@ -142,7 +142,7 @@ export class GUI {
 					resolve();
 				}
 			}),
-			new Promise((resolve) => {
+			new Promise<void>((resolve) => {
 				if (bigBoard.state === 'complete' && !flagTransportDone) {
 					flagTransportDone = true;
 					while (terrestrialControllersList.length > 0) {
@@ -199,7 +199,6 @@ export class GUI {
 						curveColor.onChange(curveListener);
 						const curveOpacity = folder.add(conf, 'curve transparency', 0, 1, 0.01).name('transparency');
 						curveOpacity.onChange(curveListener);
-						console.log('ici');
 					});
 				}
 
