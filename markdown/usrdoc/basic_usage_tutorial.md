@@ -49,6 +49,10 @@ Most commands can be accessed through the lateral UI:
 - __Cones__:
   * __Color__: Menu 'Cones', 'cones color'
   * __Rendering quality__: 'coneStep' modifies the visual aspect of cones. The default value is 15 degrees, a facet = 15°, a recommended value is 5 or less. Lower values will generate higher quality graphics, at the cost of larger export files and resource consuming rendering
+  * the cones layout has currently three available options:
+     * in the default __simple cones__ case, all cones are simple regular cones with a unique slope -- for a given year -- based on the road speed
+     * in the __fast terrestrial transport mode__ case, cones all have a regular shape but may have different slopes; the slope of cones is determined by the existence of terrestrial transport mode faster than road. The mere connection of the city to the a high speed rail line network will alter the slope of its cone, expressing its access to fast speed.
+     * in the __complex cones__ case, cones are locally deformed based on existing incoming or departing edges of transport terrestrial transport modes faster than road, typically expressway or High-Speed Rail lines
 
 * __Curves__:
   * __Color__ and __transparency__: curves may have a different color and transparency according to the transport mode they represent, chosen in 'Curves', 'terrestrial modes' and 'Aircraft'
