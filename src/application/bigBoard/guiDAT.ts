@@ -110,7 +110,7 @@ export class GUI {
 			}
 		});
 		void Promise.all([
-			new Promise((resolve) => {
+			new Promise<void>((resolve) => {
 				if (!bigBoard.countryBoard.ready && json !== undefined) {
 					void bigBoard.countryBoard.add(JSON.parse(json)).then(() => {
 						while (countryControllersList.length > 0) {
@@ -142,7 +142,7 @@ export class GUI {
 					resolve(0);
 				}
 			}),
-			new Promise((resolve) => {
+			new Promise<void>((resolve) => {
 				if (bigBoard.state === 'complete' && !flagTransportDone) {
 					flagTransportDone = true;
 					while (terrestrialControllersList.length > 0) {
@@ -177,6 +177,7 @@ export class GUI {
 						curveOpacity.onChange(curveListener);
 					});
 					// Adding terrestrial networks
+					console.log('Adding terrestrial network');
 					this._merger.transportNames.cones.forEach((transportName) => {
 						const folder = terrestrialFolder.addFolder(transportName);
 						terrestrialControllersList.push(folder);
@@ -207,6 +208,7 @@ export class GUI {
 			if (bigBoard.countryBoard.ready && bigBoard.state === 'complete') {
 				flagTransportDone = false;
 				years.min(this._merger.minYear).max(this._merger.maxYear).updateDisplay();
+				console.log('guiDAT', this._merger.conesAndCurvesData);
 				bigBoard.coneBoard.add(this._merger.conesAndCurvesData);
 				// This._merger.clear();
 				const sizeText = generalFolder.add(bigBoard, '_sizeText', 0, 2).name('taille du texte').step(0.1);

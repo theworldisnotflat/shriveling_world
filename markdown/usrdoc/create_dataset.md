@@ -4,14 +4,15 @@
 
 ![data model](assets/data_model_v11.svg 'data model')
 
-## A system of five files
+## A system of six files
 
-According to the data model, _Shriveling world_ datasets are composed of five files:
-1. [cities](#cities-file)
-2. [population](#population-file)
-3. [transport network](#transport-network-file)
-4. [transport modes](#transport-modes-file)
-5. [transport mode speed](#transport-mode-speed-file)
+According to the data model, _Shriveling world_ datasets are composed of six files:
+1. [cities file](#cities-file)
+2. [population file](#population-file)
+3. [transport network file](#transport-network-file)
+4. [transport modes file](#transport-modes-file)
+5. [transport mode speed file](#transport-mode-speed-file)
+6. [GEOJSON file](#geojson-file) with the contour of continents or countries
 
 The files describe a __graph__ modelling a transport network between cities with __speed__ as a key parameter. The content of the files is [described below](#content-of-files-columns).
 
@@ -101,7 +102,7 @@ In addition, the transport related period should also be coherent with the dates
 
 General __common sense__ instructions:
 * Files are in CSV format produced with default export options from LibreOffice Calc.
-* The [five files](#a-system-of-five-files) must all be present in the dataset
+* The [six files](#a-system-of-six-files) must all be present in the dataset
 * As shown in the [figure of the data model](#data-model) each file has optional and mandatory columns
   * mandatory columns must be populated completely, with no missing data
   * optional columns may be left empty or may be completely or partially populated
@@ -170,3 +171,9 @@ Column name | Type | Mandatory | Comments
 _year_|number|yes|referring to a date when speed changed
 _transportModeCode_|number|yes|id of transport mode
 _speedKPH_|number|yes|commercial average speed on the transport network
+
+### GEOJSON file
+
+The GEOJSON file is needed to cut the cones at the limits of the shores or at the limits of a country or region. 
+
+__CAUTION__: for an unknown reason the GEOJSON file may crash the app; as a workaround use the provided world geojson file.
