@@ -454,7 +454,9 @@ export function interpolator<U>(
 ): (x: number) => number {
 	const length = normalizedBase.length;
 	let result: (x?: number) => number = () => 0;
-	if (length === 1) {
+	if (length === 0) {
+		result = () => null;
+	} else if (length === 1) {
 		result = () => normalizedBase[0][yProperty];
 	} else {
 		result = (x: number) => {
