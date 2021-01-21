@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>IComplexAlphaItem | Shriveling world developer documentation</title>
+	<title>CONESSHAPE_ENUM | Shriveling world developer documentation</title>
 	<meta name="description" content="Documentation for Shriveling world developer documentation">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -59,81 +59,62 @@
 					<a href="../modules/_definitions_project_.html">&quot;definitions/project&quot;</a>
 				</li>
 				<li>
-					<a href="_definitions_project_.icomplexalphaitem.html">IComplexAlphaItem</a>
+					<a href="_definitions_project_.conesshape_enum.html">CONESSHAPE_ENUM</a>
 				</li>
 			</ul>
-			<h1>Interface IComplexAlphaItem</h1>
+			<h1>Enumeration CONESSHAPE_ENUM</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>An item grouping for a fixed year and a fixed origin city data to generate
-							a complex cone the slope for road and slope for each
-						destination city (clock) using a terrestrial transport.</p>
-					</div>
-				</div>
-			</section>
-			<section class="tsd-panel tsd-hierarchy">
-				<h3>Hierarchy</h3>
-				<ul class="tsd-hierarchy">
-					<li>
-						<span class="target">IComplexAlphaItem</span>
-					</li>
-				</ul>
-			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Properties</h3>
+							<h3>Enumeration members</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.icomplexalphaitem.html#coneroadalpha" class="tsd-kind-icon">cone<wbr>Road<wbr>Alpha</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.icomplexalphaitem.html#tab" class="tsd-kind-icon">tab</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_definitions_project_.conesshape_enum.html#basedonfastestterrestrialmode" class="tsd-kind-icon">based<wbr>OnFastest<wbr>Terrestrial<wbr>Mode</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_definitions_project_.conesshape_enum.html#basedonroad" class="tsd-kind-icon">based<wbr>OnRoad</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_definitions_project_.conesshape_enum.html#complex" class="tsd-kind-icon">complex</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="coneroadalpha" class="tsd-anchor"></a>
-					<h3>cone<wbr>Road<wbr>Alpha</h3>
-					<div class="tsd-signature tsd-kind-icon">cone<wbr>Road<wbr>Alpha<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+				<h2>Enumeration members</h2>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="basedonfastestterrestrialmode" class="tsd-anchor"></a>
+					<h3>based<wbr>OnFastest<wbr>Terrestrial<wbr>Mode</h3>
+					<div class="tsd-signature tsd-kind-icon">based<wbr>OnFastest<wbr>Terrestrial<wbr>Mode<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = 1</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5987eb0/src/application/definitions/project.ts#L81">src/application/definitions/project.ts:81</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/86ed154/src/application/definitions/project.ts#L33">src/application/definitions/project.ts:33</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>This property represents the slope of the road transport for the considered year.</p>
-						</div>
-					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="tab" class="tsd-anchor"></a>
-					<h3>tab</h3>
-					<div class="tsd-signature tsd-kind-icon">tab<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>alpha<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>clock<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="basedonroad" class="tsd-anchor"></a>
+					<h3>based<wbr>OnRoad</h3>
+					<div class="tsd-signature tsd-kind-icon">based<wbr>OnRoad<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = 0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5987eb0/src/application/definitions/project.ts#L88">src/application/definitions/project.ts:88</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/86ed154/src/application/definitions/project.ts#L32">src/application/definitions/project.ts:32</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>This property lists for the considered year and the considered origin city
-								each destination city using a terrestrial transport. Each item of this
-								array is a clock in direction of the destination city and a slope
-							corresponding to the transport speed linking the two cities. This array can have zero item.</p>
-						</div>
-					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="complex" class="tsd-anchor"></a>
+					<h3>complex</h3>
+					<div class="tsd-signature tsd-kind-icon">complex<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = 2</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/86ed154/src/application/definitions/project.ts#L34">src/application/definitions/project.ts:34</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 		</div>
@@ -195,104 +176,110 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum tsd-parent-kind-module">
-						<a href="../enums/_definitions_project_.projection_enum.html" class="tsd-kind-icon">PROJECTION_<wbr>ENUM</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.ibbox.html" class="tsd-kind-icon">IBBox</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.icartographic.html" class="tsd-kind-icon">ICartographic</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.icity.html" class="tsd-kind-icon">ICity</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.icityextremityofedge.html" class="tsd-kind-icon">ICity<wbr>Extremity<wbr>OfEdge</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.icitygraph.html" class="tsd-kind-icon">ICity<wbr>Graph</a>
-					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.icomplexalphaitem.html" class="tsd-kind-icon">IComplex<wbr>Alpha<wbr>Item</a>
+					<li class="current tsd-kind-enum tsd-parent-kind-module">
+						<a href="_definitions_project_.conesshape_enum.html" class="tsd-kind-icon">CONESSHAPE_<wbr>ENUM</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_definitions_project_.icomplexalphaitem.html#coneroadalpha" class="tsd-kind-icon">cone<wbr>Road<wbr>Alpha</a>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="_definitions_project_.conesshape_enum.html#basedonfastestterrestrialmode" class="tsd-kind-icon">based<wbr>OnFastest<wbr>Terrestrial<wbr>Mode</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_definitions_project_.icomplexalphaitem.html#tab" class="tsd-kind-icon">tab</a>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="_definitions_project_.conesshape_enum.html#basedonroad" class="tsd-kind-icon">based<wbr>OnRoad</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="_definitions_project_.conesshape_enum.html#complex" class="tsd-kind-icon">complex</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.icountrytextureurl.html" class="tsd-kind-icon">ICountry<wbr>TextureURL</a>
+					<li class=" tsd-kind-enum tsd-parent-kind-module">
+						<a href="_definitions_project_.projection_enum.html" class="tsd-kind-icon">PROJECTION_<wbr>ENUM</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.icriteria.html" class="tsd-kind-icon">ICriteria</a>
+						<a href="../interfaces/_definitions_project_.ibbox.html" class="tsd-kind-icon">IBBox</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.iedge.html" class="tsd-kind-icon">IEdge</a>
+						<a href="../interfaces/_definitions_project_.icartographic.html" class="tsd-kind-icon">ICartographic</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.iitemcriteria.html" class="tsd-kind-icon">IItem<wbr>Criteria</a>
+						<a href="../interfaces/_definitions_project_.icity.html" class="tsd-kind-icon">ICity</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.ilistfile.html" class="tsd-kind-icon">IList<wbr>File</a>
+						<a href="../interfaces/_definitions_project_.icityextremityofedge.html" class="tsd-kind-icon">ICity<wbr>Extremity<wbr>OfEdge</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.ilookupcitygraph.html" class="tsd-kind-icon">ILookup<wbr>City<wbr>Graph</a>
+						<a href="../interfaces/_definitions_project_.icitygraph.html" class="tsd-kind-icon">ICity<wbr>Graph</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.ilookupcomplexalpha.html" class="tsd-kind-icon">ILookup<wbr>Complex<wbr>Alpha</a>
+						<a href="../interfaces/_definitions_project_.iconeanglesitem.html" class="tsd-kind-icon">ICone<wbr>Angles<wbr>Item</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.ilookupcurvelist.html" class="tsd-kind-icon">ILookup<wbr>Curve<wbr>List</a>
+						<a href="../interfaces/_definitions_project_.icountrytextureurl.html" class="tsd-kind-icon">ICountry<wbr>TextureURL</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.ilookupcurves.html" class="tsd-kind-icon">ILookup<wbr>Curves</a>
+						<a href="../interfaces/_definitions_project_.icriteria.html" class="tsd-kind-icon">ICriteria</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.ilookupcurvesandcitygraph.html" class="tsd-kind-icon">ILookup<wbr>Curves<wbr>And<wbr>City<wbr>Graph</a>
+						<a href="../interfaces/_definitions_project_.iedge.html" class="tsd-kind-icon">IEdge</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.ilookupcurvesfromcity.html" class="tsd-kind-icon">ILookup<wbr>Curves<wbr>From<wbr>City</a>
+						<a href="../interfaces/_definitions_project_.iitemcriteria.html" class="tsd-kind-icon">IItem<wbr>Criteria</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.ilookupdestwithmodes.html" class="tsd-kind-icon">ILookup<wbr>Dest<wbr>With<wbr>Modes</a>
+						<a href="../interfaces/_definitions_project_.ilistfile.html" class="tsd-kind-icon">IList<wbr>File</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.ilookuptranspmodespeed.html" class="tsd-kind-icon">ILookup<wbr>Transp<wbr>Mode<wbr>Speed</a>
+						<a href="../interfaces/_definitions_project_.ilookupcitygraph.html" class="tsd-kind-icon">ILookup<wbr>City<wbr>Graph</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.imarklimits.html" class="tsd-kind-icon">IMark<wbr>Limits</a>
+						<a href="../interfaces/_definitions_project_.ilookupconeangles.html" class="tsd-kind-icon">ILookup<wbr>Cone<wbr>Angles</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.inedlocalglsl.html" class="tsd-kind-icon">INEDLocalGLSL</a>
+						<a href="../interfaces/_definitions_project_.ilookupcurvelist.html" class="tsd-kind-icon">ILookup<wbr>Curve<wbr>List</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.iorderascendant.html" class="tsd-kind-icon">IOrder<wbr>Ascendant</a>
+						<a href="../interfaces/_definitions_project_.ilookupcurves.html" class="tsd-kind-icon">ILookup<wbr>Curves</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.ipopulation.html" class="tsd-kind-icon">IPopulation</a>
+						<a href="../interfaces/_definitions_project_.ilookupcurvesandcitygraph.html" class="tsd-kind-icon">ILookup<wbr>Curves<wbr>And<wbr>City<wbr>Graph</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.ipseudogeometry.html" class="tsd-kind-icon">IPseudo<wbr>Geometry</a>
+						<a href="../interfaces/_definitions_project_.ilookupcurvesfromcity.html" class="tsd-kind-icon">ILookup<wbr>Curves<wbr>From<wbr>City</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.isumupcriteria.html" class="tsd-kind-icon">ISum<wbr>UpCriteria</a>
+						<a href="../interfaces/_definitions_project_.ilookupdestwithmodes.html" class="tsd-kind-icon">ILookup<wbr>Dest<wbr>With<wbr>Modes</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.isumupcriteriaitem.html" class="tsd-kind-icon">ISum<wbr>UpCriteria<wbr>Item</a>
+						<a href="../interfaces/_definitions_project_.ilookuptranspmodespeed.html" class="tsd-kind-icon">ILookup<wbr>Transp<wbr>Mode<wbr>Speed</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.itranspmode.html" class="tsd-kind-icon">ITransp<wbr>Mode</a>
+						<a href="../interfaces/_definitions_project_.imarklimits.html" class="tsd-kind-icon">IMark<wbr>Limits</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_definitions_project_.itransportmodespeed.html" class="tsd-kind-icon">ITransport<wbr>Mode<wbr>Speed</a>
+						<a href="../interfaces/_definitions_project_.inedlocalglsl.html" class="tsd-kind-icon">INEDLocalGLSL</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_definitions_project_.iorderascendant.html" class="tsd-kind-icon">IOrder<wbr>Ascendant</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_definitions_project_.ipopulation.html" class="tsd-kind-icon">IPopulation</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_definitions_project_.ipseudogeometry.html" class="tsd-kind-icon">IPseudo<wbr>Geometry</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_definitions_project_.isumupcriteria.html" class="tsd-kind-icon">ISum<wbr>UpCriteria</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_definitions_project_.isumupcriteriaitem.html" class="tsd-kind-icon">ISum<wbr>UpCriteria<wbr>Item</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_definitions_project_.itranspmode.html" class="tsd-kind-icon">ITransp<wbr>Mode</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_definitions_project_.itransportmodespeed.html" class="tsd-kind-icon">ITransport<wbr>Mode<wbr>Speed</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
 						<a href="../modules/_definitions_project_.html#imergerstate" class="tsd-kind-icon">IMerger<wbr>State</a>
@@ -329,11 +316,10 @@
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ILookupDestWithModes | Shriveling world developer documentation</title>
+	<title>ILookupConeAngles | Shriveling world developer documentation</title>
 	<meta name="description" content="Documentation for Shriveling world developer documentation">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -59,10 +59,10 @@
 					<a href="../modules/_definitions_project_.html">&quot;definitions/project&quot;</a>
 				</li>
 				<li>
-					<a href="_definitions_project_.ilookupdestwithmodes.html">ILookupDestWithModes</a>
+					<a href="_definitions_project_.ilookupconeangles.html">ILookupConeAngles</a>
 				</li>
 			</ul>
-			<h1>Interface ILookupDestWithModes</h1>
+			<h1>Interface ILookupConeAngles</h1>
 		</div>
 	</div>
 </header>
@@ -72,27 +72,29 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>a table of destination [[cityCode]] and the associated
-						transport modes and their respective speed</p>
+						<p>It&#39;s a lookup mapping for a given year the slope angle between earth surface
+						and cone slope as cone radius is determined, it&#39;s the key parameter for cone geometries.</p>
 					</div>
+					<p>This slope (alpha) is determined by <img src="http://bit.ly/2tLfehC" alt="equation 1"></p>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">ILookupDestWithModes</span>
+						<span class="target">ILookupConeAngles</span>
 					</li>
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-kind-interface tsd-parent-kind-module">
 				<h3 class="tsd-before-signature">Indexable</h3>
-				<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span>cityCode: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><a href="_definitions_project_.ilookuptranspmodespeed.html" class="tsd-signature-type">ILookupTranspModeSpeed</a></div>
+				<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span>year: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><a href="_definitions_project_.iconeanglesitem.html" class="tsd-signature-type">IConeAnglesItem</a></div>
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>a table of destination [[cityCode]] and the associated
-						transport modes and their respective speed</p>
+						<p>It&#39;s a lookup mapping for a given year the slope angle between earth surface
+						and cone slope as cone radius is determined, it&#39;s the key parameter for cone geometries.</p>
 					</div>
+					<p>This slope (alpha) is determined by <img src="http://bit.ly/2tLfehC" alt="equation 1"></p>
 				</div>
 			</section>
 		</div>
@@ -196,9 +198,13 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="_definitions_project_.ilookupcitygraph.html" class="tsd-kind-icon">ILookup<wbr>City<wbr>Graph</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface tsd-parent-kind-module">
 						<a href="_definitions_project_.ilookupconeangles.html" class="tsd-kind-icon">ILookup<wbr>Cone<wbr>Angles</a>
 					</li>
+				</ul>
+				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="_definitions_project_.ilookupcurvelist.html" class="tsd-kind-icon">ILookup<wbr>Curve<wbr>List</a>
 					</li>
@@ -211,13 +217,9 @@
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="_definitions_project_.ilookupcurvesfromcity.html" class="tsd-kind-icon">ILookup<wbr>Curves<wbr>From<wbr>City</a>
 					</li>
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-module">
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="_definitions_project_.ilookupdestwithmodes.html" class="tsd-kind-icon">ILookup<wbr>Dest<wbr>With<wbr>Modes</a>
 					</li>
-				</ul>
-				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="_definitions_project_.ilookuptranspmodespeed.html" class="tsd-kind-icon">ILookup<wbr>Transp<wbr>Mode<wbr>Speed</a>
 					</li>
