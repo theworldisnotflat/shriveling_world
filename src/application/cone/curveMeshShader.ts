@@ -109,7 +109,6 @@ function computation(): void {
 	const tempo = _gpgpu.positions.calculate(_width, _height);
 	const allPositions = tempo[0];
 	for (let i = 0; i < _height; i++) {
-		console.log(i, _curves[i]);
 		_curves[i].setGeometry(allPositions.subarray(i * _width * 4, (i + 1) * _width * 4));
 	}
 }

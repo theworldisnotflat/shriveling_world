@@ -578,7 +578,6 @@ function networkFromCities(
 				} else {
 					destCityCode = edge.cityCodeOri;
 				}
-				console.log(city.edges);
 				// EdgeTranspModeSpeed is the key parameter of the process
 				// it will be confronted to maximumSpeed[year]
 				edgeTranspModeSpeed = speedPerTransportPerYear[edge.transportModeCode];
@@ -597,7 +596,6 @@ function networkFromCities(
 						destCityCode
 					);
 					edgeTranspModeName = edgeTranspModeSpeed.name;
-					console.log(origCityCode, destCityCode, theta);
 					// Prepare tables
 					if (!destinationsWithModes.hasOwnProperty(destCityCode)) {
 						destinationsWithModes[destCityCode] = {};
@@ -644,7 +642,6 @@ function networkFromCities(
 									// The ratio linking the current speed and maxSpeed is
 									// computed according to this ![equation](http://bit.ly/2EejFpW)
 									const speedRatio = (maximumSpeed[year] * theta) / (2 * modelledSpeed);
-									console.log('speedRatio', speedRatio, maximumSpeed[year], theta, modelledSpeed);
 									if (!listOfCurves.hasOwnProperty(destCityCode)) {
 										listOfCurves[destCityCode] = <ILookupCurveList>{
 											end,
@@ -675,7 +672,6 @@ function networkFromCities(
 								// The ratio linking the current speed and maxSpeed is
 								// computed according to this ![equation](http://bit.ly/2EejFpW)
 								const speedRatio = (maximumSpeed[year] * theta) / (2 * modelledSpeed);
-								// console.log('modelledSpeed', modelledSpeed);
 								if (!listOfCurves.hasOwnProperty(destCityCode)) {
 									listOfCurves[destCityCode] = <ILookupCurveList>{
 										end,
@@ -708,7 +704,6 @@ function networkFromCities(
 					coneAngles[yearC].tab = coneAngles[yearC].tab.sort((a, b) => a.clock - b.clock);
 				}
 			}
-			//console.log(roadCode, speedPerTransportPerYear[roadCode]);
 			if (Object.keys(coneAngles).length === 0) {
 				// The case of cities not being origin or destinations in the network
 				// or only by aerial mode

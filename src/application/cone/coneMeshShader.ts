@@ -192,7 +192,6 @@ function updateConesAlphas(): void {
 	let clockB: number;
 	let interpol: (x: number) => number;
 	if (!_alphas.hasOwnProperty(year)) {
-		console.log('_alphas', _alphas);
 		const tempAlphas = new Float32Array(_height * _width);
 		for (let i = 0; i < _height; i++) {
 			const coneAngles = _cones[i].getConeAngles(year);
@@ -205,35 +204,17 @@ function updateConesAlphas(): void {
 				// this city (cone) has no connection with other terrestrial modes in the network
 				// whatever the choice, cone wil remain simple, based on road speed
 				subAlphas = _clocks.map(() => coneRoadAlpha);
-				//console.log(_cones[i].cityCode, 'length', length);
 			} else if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.basedOnRoad) {
 				// all the cones are simple with unique road slope (for a given year)
 				subAlphas = _clocks.map(() => coneRoadAlpha);
-				//console.log(_cones[i].cityCode, 'CONFIGURATION.conesShape:', CONFIGURATION.conesShape);
 			} else {
 				if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.basedOnFastestTerrestrialMode) {
 					// when an edge of a faster than road terrestrial (not aerial) mode
 					// touches the city, the cone slope gets the slope value attached to this mode
-					console.log(
-						_cones[i].cityCode,
-						'CONFIGURATION.conesShape:',
-						CONFIGURATION.conesShape,
-						coneFastTerrModeAlpha
-					);
 					subAlphas = _clocks.map(() => coneFastTerrModeAlpha);
 				} else if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.complex) {
 					// cones will be deformed locally by edges with
 					// a 'faster than road terrestrial mode'
-					console.log(
-						_cones[i].cityCode,
-						'CONFIGURATION.conesShape:',
-						CONFIGURATION.conesShape,
-						'road',
-						coneRoadAlpha,
-						'fast',
-						coneFastTerrModeAlpha,
-						coneAnglesTab
-					);
 					const lastItem = { clock: 0, alpha: 0 };
 					lastItem.clock = coneAnglesTab[length - 1].clock - twoPI;
 					lastItem.alpha = coneAnglesTab[length - 1].alpha;
