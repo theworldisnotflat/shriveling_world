@@ -543,7 +543,6 @@ function networkFromCities(
 	// processedODs avoids duplicating edges:
 	const processedODs: { [begin: string]: { [end: string]: string[] } } = {};
 	cities.forEach((city) => {
-		console.log(city.cityName, city);
 		const origCityCode = city.cityCode;
 		const referential = lookupPosition[origCityCode];
 		if (!processedODs.hasOwnProperty(origCityCode)) {
@@ -574,7 +573,12 @@ function networkFromCities(
 			// For each edge incident to the city considered
 			for (let i = 0; i < city.edges.length; i++) {
 				edge = city.edges[i];
-				destCityCode = edge.cityCodeDes;
+				if (origCityCode == edge.cityCodeOri) {
+					destCityCode = edge.cityCodeDes;
+				} else {
+					destCityCode = edge.cityCodeOri;
+				}
+				console.log(city.edges);
 				// EdgeTranspModeSpeed is the key parameter of the process
 				// it will be confronted to maximumSpeed[year]
 				edgeTranspModeSpeed = speedPerTransportPerYear[edge.transportModeCode];
@@ -587,13 +591,13 @@ function networkFromCities(
 					processedODs[origCityCode][destCityCode] = []; // O-d edge
 					processedODs[destCityCode][origCityCode] = []; // D-o edge to avoid
 				}
-
 				if (lookupPosition.hasOwnProperty(destCityCode)) {
 					const { end, middle, theta, pointP, pointQ, clock } = cachedGetTheMiddle(
 						origCityCode,
 						destCityCode
 					);
 					edgeTranspModeName = edgeTranspModeSpeed.name;
+					console.log(origCityCode, destCityCode, theta);
 					// Prepare tables
 					if (!destinationsWithModes.hasOwnProperty(destCityCode)) {
 						destinationsWithModes[destCityCode] = {};
@@ -629,7 +633,6 @@ function networkFromCities(
 									year,
 									speed: edgeModeSpeed[year].speed,
 								});
-								console.log(year, edge.transportModeCode, coneAngles[year]);
 								if (edgeToBeProcessed) {
 									// Condition to avoid visual duplication of curves!
 									const modelledSpeed = getModelledSpeed(
@@ -641,6 +644,7 @@ function networkFromCities(
 									// The ratio linking the current speed and maxSpeed is
 									// computed according to this ![equation](http://bit.ly/2EejFpW)
 									const speedRatio = (maximumSpeed[year] * theta) / (2 * modelledSpeed);
+									console.log('speedRatio', speedRatio, maximumSpeed[year], theta, modelledSpeed);
 									if (!listOfCurves.hasOwnProperty(destCityCode)) {
 										listOfCurves[destCityCode] = <ILookupCurveList>{
 											end,

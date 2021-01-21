@@ -205,11 +205,11 @@ function updateConesAlphas(): void {
 				// this city (cone) has no connection with other terrestrial modes in the network
 				// whatever the choice, cone wil remain simple, based on road speed
 				subAlphas = _clocks.map(() => coneRoadAlpha);
-				console.log(_cones[i].cityCode, 'length', length);
+				//console.log(_cones[i].cityCode, 'length', length);
 			} else if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.basedOnRoad) {
 				// all the cones are simple with unique road slope (for a given year)
 				subAlphas = _clocks.map(() => coneRoadAlpha);
-				console.log(_cones[i].cityCode, 'CONFIGURATION.conesShape:', CONFIGURATION.conesShape);
+				//console.log(_cones[i].cityCode, 'CONFIGURATION.conesShape:', CONFIGURATION.conesShape);
 			} else {
 				if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.basedOnFastestTerrestrialMode) {
 					// when an edge of a faster than road terrestrial (not aerial) mode
