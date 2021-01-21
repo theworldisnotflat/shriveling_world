@@ -2,7 +2,7 @@
 import type { LineBasicMaterial, MeshPhongMaterial } from 'three';
 import type { Merger } from './merger';
 import { DragNDrop as DragNDrop } from '../common/utils';
-import type { IListFile } from '../definitions/project';
+import type { IListFile, CONESSHAPE_ENUM } from '../definitions/project';
 import type BigBoard from './bigBoard';
 import { ConeMeshShader } from '../cone/coneMeshShader';
 import * as dat from 'dat.gui';
@@ -30,6 +30,11 @@ let conf = {
 		Eckert: 4,
 		'Van Der Grinten': 5,
 		'conic equidistant': 6,
+	},
+	conesShape: {
+		'based on road': 0,
+		'based on the fastest terrestrial mode': 1,
+		complex: 2,
 	},
 	'transport type': '',
 	'cones color': '#',
@@ -67,6 +72,11 @@ export class GUI {
 				Eckert: 4,
 				'Van Der Grinten': 5,
 				'conic equidistant': 6,
+			},
+			conesShape: {
+				'based on road': 0,
+				'based on the fastest terrestrial mode': 1,
+				complex: 2,
 			},
 			'transport type': '',
 			'cones color': '#' + (<any>CONFIGURATION.BASIC_CONE_MATERIAL).color.getHex().toString(16),
@@ -207,8 +217,7 @@ export class GUI {
 		]).then(() => {
 			if (bigBoard.countryBoard.ready && bigBoard.state === 'complete') {
 				flagTransportDone = false;
-				years.min(this._merger.minYear).max(this._merger.maxYear).updateDisplay();
-				console.log('guiDAT', this._merger.conesAndCurvesData);
+				years.min(this._merger.firstYear).max(this._merger.lastYear).updateDisplay();
 				bigBoard.coneBoard.add(this._merger.conesAndCurvesData);
 				// This._merger.clear();
 				const sizeText = generalFolder.add(bigBoard, '_sizeText', 0, 2).name('taille du texte').step(0.1);
@@ -322,9 +331,12 @@ export class GUI {
 		coneFolder.add(bigBoard, 'withLimits').onChange((value: boolean) => {
 			conf['with limits'] = value;
 		});
-		coneFolder.add(bigBoard, 'complexCones').onChange((value: boolean) => {
-			conf['complex cones'] = value;
-		});
+		coneFolder
+			.add(CONFIGURATION, 'conesShape', conf.conesShape)
+			.name('shape of cones')
+			.onChange((v: CONESSHAPE_ENUM) => {
+				CONFIGURATION.conesShape = v;
+			});
 		coneFolder.add(bigBoard.coneBoard, 'opacity', 0, 1).step(0.01);
 		coneFolder.addColor(conf, 'cones color').onChange((v: string) => {
 			const color = Number.parseInt(v.replace('#', ''), 16);

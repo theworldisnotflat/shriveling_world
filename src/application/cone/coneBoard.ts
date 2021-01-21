@@ -20,7 +20,6 @@ export class ConeBoard {
 	private _scale = 1;
 	private _show = true;
 	private _withLimits = true;
-	private _complexCones = false;
 	private readonly _countries: CountryBoard;
 	private _sumUpProperties: ISumUpCriteria = {};
 	private readonly _renderer: WebGLRenderer;
@@ -46,14 +45,6 @@ export class ConeBoard {
 			country.withLimits = value;
 		});
 		this._withLimits = value;
-	}
-
-	get complexCones(): boolean {
-		return this._complexCones;
-	}
-
-	set complexCones(value: boolean) {
-		this._complexCones = value;
 	}
 
 	get scale(): number {
@@ -101,8 +92,8 @@ export class ConeBoard {
 	 */
 	public add(lookup: ILookupCurvesAndCityGraph): void {
 		this.clean();
-		const bBoxes = this._countries.countryMeshCollection.map((country) => country.bBox);
 		console.log('city network', lookup.lookupCityNetwork);
+		const bBoxes = this._countries.countryMeshCollection.map((country) => country.bBox);
 		void ConeMeshShader.generateCones(lookup.lookupCityNetwork, bBoxes).then((cones) => {
 			cones.forEach((cone) => {
 				// UpdateSumUpCriteria(that._sumUpProperties, cone.otherProperties);

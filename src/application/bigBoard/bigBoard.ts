@@ -214,14 +214,6 @@ export default class BigBoard {
 		this.coneBoard.withLimits = value;
 	}
 
-	get complexCones(): boolean {
-		return this.coneBoard.complexCones;
-	}
-
-	set complexCones(value: boolean) {
-		this.coneBoard.complexCones = value;
-	}
-
 	/**
 	 * Getter : Get the current state of the merger
 	 * @returns missing || ready || complete || pending
