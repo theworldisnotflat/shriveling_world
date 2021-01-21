@@ -120,7 +120,7 @@ export class GUI {
 			}
 		});
 		void Promise.all([
-			new Promise((resolve) => {
+			new Promise<void>((resolve) => {
 				if (!bigBoard.countryBoard.ready && json !== undefined) {
 					void bigBoard.countryBoard.add(JSON.parse(json)).then(() => {
 						while (countryControllersList.length > 0) {
@@ -152,7 +152,7 @@ export class GUI {
 					resolve();
 				}
 			}),
-			new Promise((resolve) => {
+			new Promise<void>((resolve) => {
 				if (bigBoard.state === 'complete' && !flagTransportDone) {
 					flagTransportDone = true;
 					while (terrestrialControllersList.length > 0) {
