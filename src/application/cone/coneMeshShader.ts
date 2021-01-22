@@ -10,7 +10,13 @@ import {
 import { CONFIGURATION } from '../common/configuration';
 import { PseudoCone } from './base';
 import { Cartographic, interpolator, matchingBBox } from '../common/utils';
-import type { ILookupCityGraph, IBBox, ILookupComplexAlpha, IComplexAlphaItem } from '../definitions/project';
+import type {
+	ILookupCityGraph,
+	IBBox,
+	ILookupConeAngles,
+	IConeAnglesItem as IConeAnglesItem,
+} from '../definitions/project';
+import { CONESSHAPE_ENUM } from '../definitions/project';
 import type { NEDLocal, Coordinate } from '../common/referential';
 import { getShader } from '../shaders';
 import { GPUComputer } from '../common/gpuComputer';
@@ -176,9 +182,9 @@ function regenerateFromConeStep(): void {
  * Function [[updateAlphas]] sets the alpha (fixing slopes) of cones according to year
  * and deals with cones that shouldn't be displayed
  *
- * will call function [[getComplexAlpha]]
+ * will call function [[getConeAngles]]
  */
-function updateAlphas(): void {
+function updateConesAlphas(): void {
 	const year = CONFIGURATION.year;
 	const twoPI = CONFIGURATION.TWO_PI;
 	const minimumGap = _discriminant * CONFIGURATION.coneStep;
@@ -186,44 +192,60 @@ function updateAlphas(): void {
 	let clockB: number;
 	let interpol: (x: number) => number;
 	if (!_alphas.hasOwnProperty(year)) {
-		const temp = new Float32Array(_height * _width);
+		const tempAlphas = new Float32Array(_height * _width);
 		for (let i = 0; i < _height; i++) {
-			const complexAlpha = _cones[i].getComplexAlpha(year);
-			const coneAlpha = complexAlpha.coneRoadAlpha;
-			const alphaTab = [...complexAlpha.tab];
+			const coneAngles = _cones[i].getConeAngles(year);
+			const coneRoadAlpha = coneAngles.coneRoadAlpha;
+			const coneFastTerrModeAlpha = coneAngles.coneFastTerrModeAlpha;
+			const coneAnglesTab = [...coneAngles.tab];
 			let subAlphas: Float32Array;
-			const length = alphaTab.length;
+			const length = coneAnglesTab.length;
 			if (length === 0) {
-				// Il n'y a pas de destination avec un transport terrestre.
-				subAlphas = _clocks.map(() => coneAlpha);
+				// this city (cone) has no connection with other terrestrial modes in the network
+				// whatever the choice, cone wil remain simple, based on road speed
+				subAlphas = _clocks.map(() => coneRoadAlpha);
+			} else if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.basedOnRoad) {
+				// all the cones are simple with unique road slope (for a given year)
+				subAlphas = _clocks.map(() => coneRoadAlpha);
 			} else {
-				const lastItem = { clock: 0, alpha: 0 };
-				lastItem.clock = alphaTab[length - 1].clock - twoPI;
-				lastItem.alpha = alphaTab[length - 1].alpha;
-				const firstItem = { clock: 0, alpha: 0 };
-				firstItem.clock = alphaTab[0].clock + twoPI;
-				firstItem.alpha = alphaTab[0].alpha;
-				// Ajout croisés des éléments extrêmes pour avoir un tableau débordant le domaine [0, 2PI].
-				alphaTab.push(firstItem);
-				alphaTab.splice(0, 0, lastItem);
-				for (let i = length + 1; i > 0; i--) {
-					clockA = alphaTab[i - 1].clock;
-					clockB = alphaTab[i].clock;
-					if (clockB - clockA > minimumGap) {
-						// Ajout d'une pente de route quand
-						// l'écart d'azimut entre deux destinations est trop grande
-						alphaTab.splice(i, 0, { alpha: coneAlpha, clock: clockA + (clockB - clockA) / 2 });
+				if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.basedOnFastestTerrestrialMode) {
+					// when an edge of a faster than road terrestrial (not aerial) mode
+					// touches the city, the cone slope gets the slope value attached to this mode
+					subAlphas = _clocks.map(() => coneFastTerrModeAlpha);
+				} else if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.complex) {
+					// cones will be deformed locally by edges with
+					// a 'faster than road terrestrial mode'
+					const lastItem = { clock: 0, alpha: 0 };
+					lastItem.clock = coneAnglesTab[length - 1].clock - twoPI;
+					lastItem.alpha = coneAnglesTab[length - 1].alpha;
+					const firstItem = { clock: 0, alpha: 0 };
+					firstItem.clock = coneAnglesTab[0].clock + twoPI;
+					firstItem.alpha = coneAnglesTab[0].alpha;
+					// adding the extreme elements in order to produce a table with overlap beyond [0, 2PI]
+					coneAnglesTab.push(firstItem);
+					coneAnglesTab.splice(0, 0, lastItem);
+					for (let i = length + 1; i > 0; i--) {
+						clockA = coneAnglesTab[i - 1].clock;
+						clockB = coneAnglesTab[i].clock;
+						if (clockB - clockA > minimumGap) {
+							// adding a road slope when
+							// the gap between two destination cities is too wide
+							coneAnglesTab.splice(i, 0, {
+								alpha: coneRoadAlpha,
+								clock: clockA + (clockB - clockA) / 2,
+							});
+						}
 					}
 				}
 
-				interpol = interpolator(alphaTab, 'clock', 'alpha');
+				interpol = interpolator(coneAnglesTab, 'clock', 'alpha');
 				subAlphas = _clocks.map((clock) => interpol(clock));
 			}
 
-			temp.set(subAlphas, i * _width);
+			tempAlphas.set(subAlphas, i * _width);
 		}
 
-		_alphas[year] = temp;
+		_alphas[year] = tempAlphas;
 	}
 
 	const options = {
@@ -247,18 +269,6 @@ function updateWithLimits(): void {
 	_gpgpu.positions.updateTextures(options);
 }
 
-function updateComplexCones(): void {
-	const complexCones = new Float32Array(_height);
-	for (let i = 0; i < _height; i++) {
-		complexCones[i] = _cones[i].complexCones ? 1 : 0;
-	}
-
-	const options = {
-		u_complexCones: { src: complexCones, width: 1, height: _height },
-	};
-	_gpgpu.positions.updateTextures(options);
-}
-
 function computation(): void {
 	const uniforms: { [x: string]: number | ArrayBufferView } = {};
 	uniforms.longueurMaxi = CONFIGURATION.extrudedHeight;
@@ -268,6 +278,7 @@ function computation(): void {
 	uniforms.representationInit = CONFIGURATION.projectionInit;
 	uniforms.representationEnd = CONFIGURATION.projectionEnd;
 	uniforms.percentRepresentation = CONFIGURATION.percentProjection;
+	uniforms.conesShape = CONFIGURATION.conesShape;
 	uniforms.standardParallel1 = CONFIGURATION.standardParallel1;
 	uniforms.standardParallel2 = CONFIGURATION.standardParallel2;
 	_gpgpu.positions.updateUniforms(uniforms);
@@ -298,11 +309,10 @@ function computation(): void {
 export class ConeMeshShader extends PseudoCone {
 	public otherProperties: any;
 	private _withLimits: boolean;
-	private _complexCones: boolean;
 	private readonly _cityCode: string;
 	// Private _transportName: string;
 	private readonly _position: Cartographic;
-	private readonly _complexAlpha: ILookupComplexAlpha;
+	private readonly _coneAngles: ILookupConeAngles;
 
 	/**
 	 * Will [[generateCones]] from [[cityGraph]]
@@ -336,7 +346,7 @@ export class ConeMeshShader extends PseudoCone {
 				]).then(() => {
 					uuid = CONFIGURATION.addEventListener(
 						'heightRatio intrudedHeightRatio coneStep  referenceEquiRectangular THREE_EARTH_RADIUS ' +
-							'projectionBegin projectionEnd projectionPercent year tick',
+							'projectionBegin projectionEnd projectionPercent year tick conesShape',
 						(name: string) => {
 							if (_ready) {
 								switch (name) {
@@ -345,21 +355,18 @@ export class ConeMeshShader extends PseudoCone {
 										_alphas = {};
 										_indexesArr = new Uint16Array(0);
 										regenerateFromConeStep();
-										updateAlphas();
+										updateConesAlphas();
 										updateWithLimits();
-										updateComplexCones();
 										computation();
 										break;
 									case 'year':
-										updateAlphas();
+										updateConesAlphas();
 										updateWithLimits();
-										updateComplexCones();
 										computation();
 										break;
 									case 'tick':
 										if (_dirtyLimits && _tickCount > 10) {
 											updateWithLimits();
-											updateComplexCones();
 											computation();
 											_tickCount = 0;
 											_dirtyLimits = false;
@@ -369,6 +376,12 @@ export class ConeMeshShader extends PseudoCone {
 
 										break;
 									case 'projectionBegin':
+										computation();
+										break;
+									case 'conesShape':
+										_alphas = {};
+										updateConesAlphas();
+										updateWithLimits();
 										computation();
 										break;
 									default:
@@ -424,9 +437,8 @@ export class ConeMeshShader extends PseudoCone {
 		};
 		_gpgpu.positions.updateTextures(options);
 		regenerateFromConeStep();
-		updateAlphas();
+		updateConesAlphas();
 		updateWithLimits();
-		updateComplexCones();
 		computation();
 		_ready = true;
 		return [..._cones];
@@ -439,12 +451,7 @@ export class ConeMeshShader extends PseudoCone {
 	 * @param terrestrialData // cone angles
 	 * @param properties
 	 */
-	private constructor(
-		cityCode: string,
-		position: Cartographic,
-		terrestrialData: ILookupComplexAlpha,
-		properties: any
-	) {
+	private constructor(cityCode: string, position: Cartographic, terrestrialData: ILookupConeAngles, properties: any) {
 		const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(400 * 4 * 2), 4).setUsage(
 			DynamicDrawUsage
 		);
@@ -466,9 +473,8 @@ export class ConeMeshShader extends PseudoCone {
 		this._cityCode = cityCode;
 		this._position = position;
 		this.otherProperties = properties;
-		this._complexAlpha = terrestrialData;
+		this._coneAngles = terrestrialData;
 		this._withLimits = true;
-		this._complexCones = false;
 		this.visible = true;
 		this.castShadow = true;
 		// This.receiveShadow = true;
@@ -481,7 +487,7 @@ export class ConeMeshShader extends PseudoCone {
 	public static set discriminant(value: number) {
 		_discriminant = value;
 		_alphas = {};
-		updateAlphas();
+		updateConesAlphas();
 		computation();
 	}
 
@@ -512,11 +518,11 @@ export class ConeMeshShader extends PseudoCone {
 	}
 
 	/**
-	 * Return a [[IComplexAlphaItem]] corresponding to a year for the city defined in this [[ConeMeshShader]]
+	 * Return a [[IConeAnglesItem]] corresponding to a year for the city defined in this [[ConeMeshShader]]
 	 * @param year
 	 */
-	public getComplexAlpha(year: string | number): IComplexAlphaItem {
-		return this._complexAlpha[year];
+	public getConeAngles(year: string | number): IConeAnglesItem {
+		return this._coneAngles[year];
 	}
 
 	get cityCode(): string {
@@ -535,16 +541,6 @@ export class ConeMeshShader extends PseudoCone {
 		if (value !== this._withLimits) {
 			_dirtyLimits = true;
 			this._withLimits = value;
-		}
-	}
-
-	get complexCones(): boolean {
-		return this._complexCones;
-	}
-
-	set complexCones(value: boolean) {
-		if (value !== this._complexCones) {
-			this._complexCones = value;
 		}
 	}
 }

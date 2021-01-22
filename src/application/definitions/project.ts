@@ -28,6 +28,12 @@ export enum PROJECTION_ENUM {
 	conicEquidistant = 6,
 }
 
+export enum CONESSHAPE_ENUM {
+	basedOnRoad = 0,
+	basedOnFastestTerrestrialMode = 1,
+	complex = 2,
+}
+
 export type internalFormatType =
 	| 'R8'
 	| 'R32F'
@@ -74,11 +80,13 @@ export interface ICartographic {
  * a complex cone the slope for road and slope for each
  * destination city (clock) using a terrestrial transport.
  */
-export interface IComplexAlphaItem {
+export interface IConeAnglesItem {
 	/**
 	 * This property represents the slope of the road transport for the considered year.
 	 */
 	coneRoadAlpha: number;
+	// angle of the non-road fastest terrestrial mode linked to the city
+	coneFastTerrModeAlpha: number;
 	/**
 	 * This property lists for the considered year and the considered origin city
 	 * each destination city using a terrestrial transport. Each item of this
@@ -94,8 +102,8 @@ export interface IComplexAlphaItem {
  *
  * This slope (alpha) is determined by ![equation 1](http://bit.ly/2tLfehC)
  */
-export interface ILookupComplexAlpha {
-	[year: string]: IComplexAlphaItem;
+export interface ILookupConeAngles {
+	[year: string]: IConeAnglesItem;
 }
 
 /**
@@ -133,7 +141,7 @@ export interface ILookupDestWithModes {
  */
 export interface ICityGraph {
 	referential: NEDLocal; // À inhiber dans forbiddenAttributes de coneMeshShader
-	cone: ILookupComplexAlpha; // À inhiber dans forbiddenAttributes de coneMeshShader
+	cone: ILookupConeAngles; // À inhiber dans forbiddenAttributes de coneMeshShader
 	destinationsWithModes: ILookupDestWithModes;
 	origCityProperties: ICity;
 }
@@ -201,6 +209,8 @@ export interface ICity {
 	longitude: number;
 	radius: number; // For cases of cities in islands close to a continent
 	populations?: IPopulation;
+	outEdges?: IEdge[];
+	inEdges?: IEdge[];
 	edges?: IEdge[];
 }
 
@@ -294,9 +304,11 @@ export type configurationObservableEvt =
 	| 'THREE_EARTH_RADIUS'
 	| 'projectionBegin'
 	| 'projectionEnd'
+	| 'conesShape'
 	| 'projectionPercent'
 	| 'year'
-	| 'tick';
+	| 'tick'
+	| 'conesShape';
 
 export type configurationCallback = (name: configurationObservableEvt, value: unknown) => void;
 export type ShaderTypes = 'fragment' | 'vertex';

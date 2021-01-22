@@ -1,0 +1,14 @@
+eYearBegin,eYearEnd,cityCodeOri,nameOri,cityCodeDes,nameDes,transportModeCode,length,notes
+1989,,160210," Le-Mans",160070,Paris,31,0211.000,54
+1990,,160230," Tours",160070,Paris,31,0235.000,56
+1993,,160020," Lille",160100,Calais,31,0104.092,28
+1983,,160030,Lyon,160070," Paris",31,,
+1993,,160070," Paris",160020,Lille,31,,
+2001,,160030,Lyon,160041,Avignon,31,,
+2001,,160041,Avignon,160040,Marseille,31,,
+2007,,160070,Paris,165102,Reims,31,,
+2016,,165102,Reims,160032,Strasbourg,31,,
+2017,,160230,Tours,160240,Poitiers,31,,
+2017,,160240,Poitiers,160010,Bordeaux,31,,
+2017,,160210,Le Mans,160180,Rennes,31,,
+2017,,160041,Avignon,160280,Montpellier,31,,

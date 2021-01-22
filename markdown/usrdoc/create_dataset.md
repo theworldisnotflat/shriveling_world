@@ -23,9 +23,9 @@ The _Shriveling world_ model is by design __differential__, id est, it compares 
 ## Historical time span
 
 The dataset will generate a _historical time span_ during which, for each year, a graphical representation may be built. This _historical time span_ considers the dates attached to the modes and network links but also the coexistence of road and other transport modes. This coexistence of transport modes is necessary to generate the cones slope, [as seen earlier](#a-differential-model). Hence the _historical time span_ is based on data provided about the year of opening and sometimes ending (e.g. supersonic aircraft) of the transport services, an on the period where __road speed and another faster transport mode speed__ are known.
-The _historical time span_ needs to fill in the variable _yearBegin_ and the variable _yearEnd_
-* _yearBegin_ will be the earliest year when the model can be computed
-* _yearEnd_ will be the latest year when the model can be computed
+The _historical time span_ needs to fill in the variable _firstYear_ and the variable _lastYear_
+* _firstYear_ will be the earliest year when the model can be computed
+* _lastYear_ will be the latest year when the model can be computed
 
 There are two sources to determine this _historical time span_:
 Source file | Columns | Rationale
@@ -46,17 +46,17 @@ _maxEYear_|max(_eYearEnd_)|Usually empty (exception is Concorde that stopped ope
 _minSYear_|min(_year_)|The earliest year in the _transport_mode_speed_ file
 _maxSYear_|max(_year_)|The latest year in the _transport_mode_speed_ file
 
-### Step #2 Computing _yearBegin_ at transport mode level
+### Step #2 Computing _firstYear_ at transport mode level
 
 A valid period for the model has an operating network and speed data. The period of operation of the network can be determined at edge level in the _transport_network_, while speed data comes as a table of _year_ and _speed_. Network data should be consistent with the [other data sources for the historical time span](#historical-time-span), and hence be considered when computing _yearBegin<sub>road</sub>_. The equation becomes:
 
 _yearBegin<sub>road</sub>_ = max(_minSYear<sub>road</sub>_,   _minEYear<sub>road</sub>_)
 
-In case one or several _minEYear<sub>road</sub>_ values are empty, the variable _minEYear_ should have no influence on forming _yearBegin_.
+In case one or several _minEYear<sub>road</sub>_ values are empty, the variable _minEYear_ should have no influence on forming _firstYear_.
 
 The computation for _road_ described in steps #1 and #2 should be repeated for each transport mode accordingly.
 
-### Step #3 Computing _yearEnd_ at transport mode level
+### Step #3 Computing _lastYear_ at transport mode level
 
 The formula is:
 
@@ -66,18 +66,18 @@ The computation for _road_ described in steps #1 and #3 should be repeated for e
 
 ### Step #4 Compute the _Historical time span_
 
-Due to the  [differential nature of the model](#a-differential-model), _yearBegin_ should be indicated by the earliest year of operation among all the non road transport modes. In a typical, well formed dataset, one or several transport modes faster than road are described, typically expressway, high-speed rail or airlines. In this case the earliest date when the model can be computed is when one of these faster modes starts operations, providing _yearBegin<sub>road</sub>_ is equal or earlier.
+Due to the  [differential nature of the model](#a-differential-model), _firstYear_ should be indicated by the earliest year of operation among all the non road transport modes. In a typical, well formed dataset, one or several transport modes faster than road are described, typically expressway, high-speed rail or airlines. In this case the earliest date when the model can be computed is when one of these faster modes starts operations, providing _yearBegin<sub>road</sub>_ is equal or earlier.
 
-_yearBegin_ = min(_yearBegin<sub>Transp1</sub>_, _yearBegin<sub>Transp2</sub>_, ...)
+_firstYear_ = min(_yearBegin<sub>Transp1</sub>_, _yearBegin<sub>Transp2</sub>_, ...)
 
-Usually -- exception made of historical past datasets and prospective datasets -- _yearEnd_ should be the current year. In order to care for these two cases, we add the rule that if _yearEnd<sub>road</sub>_ is empty, it should be populated with _currentYear_ and otherwise untouched.
+Usually -- exception made of historical past datasets and prospective datasets -- _lastYear_ should be the current year. In order to care for these two cases, we add the rule that if _yearEnd<sub>road</sub>_ is empty, it should be populated with _currentYear_ and otherwise untouched.
 
-1. _yearEnd_ = max(_yearEnd<sub>Transp1</sub>_, _yearEnd<sub>Transp2</sub>_, ...)
+1. _lastYear_ = max(_yearEnd<sub>Transp1</sub>_, _yearEnd<sub>Transp2</sub>_, ...)
 2. if _yearEnd<sub>road</sub>_ is empty, then _yearEnd<sub>road</sub>_ = _currentYear_,
 
-These formulas apply in the -- well formed dataset -- case where years for road are consistent with other modes years data, and hence: _yearBegin<sub>road</sub>_ <= _yearBegin_ AND _yearEnd<sub>road</sub>_ >= _yearEnd_
+These formulas apply in the -- well formed dataset -- case where years for road are consistent with other modes years data, and hence: _yearBegin<sub>road</sub>_ <= _firstYear_ AND _yearEnd<sub>road</sub>_ >= _lastYear_
 
-<!-- Algorithm for determining the variables _yearBegin_ and  _yearEnd_:
+<!-- Algorithm for determining the variables _firstYear_ and  _lastYear_:
 
 Source file | Starting year for each mode | Ending year for each mode
 ----------|----------|----------
@@ -91,8 +91,8 @@ etc.
 
 _yearEndRoad_ = max (_yearEndRoadMode_, _yearEndRoadNetwork_)
 
-_yearBegin_ = max((_yearBeginRoad_), min(_yearBeginFasterTransp1_, _yearBeginFasterTransp2_, etc.))
-_yearEnd_ = min((_yearEndRoad_), max(_yearEndFasterTransp1_, _yearEndFasterTransp2_, etc.))
+_firstYear_ = max((_yearBeginRoad_), min(_yearBeginFasterTransp1_, _yearBeginFasterTransp2_, etc.))
+_lastYear_ = min((_yearEndRoad_), max(_yearEndFasterTransp1_, _yearEndFasterTransp2_, etc.))
 
 -->
 
@@ -147,10 +147,10 @@ _year_|number|yes|year of census period
 _population_|number|yes|in thousands inhabitants, at the agglomeration level recommended, e.g. as in UN World Urban Prospect database
 
 ### Transport network file
-The _transport network file_ describes the edges of the graph between the cities as nodes. See her for [a justification of the terminology choices](https://timespace.hypotheses.org/177).
+The _transport network file_ describes the edges of the graph between the cities as nodes.  A line in the _transport network file_ describes the existence of an infrastructure or a bi-directional transport service between two cities. See here for [a justification of the terminology choices](https://timespace.hypotheses.org/177).
 Column name | Type | Mandatory | Comments
 ----------|----------|-------------|-------------
-_cityCodeOri_|number|yes|id of origin city; direction (ori-des or des-ori) has no meaning in the model
+_cityCodeOri_|number|yes|id of origin city; direction (ori-des or des-ori) has no meaning in the model. A line in the network file marks the existence of an infrastructure or a bi-directional transport service between two cities.
 _cityCodeDes_|number|yes|id of destination city
 _transportModeCode_|number|yes|id of the transport mode
 _eYearBegin_|number|no|year of opening of the edge, infrastructure or service, e.g. High Speed Rail in 1964 between Tokyo and Osaka; if _eYearBegin_ is not populated( even only one single edge) , the period _historical time span_ will be determined from the variable _year_ in the _transport speed_ file

@@ -1,0 +1,8 @@
+cityCode,index,countryCode,countryName,cityName,latitude,longitude,radius,yearMotorway,yearHST
+160070,6,250,France,Paris,48.85718,2.34141,,,
+160210,17,250,France,Le-Mans,48.00832,0.19745,,,
+160220,18,250,France,Angers,47.4707,-0.55326,,,
+160230,19,250,France,Tours,47.38846,0.68957,,,
+160300,26,250,France,Rouen,49.44014,1.08941,,,
+160310,27,250,France,Caen,49.18434,-0.36118,,,
+160350,30,250,France,Orléans,47.90144,1.90498,,,

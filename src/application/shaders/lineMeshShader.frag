@@ -18,6 +18,7 @@ uniform float standardParallel2;
 uniform int representationInit;
 uniform int representationEnd;
 uniform float percentRepresentation;
+uniform int conesShape;
 
 uniform float coefficient;
 
@@ -42,6 +43,6 @@ void main() {
 
   vec3 modelPosition = displayConversions(
       cartoPosition, threeRadius, earthRadius, referenceEquiRectangular,standardParallel1,standardParallel2,
-      representationInit, representationEnd, percentRepresentation);
+      representationInit, representationEnd, percentRepresentation, conesShape);
   myOutputColor = vec4(modelPosition, 0.0);
 }
