@@ -22,7 +22,9 @@ Go inside the application folder and open a terminal, execute the following line
 
 `npm i` (update nodejs)
 
-`npm run dev` (compile sources, launch server)
+`npm run build` (compile sources)
+
+`npm run dev` (quick compile sources, launch server)
 
 Then open in a browser this address http://localhost:3000.
 
