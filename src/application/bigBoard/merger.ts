@@ -256,8 +256,8 @@ function networkFromCities(
 	const curvesData: ILookupCurves = {};
 	// determining the 'historical time span'
 	const currentYear = new Date().getFullYear();
-	let firstYear: number;
-	let lastYear: number;
+	let firstYear = -3000;
+	let lastYear = 3000;
 
 	/**
 	 * [[ISpeedPerYear]] is the table of max speed per [[year]]
@@ -343,87 +343,7 @@ function networkFromCities(
 	});
 
 	// computing transport mode time span variables
-	transportMode.forEach((transpMode) => {
-		// initializing the variables
-		let oneUndefinedEYearBegin = false;
-		let oneUndefinedEYearEnd = false;
-		transpMode.minSYear = transpMode.speedTab[0].year;
-		transpMode.maxSYear = transpMode.speedTab[0].year;
-		transpMode.speedTab.forEach((transpSpeed) => {
-			if (transpSpeed.year < transpMode.minSYear) {
-				transpMode.minSYear = transpSpeed.year;
-			}
-			if (transpSpeed.year > transpMode.maxSYear) {
-				transpMode.maxSYear = transpSpeed.year;
-			}
-		});
-		transpMode.minEYear = null;
-		transpMode.maxEYear = null;
-		transpNetwork.forEach((edge) => {
-			if (edge.transportModeCode === transpMode.code) {
-				if (edge.eYearBegin !== undefined) {
-					if (transpMode.minEYear === null) {
-						transpMode.minEYear = edge.eYearBegin;
-					} else {
-						if (transpMode.minEYear > edge.eYearBegin) {
-							transpMode.minEYear = edge.eYearBegin;
-						}
-					}
-				} else {
-					oneUndefinedEYearBegin = true;
-				}
-				if (edge.eYearEnd !== undefined) {
-					if (transpMode.maxEYear === null) {
-						transpMode.maxEYear = edge.eYearEnd;
-					} else {
-						if (transpMode.maxEYear < edge.eYearEnd) {
-							transpMode.maxEYear = edge.eYearEnd;
-						}
-					}
-				} else {
-					oneUndefinedEYearEnd = true;
-				}
-			}
-		});
-		if (oneUndefinedEYearBegin) {
-			transpMode.minEYear = null;
-		}
-		if (oneUndefinedEYearEnd) {
-			transpMode.maxEYear = null;
-		}
-	});
-
-	// computing the valid time span of transport modes considering:
-	// range of operation AND available speed data
-	transportMode.forEach((transpMode) => {
-		transpMode.yearBegin = Math.max(
-			transpMode.minSYear === null ? -Infinity : transpMode.minSYear,
-			transpMode.minEYear === null ? -Infinity : transpMode.minEYear
-		);
-		transpMode.yearEnd = Math.min(
-			transpMode.maxSYear === null ? Infinity : transpMode.maxSYear,
-			transpMode.maxEYear === null ? Infinity : transpMode.maxEYear
-		);
-	});
-
-	// computing the historical time span of the model
-	firstYear = Infinity;
-	lastYear = -Infinity;
-	transportMode.forEach((transpMode) => {
-		if (transpMode.code !== roadCode) {
-			if (transpMode.yearBegin < firstYear) firstYear = transpMode.yearBegin;
-			if (transpMode.yearEnd > lastYear) lastYear = transpMode.yearEnd;
-		}
-	});
-
-	// unlikely case when road times are not consistent
-	transportMode.forEach((transpMode) => {
-		if (transpMode.code === roadCode) {
-			if (transpMode.yearBegin > firstYear) firstYear = transpMode.yearBegin;
-			if (transpMode.yearEnd < lastYear) lastYear = transpMode.yearEnd;
-		}
-	});
-	console.log('time span', firstYear, lastYear, transportMode);
+	({ firstYear, lastYear } = historicalTimeSpan(transportMode, transpNetwork, firstYear, lastYear, roadCode));
 
 	// will compute for each year the maximumSpeed and
 	// for each transport mode a table of speed
@@ -914,4 +834,94 @@ export class Merger {
 			this._state = state;
 		}
 	}
+}
+function historicalTimeSpan(
+	transportMode: ITranspMode[],
+	transpNetwork: IEdge[],
+	firstYear: number,
+	lastYear: number,
+	roadCode: number
+) {
+	transportMode.forEach((transpMode) => {
+		// initializing the variables
+		let oneUndefinedEYearBegin = false;
+		let oneUndefinedEYearEnd = false;
+		transpMode.minSYear = transpMode.speedTab[0].year;
+		transpMode.maxSYear = transpMode.speedTab[0].year;
+		transpMode.speedTab.forEach((transpSpeed) => {
+			if (transpSpeed.year < transpMode.minSYear) {
+				transpMode.minSYear = transpSpeed.year;
+			}
+			if (transpSpeed.year > transpMode.maxSYear) {
+				transpMode.maxSYear = transpSpeed.year;
+			}
+		});
+		transpMode.minEYear = null;
+		transpMode.maxEYear = null;
+		transpNetwork.forEach((edge) => {
+			if (edge.transportModeCode === transpMode.code) {
+				if (edge.eYearBegin !== undefined) {
+					if (transpMode.minEYear === null) {
+						transpMode.minEYear = edge.eYearBegin;
+					} else {
+						if (transpMode.minEYear > edge.eYearBegin) {
+							transpMode.minEYear = edge.eYearBegin;
+						}
+					}
+				} else {
+					oneUndefinedEYearBegin = true;
+				}
+				if (edge.eYearEnd !== undefined) {
+					if (transpMode.maxEYear === null) {
+						transpMode.maxEYear = edge.eYearEnd;
+					} else {
+						if (transpMode.maxEYear < edge.eYearEnd) {
+							transpMode.maxEYear = edge.eYearEnd;
+						}
+					}
+				} else {
+					oneUndefinedEYearEnd = true;
+				}
+			}
+		});
+		if (oneUndefinedEYearBegin) {
+			transpMode.minEYear = null;
+		}
+		if (oneUndefinedEYearEnd) {
+			transpMode.maxEYear = null;
+		}
+	});
+
+	// computing the valid time span of transport modes considering:
+	// range of operation AND available speed data
+	transportMode.forEach((transpMode) => {
+		transpMode.yearBegin = Math.max(
+			transpMode.minSYear === null ? -Infinity : transpMode.minSYear,
+			transpMode.minEYear === null ? -Infinity : transpMode.minEYear
+		);
+		transpMode.yearEnd = Math.min(
+			transpMode.maxSYear === null ? Infinity : transpMode.maxSYear,
+			transpMode.maxEYear === null ? Infinity : transpMode.maxEYear
+		);
+	});
+
+	// computing the historical time span of the model
+	firstYear = Infinity;
+	lastYear = -Infinity;
+	transportMode.forEach((transpMode) => {
+		if (transpMode.code !== roadCode) {
+			if (transpMode.yearBegin < firstYear) firstYear = transpMode.yearBegin;
+			if (transpMode.yearEnd > lastYear) lastYear = transpMode.yearEnd;
+		}
+	});
+
+	// unlikely case when road times are not consistent
+	transportMode.forEach((transpMode) => {
+		if (transpMode.code === roadCode) {
+			if (transpMode.yearBegin > firstYear) firstYear = transpMode.yearBegin;
+			if (transpMode.yearEnd < lastYear) lastYear = transpMode.yearEnd;
+		}
+	});
+	console.log('time span', firstYear, lastYear, transportMode);
+	return { firstYear, lastYear };
 }
