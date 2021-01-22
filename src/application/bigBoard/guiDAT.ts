@@ -158,10 +158,10 @@ export class GUI {
 								folder.add(country.material, 'opacity', 0, 1).step(0.01).listen();
 								countryControllersList.push(folder);
 							});
-						resolve(0);
+						resolve();
 					});
 				} else {
-					resolve(0);
+					resolve();
 				}
 			}),
 			new Promise<void>((resolve) => {
@@ -247,7 +247,7 @@ export class GUI {
 					});
 				}
 
-				resolve(0);
+				resolve();
 			}),
 		]).then(() => {
 			if (bigBoard.countryBoard.ready && bigBoard.state === 'complete') {
