@@ -482,14 +482,9 @@ function networkFromCities(
 			let alpha: number; // for complex alpha cones
 			let edgeTranspModeName: string;
 			let edgeTranspModeSpeed: ITabSpeedPerYearPerTranspModeItem;
-			city.edges = [];
-			if (city.inEdges.length === 0 && city.outEdges.length === 0) {
+			if (city.edges.length === 0) {
 				city.edges.push({ eYearBegin: firstYear, cityCodeDes: -Infinity, transportModeCode: roadCode });
-			} else {
-				city.edges = [...city.inEdges, ...city.outEdges];
 			}
-			delete city.inEdges;
-			delete city.outEdges;
 			// For each edge incident to the city considered
 			for (let i = 0; i < city.edges.length; i++) {
 				edge = city.edges[i];
@@ -795,23 +790,88 @@ export class Merger {
 			merger(transportNetwork, cities, 'cityCodeOri', 'cityCode', 'origCityInfo', false, false, false);
 			merger(transportNetwork, cities, 'cityCodeDes', 'cityCode', 'destCityInfo', false, false, false);
 			// cleaning up transportNetwork = remove edges with one or zero extremities in the 'cities' list
-			for (let i = 0; i < transportNetwork.length; i++) {
-				if (
-					cities.findIndex((c) => c.cityCode == transportNetwork[i].cityCodeOri) === -1 ||
-					cities.findIndex((c) => c.cityCode == transportNetwork[i].cityCodeDes) === -1
-				) {
-					transportNetwork.splice(i--, 1);
-				}
-			}
+			this.cleanUpNetwork(transportNetwork, cities);
 			// Generates subgraph from city considered as origin and as destination
 			merger(cities, transportNetwork, 'cityCode', 'cityCodeOri', 'outEdges', true, false, false);
 			merger(cities, transportNetwork, 'cityCode', 'cityCodeDes', 'inEdges', true, false, false);
+			cities.forEach((city) => {
+				city.edges = [...city.inEdges, ...city.outEdges];
+				delete city.inEdges;
+				delete city.outEdges;
+			});
+			// generate travel time matrix with Dijkstra algorithm
+			const ttMat = [];
+			const queue: IEdge[] = [];
+			const Q: ICity[] = [];
+			// todo: generate all straight line trips by road between cities
+			cities.forEach((source) => {
+				cities.forEach((city) => {
+					city.dist = Infinity;
+					city.prev = undefined;
+					Q.push(city);
+					//console.log(city.cityName);
+				});
+				source.dist = 0;
+				console.log('source', source.cityName, source, Q.length);
+				while (Q.length > 0) {
+					const miniCity: ICity = Q.reduce((a, b) => (a.dist < b.dist ? a : b));
+					const miniCityDist = miniCity.dist;
+					const minCity: ICity = cities.find((c) => c === miniCity);
+					console.log(miniCity.cityName, miniCityDist);
+					Q.splice(Q.indexOf(miniCity), 1);
+					minCity.edges.forEach((edge) => {
+						//need to consider the direction of the edge
+						const cityOri = cities.find((c) => c.cityCode === edge.cityCodeOri);
+						const cityDes = cities.find((c) => c.cityCode === edge.cityCodeDes);
+						let dCity: ICity = undefined;
+						let oCity: ICity = undefined;
+						//if (cityOri.dist < cityDes.dist) {
+						if (cityOri === minCity) {
+							oCity = cityOri;
+							dCity = cityDes;
+						} else {
+							dCity = cityOri;
+							oCity = cityDes;
+						}
+						const pathDuration = miniCityDist + 1;
+						//const vQ: ICity  = Q.find((c) => c === vCity);
+						console.log(
+							'pathDuration',
+							pathDuration,
+							oCity.cityName,
+							oCity.dist,
+							dCity.cityName,
+							dCity.dist
+						);
+						if (pathDuration < dCity.dist) {
+							dCity.dist = pathDuration;
+							dCity.prev = oCity;
+							//vQ.dist = pathDuration;
+							//vQ.prev = uCity;
+							ttMat[(source.cityCode, oCity.cityCode)] = pathDuration;
+						}
+					});
+				}
+			});
+			// todo : remove all straight line trips by road between cities
+			console.log('ttMat', ttMat);
 			// The main function that generates geometries (cones, curves) by exploring the subgraphs from cities
 			this._curvesAndCityGraph = networkFromCities(transportMode, cities, transportNetwork, transportModeSpeed);
 			// for input data reading debugging
 			console.log('curves & cityGraph', this._curvesAndCityGraph);
 			this._state = 'missing';
 			this._checkState();
+		}
+	}
+
+	private cleanUpNetwork(transportNetwork: IEdge[], cities: ICity[]) {
+		for (let i = 0; i < transportNetwork.length; i++) {
+			if (
+				cities.findIndex((c) => c.cityCode == transportNetwork[i].cityCodeOri) === -1 ||
+				cities.findIndex((c) => c.cityCode == transportNetwork[i].cityCodeDes) === -1
+			) {
+				transportNetwork.splice(i--, 1);
+			}
 		}
 	}
 

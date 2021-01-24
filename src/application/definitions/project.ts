@@ -199,6 +199,8 @@ export interface IPopulation {
  * * [[radius]]: number; // for cases of cities in islands close to a continent
  * * [[populations]] (optional) for several years as provided in csv file 'population.csv'
  * * [[edges]] (optional) is a table will be determined by scanning the [[ITransportNetwork]]
+ * * with temporary fields [[inEdges]] and [[outEdges]]
+ * * [[dist]] and [[prev]] are used for computing minimum path
  */
 export interface ICity {
 	cityCode: number;
@@ -212,6 +214,8 @@ export interface ICity {
 	outEdges?: IEdge[];
 	inEdges?: IEdge[];
 	edges?: IEdge[];
+	dist?: number;
+	prev?: ICity;
 }
 
 /**
@@ -273,6 +277,8 @@ export interface IEdge {
 	transportModeCode: number;
 	eYearBegin?: number;
 	eYearEnd?: number;
+	dist?: number;
+	prev?: number;
 }
 
 export interface IBBox {
