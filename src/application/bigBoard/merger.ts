@@ -799,11 +799,39 @@ export class Merger {
 				delete city.inEdges;
 				delete city.outEdges;
 			});
+			// The main function that generates geometries (cones, curves) by exploring the subgraphs from cities
+			this._curvesAndCityGraph = networkFromCities(transportMode, cities, transportNetwork, transportModeSpeed);
+			// for input data reading debugging
+			console.log('curves & cityGraph', this._curvesAndCityGraph);
 			// generate travel time matrix with Dijkstra algorithm
 			const ttMat = [];
 			const queue: IEdge[] = [];
 			const Q: ICity[] = [];
-			// todo: generate all straight line trips by road between cities
+			// populate distKM for existing edges
+			transportNetwork.forEach((edge) => {
+				const cityOri: ICity = cities.find((c) => c.cityCode === edge.cityCodeOri);
+				const cityDes: ICity = cities.find((c) => c.cityCode === edge.cityCodeDes);
+				edge.distKM =
+					haversine(cityOri.latitude, cityOri.longitude, cityDes.latitude, cityDes.longitude) / 1000;
+			});
+			//generate all straight line trips by road between cities
+			cities.forEach((oCity) => {
+				cities.forEach((dCity) => {
+					// trick for a half matrix
+					if (oCity.cityCode > dCity.cityCode) {
+						const crowKM =
+							haversine(oCity.latitude, oCity.longitude, dCity.latitude, dCity.longitude) / 1000;
+						transportNetwork.push({
+							cityCodeOri: oCity.cityCode,
+							cityCodeDes: dCity.cityCode,
+							transportModeCode: 7, // todo:utiliser roadCode
+							distKM: crowKM,
+						});
+					}
+				});
+			});
+			const year = 2010;
+
 			cities.forEach((source) => {
 				cities.forEach((city) => {
 					city.dist = Infinity;
@@ -817,7 +845,7 @@ export class Merger {
 					const miniCity: ICity = Q.reduce((a, b) => (a.dist < b.dist ? a : b));
 					const miniCityDist = miniCity.dist;
 					const minCity: ICity = cities.find((c) => c === miniCity);
-					console.log(miniCity.cityName, miniCityDist);
+					//console.log(miniCity.cityName, miniCityDist);
 					Q.splice(Q.indexOf(miniCity), 1);
 					minCity.edges.forEach((edge) => {
 						//need to consider the direction of the edge
@@ -833,32 +861,35 @@ export class Merger {
 							dCity = cityOri;
 							oCity = cityDes;
 						}
-						const pathDuration = miniCityDist + 1;
-						//const vQ: ICity  = Q.find((c) => c === vCity);
-						console.log(
-							'pathDuration',
-							pathDuration,
-							oCity.cityName,
-							oCity.dist,
-							dCity.cityName,
-							dCity.dist
-						);
-						if (pathDuration < dCity.dist) {
-							dCity.dist = pathDuration;
-							dCity.prev = oCity;
-							//vQ.dist = pathDuration;
-							//vQ.prev = uCity;
-							ttMat[(source.cityCode, oCity.cityCode)] = pathDuration;
+						if (oCity !== undefined || dCity !== undefined) {
+							const transportSpeed = this._transportModeSpeed.find(
+								(t) => t.transportModeCode === edge.transportModeCode && t.year === year
+							);
+							// zero cost for changing transport mode
+							const edgeDuration = edge.distKM / transportSpeed.speedKPH;
+							const pathDuration = miniCityDist + edgeDuration;
+							console.log(
+								'pathDuration',
+								pathDuration,
+								edge.distKM,
+								transportSpeed.transportModeCode,
+								transportSpeed.speedKPH,
+								oCity.cityName,
+								oCity.dist,
+								dCity.cityName,
+								dCity.dist
+							);
+							if (pathDuration < dCity.dist) {
+								dCity.dist = pathDuration;
+								dCity.prev = oCity;
+								ttMat[(source.cityCode, oCity.cityCode)] = pathDuration;
+							}
 						}
 					});
 				}
 			});
 			// todo : remove all straight line trips by road between cities
 			console.log('ttMat', ttMat);
-			// The main function that generates geometries (cones, curves) by exploring the subgraphs from cities
-			this._curvesAndCityGraph = networkFromCities(transportMode, cities, transportNetwork, transportModeSpeed);
-			// for input data reading debugging
-			console.log('curves & cityGraph', this._curvesAndCityGraph);
 			this._state = 'missing';
 			this._checkState();
 		}
@@ -895,6 +926,20 @@ export class Merger {
 		}
 	}
 }
+function haversine(lat1: number, lon1: number, lat2: number, lon2: number) {
+	const R = CONFIGURATION.earthRadiusMeters;
+	const φ1 = (lat1 * Math.PI) / 180; // φ, λ in radians
+	const φ2 = (lat2 * Math.PI) / 180;
+	const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+	const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+
+	const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+	const d = R * c; // in metres
+	return d;
+}
+
 function historicalTimeSpan(
 	transportMode: ITranspMode[],
 	transpNetwork: IEdge[],

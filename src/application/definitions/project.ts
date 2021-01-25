@@ -279,6 +279,7 @@ export interface IEdge {
 	eYearEnd?: number;
 	dist?: number;
 	prev?: number;
+	distKM?: number;
 }
 
 export interface IBBox {
