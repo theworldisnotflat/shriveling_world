@@ -61,6 +61,11 @@ Most commands can be accessed through the lateral UI:
     - The value **2** draws a broken line, as two segments with an intermediate point; the line has the desired length
     - A value superior to __2__ will interpolate a Bézier curve of the desired length. This curve can be a geodesic in the non projected case, or can be a longer curve. Recommended value is superior to __50__ for a high quality graphic
 
+### Navigation
+* click + scroll
+* alt scroll = rotation
+* ctrl scroll = translation
+
 ## More parameters with the console
 
 Instructions to the application can also be entered in the console (F12) of the browser

@@ -132,6 +132,7 @@ const hardCodedHeadings: Array<{ fileName: string; headings: string[] }> = [
 const thetaLimit = 2000 / (CONFIGURATION.earthRadiusMeters / 1000);
 let _firstYear = 2000;
 let _lastYear = 1900;
+let roadCode: number;
 let _transportName: { curves: string[]; cones: string[] } = { curves: [], cones: [] };
 const config: Papa.ParseConfig = {
 	header: true,
@@ -311,7 +312,6 @@ function networkFromCities(
 		theta: number;
 		clock: number;
 	}
-	let roadCode: number;
 	_transportName = { curves: [], cones: [] };
 	/**
 	 * association table linking a transport mode to an object of type [[ITabSpeedPerYearPerTranspModeItem]]
@@ -332,15 +332,6 @@ function networkFromCities(
 	 *
 	 * At the end of this loop [[speedPerTransportPerYear]] and [[maximumSpeed]] are populated
 	 */
-
-	// identifying Road in the dataset
-	transportMode.forEach((transpMode) => {
-		const transportCode = transpMode.code;
-		const modeName = transpMode.name;
-		if (modeName === 'Road') {
-			roadCode = transportCode;
-		}
-	});
 
 	// computing transport mode time span variables
 	({ firstYear, lastYear } = historicalTimeSpan(transportMode, transpNetwork, firstYear, lastYear, roadCode));
@@ -785,7 +776,11 @@ export class Merger {
 			// Linking tables to each other
 			// merger(mother,     girl,               motherProp., girlProp.,      newName, forceArray, removeMotherProp., removeGirlProp.)
 			merger(transportMode, transportModeSpeed, 'code', 'transportModeCode', 'speedTab', true, true, false);
+			// identifying Road in the dataset
+			roadCode = identifyingRoadMode(transportMode);
 			merger(cities, population, 'cityCode', 'cityCode', 'populations', false, true, false);
+			//generate all straight line trips by road between cities
+			this.generateRoadCrowFlyEdges(cities, transportNetwork);
 			// Attach city information to starting and ending city edge
 			merger(transportNetwork, cities, 'cityCodeOri', 'cityCode', 'origCityInfo', false, false, false);
 			merger(transportNetwork, cities, 'cityCodeDes', 'cityCode', 'destCityInfo', false, false, false);
@@ -803,8 +798,10 @@ export class Merger {
 			this._curvesAndCityGraph = networkFromCities(transportMode, cities, transportNetwork, transportModeSpeed);
 			// for input data reading debugging
 			console.log('curves & cityGraph', this._curvesAndCityGraph);
+
 			// generate travel time matrix with Dijkstra algorithm
-			const ttMat = [];
+			//const ttMat: number[][] = [];
+			const ttMat = new Array(cities.length).fill(0).map(() => new Array(cities.length).fill(0));
 			const queue: IEdge[] = [];
 			const Q: ICity[] = [];
 			// populate distKM for existing edges
@@ -814,24 +811,8 @@ export class Merger {
 				edge.distKM =
 					haversine(cityOri.latitude, cityOri.longitude, cityDes.latitude, cityDes.longitude) / 1000;
 			});
-			//generate all straight line trips by road between cities
-			cities.forEach((oCity) => {
-				cities.forEach((dCity) => {
-					// trick for a half matrix
-					if (oCity.cityCode > dCity.cityCode) {
-						const crowKM =
-							haversine(oCity.latitude, oCity.longitude, dCity.latitude, dCity.longitude) / 1000;
-						transportNetwork.push({
-							cityCodeOri: oCity.cityCode,
-							cityCodeDes: dCity.cityCode,
-							transportModeCode: 7, // todo:utiliser roadCode
-							distKM: crowKM,
-						});
-					}
-				});
-			});
-			const year = 2010;
 
+			const year = 2010;
 			cities.forEach((source) => {
 				cities.forEach((city) => {
 					city.dist = Infinity;
@@ -840,12 +821,12 @@ export class Merger {
 					//console.log(city.cityName);
 				});
 				source.dist = 0;
-				console.log('source', source.cityName, source, Q.length);
+				//const sourceCityCode = source.cityCode;
+				console.log('source', source.cityName);
 				while (Q.length > 0) {
 					const miniCity: ICity = Q.reduce((a, b) => (a.dist < b.dist ? a : b));
 					const miniCityDist = miniCity.dist;
 					const minCity: ICity = cities.find((c) => c === miniCity);
-					//console.log(miniCity.cityName, miniCityDist);
 					Q.splice(Q.indexOf(miniCity), 1);
 					minCity.edges.forEach((edge) => {
 						//need to consider the direction of the edge
@@ -877,24 +858,56 @@ export class Merger {
 								oCity.cityName,
 								oCity.dist,
 								dCity.cityName,
-								dCity.dist
+								dCity.dist,
+								cities.indexOf(source),
+								cities.indexOf(oCity)
 							);
 							if (pathDuration < dCity.dist) {
 								dCity.dist = pathDuration;
 								dCity.prev = oCity;
-								ttMat[(source.cityCode, oCity.cityCode)] = pathDuration;
+								ttMat[cities.indexOf(source)][cities.indexOf(dCity)] = pathDuration;
 							}
 						}
 					});
 				}
 			});
 			// todo : remove all straight line trips by road between cities
-			console.log('ttMat', ttMat);
+			console.log(cities, 'ttMat', ttMat);
 			this._state = 'missing';
 			this._checkState();
 		}
 	}
+	/**
+	 * generate all straight line trips by road between cities
+	 * *
+	 * @param cities
+	 * @param transportNetwork
+	 */
+	private generateRoadCrowFlyEdges(cities: ICity[], transportNetwork: IEdge[]) {
+		cities.forEach((oCity) => {
+			cities.forEach((dCity) => {
+				// trick for a half matrix
+				if (oCity.cityCode > dCity.cityCode) {
+					const crowKM = haversine(oCity.latitude, oCity.longitude, dCity.latitude, dCity.longitude) / 1000;
+					transportNetwork.push({
+						cityCodeOri: oCity.cityCode,
+						cityCodeDes: dCity.cityCode,
+						transportModeCode: roadCode,
+						distKM: crowKM,
+					});
+				}
+			});
+		});
+	}
 
+	/**
+	 * The function [[cleanUpNetwork]] will
+	 * remove unconnected [[edges]], id est remove
+	 * * [[edges]] with zero extremities in [[cities]] list
+	 * * [[edges]] with one  extremity   in [[cities]] list
+	 * @param transportNetwork
+	 * @param cities
+	 */
 	private cleanUpNetwork(transportNetwork: IEdge[], cities: ICity[]) {
 		for (let i = 0; i < transportNetwork.length; i++) {
 			if (
@@ -926,6 +939,32 @@ export class Merger {
 		}
 	}
 }
+/**
+ * Scanning the table of [[transportMode]]s to identify
+ * the road mode, reference of the model
+ * @param transportMode
+ */
+function identifyingRoadMode(transportMode: ITranspMode[]): number {
+	let roadModeCode: number = undefined;
+	transportMode.forEach((transpMode) => {
+		const transportCode = transpMode.code;
+		const modeName = transpMode.name;
+		if (modeName === 'Road') {
+			roadModeCode = transportCode;
+		}
+	});
+	return roadModeCode;
+}
+
+/**
+ * The function [[haversine]] computes
+ * ___great circle distance___ between two location
+ * based on lat/lon data
+ * @param lat1
+ * @param lon1
+ * @param lat2
+ * @param lon2
+ */
 function haversine(lat1: number, lon1: number, lat2: number, lon2: number) {
 	const R = CONFIGURATION.earthRadiusMeters;
 	const φ1 = (lat1 * Math.PI) / 180; // φ, λ in radians
@@ -939,7 +978,17 @@ function haversine(lat1: number, lon1: number, lat2: number, lon2: number) {
 	const d = R * c; // in metres
 	return d;
 }
-
+/**
+ * The function determines the [[historicalTimeSpan]]
+ * based on data found in the input files:
+ * * [[transportMode]]
+ * * [[transpNetwork]]
+ * @param transportMode
+ * @param transpNetwork
+ * @param firstYear
+ * @param lastYear
+ * @param roadCode
+ */
 function historicalTimeSpan(
 	transportMode: ITranspMode[],
 	transpNetwork: IEdge[],
