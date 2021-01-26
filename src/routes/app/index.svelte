@@ -31,6 +31,7 @@
 	onMount(async () => {
 		const BigBoard = (await import('../../application/bigBoard/bigBoard')).default;
 		bigBoard = new BigBoard(board, dat);
+		window.bigBoard = bigBoard;
 	});
 </script>
 

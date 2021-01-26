@@ -760,7 +760,8 @@ export class Merger {
 	 * * execute the main process i.e. [[networkFromCities]]
 	 * * retrieve the resulting data into [[_edgesAndTranspModes]]
 	 */
-	public merge(): void {
+	public merge(testParam?: any): void {
+		console.log('Merge Parameter : ', testParam);
 		if (this._state === 'ready') {
 			const generateTraveTimeMatrix = false;
 			const year = 2010;
