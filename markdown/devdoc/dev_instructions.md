@@ -22,7 +22,9 @@ Go inside the application folder and open a terminal, execute the following line
 
 `npm i` (update nodejs)
 
-`npm run dev` (compile sources, launch server)
+`npm run build` (compile sources)
+
+`npm run dev` (quick compile sources, launch server)
 
 Then open in a browser this address http://localhost:3000.
 
@@ -43,3 +45,5 @@ Once all changes are considered worth being pushed to _master_, _stage_ and _com
 2. Then in the branch in the upper left window of GitKraken, right click and, _Merge TestDataSet into master_ will introduce changes of the branch into the local _master_.
 
 3. Finally _push_ the modifications to the distant _master_.
+
+Alternatively: _Start a pull request to origin from origin/TestDataSet_

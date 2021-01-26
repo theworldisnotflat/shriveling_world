@@ -49,6 +49,10 @@ Most commands can be accessed through the lateral UI:
 - __Cones__:
   * __Color__: Menu 'Cones', 'cones color'
   * __Rendering quality__: 'coneStep' modifies the visual aspect of cones. The default value is 15 degrees, a facet = 15°, a recommended value is 5 or less. Lower values will generate higher quality graphics, at the cost of larger export files and resource consuming rendering
+  * the __shape of cones__ has currently three available options:
+     * in the default __based on road__ case, all cones are simple regular cones with a unique slope -- for a given year -- based on the road speed
+     * in the __fast terrestrial transport mode__ case, cones all have a regular shape but may have different slopes; the slope of a cone is determined by the connection to a terrestrial transport mode faster than road. The mere connection of the city to the a high speed rail line network will alter the slope of its cone, expressing its access to fast speed. In this case the slope, i.e. the local time-space relative speed, is potentially wrong in many places, but we produce an image that highlights the connectivity of cities to hight speed terrestrial transport networks. In this case, we ignore the 'tunnel effect' of fast transport networks.
+     * in the __complex cones__ case, cones are locally deformed based on existing incoming or departing edges of transport terrestrial transport modes faster than road, typically expressway or High-Speed Rail lines. In this case, as in the previous one, we ignore the 'tunnel effect' of fast transport networks.
 
 * __Curves__:
   * __Color__ and __transparency__: curves may have a different color and transparency according to the transport mode they represent, chosen in 'Curves', 'terrestrial modes' and 'Aircraft'
@@ -56,6 +60,11 @@ Most commands can be accessed through the lateral UI:
     - The value **1** draws all straight lines
     - The value **2** draws a broken line, as two segments with an intermediate point; the line has the desired length
     - A value superior to __2__ will interpolate a Bézier curve of the desired length. This curve can be a geodesic in the non projected case, or can be a longer curve. Recommended value is superior to __50__ for a high quality graphic
+
+### Navigation
+* click + scroll
+* alt scroll = rotation
+* ctrl scroll = translation
 
 ## More parameters with the console
 

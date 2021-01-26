@@ -7,7 +7,7 @@ import type { ILookupCurves } from '../definitions/project';
 
 let _curves: CurveMeshShader[];
 
-let curvesDontDisplay: CurveMeshShader[] = [];
+let curvesDonTDisplay: CurveMeshShader[] = [];
 let uuid: string;
 let _ready = false;
 let _width: number;
@@ -19,20 +19,18 @@ let _coefficient = 1;
 const _gpgpu: { [x: string]: GPUComputer } = {};
 
 let _t: Float32Array;
-let _hauteurs: Float32Array;
+let _heightTab: Float32Array;
 
 function fullCleanArrays(): void {
 	_t = new Float32Array(0);
-	_hauteurs = new Float32Array(0);
+	_heightTab = new Float32Array(0);
 }
 
 fullCleanArrays();
 
 /**
- * Formule de la hauteur des arcs fonction de [[theta]]
- * et du [[speedRatio]] des vitesses
  *
- * formules of the heigth of links function of '[[theta]]' and '[[ratio]]'
+ * formulas of the height of links function of '[[theta]]' and '[[ratio]]'
  * * '[[speedRatio]]' is computed in function '[[getSpeedRatio]]' in file [[bigBoard/merger.ts]]
  * * '[[speedRatio]]' is computed with [two formulas](https://timespace.hypotheses.org/121)
  * depending on '[[theta]]' compared with '[[thetaLimit]]'
@@ -82,10 +80,10 @@ function regenerateStep(): void {
  */
 function updateYear(): void {
 	const year = CONFIGURATION.year;
-	curvesDontDisplay = [];
+	curvesDonTDisplay = [];
 	for (let i = 0; i < _height; i++) {
 		if (!_curves[i].isAvailable(year)) {
-			curvesDontDisplay.push(_curves[i]);
+			curvesDonTDisplay.push(_curves[i]);
 		}
 	}
 }
@@ -99,12 +97,13 @@ function computation(): void {
 	uniforms.representationInit = CONFIGURATION.projectionInit;
 	uniforms.representationEnd = CONFIGURATION.projectionEnd;
 	uniforms.percentRepresentation = CONFIGURATION.percentProjection;
+	uniforms.conesShape = CONFIGURATION.conesShape;
 	uniforms.standardParallel1 = CONFIGURATION.standardParallel1;
 	uniforms.standardParallel2 = CONFIGURATION.standardParallel2;
 	uniforms.coefficient = _coefficient;
 	_gpgpu.positions.updateUniforms(uniforms);
 	const options = {
-		u_height: { src: _hauteurs, width: 1, height: _height },
+		u_height: { src: _heightTab, width: 1, height: _height },
 	};
 	_gpgpu.positions.updateTextures(options);
 	const tempo = _gpgpu.positions.calculate(_width, _height);
@@ -214,7 +213,7 @@ export class CurveMeshShader extends Line {
 		}
 
 		_height = _curves.length;
-		_hauteurs = new Float32Array(_height);
+		_heightTab = new Float32Array(_height);
 		const options = {
 			u_PControls0: { src: new Float32Array(pControls0), width: 1, height: _height },
 			u_PControls1: { src: new Float32Array(pControls1), width: 1, height: _height },
@@ -262,13 +261,13 @@ export class CurveMeshShader extends Line {
 		return _coefficient;
 	}
 
-	// Update edges heigth when 'coefficient' changes
+	// Update edges height when 'coefficient' changes
 	// for testing purposes only
 	public static set coefficient(value: number) {
 		_coefficient = value;
 		for (let i = 0; i < _height; i++) {
 			const curve = _curves[i];
-			_hauteurs[i] = getHeight(curve._speedRatio, curve.theta);
+			_heightTab[i] = getHeight(curve._speedRatio, curve.theta);
 		}
 
 		computation();
@@ -289,7 +288,7 @@ export class CurveMeshShader extends Line {
 
 	public setGeometry(positions: Float32Array): void {
 		const bufferedGeometry = <BufferGeometry>this.geometry;
-		if (curvesDontDisplay.includes(this)) {
+		if (curvesDonTDisplay.includes(this)) {
 			bufferedGeometry.setDrawRange(0, 0);
 		} else {
 			const interleavedBuffer = (<InterleavedBufferAttribute>bufferedGeometry.getAttribute('position')).data;
@@ -300,16 +299,16 @@ export class CurveMeshShader extends Line {
 		}
 	}
 
-	// Sets the heigth of edges
+	// Sets the height of edges
 	public isAvailable(year: string | number): boolean {
 		const speedRatio = this._years[year];
-		const resultat = speedRatio !== undefined;
-		if (resultat) {
+		const result = speedRatio !== undefined;
+		if (result) {
 			this._speedRatio = speedRatio;
 			const index = _curves.indexOf(this);
-			_hauteurs[index] = getHeight(this._speedRatio, this.theta);
+			_heightTab[index] = getHeight(this._speedRatio, this.theta);
 		}
 
-		return resultat;
+		return result;
 	}
 }
