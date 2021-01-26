@@ -315,7 +315,8 @@ export type configurationObservableEvt =
 	| 'projectionPercent'
 	| 'year'
 	| 'tick'
-	| 'conesShape';
+	| 'conesShape'
+	| 'modeSelected';
 
 export type configurationCallback = (name: configurationObservableEvt, value: unknown) => void;
 export type ShaderTypes = 'fragment' | 'vertex';

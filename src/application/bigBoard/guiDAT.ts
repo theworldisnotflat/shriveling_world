@@ -85,7 +85,7 @@ export class GUI {
 			'curve color': '#' + CONFIGURATION.BASIC_LINE_MATERIAL.color.getHex().toString(16),
 			'text color': '#' + CONFIGURATION.BASIC_TEXT_MATERIAL.color.getHex().toString(16),
 			'curve transparency': CONFIGURATION.BASIC_LINE_MATERIAL.opacity,
-			'transport mode selected': true,
+			'transport mode selected': CONFIGURATION.modeSelected,
 			'light color': '#' + bigBoard.light.color.getHex().toString(16),
 			intensity: bigBoard.light.intensity,
 			'ambient color': '#' + bigBoard.ambient.color.getHex().toString(16),
@@ -174,6 +174,7 @@ export class GUI {
 						function curveListener(): void {
 							const opacity = <number>curveOpacity.getValue();
 							const color = Number.parseInt(curveColor.getValue().replace('#', ''), 16);
+							const transpModeSelected = <boolean>modeSelected.getValue();
 							bigBoard.coneBoard.curveCollection
 								.filter((curve) => transportName === curve.transportName)
 								.forEach((curve) => {
@@ -190,7 +191,7 @@ export class GUI {
 						const modeSelected = folder.add(conf, 'modeSelected').onChange((value: boolean) => {
 							conf['transport mode selected'] = value;
 						});
-						// modeSelected.onChange(curveListener);
+						modeSelected.onChange(curveListener);
 					});
 					// Adding terrestrial networks
 					console.log('Adding terrestrial network');
@@ -201,7 +202,7 @@ export class GUI {
 						function curveListener(): void {
 							const opacity = <number>curveOpacity.getValue();
 							const color = Number.parseInt(curveColor.getValue().replace('#', ''), 16);
-							//const transpModeSelected=
+							const transpModeSelected = <boolean>modeSelected.getValue();
 
 							bigBoard.coneBoard.curveCollection
 								.filter((curve) => transportName === curve.transportName)
@@ -216,6 +217,10 @@ export class GUI {
 						curveColor.onChange(curveListener);
 						const curveOpacity = folder.add(conf, 'curve transparency', 0, 1, 0.01).name('transparency');
 						curveOpacity.onChange(curveListener);
+						const modeSelected = folder.add(conf, 'modeSelected').onChange((value: boolean) => {
+							conf['transport mode selected'] = value;
+						});
+						modeSelected.onChange(curveListener);
 					});
 				}
 
@@ -353,9 +358,6 @@ export class GUI {
 				material.emissive.setHex(color);
 			});
 		});
-		// Let terrestrialFolder = coneFolder.addFolder('configurations spécifiques');
-		// let terrestrialControllersList: dat.GUI[] = [];
-		// let flagTransportDone = false;
 
 		// curves
 		aerialFolder = gui.addFolder('Curves');

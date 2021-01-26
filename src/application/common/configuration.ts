@@ -38,6 +38,7 @@ let _THREE_EARTH_RADIUS = 0;
 let _projectionInit: PROJECTION_ENUM = PROJECTION_ENUM.none;
 let _projectionEnd: PROJECTION_ENUM = PROJECTION_ENUM.none;
 let _conesShape: CONESSHAPE_ENUM = CONESSHAPE_ENUM.basedOnRoad;
+let _modeSelected: boolean;
 let _projectionPercent = 0;
 let _year: string | number = 1980;
 let _highLightedMaterial: MeshBasicMaterial;
@@ -64,6 +65,7 @@ const _listeners: {
 	tick: IEventListItem[];
 	pointsPerCurve: IEventListItem[];
 	conesShape: IEventListItem[];
+	modeSelected: IEventListItem[];
 } = {
 	heightRatio: [],
 	intrudedHeightRatio: [],
@@ -77,6 +79,7 @@ const _listeners: {
 	tick: [],
 	pointsPerCurve: [],
 	conesShape: [],
+	modeSelected: [],
 };
 function fireEvents(attribute: configurationObservableEvt, value: any): void {
 	if (_listeners.hasOwnProperty(attribute)) {
@@ -168,13 +171,14 @@ export const CONFIGURATION = {
 		}
 	},
 	get modeSelected(): boolean {
-		return this.CONFIGURATION.modeSelected;
+		return _modeSelected;
 	},
 	set modeSelected(value: boolean) {
-		this.CONFIGURATION.modeSelected = value;
+		_modeSelected = value;
+		fireEvents('modeSelected', value);
 	},
 	/**
-	 * Continents shapefile is used to 'cut' cones in order to
+	 * Continents shapeFile is used to 'cut' cones in order to
 	 * produce a more readable image/map
 	 *
 	 * the main paramter of this operation is [[extrudedHeight]]
