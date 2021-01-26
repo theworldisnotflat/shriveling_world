@@ -762,6 +762,9 @@ export class Merger {
 	 */
 	public merge(): void {
 		if (this._state === 'ready') {
+			const generateTraveTimeMatrix = false;
+			const year = 2010;
+			let startIndexRoadCrowFlyEdges = undefined;
 			this._state = 'pending';
 			// Csv parsing into tables
 			const cities: ICity[] = JSON.parse(JSON.stringify(this._cities), reviver);
@@ -779,8 +782,12 @@ export class Merger {
 			// identifying Road in the dataset
 			roadCode = identifyingRoadMode(transportMode);
 			merger(cities, population, 'cityCode', 'cityCode', 'populations', false, true, false);
-			//generate all straight line trips by road between cities
-			this.generateRoadCrowFlyEdges(cities, transportNetwork);
+			if (generateTraveTimeMatrix) {
+				//generate all straight line trips by road between cities (for travel time matrix)
+				console.log(transportNetwork.length);
+				startIndexRoadCrowFlyEdges = transportNetwork.length + 1;
+				this.generateRoadCrowFlyEdges(cities, transportNetwork);
+			}
 			// Attach city information to starting and ending city edge
 			merger(transportNetwork, cities, 'cityCodeOri', 'cityCode', 'origCityInfo', false, false, false);
 			merger(transportNetwork, cities, 'cityCodeDes', 'cityCode', 'destCityInfo', false, false, false);
@@ -789,6 +796,7 @@ export class Merger {
 			// Generates subgraph from city considered as origin and as destination
 			merger(cities, transportNetwork, 'cityCode', 'cityCodeOri', 'outEdges', true, false, false);
 			merger(cities, transportNetwork, 'cityCode', 'cityCodeDes', 'inEdges', true, false, false);
+			// merging in and out into edges, remove in and out
 			cities.forEach((city) => {
 				city.edges = [...city.inEdges, ...city.outEdges];
 				delete city.inEdges;
@@ -799,86 +807,84 @@ export class Merger {
 			// for input data reading debugging
 			console.log('curves & cityGraph', this._curvesAndCityGraph);
 
-			// generate travel time matrix with Dijkstra algorithm
-			//const ttMat: number[][] = [];
-			const ttMat = new Array(cities.length).fill(0).map(() => new Array(cities.length).fill(0));
-			const queue: IEdge[] = [];
-			const Q: ICity[] = [];
-			// populate distKM for existing edges
-			transportNetwork.forEach((edge) => {
-				const cityOri: ICity = cities.find((c) => c.cityCode === edge.cityCodeOri);
-				const cityDes: ICity = cities.find((c) => c.cityCode === edge.cityCodeDes);
-				edge.distKM =
-					haversine(cityOri.latitude, cityOri.longitude, cityDes.latitude, cityDes.longitude) / 1000;
-			});
-
-			const year = 2010;
-			cities.forEach((source) => {
+			if (generateTraveTimeMatrix) {
+				// generate travel time matrix with Dijkstra algorithm
+				const ttMat = new Array(cities.length + 1).fill(0).map(() => new Array(cities.length + 1).fill(0));
+				// ttMat headings
 				cities.forEach((city) => {
-					city.dist = Infinity;
-					city.prev = undefined;
-					Q.push(city);
-					//console.log(city.cityName);
+					ttMat[0][cities.indexOf(city) + 1] = city.cityName;
+					ttMat[cities.indexOf(city) + 1][0] = city.cityName;
 				});
-				source.dist = 0;
-				//const sourceCityCode = source.cityCode;
-				console.log('source', source.cityName);
-				while (Q.length > 0) {
-					const miniCity: ICity = Q.reduce((a, b) => (a.dist < b.dist ? a : b));
-					const miniCityDist = miniCity.dist;
-					const minCity: ICity = cities.find((c) => c === miniCity);
-					Q.splice(Q.indexOf(miniCity), 1);
-					minCity.edges.forEach((edge) => {
-						//need to consider the direction of the edge
-						const cityOri = cities.find((c) => c.cityCode === edge.cityCodeOri);
-						const cityDes = cities.find((c) => c.cityCode === edge.cityCodeDes);
-						let dCity: ICity = undefined;
-						let oCity: ICity = undefined;
-						//if (cityOri.dist < cityDes.dist) {
-						if (cityOri === minCity) {
-							oCity = cityOri;
-							dCity = cityDes;
-						} else {
-							dCity = cityOri;
-							oCity = cityDes;
-						}
-						if (oCity !== undefined || dCity !== undefined) {
-							const transportSpeed = this._transportModeSpeed.find(
-								(t) => t.transportModeCode === edge.transportModeCode && t.year === year
-							);
-							// zero cost for changing transport mode
-							const edgeDuration = edge.distKM / transportSpeed.speedKPH;
-							const pathDuration = miniCityDist + edgeDuration;
-							console.log(
-								'pathDuration',
-								pathDuration,
-								edge.distKM,
-								transportSpeed.transportModeCode,
-								transportSpeed.speedKPH,
-								oCity.cityName,
-								oCity.dist,
-								dCity.cityName,
-								dCity.dist,
-								cities.indexOf(source),
-								cities.indexOf(oCity)
-							);
-							if (pathDuration < dCity.dist) {
-								dCity.dist = pathDuration;
-								dCity.prev = oCity;
-								ttMat[cities.indexOf(source)][cities.indexOf(dCity)] = pathDuration;
-							}
-						}
+				const Q: ICity[] = [];
+				// populate distKM for existing edges
+				transportNetwork.forEach((edge) => {
+					const cityOri: ICity = cities.find((c) => c.cityCode === edge.cityCodeOri);
+					const cityDes: ICity = cities.find((c) => c.cityCode === edge.cityCodeDes);
+					edge.distKM =
+						haversine(cityOri.latitude, cityOri.longitude, cityDes.latitude, cityDes.longitude) / 1000;
+				});
+				// TODO: use year as function parameter
+				cities.forEach((source) => {
+					cities.forEach((city) => {
+						city.timeDist = Infinity;
+						city.prev = undefined;
+						Q.push(city);
 					});
-				}
-			});
-			// todo : remove all straight line trips by road between cities
-			console.log(cities, 'ttMat', ttMat);
+					source.timeDist = 0;
+					while (Q.length > 0) {
+						const miniCity: ICity = Q.reduce((a, b) => (a.timeDist < b.timeDist ? a : b));
+						const miniCityDist = miniCity.timeDist;
+						const minCity: ICity = cities.find((c) => c === miniCity);
+						Q.splice(Q.indexOf(miniCity), 1);
+						minCity.edges.forEach((edge) => {
+							//need to consider the direction of the edge
+							const cityOri = cities.find((c) => c.cityCode === edge.cityCodeOri);
+							const cityDes = cities.find((c) => c.cityCode === edge.cityCodeDes);
+							let dCity: ICity = undefined;
+							let oCity: ICity = undefined;
+							if (cityOri === minCity) {
+								oCity = cityOri;
+								dCity = cityDes;
+							} else {
+								dCity = cityOri;
+								oCity = cityDes;
+							}
+							if (oCity !== undefined || dCity !== undefined) {
+								const transportSpeed = this._transportModeSpeed.find(
+									(t) => t.transportModeCode === edge.transportModeCode && t.year === year
+								);
+								// zero cost for changing transport mode
+								const edgeDuration = edge.distKM / transportSpeed.speedKPH;
+								const pathDuration = miniCityDist + edgeDuration;
+								if (pathDuration < dCity.timeDist) {
+									dCity.timeDist = pathDuration;
+									dCity.prev = oCity;
+									// convert to minutes
+									ttMat[cities.indexOf(source) + 1][cities.indexOf(dCity) + 1] = Math.round(
+										pathDuration * 60
+									);
+								}
+							}
+						});
+					}
+				});
+				// remove all straight line trips by road between cities generated in the code
+				// not fully working :(
+				transportNetwork.splice(
+					startIndexRoadCrowFlyEdges--,
+					transportNetwork.length - startIndexRoadCrowFlyEdges
+				);
+				const csvContent = 'data:text/csv;charset=utf-8,' + ttMat.map((e) => e.join(',')).join('\n');
+				const encodedUri = encodeURI(csvContent);
+				window.open(encodedUri);
+			}
+
 			this._state = 'missing';
 			this._checkState();
 		}
 	}
 	/**
-	 * generate all straight line trips by road between cities
+	 * generate all straight line trips (edges) by road between cities
 	 * *
 	 * @param cities
 	 * @param transportNetwork

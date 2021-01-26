@@ -214,7 +214,7 @@ export interface ICity {
 	outEdges?: IEdge[];
 	inEdges?: IEdge[];
 	edges?: IEdge[];
-	dist?: number;
+	timeDist?: number;
 	prev?: ICity;
 }
 
