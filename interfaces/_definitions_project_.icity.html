@@ -83,6 +83,8 @@
 						<li><a href="_definitions_project_.icity.html#radius">radius</a>: number; // for cases of cities in islands close to a continent</li>
 						<li><a href="_definitions_project_.icity.html#populations">populations</a> (optional) for several years as provided in csv file &#39;population.csv&#39;</li>
 						<li><a href="_definitions_project_.icity.html#edges">edges</a> (optional) is a table will be determined by scanning the [[ITransportNetwork]]</li>
+						<li>with temporary fields <a href="_definitions_project_.icity.html#inedges">inEdges</a> and <a href="_definitions_project_.icity.html#outedges">outEdges</a></li>
+						<li><a href="_definitions_project_.iedge.html#dist">dist</a> and <a href="_definitions_project_.icity.html#prev">prev</a> are used for computing minimum path</li>
 					</ul>
 				</div>
 			</section>
@@ -111,7 +113,9 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.icity.html#longitude" class="tsd-kind-icon">longitude</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.icity.html#outedges" class="tsd-kind-icon">out<wbr>Edges</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.icity.html#populations" class="tsd-kind-icon">populations</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.icity.html#prev" class="tsd-kind-icon">prev</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.icity.html#radius" class="tsd-kind-icon">radius</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.icity.html#timedist" class="tsd-kind-icon">time<wbr>Dist</a></li>
 							</ul>
 						</section>
 					</div>
@@ -125,7 +129,7 @@
 					<div class="tsd-signature tsd-kind-icon">city<wbr>Code<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/definitions/project.ts#L204">src/application/definitions/project.ts:204</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/definitions/project.ts#L206">src/application/definitions/project.ts:206</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -135,7 +139,7 @@
 					<div class="tsd-signature tsd-kind-icon">city<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/definitions/project.ts#L207">src/application/definitions/project.ts:207</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/definitions/project.ts#L209">src/application/definitions/project.ts:209</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -145,7 +149,7 @@
 					<div class="tsd-signature tsd-kind-icon">country<wbr>Code<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/definitions/project.ts#L205">src/application/definitions/project.ts:205</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/definitions/project.ts#L207">src/application/definitions/project.ts:207</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -155,7 +159,7 @@
 					<div class="tsd-signature tsd-kind-icon">country<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/definitions/project.ts#L206">src/application/definitions/project.ts:206</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/definitions/project.ts#L208">src/application/definitions/project.ts:208</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -165,7 +169,7 @@
 					<div class="tsd-signature tsd-kind-icon">edges<span class="tsd-signature-symbol">:</span> <a href="_definitions_project_.iedge.html" class="tsd-signature-type">IEdge</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/definitions/project.ts#L214">src/application/definitions/project.ts:214</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/definitions/project.ts#L216">src/application/definitions/project.ts:216</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -175,7 +179,7 @@
 					<div class="tsd-signature tsd-kind-icon">in<wbr>Edges<span class="tsd-signature-symbol">:</span> <a href="_definitions_project_.iedge.html" class="tsd-signature-type">IEdge</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/definitions/project.ts#L213">src/application/definitions/project.ts:213</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/definitions/project.ts#L215">src/application/definitions/project.ts:215</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -185,7 +189,7 @@
 					<div class="tsd-signature tsd-kind-icon">latitude<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/definitions/project.ts#L208">src/application/definitions/project.ts:208</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/definitions/project.ts#L210">src/application/definitions/project.ts:210</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -195,7 +199,7 @@
 					<div class="tsd-signature tsd-kind-icon">longitude<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/definitions/project.ts#L209">src/application/definitions/project.ts:209</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/definitions/project.ts#L211">src/application/definitions/project.ts:211</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -205,7 +209,7 @@
 					<div class="tsd-signature tsd-kind-icon">out<wbr>Edges<span class="tsd-signature-symbol">:</span> <a href="_definitions_project_.iedge.html" class="tsd-signature-type">IEdge</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/definitions/project.ts#L212">src/application/definitions/project.ts:212</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/definitions/project.ts#L214">src/application/definitions/project.ts:214</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -215,7 +219,17 @@
 					<div class="tsd-signature tsd-kind-icon">populations<span class="tsd-signature-symbol">:</span> <a href="_definitions_project_.ipopulation.html" class="tsd-signature-type">IPopulation</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/definitions/project.ts#L211">src/application/definitions/project.ts:211</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/definitions/project.ts#L213">src/application/definitions/project.ts:213</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="prev" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> prev</h3>
+					<div class="tsd-signature tsd-kind-icon">prev<span class="tsd-signature-symbol">:</span> <a href="_definitions_project_.icity.html" class="tsd-signature-type">ICity</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/definitions/project.ts#L218">src/application/definitions/project.ts:218</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -225,7 +239,17 @@
 					<div class="tsd-signature tsd-kind-icon">radius<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/definitions/project.ts#L210">src/application/definitions/project.ts:210</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/definitions/project.ts#L212">src/application/definitions/project.ts:212</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="timedist" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> time<wbr>Dist</h3>
+					<div class="tsd-signature tsd-kind-icon">time<wbr>Dist<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/definitions/project.ts#L217">src/application/definitions/project.ts:217</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -337,7 +361,13 @@
 								<a href="_definitions_project_.icity.html#populations" class="tsd-kind-icon">populations</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_definitions_project_.icity.html#prev" class="tsd-kind-icon">prev</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_definitions_project_.icity.html#radius" class="tsd-kind-icon">radius</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_definitions_project_.icity.html#timedist" class="tsd-kind-icon">time<wbr>Dist</a>
 							</li>
 						</ul>
 					</li>

@@ -82,6 +82,7 @@
 								<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported"><a href="_bigboard_merger_.html#_firstyear" class="tsd-kind-icon">_first<wbr>Year</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported"><a href="_bigboard_merger_.html#_lastyear" class="tsd-kind-icon">_last<wbr>Year</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported"><a href="_bigboard_merger_.html#hardcodedheadings" class="tsd-kind-icon">hard<wbr>Coded<wbr>Headings</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported"><a href="_bigboard_merger_.html#roadcode" class="tsd-kind-icon">road<wbr>Code</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported"><a href="_bigboard_merger_.html#thetalimit" class="tsd-kind-icon">theta<wbr>Limit</a></li>
 							</ul>
 						</section>
@@ -91,7 +92,9 @@
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-is-not-exported"><a href="_bigboard_merger_.html#getcsv" class="tsd-kind-icon">getCSV</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-is-not-exported"><a href="_bigboard_merger_.html#getmodelledspeed" class="tsd-kind-icon">get<wbr>Modelled<wbr>Speed</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-is-not-exported"><a href="_bigboard_merger_.html#getthemiddle" class="tsd-kind-icon">get<wbr>The<wbr>Middle</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-is-not-exported"><a href="_bigboard_merger_.html#haversine" class="tsd-kind-icon">haversine</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-is-not-exported"><a href="_bigboard_merger_.html#historicaltimespan" class="tsd-kind-icon">historical<wbr>Time<wbr>Span</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-is-not-exported"><a href="_bigboard_merger_.html#identifyingroadmode" class="tsd-kind-icon">identifying<wbr>Road<wbr>Mode</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter tsd-is-not-exported"><a href="_bigboard_merger_.html#merger-1" class="tsd-kind-icon">merger</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module tsd-is-not-exported"><a href="_bigboard_merger_.html#networkfromcities" class="tsd-kind-icon">network<wbr>From<wbr>Cities</a></li>
 							</ul>
@@ -114,7 +117,7 @@
 					<div class="tsd-signature tsd-kind-icon">_first<wbr>Year<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 2000</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/bigBoard/merger.ts#L133">src/application/bigBoard/merger.ts:133</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L133">src/application/bigBoard/merger.ts:133</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -124,7 +127,7 @@
 					<div class="tsd-signature tsd-kind-icon">_last<wbr>Year<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 1900</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/bigBoard/merger.ts#L134">src/application/bigBoard/merger.ts:134</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L134">src/application/bigBoard/merger.ts:134</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -134,7 +137,7 @@
 					<div class="tsd-signature tsd-kind-icon">hard<wbr>Coded<wbr>Headings<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>fileName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>headings<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = [{ fileName: &#x27;_cities&#x27;, headings: [&#x27;cityCode&#x27;, &#x27;latitude&#x27;, &#x27;longitude&#x27;, &#x27;radius&#x27;] },{ fileName: &#x27;_transportModeSpeed&#x27;, headings: [&#x27;transportModeCode&#x27;, &#x27;year&#x27;, &#x27;speedKPH&#x27;] },{ fileName: &#x27;_transportMode&#x27;, headings: [&#x27;code&#x27;, &#x27;name&#x27;, &#x27;terrestrial&#x27;] },{ fileName: &#x27;_transportNetwork&#x27;, headings: [&#x27;transportModeCode&#x27;, &#x27;cityCodeDes&#x27;, &#x27;cityCodeOri&#x27;] },{ fileName: &#x27;_populations&#x27;, headings: [&#x27;cityCode&#x27;] },]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/bigBoard/merger.ts#L118">src/application/bigBoard/merger.ts:118</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L118">src/application/bigBoard/merger.ts:118</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -146,12 +149,22 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
+					<a name="roadcode" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagLet">Let</span> road<wbr>Code</h3>
+					<div class="tsd-signature tsd-kind-icon">road<wbr>Code<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L135">src/application/bigBoard/merger.ts:135</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
 					<a name="thetalimit" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> theta<wbr>Limit</h3>
 					<div class="tsd-signature tsd-kind-icon">theta<wbr>Limit<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 2000 / (CONFIGURATION.earthRadiusMeters / 1000)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/bigBoard/merger.ts#L132">src/application/bigBoard/merger.ts:132</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L132">src/application/bigBoard/merger.ts:132</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -178,7 +191,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/bigBoard/merger.ts#L151">src/application/bigBoard/merger.ts:151</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L152">src/application/bigBoard/merger.ts:152</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -210,7 +223,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/bigBoard/merger.ts#L212">src/application/bigBoard/merger.ts:212</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L213">src/application/bigBoard/merger.ts:213</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -263,7 +276,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/bigBoard/merger.ts#L174">src/application/bigBoard/merger.ts:174</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L175">src/application/bigBoard/merger.ts:175</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -294,6 +307,47 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+					<a name="haversine" class="tsd-anchor"></a>
+					<h3>haversine</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">haversine<span class="tsd-signature-symbol">(</span>lat1<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, lon1<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, lat2<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, lon2<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L974">src/application/bigBoard/merger.ts:974</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>The function <a href="_bigboard_merger_.html#haversine">haversine</a> computes
+										<strong><em>great circle distance</em></strong> between two location
+									based on lat/lon data</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>lat1: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>lon1: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>lat2: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>lon2: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
 					<a name="historicaltimespan" class="tsd-anchor"></a>
 					<h3>historical<wbr>Time<wbr>Span</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
@@ -303,9 +357,19 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/bigBoard/merger.ts#L838">src/application/bigBoard/merger.ts:838</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L998">src/application/bigBoard/merger.ts:998</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>The function determines the <a href="_bigboard_merger_.html#historicaltimespan">historicalTimeSpan</a>
+									based on data found in the input files:</p>
+									<ul>
+										<li>[[transportMode]]</li>
+										<li>[[transpNetwork]]</li>
+									</ul>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
@@ -322,6 +386,8 @@
 								</li>
 								<li>
 									<h5>roadCode: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span>firstYear<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>lastYear<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></h4>
@@ -336,6 +402,37 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+					<a name="identifyingroadmode" class="tsd-anchor"></a>
+					<h3>identifying<wbr>Road<wbr>Mode</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">identifying<wbr>Road<wbr>Mode<span class="tsd-signature-symbol">(</span>transportMode<span class="tsd-signature-symbol">: </span><a href="../interfaces/_definitions_project_.itranspmode.html" class="tsd-signature-type">ITranspMode</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L953">src/application/bigBoard/merger.ts:953</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Scanning the table of [[transportMode]]s to identify
+									the road mode, reference of the model</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>transportMode: <a href="../interfaces/_definitions_project_.itranspmode.html" class="tsd-signature-type">ITranspMode</a><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter tsd-is-not-exported">
 					<a name="merger-1" class="tsd-anchor"></a>
 					<h3>merger</h3>
@@ -346,7 +443,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/bigBoard/merger.ts#L52">src/application/bigBoard/merger.ts:52</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L52">src/application/bigBoard/merger.ts:52</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -425,7 +522,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/bigBoard/merger.ts#L249">src/application/bigBoard/merger.ts:249</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L250">src/application/bigBoard/merger.ts:250</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -475,7 +572,7 @@
 					<div class="tsd-signature tsd-kind-icon">_transport<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/bigBoard/merger.ts#L135">src/application/bigBoard/merger.ts:135</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L136">src/application/bigBoard/merger.ts:136</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal tsd-is-not-exported">
@@ -484,7 +581,7 @@
 						<div class="tsd-signature tsd-kind-icon">cones<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/bigBoard/merger.ts#L135">src/application/bigBoard/merger.ts:135</a></li>
+								<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L136">src/application/bigBoard/merger.ts:136</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -494,7 +591,7 @@
 						<div class="tsd-signature tsd-kind-icon">curves<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/bigBoard/merger.ts#L135">src/application/bigBoard/merger.ts:135</a></li>
+								<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L136">src/application/bigBoard/merger.ts:136</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -505,7 +602,7 @@
 					<div class="tsd-signature tsd-kind-icon">config<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/bigBoard/merger.ts#L136">src/application/bigBoard/merger.ts:136</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L137">src/application/bigBoard/merger.ts:137</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal tsd-is-not-exported">
@@ -514,7 +611,7 @@
 						<div class="tsd-signature tsd-kind-icon">dynamic<wbr>Typing<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> = true</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/bigBoard/merger.ts#L138">src/application/bigBoard/merger.ts:138</a></li>
+								<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L139">src/application/bigBoard/merger.ts:139</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -524,7 +621,7 @@
 						<div class="tsd-signature tsd-kind-icon">fast<wbr>Mode<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> = true</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/bigBoard/merger.ts#L140">src/application/bigBoard/merger.ts:140</a></li>
+								<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L141">src/application/bigBoard/merger.ts:141</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -534,7 +631,7 @@
 						<div class="tsd-signature tsd-kind-icon">header<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> = true</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/bigBoard/merger.ts#L137">src/application/bigBoard/merger.ts:137</a></li>
+								<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L138">src/application/bigBoard/merger.ts:138</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -544,7 +641,7 @@
 						<div class="tsd-signature tsd-kind-icon">skip<wbr>Empty<wbr>Lines<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> = true</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/f9fa9fd/src/application/bigBoard/merger.ts#L139">src/application/bigBoard/merger.ts:139</a></li>
+								<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/5963a38/src/application/bigBoard/merger.ts#L140">src/application/bigBoard/merger.ts:140</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -622,6 +719,9 @@
 						<a href="_bigboard_merger_.html#hardcodedheadings" class="tsd-kind-icon">hard<wbr>Coded<wbr>Headings</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
+						<a href="_bigboard_merger_.html#roadcode" class="tsd-kind-icon">road<wbr>Code</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
 						<a href="_bigboard_merger_.html#thetalimit" class="tsd-kind-icon">theta<wbr>Limit</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
@@ -634,7 +734,13 @@
 						<a href="_bigboard_merger_.html#getthemiddle" class="tsd-kind-icon">get<wbr>The<wbr>Middle</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<a href="_bigboard_merger_.html#haversine" class="tsd-kind-icon">haversine</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
 						<a href="_bigboard_merger_.html#historicaltimespan" class="tsd-kind-icon">historical<wbr>Time<wbr>Span</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<a href="_bigboard_merger_.html#identifyingroadmode" class="tsd-kind-icon">identifying<wbr>Road<wbr>Mode</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter tsd-is-not-exported">
 						<a href="_bigboard_merger_.html#merger-1" class="tsd-kind-icon">merger</a>
