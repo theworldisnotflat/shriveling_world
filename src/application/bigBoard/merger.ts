@@ -132,6 +132,7 @@ const hardCodedHeadings: Array<{ fileName: string; headings: string[] }> = [
 const thetaLimit = 2000 / (CONFIGURATION.earthRadiusMeters / 1000);
 let _firstYear = 2000;
 let _lastYear = 1900;
+let roadCode: number;
 let _transportName: { curves: string[]; cones: string[] } = { curves: [], cones: [] };
 const config: Papa.ParseConfig = {
 	header: true,
@@ -311,7 +312,6 @@ function networkFromCities(
 		theta: number;
 		clock: number;
 	}
-	let roadCode: number;
 	_transportName = { curves: [], cones: [] };
 	/**
 	 * association table linking a transport mode to an object of type [[ITabSpeedPerYearPerTranspModeItem]]
@@ -332,15 +332,6 @@ function networkFromCities(
 	 *
 	 * At the end of this loop [[speedPerTransportPerYear]] and [[maximumSpeed]] are populated
 	 */
-
-	// identifying Road in the dataset
-	transportMode.forEach((transpMode) => {
-		const transportCode = transpMode.code;
-		const modeName = transpMode.name;
-		if (modeName === 'Road') {
-			roadCode = transportCode;
-		}
-	});
 
 	// computing transport mode time span variables
 	({ firstYear, lastYear } = historicalTimeSpan(transportMode, transpNetwork, firstYear, lastYear, roadCode));
@@ -482,14 +473,9 @@ function networkFromCities(
 			let alpha: number; // for complex alpha cones
 			let edgeTranspModeName: string;
 			let edgeTranspModeSpeed: ITabSpeedPerYearPerTranspModeItem;
-			city.edges = [];
-			if (city.inEdges.length === 0 && city.outEdges.length === 0) {
+			if (city.edges.length === 0) {
 				city.edges.push({ eYearBegin: firstYear, cityCodeDes: -Infinity, transportModeCode: roadCode });
-			} else {
-				city.edges = [...city.inEdges, ...city.outEdges];
 			}
-			delete city.inEdges;
-			delete city.outEdges;
 			// For each edge incident to the city considered
 			for (let i = 0; i < city.edges.length; i++) {
 				edge = city.edges[i];
@@ -776,6 +762,9 @@ export class Merger {
 	 */
 	public merge(): void {
 		if (this._state === 'ready') {
+			const generateTraveTimeMatrix = false;
+			const year = 2010;
+			let startIndexRoadCrowFlyEdges = undefined;
 			this._state = 'pending';
 			// Csv parsing into tables
 			const cities: ICity[] = JSON.parse(JSON.stringify(this._cities), reviver);
@@ -790,28 +779,149 @@ export class Merger {
 			// Linking tables to each other
 			// merger(mother,     girl,               motherProp., girlProp.,      newName, forceArray, removeMotherProp., removeGirlProp.)
 			merger(transportMode, transportModeSpeed, 'code', 'transportModeCode', 'speedTab', true, true, false);
+			// identifying Road in the dataset
+			roadCode = identifyingRoadMode(transportMode);
 			merger(cities, population, 'cityCode', 'cityCode', 'populations', false, true, false);
+			if (generateTraveTimeMatrix) {
+				//generate all straight line trips by road between cities (for travel time matrix)
+				console.log(transportNetwork.length);
+				startIndexRoadCrowFlyEdges = transportNetwork.length + 1;
+				this.generateRoadCrowFlyEdges(cities, transportNetwork);
+			}
 			// Attach city information to starting and ending city edge
 			merger(transportNetwork, cities, 'cityCodeOri', 'cityCode', 'origCityInfo', false, false, false);
 			merger(transportNetwork, cities, 'cityCodeDes', 'cityCode', 'destCityInfo', false, false, false);
 			// cleaning up transportNetwork = remove edges with one or zero extremities in the 'cities' list
-			for (let i = 0; i < transportNetwork.length; i++) {
-				if (
-					cities.findIndex((c) => c.cityCode == transportNetwork[i].cityCodeOri) === -1 ||
-					cities.findIndex((c) => c.cityCode == transportNetwork[i].cityCodeDes) === -1
-				) {
-					transportNetwork.splice(i--, 1);
-				}
-			}
+			this.cleanUpNetwork(transportNetwork, cities);
 			// Generates subgraph from city considered as origin and as destination
 			merger(cities, transportNetwork, 'cityCode', 'cityCodeOri', 'outEdges', true, false, false);
 			merger(cities, transportNetwork, 'cityCode', 'cityCodeDes', 'inEdges', true, false, false);
+			// merging in and out into edges, remove in and out
+			cities.forEach((city) => {
+				city.edges = [...city.inEdges, ...city.outEdges];
+				delete city.inEdges;
+				delete city.outEdges;
+			});
 			// The main function that generates geometries (cones, curves) by exploring the subgraphs from cities
 			this._curvesAndCityGraph = networkFromCities(transportMode, cities, transportNetwork, transportModeSpeed);
 			// for input data reading debugging
 			console.log('curves & cityGraph', this._curvesAndCityGraph);
+
+			if (generateTraveTimeMatrix) {
+				// generate travel time matrix with Dijkstra algorithm
+				const ttMat = new Array(cities.length + 1).fill(0).map(() => new Array(cities.length + 1).fill(0));
+				// ttMat headings
+				cities.forEach((city) => {
+					ttMat[0][cities.indexOf(city) + 1] = city.cityName;
+					ttMat[cities.indexOf(city) + 1][0] = city.cityName;
+				});
+				const Q: ICity[] = [];
+				// populate distKM for existing edges
+				transportNetwork.forEach((edge) => {
+					const cityOri: ICity = cities.find((c) => c.cityCode === edge.cityCodeOri);
+					const cityDes: ICity = cities.find((c) => c.cityCode === edge.cityCodeDes);
+					edge.distKM =
+						haversine(cityOri.latitude, cityOri.longitude, cityDes.latitude, cityDes.longitude) / 1000;
+				});
+				// TODO: use year as function parameter
+				cities.forEach((source) => {
+					cities.forEach((city) => {
+						city.timeDist = Infinity;
+						city.prev = undefined;
+						Q.push(city);
+					});
+					source.timeDist = 0;
+					while (Q.length > 0) {
+						const miniCity: ICity = Q.reduce((a, b) => (a.timeDist < b.timeDist ? a : b));
+						const miniCityDist = miniCity.timeDist;
+						const minCity: ICity = cities.find((c) => c === miniCity);
+						Q.splice(Q.indexOf(miniCity), 1);
+						minCity.edges.forEach((edge) => {
+							//need to consider the direction of the edge
+							const cityOri = cities.find((c) => c.cityCode === edge.cityCodeOri);
+							const cityDes = cities.find((c) => c.cityCode === edge.cityCodeDes);
+							let dCity: ICity = undefined;
+							let oCity: ICity = undefined;
+							if (cityOri === minCity) {
+								oCity = cityOri;
+								dCity = cityDes;
+							} else {
+								dCity = cityOri;
+								oCity = cityDes;
+							}
+							if (oCity !== undefined || dCity !== undefined) {
+								const transportSpeed = this._transportModeSpeed.find(
+									(t) => t.transportModeCode === edge.transportModeCode && t.year === year
+								);
+								// zero cost for changing transport mode
+								const edgeDuration = edge.distKM / transportSpeed.speedKPH;
+								const pathDuration = miniCityDist + edgeDuration;
+								if (pathDuration < dCity.timeDist) {
+									dCity.timeDist = pathDuration;
+									dCity.prev = oCity;
+									// convert to minutes
+									ttMat[cities.indexOf(source) + 1][cities.indexOf(dCity) + 1] = Math.round(
+										pathDuration * 60
+									);
+								}
+							}
+						});
+					}
+				});
+				// remove all straight line trips by road between cities generated in the code
+				// not fully working :(
+				transportNetwork.splice(
+					startIndexRoadCrowFlyEdges--,
+					transportNetwork.length - startIndexRoadCrowFlyEdges
+				);
+				const csvContent = 'data:text/csv;charset=utf-8,' + ttMat.map((e) => e.join(',')).join('\n');
+				const encodedUri = encodeURI(csvContent);
+				window.open(encodedUri);
+			}
+
 			this._state = 'missing';
 			this._checkState();
+		}
+	}
+	/**
+	 * generate all straight line trips (edges) by road between cities
+	 * *
+	 * @param cities
+	 * @param transportNetwork
+	 */
+	private generateRoadCrowFlyEdges(cities: ICity[], transportNetwork: IEdge[]) {
+		cities.forEach((oCity) => {
+			cities.forEach((dCity) => {
+				// trick for a half matrix
+				if (oCity.cityCode > dCity.cityCode) {
+					const crowKM = haversine(oCity.latitude, oCity.longitude, dCity.latitude, dCity.longitude) / 1000;
+					transportNetwork.push({
+						cityCodeOri: oCity.cityCode,
+						cityCodeDes: dCity.cityCode,
+						transportModeCode: roadCode,
+						distKM: crowKM,
+					});
+				}
+			});
+		});
+	}
+
+	/**
+	 * The function [[cleanUpNetwork]] will
+	 * remove unconnected [[edges]], id est remove
+	 * * [[edges]] with zero extremities in [[cities]] list
+	 * * [[edges]] with one  extremity   in [[cities]] list
+	 * @param transportNetwork
+	 * @param cities
+	 */
+	private cleanUpNetwork(transportNetwork: IEdge[], cities: ICity[]) {
+		for (let i = 0; i < transportNetwork.length; i++) {
+			if (
+				cities.findIndex((c) => c.cityCode == transportNetwork[i].cityCodeOri) === -1 ||
+				cities.findIndex((c) => c.cityCode == transportNetwork[i].cityCodeDes) === -1
+			) {
+				transportNetwork.splice(i--, 1);
+			}
 		}
 	}
 
@@ -835,6 +945,56 @@ export class Merger {
 		}
 	}
 }
+/**
+ * Scanning the table of [[transportMode]]s to identify
+ * the road mode, reference of the model
+ * @param transportMode
+ */
+function identifyingRoadMode(transportMode: ITranspMode[]): number {
+	let roadModeCode: number = undefined;
+	transportMode.forEach((transpMode) => {
+		const transportCode = transpMode.code;
+		const modeName = transpMode.name;
+		if (modeName === 'Road') {
+			roadModeCode = transportCode;
+		}
+	});
+	return roadModeCode;
+}
+
+/**
+ * The function [[haversine]] computes
+ * ___great circle distance___ between two location
+ * based on lat/lon data
+ * @param lat1
+ * @param lon1
+ * @param lat2
+ * @param lon2
+ */
+function haversine(lat1: number, lon1: number, lat2: number, lon2: number) {
+	const R = CONFIGURATION.earthRadiusMeters;
+	const φ1 = (lat1 * Math.PI) / 180; // φ, λ in radians
+	const φ2 = (lat2 * Math.PI) / 180;
+	const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+	const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+
+	const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+	const d = R * c; // in metres
+	return d;
+}
+/**
+ * The function determines the [[historicalTimeSpan]]
+ * based on data found in the input files:
+ * * [[transportMode]]
+ * * [[transpNetwork]]
+ * @param transportMode
+ * @param transpNetwork
+ * @param firstYear
+ * @param lastYear
+ * @param roadCode
+ */
 function historicalTimeSpan(
 	transportMode: ITranspMode[],
 	transpNetwork: IEdge[],
