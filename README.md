@@ -1,7 +1,7 @@
 # Shriveling world
 
 The __shriveling world__ project aims at producing images of the global geographical time-space, using the third dimension, as in time-space relief maps.
-The word "shriveling" was introduced by Waldo Tobler in his comments of Mathis-L'Hostis time-space relief image, in order to describe the complex contraction process suggested by the model.
+The word _shriveling_ was introduced by Waldo Tobler in his comments of Mathis-L'Hostis time-space relief image, in order to describe the complex contraction process suggested by the model.
 
 The [scientific blog](https://timespace.hypotheses.org/) contains principles, reflections, references and images related to the project.
 
