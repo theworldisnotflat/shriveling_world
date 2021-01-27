@@ -48,7 +48,7 @@ Most commands can be accessed through the lateral UI:
 
 ## Parameters of the geometry of the model
 
-More detail about the three dimensional geometry of the model, [here](model_geometry.md).
+More detail about the three dimensional geometry of the model, [here](/marks/usrdoc/model_geometry).
 
 - __Cones__:
   * __Color__: Menu 'Cones', 'cones color'
