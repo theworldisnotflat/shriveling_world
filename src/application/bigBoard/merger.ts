@@ -35,6 +35,7 @@ import type {
 	ILookupConeAngles,
 } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
+import * as FileSaver from 'file-saver';
 import { ConeBoard } from '../cone/coneBoard';
 /**
  * Realizes the merge of two tables base on an attribute. The key for the merge is renamed.
@@ -760,11 +761,8 @@ export class Merger {
 	 * * execute the main process i.e. [[networkFromCities]]
 	 * * retrieve the resulting data into [[_edgesAndTranspModes]]
 	 */
-	public merge(testParam?: any): void {
-		console.log('Merge Parameter : ', testParam);
-		if (this._state === 'ready') {
-			const generateTraveTimeMatrix = false;
-			const year = 2010;
+	public merge(generateTraveTimeMatrix?: boolean): void {
+		if (this._state === 'ready' || this._state === 'complete') {
 			let startIndexRoadCrowFlyEdges = undefined;
 			this._state = 'pending';
 			// Csv parsing into tables
@@ -852,7 +850,7 @@ export class Merger {
 							}
 							if (oCity !== undefined || dCity !== undefined) {
 								const transportSpeed = this._transportModeSpeed.find(
-									(t) => t.transportModeCode === edge.transportModeCode && t.year === year
+									(t) => t.transportModeCode == edge.transportModeCode && t.year == CONFIGURATION.year
 								);
 								// zero cost for changing transport mode
 								const edgeDuration = edge.distKM / transportSpeed.speedKPH;
@@ -877,7 +875,8 @@ export class Merger {
 				);
 				const csvContent = 'data:text/csv;charset=utf-8,' + ttMat.map((e) => e.join(',')).join('\n');
 				const encodedUri = encodeURI(csvContent);
-				window.open(encodedUri);
+				FileSaver.saveAs(encodedUri, 'matrix.csv');
+				//window.open(encodedUri);
 			}
 
 			this._state = 'missing';
