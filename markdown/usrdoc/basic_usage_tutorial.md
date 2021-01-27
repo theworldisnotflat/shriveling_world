@@ -46,6 +46,10 @@ Most commands can be accessed through the lateral UI:
     * Set the final projection: 'Generalities', 'projection', 'final projection'
     * 'transition': transition value between projectionBegin and projectionEnd. Value included in the range 0 to 100 included.
 
+## Parameters of the geometry of the model
+
+More detail about the three dimensional geometry of the model, [here](model_geometry.md).
+
 - __Cones__:
   * __Color__: Menu 'Cones', 'cones color'
   * __Rendering quality__: 'coneStep' modifies the visual aspect of cones. The default value is 15 degrees, a facet = 15°, a recommended value is 5 or less. Lower values will generate higher quality graphics, at the cost of larger export files and resource consuming rendering
