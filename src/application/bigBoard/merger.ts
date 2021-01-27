@@ -761,7 +761,7 @@ export class Merger {
 	 * * execute the main process i.e. [[networkFromCities]]
 	 * * retrieve the resulting data into [[_edgesAndTranspModes]]
 	 */
-	public merge(generateTraveTimeMatrix?: boolean): void {
+	public merge(generateTraveTimeMatrix?: boolean, matrixName?: string): void {
 		if (this._state === 'ready' || this._state === 'complete') {
 			let startIndexRoadCrowFlyEdges = undefined;
 			this._state = 'pending';
@@ -875,7 +875,7 @@ export class Merger {
 				);
 				const csvContent = 'data:text/csv;charset=utf-8,' + ttMat.map((e) => e.join(',')).join('\n');
 				const encodedUri = encodeURI(csvContent);
-				FileSaver.saveAs(encodedUri, 'matrix.csv');
+				FileSaver.saveAs(encodedUri, matrixName + '.csv');
 				//window.open(encodedUri);
 			}
 
