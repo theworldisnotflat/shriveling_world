@@ -11,9 +11,9 @@
 * Click on predefined dataset list on the left side of the browser window
 * Introduce data in the app by drag & drop (see below)
 
-_Attention: in any case data processing may take time, depending on the number of cities and the performance of your own machine, CPU and GPU. So once clicked on the list of predefined datasets or drag & drop files, you have to wait for a few seconds_
+_Attention: in any case data processing may take time, depending on the number of cities and the performance of your own machine, CPU and GPU. So once you have clicked on the list of predefined datasets or drag & drop files, you have to wait for a few seconds_
 
-**Step #3**: enjoy! navigate around the three dimensional structure with mouse controls, define projection through interface, define desired control parameters through the interface on the right. Reload the page in the browser before changing dataset.
+**Step #3**: enjoy! [navigate](#navigation) around the three dimensional structure with [mouse controls](#navigation), define projection through interface, define desired control parameters through the interface on the right. Reload the page in the browser before changing dataset.
 
 ## Introducing data in the application by drag & drop
 
@@ -50,15 +50,16 @@ More detail about the three dimensional geometry of the model, [here](/marks/usr
 
 - __Cones__:
   * __Color__: Menu 'Cones', 'cones color'
-  * __Rendering quality__: 'coneStep' modifies the visual aspect of cones. The default value is 15 degrees, a facet = 15°, a recommended value is 5 or less. Lower values will generate higher quality graphics, at the cost of larger export files and resource consuming rendering
-  * the __shape of cones__ has currently three available options:
+  * __Rendering quality__: ```coneStep``` modifies the visual aspect of cones. The default value is 15 degrees, a facet = 15°; a recommended value is 5 or less. Lower values will generate higher quality graphics, at the cost of larger export files and resource consuming rendering
+  * The __shape of cones__ has currently three available options:
      * in the default __based on road__ case, all cones are simple regular cones with a unique slope -- for a given year -- based on the road speed
      * in the __fast terrestrial transport mode__ case, cones all have a regular shape but may have different slopes; the slope of a cone is determined by the connection to a terrestrial transport mode faster than road. The mere connection of the city to the a high speed rail line network will alter the slope of its cone, expressing its access to fast speed. In this case the slope, i.e. the local time-space relative speed, is potentially wrong in many places, but we produce an image that highlights the connectivity of cities to hight speed terrestrial transport networks. In this case, we ignore the 'tunnel effect' of fast transport networks.
      * in the __complex cones__ case, cones are locally deformed based on existing incoming or departing edges of transport terrestrial transport modes faster than road, typically expressway or High-Speed Rail lines. In this case, as in the previous one, we ignore the 'tunnel effect' of fast transport networks.
+     * More to come: the [horse saddle]()
 
 * __Curves__:
   * __Color__ and __transparency__: curves may have a different color and transparency according to the transport mode they represent, chosen in 'Curves', 'terrestrial modes' and 'Aircraft'
-  * __Straight lines__ or __curves__:  the parameter 'nb of points' will populate the variable  'nbPointsPerCurve=X where X is an integer between 1 and 199 included. This value determines the way curves are drawn:
+  * __Straight lines__ or __curves__:  the parameter 'nb of points' will populate the variable  ```nbPointsPerCurve=X``` where X is an integer between 1 and 199 included. This value determines the way curves are drawn:
     - The value **1** draws all straight lines
     - The value **2** draws a broken line, as two segments with an intermediate point; the line has the desired length
     - A value superior to __2__ will interpolate a Bézier curve of the desired length. This curve can be a geodesic in the non projected case, or can be a longer curve. Recommended value is superior to __50__ for a high quality graphic
@@ -73,19 +74,19 @@ More detail about the three dimensional geometry of the model, [here](/marks/usr
 
 * The __three dimensional scene__ can be exported. Export to gltf (.obj) file format is available (red button in the bottom). In order to import in Blender the file produced from the app, see [Blender instructions](/marks/usrdoc/blender_instructions).
 
-* A __travel times matrix__ in minutes between the cities of the input dataset can be exported (for generating plastic space maps for instance). _Year_ of reference is fixed in the GUI interface. The matrix computation is preceded by the generation of multiple road edges in order to provide the minimum path algorithm with sufficient input data. The matrix is exported from the browser console (Ctrl + Shift + K or Command + Option + K) with the instruction:
+* A __travel times matrix__ in minutes between the cities of the input dataset can be exported (for generating plastic space maps for instance). _Year_ of reference is fixed in the GUI interface. The matrix computation is preceded by the generation of multiple road edges in order to provide the minimum path algorithm with sufficient input data. The matrix is exported from the browser console (F12, Ctrl + Shift + K or Command + Option + K) with the instruction:
 
   * ```bigBoard._merger.merge(true,'aFileNameForTheMatrix')```
 
 ## More parameters with the console
 
-Instructions to the application can also be entered in the console (F12) of the browser
+Instructions to the application can also be entered in the console of the browser (F12, Ctrl + Shift + K or Command + Option + K):
 
-`shriveling.configuration.XXX=value`
+```shriveling.configuration.XXX=value```
 
-with XXX and value in the following range:
+with ```XXX``` and ```value``` in the following range:
 
--   intrudedHeightRatio : sets the height of cones, in the range [0,1], a ratio of the earth radius
+-   ```intrudedHeightRatio``` : sets the height of cones, in the range [0,1], a ratio of the earth radius
 
 
 ## Testing lengths and angles

@@ -14,7 +14,7 @@ Cones geometry is determined by three main parameters:
 
 Cones geometry is also modifiable through the user interface:
 
-* The variable 'coneStep' determines the width, in degrees, of the facets that constitute the cone; a minimum value of 1 degree will produce a cone based on 360 small three dimensional triangles
+* The variable ```coneStep``` determines the width, in degrees, of the facets that constitute the cone; a minimum value of 1 degree will produce a cone based on 360 small three dimensional triangles
 
 * Color
 
