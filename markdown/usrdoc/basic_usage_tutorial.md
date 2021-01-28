@@ -9,15 +9,15 @@
 **Step #2**: Once the app runs in the browser data is read by two alternative ways:
 
 * Click on predefined dataset list on the left side of the browser window
-* Introduce data in the app by drag'n'drop (see below)
+* Introduce data in the app by drag & drop (see below)
 
-_Attention: in any case data processing may take time, depending on the number of cities and the performance of your own machine, CPU and GPU. So once clicked on the list of predefined datasets or drag'n'drop files, you have to wait for a few seconds_
+_Attention: in any case data processing may take time, depending on the number of cities and the performance of your own machine, CPU and GPU. So once clicked on the list of predefined datasets or drag & drop files, you have to wait for a few seconds_
 
 **Step #3**: enjoy! navigate around the three dimensional structure with mouse controls, define projection through interface, define desired control parameters through the interface on the right. Reload the page in the browser before changing dataset.
 
-## Introducing data in the application by drag'n'drop
+## Introducing data in the application by drag & drop
 
-Drag'n'drop the following geojson and csv files found in the folder datasets in the web app:
+Drag & drop the following geojson and csv files found in the folder datasets in the web app:
 
 -   cities.csv
 -   population.csv
@@ -45,6 +45,10 @@ Most commands can be accessed through the lateral UI:
   * __Dynamic__
     * Set the final projection: 'Generalities', 'projection', 'final projection'
     * 'transition': transition value between projectionBegin and projectionEnd. Value included in the range 0 to 100 included.
+
+## Parameters of the geometry of the model
+
+More detail about the three dimensional geometry of the model, [here](/marks/usrdoc/model_geometry).
 
 - __Cones__:
   * __Color__: Menu 'Cones', 'cones color'
