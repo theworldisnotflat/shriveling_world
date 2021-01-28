@@ -26,11 +26,9 @@ Drag & drop the following geojson and csv files found in the folder datasets in 
 -   transport_network.csv
 -   110m_land_shrivel.geojson
 
-## Detailed instructions for use
+## General parameters
 
 Instructions for the application are provided in a lateral user interface.
-
-Export to gltf (.obj) file format is available (red button in the bottom). In order to import in Blender the file produced from the app, [a Blender plugin must be installed](https://github.com/ksons/gltf-blender-importer)
 
 Most commands can be accessed through the lateral UI:
 
@@ -65,10 +63,19 @@ More detail about the three dimensional geometry of the model, [here](/marks/usr
     - The value **2** draws a broken line, as two segments with an intermediate point; the line has the desired length
     - A value superior to __2__ will interpolate a Bézier curve of the desired length. This curve can be a geodesic in the non projected case, or can be a longer curve. Recommended value is superior to __50__ for a high quality graphic
 
-### Navigation
+## Navigation
 * click + scroll
 * alt scroll = rotation
 * ctrl scroll = translation
+
+
+## Exports
+
+* The __three dimensional scene__ can be exported. Export to gltf (.obj) file format is available (red button in the bottom). In order to import in Blender the file produced from the app, see [Blender instructions](/marks/usrdoc/blender_instructions).
+
+* A __travel times matrix__ in minutes between the cities of the input dataset can be exported (for generating plastic space maps for instance). _Year_ of reference is fixed in the GUI interface. The matrix computation is preceded by the generation of multiple road edges in order to provide the minimum path algorithm with sufficient input data. The matrix is exported from the browser console (Ctrl + Shift + K or Command + Option + K) with the instruction:
+
+  * ```bigBoard._merger.merge(true,'aFileNameForTheMatrix')```
 
 ## More parameters with the console
 

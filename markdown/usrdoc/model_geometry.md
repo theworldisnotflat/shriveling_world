@@ -21,4 +21,4 @@ Cones geometry is also modifiable through the user interface:
 * Transparency
 
 The model allows to generate several sub models for the slope of cones:
- * (details in the [basic user tutorial](basic_user_tutorial) section)
+ * (details in the [basic user tutorial](/marks/usrdoc/basic_usage_tutorial/) section)
