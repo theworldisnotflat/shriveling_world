@@ -93,9 +93,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.iconeanglesitem.html#alphatab" class="tsd-kind-icon">alpha<wbr>Tab</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.iconeanglesitem.html#conefastterrmodealpha" class="tsd-kind-icon">cone<wbr>Fast<wbr>Terr<wbr>Mode<wbr>Alpha</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.iconeanglesitem.html#coneroadalpha" class="tsd-kind-icon">cone<wbr>Road<wbr>Alpha</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_definitions_project_.iconeanglesitem.html#tab" class="tsd-kind-icon">tab</a></li>
 							</ul>
 						</section>
 					</div>
@@ -104,12 +104,30 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="alphatab" class="tsd-anchor"></a>
+					<h3>alpha<wbr>Tab</h3>
+					<div class="tsd-signature tsd-kind-icon">alpha<wbr>Tab<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>alpha<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>clock<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/definitions/project.ts#L96">src/application/definitions/project.ts:96</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>This property lists for the considered year and the considered origin city
+								each destination city using a terrestrial transport. Each item of this
+								array is a clock in direction of the destination city and a slope
+							corresponding to the transport speed linking the two cities. This array can have zero item.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="conefastterrmodealpha" class="tsd-anchor"></a>
 					<h3>cone<wbr>Fast<wbr>Terr<wbr>Mode<wbr>Alpha</h3>
 					<div class="tsd-signature tsd-kind-icon">cone<wbr>Fast<wbr>Terr<wbr>Mode<wbr>Alpha<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1a064e5/src/application/definitions/project.ts#L89">src/application/definitions/project.ts:89</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/definitions/project.ts#L89">src/application/definitions/project.ts:89</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -119,30 +137,12 @@
 					<div class="tsd-signature tsd-kind-icon">cone<wbr>Road<wbr>Alpha<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1a064e5/src/application/definitions/project.ts#L87">src/application/definitions/project.ts:87</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/definitions/project.ts#L87">src/application/definitions/project.ts:87</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>This property represents the slope of the road transport for the considered year.</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="tab" class="tsd-anchor"></a>
-					<h3>tab</h3>
-					<div class="tsd-signature tsd-kind-icon">tab<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>alpha<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>clock<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1a064e5/src/application/definitions/project.ts#L96">src/application/definitions/project.ts:96</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>This property lists for the considered year and the considered origin city
-								each destination city using a terrestrial transport. Each item of this
-								array is a clock in direction of the destination city and a slope
-							corresponding to the transport speed linking the two cities. This array can have zero item.</p>
 						</div>
 					</div>
 				</section>
@@ -233,13 +233,13 @@
 						<a href="_definitions_project_.iconeanglesitem.html" class="tsd-kind-icon">ICone<wbr>Angles<wbr>Item</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_definitions_project_.iconeanglesitem.html#alphatab" class="tsd-kind-icon">alpha<wbr>Tab</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_definitions_project_.iconeanglesitem.html#conefastterrmodealpha" class="tsd-kind-icon">cone<wbr>Fast<wbr>Terr<wbr>Mode<wbr>Alpha</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_definitions_project_.iconeanglesitem.html#coneroadalpha" class="tsd-kind-icon">cone<wbr>Road<wbr>Alpha</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_definitions_project_.iconeanglesitem.html#tab" class="tsd-kind-icon">tab</a>
 							</li>
 						</ul>
 					</li>
