@@ -93,7 +93,7 @@ export interface IConeAnglesItem {
 	 * array is a clock in direction of the destination city and a slope
 	 * corresponding to the transport speed linking the two cities. This array can have zero item.
 	 */
-	tab: Array<{ clock: number; alpha: number }>;
+	alphaTab: Array<{ clock: number; alpha: number }>;
 }
 
 /**

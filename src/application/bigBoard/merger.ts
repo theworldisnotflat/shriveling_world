@@ -411,8 +411,8 @@ function networkFromCities(
 	 * (opening theta, points P Q and midpoint)
 	 */
 	function cachedGetTheMiddle(begin: number, end: number): ILookupCacheAnchorsEdgeCone {
-		const res = <ILookupCacheAnchorsEdgeCone>{};
-		res.end = { cityCode: end, position: lookupPosition[end].cartoRef };
+		const result = <ILookupCacheAnchorsEdgeCone>{};
+		result.end = { cityCode: end, position: lookupPosition[end].cartoRef };
 		if (lookupMiddle.hasOwnProperty(begin)) {
 			if (!lookupMiddle[begin].hasOwnProperty(end)) {
 				const { middle, theta } = getTheMiddle(lookupPosition[begin].cartoRef, lookupPosition[end].cartoRef);
@@ -443,12 +443,12 @@ function networkFromCities(
 		}
 
 		const cached = lookupMiddle[begin][end];
-		res.middle = cached.middle;
-		res.theta = cached.theta;
-		res.pointQ = cached.pointQ;
-		res.pointP = cached.pointP;
-		res.clock = cached.clock;
-		return res;
+		result.middle = cached.middle;
+		result.theta = cached.theta;
+		result.pointQ = cached.pointQ;
+		result.pointP = cached.pointP;
+		result.clock = cached.clock;
+		return result;
 	}
 
 	// ProcessedODs will contain the value of edgeTranspModeName for each existing edge (OD)
@@ -528,12 +528,12 @@ function networkFromCities(
 									coneAngles[year] = {
 										coneRoadAlpha: coneRoadAlpha,
 										coneFastTerrModeAlpha: coneFastTerrModeAlpha,
-										tab: [],
+										alphaTab: [],
 									};
 								}
 
 								alpha = edgeTranspModeSpeed.tabSpeedPerYear[year].alpha;
-								coneAngles[year].tab.push({ alpha, clock });
+								coneAngles[year].alphaTab.push({ alpha, clock });
 								destinationsWithModes[destCityCode][edgeTranspModeName].push({
 									year,
 									speed: edgeModeSpeed[year].speed,
@@ -608,7 +608,7 @@ function networkFromCities(
 			// and inserting the result in network and insert the edgeData
 			for (const yearC in coneAngles) {
 				if (coneAngles.hasOwnProperty(yearC)) {
-					coneAngles[yearC].tab = coneAngles[yearC].tab.sort((a, b) => a.clock - b.clock);
+					coneAngles[yearC].alphaTab = coneAngles[yearC].alphaTab.sort((a, b) => a.clock - b.clock);
 				}
 			}
 			if (Object.keys(coneAngles).length === 0) {
@@ -616,7 +616,7 @@ function networkFromCities(
 				// or only by aerial mode
 				for (let year = firstYear; year <= lastYear; year++) {
 					const coneRoadAlpha = speedPerTransportPerYear[roadCode].tabSpeedPerYear[year].alpha;
-					coneAngles[year] = { coneRoadAlpha: coneRoadAlpha, coneFastTerrModeAlpha: null, tab: [] };
+					coneAngles[year] = { coneRoadAlpha: coneRoadAlpha, coneFastTerrModeAlpha: null, alphaTab: [] };
 				}
 			}
 

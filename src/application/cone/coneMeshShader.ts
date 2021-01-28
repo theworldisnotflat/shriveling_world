@@ -179,12 +179,12 @@ function regenerateFromConeStep(): void {
 }
 
 /**
- * Function [[updateAlphas]] sets the alpha (fixing slopes) of cones according to year
+ * Function [[updateConesAngles]] sets the alpha (fixing slopes) of cones according to year
  * and deals with cones that shouldn't be displayed
  *
  * will call function [[getConeAngles]]
  */
-function updateConesAlphas(): void {
+function updateConesAngles(): void {
 	const year = CONFIGURATION.year;
 	const twoPI = CONFIGURATION.TWO_PI;
 	const minimumGap = _discriminant * CONFIGURATION.coneStep;
@@ -197,10 +197,10 @@ function updateConesAlphas(): void {
 			const coneAngles = _cones[i].getConeAngles(year);
 			const coneRoadAlpha = coneAngles.coneRoadAlpha;
 			const coneFastTerrModeAlpha = coneAngles.coneFastTerrModeAlpha;
-			const coneAnglesTab = [...coneAngles.tab];
+			const coneAnglesTab = [...coneAngles.alphaTab];
 			let subAlphas: Float32Array;
-			const length = coneAnglesTab.length;
-			if (length === 0) {
+			const lengthAnglesTab = coneAnglesTab.length;
+			if (lengthAnglesTab === 0) {
 				// this city (cone) has no connection with other terrestrial modes in the network
 				// whatever the choice, cone wil remain simple, based on road speed
 				subAlphas = _clocks.map(() => coneRoadAlpha);
@@ -215,16 +215,17 @@ function updateConesAlphas(): void {
 				} else if (CONFIGURATION.conesShape == CONESSHAPE_ENUM.complex) {
 					// cones will be deformed locally by edges with
 					// a 'faster than road terrestrial mode'
-					const lastItem = { clock: 0, alpha: 0 };
-					lastItem.clock = coneAnglesTab[length - 1].clock - twoPI;
-					lastItem.alpha = coneAnglesTab[length - 1].alpha;
-					const firstItem = { clock: 0, alpha: 0 };
-					firstItem.clock = coneAnglesTab[0].clock + twoPI;
+					const lastItem = { alpha: 0, clock: 0 };
+					lastItem.alpha = coneAnglesTab[lengthAnglesTab - 1].alpha;
+					lastItem.clock = coneAnglesTab[lengthAnglesTab - 1].clock - twoPI;
+					const firstItem = { alpha: 0, clock: 0 };
 					firstItem.alpha = coneAnglesTab[0].alpha;
-					// adding the extreme elements in order to produce a table with overlap beyond [0, 2PI]
-					coneAnglesTab.push(firstItem);
+					firstItem.clock = coneAnglesTab[0].clock + twoPI;
+					// adding a first and last element in order to produce a table with overlap beyond [0, 2PI]
 					coneAnglesTab.splice(0, 0, lastItem);
-					for (let i = length + 1; i > 0; i--) {
+					coneAnglesTab.push(firstItem);
+					console.log(_cones[i].name, minimumGap, coneAnglesTab);
+					for (let i = lengthAnglesTab + 1; i > 0; i--) {
 						clockA = coneAnglesTab[i - 1].clock;
 						clockB = coneAnglesTab[i].clock;
 						if (clockB - clockA > minimumGap) {
@@ -355,12 +356,12 @@ export class ConeMeshShader extends PseudoCone {
 										_alphas = {};
 										_indexesArr = new Uint16Array(0);
 										regenerateFromConeStep();
-										updateConesAlphas();
+										updateConesAngles();
 										updateWithLimits();
 										computation();
 										break;
 									case 'year':
-										updateConesAlphas();
+										updateConesAngles();
 										updateWithLimits();
 										computation();
 										break;
@@ -380,7 +381,7 @@ export class ConeMeshShader extends PseudoCone {
 										break;
 									case 'conesShape':
 										_alphas = {};
-										updateConesAlphas();
+										updateConesAngles();
 										updateWithLimits();
 										computation();
 										break;
@@ -437,7 +438,7 @@ export class ConeMeshShader extends PseudoCone {
 		};
 		_gpgpu.positions.updateTextures(options);
 		regenerateFromConeStep();
-		updateConesAlphas();
+		updateConesAngles();
 		updateWithLimits();
 		computation();
 		_ready = true;
@@ -487,7 +488,7 @@ export class ConeMeshShader extends PseudoCone {
 	public static set discriminant(value: number) {
 		_discriminant = value;
 		_alphas = {};
-		updateConesAlphas();
+		updateConesAngles();
 		computation();
 	}
 
