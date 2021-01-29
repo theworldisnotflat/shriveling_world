@@ -14,11 +14,11 @@ Cones geometry is determined by three main parameters:
 
 Cones geometry is also modifiable through the user interface:
 
-* The variable 'coneStep' determines the width, in degrees, of the facets that constitute the cone; a minimum value of 1 degree will produce a cone based on 360 small three dimensional triangles
+* The variable ```coneStep``` determines the width, in degrees, of the facets that constitute the cone; a minimum value of 1 degree will produce a cone based on 360 small three dimensional triangles
 
 * Color
 
 * Transparency
 
 The model allows to generate several sub models for the slope of cones:
- * (details in the [basic user tutorial](basic_user_tutorial) section)
+ * (details in the [basic user tutorial](/marks/usrdoc/basic_usage_tutorial/) section)
