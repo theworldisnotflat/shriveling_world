@@ -378,21 +378,21 @@ function networkFromCities(
 	// for each transport mode, for each year determine [alpha]
 	// using maximumSpeed and mode Speed based on [equation 1](http://bit.ly/2tLfehC)
 	for (const transportCode in speedPerTransportPerYear) {
-		const tabSpedPerYear = speedPerTransportPerYear[transportCode].tabSpeedPerYear;
-		for (const year in tabSpedPerYear) {
+		const tabSpeedPerYear = speedPerTransportPerYear[transportCode].tabSpeedPerYear;
+		for (const year in tabSpeedPerYear) {
 			if (maximumSpeed.hasOwnProperty(year)) {
 				const maxSpeed = maximumSpeed[year];
-				const speedAmb = tabSpedPerYear[year].speed;
+				const speedAmb = tabSpeedPerYear[year].speed;
 				let alpha = Math.atan(Math.sqrt((maxSpeed / speedAmb) * (maxSpeed / speedAmb) - 1));
 				if (alpha < 0) {
 					alpha += CONFIGURATION.TWO_PI;
 				}
 
-				tabSpedPerYear[year].alpha = alpha;
+				tabSpeedPerYear[year].alpha = alpha;
 			}
 		}
 	}
-	// Faire lookup des cartographic/referential par cityCode. OK
+	// Faire lookup des latLonH/referential par cityCode. OK
 	const lookupPosition: { [cityCode: string]: NEDLocal } = {};
 	const lookupMiddle: { [cityCodeBegin: number]: { [cityCodeEnd: number]: ILookupCacheAnchorsEdgeCone } } = {};
 	cities.forEach((city) => {
