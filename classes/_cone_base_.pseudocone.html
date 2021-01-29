@@ -101,7 +101,6 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_cone_base_.pseudocone.html#animations" class="tsd-kind-icon">animations</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_cone_base_.pseudocone.html#cartographicposition" class="tsd-kind-icon">cartographic<wbr>Position</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_cone_base_.pseudocone.html#castshadow" class="tsd-kind-icon">cast<wbr>Shadow</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_cone_base_.pseudocone.html#children" class="tsd-kind-icon">children</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_cone_base_.pseudocone.html#citycode" class="tsd-kind-icon">city<wbr>Code</a></li>
@@ -112,6 +111,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_cone_base_.pseudocone.html#id" class="tsd-kind-icon">id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_cone_base_.pseudocone.html#ismesh" class="tsd-kind-icon">is<wbr>Mesh</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_cone_base_.pseudocone.html#isobject3d" class="tsd-kind-icon">is<wbr>Object3D</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_cone_base_.pseudocone.html#latlonhposition" class="tsd-kind-icon">lat<wbr>LonHPosition</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_cone_base_.pseudocone.html#layers" class="tsd-kind-icon">layers</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_cone_base_.pseudocone.html#material" class="tsd-kind-icon">material</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_cone_base_.pseudocone.html#matrix" class="tsd-kind-icon">matrix</a></li>
@@ -209,7 +209,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides Mesh.__constructor</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/base.ts#L8">src/application/cone/base.ts:8</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/base.ts#L8">src/application/cone/base.ts:8</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -248,16 +248,6 @@
 							</dd>
 						</dl>
 					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="cartographicposition" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> <span class="tsd-flag ts-flagAbstract">Abstract</span> cartographic<wbr>Position</h3>
-					<div class="tsd-signature tsd-kind-icon">cartographic<wbr>Position<span class="tsd-signature-symbol">:</span> <a href="_common_utils_.cartographic.html" class="tsd-signature-type">Cartographic</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/base.ts#L7">src/application/cone/base.ts:7</a></li>
-						</ul>
-					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="castshadow" class="tsd-anchor"></a>
@@ -307,7 +297,7 @@
 					<div class="tsd-signature tsd-kind-icon">city<wbr>Code<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/base.ts#L8">src/application/cone/base.ts:8</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/base.ts#L8">src/application/cone/base.ts:8</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -421,6 +411,16 @@
 							You should not change this, as it is used internally for optimisation.</p>
 						</div>
 					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="latlonhposition" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> <span class="tsd-flag ts-flagAbstract">Abstract</span> lat<wbr>LonHPosition</h3>
+					<div class="tsd-signature tsd-kind-icon">lat<wbr>LonHPosition<span class="tsd-signature-symbol">:</span> <a href="_common_utils_.latlonh.html" class="tsd-signature-type">LatLonH</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/base.ts#L7">src/application/cone/base.ts:7</a></li>
+						</ul>
+					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="layers" class="tsd-anchor"></a>
@@ -732,7 +732,7 @@
 					<div class="tsd-signature tsd-kind-icon">other<wbr>Properties<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/base.ts#L5">src/application/cone/base.ts:5</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/base.ts#L5">src/application/cone/base.ts:5</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -983,7 +983,7 @@
 					<div class="tsd-signature tsd-kind-icon">with<wbr>Limits<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/base.ts#L6">src/application/cone/base.ts:6</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/base.ts#L6">src/application/cone/base.ts:6</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -1304,7 +1304,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/base.ts#L17">src/application/cone/base.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/base.ts#L17">src/application/cone/base.ts:17</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -2491,9 +2491,6 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="_cone_base_.pseudocone.html#animations" class="tsd-kind-icon">animations</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_cone_base_.pseudocone.html#cartographicposition" class="tsd-kind-icon">cartographic<wbr>Position</a>
-							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="_cone_base_.pseudocone.html#castshadow" class="tsd-kind-icon">cast<wbr>Shadow</a>
 							</li>
@@ -2523,6 +2520,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="_cone_base_.pseudocone.html#isobject3d" class="tsd-kind-icon">is<wbr>Object3D</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_cone_base_.pseudocone.html#latlonhposition" class="tsd-kind-icon">lat<wbr>LonHPosition</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="_cone_base_.pseudocone.html#layers" class="tsd-kind-icon">layers</a>

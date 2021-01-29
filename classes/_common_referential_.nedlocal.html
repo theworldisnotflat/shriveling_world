@@ -105,7 +105,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_common_referential_.nedlocal.html#_glsldata" class="tsd-kind-icon">_glsl<wbr>Data</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_common_referential_.nedlocal.html#_matecef2ned" class="tsd-kind-icon">_matECEF2NED</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_common_referential_.nedlocal.html#_matned2ecef" class="tsd-kind-icon">_matNED2ECEF</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_common_referential_.nedlocal.html#cartoref" class="tsd-kind-icon">carto<wbr>Ref</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_common_referential_.nedlocal.html#latlonhref" class="tsd-kind-icon">lat<wbr>LonHRef</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -117,10 +117,10 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_common_referential_.nedlocal.html#ned2cartographic" class="tsd-kind-icon">NED2<wbr>Cartographic</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_common_referential_.nedlocal.html#cartographic2ned" class="tsd-kind-icon">cartographic2NED</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_common_referential_.nedlocal.html#ned2latlonh" class="tsd-kind-icon">NED2<wbr>Lat<wbr>LonH</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_common_referential_.nedlocal.html#direction2position" class="tsd-kind-icon">direction2<wbr>Position</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_common_referential_.nedlocal.html#getclock" class="tsd-kind-icon">get<wbr>Clock</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_common_referential_.nedlocal.html#latlonh2ned" class="tsd-kind-icon">lat<wbr>Lon<wbr>H2NED</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_common_referential_.nedlocal.html#project" class="tsd-kind-icon">project</a></li>
 							</ul>
 						</section>
@@ -133,19 +133,19 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new NEDLocal<span class="tsd-signature-symbol">(</span>summit<span class="tsd-signature-symbol">?: </span><a href="_common_utils_.cartographic.html" class="tsd-signature-type">Cartographic</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_common_referential_.nedlocal.html" class="tsd-signature-type">NEDLocal</a></li>
+						<li class="tsd-signature tsd-kind-icon">new NEDLocal<span class="tsd-signature-symbol">(</span>summit<span class="tsd-signature-symbol">?: </span><a href="_common_utils_.latlonh.html" class="tsd-signature-type">LatLonH</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_common_referential_.nedlocal.html" class="tsd-signature-type">NEDLocal</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/common/referential.ts#L128">src/application/common/referential.ts:128</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/common/referential.ts#L128">src/application/common/referential.ts:128</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> summit: <a href="_common_utils_.cartographic.html" class="tsd-signature-type">Cartographic</a><span class="tsd-signature-symbol"> = ZERO_CARTOGRAPHIC</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> summit: <a href="_common_utils_.latlonh.html" class="tsd-signature-type">LatLonH</a><span class="tsd-signature-symbol"> = ZERO_LATLONH</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_common_referential_.nedlocal.html" class="tsd-signature-type">NEDLocal</a></h4>
@@ -161,7 +161,7 @@
 					<div class="tsd-signature tsd-kind-icon">_ECEFRef<span class="tsd-signature-symbol">:</span> <a href="_common_referential_.coordinate.html" class="tsd-signature-type">Coordinate</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/common/referential.ts#L125">src/application/common/referential.ts:125</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/common/referential.ts#L125">src/application/common/referential.ts:125</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -171,7 +171,7 @@
 					<div class="tsd-signature tsd-kind-icon">_glsl<wbr>Data<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_definitions_project_.inedlocalglsl.html" class="tsd-signature-type">INEDLocalGLSL</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/common/referential.ts#L128">src/application/common/referential.ts:128</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/common/referential.ts#L128">src/application/common/referential.ts:128</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -181,7 +181,7 @@
 					<div class="tsd-signature tsd-kind-icon">_matECEF2NED<span class="tsd-signature-symbol">:</span> <a href="_common_referential_.coordinate.html" class="tsd-signature-type">Coordinate</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/common/referential.ts#L126">src/application/common/referential.ts:126</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/common/referential.ts#L126">src/application/common/referential.ts:126</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -191,17 +191,17 @@
 					<div class="tsd-signature tsd-kind-icon">_matNED2ECEF<span class="tsd-signature-symbol">:</span> <a href="_common_referential_.coordinate.html" class="tsd-signature-type">Coordinate</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/common/referential.ts#L127">src/application/common/referential.ts:127</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/common/referential.ts#L127">src/application/common/referential.ts:127</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="cartoref" class="tsd-anchor"></a>
-					<h3>carto<wbr>Ref</h3>
-					<div class="tsd-signature tsd-kind-icon">carto<wbr>Ref<span class="tsd-signature-symbol">:</span> <a href="_common_utils_.cartographic.html" class="tsd-signature-type">Cartographic</a></div>
+					<a name="latlonhref" class="tsd-anchor"></a>
+					<h3>lat<wbr>LonHRef</h3>
+					<div class="tsd-signature tsd-kind-icon">lat<wbr>LonHRef<span class="tsd-signature-symbol">:</span> <a href="_common_utils_.latlonh.html" class="tsd-signature-type">LatLonH</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/common/referential.ts#L124">src/application/common/referential.ts:124</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/common/referential.ts#L124">src/application/common/referential.ts:124</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -218,7 +218,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/common/referential.ts#L192">src/application/common/referential.ts:192</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/common/referential.ts#L192">src/application/common/referential.ts:192</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_definitions_project_.inedlocalglsl.html" class="tsd-signature-type">INEDLocalGLSL</a></h4>
@@ -229,16 +229,16 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="ned2cartographic" class="tsd-anchor"></a>
-					<h3>NED2<wbr>Cartographic</h3>
+					<a name="ned2latlonh" class="tsd-anchor"></a>
+					<h3>NED2<wbr>Lat<wbr>LonH</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">NED2<wbr>Cartographic<span class="tsd-signature-symbol">(</span>pos<span class="tsd-signature-symbol">: </span><a href="_common_referential_.coordinate.html" class="tsd-signature-type">Coordinate</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_common_utils_.cartographic.html" class="tsd-signature-type">Cartographic</a></li>
+						<li class="tsd-signature tsd-kind-icon">NED2<wbr>Lat<wbr>LonH<span class="tsd-signature-symbol">(</span>pos<span class="tsd-signature-symbol">: </span><a href="_common_referential_.coordinate.html" class="tsd-signature-type">Coordinate</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_common_utils_.latlonh.html" class="tsd-signature-type">LatLonH</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/common/referential.ts#L159">src/application/common/referential.ts:159</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/common/referential.ts#L159">src/application/common/referential.ts:159</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -247,30 +247,7 @@
 									<h5>pos: <a href="_common_referential_.coordinate.html" class="tsd-signature-type">Coordinate</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_common_utils_.cartographic.html" class="tsd-signature-type">Cartographic</a></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="cartographic2ned" class="tsd-anchor"></a>
-					<h3>cartographic2NED</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">cartographic2NED<span class="tsd-signature-symbol">(</span>pos<span class="tsd-signature-symbol">: </span><a href="_common_utils_.cartographic.html" class="tsd-signature-type">Cartographic</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_common_referential_.coordinate.html" class="tsd-signature-type">Coordinate</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/common/referential.ts#L149">src/application/common/referential.ts:149</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>pos: <a href="_common_utils_.cartographic.html" class="tsd-signature-type">Cartographic</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_common_referential_.coordinate.html" class="tsd-signature-type">Coordinate</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_common_utils_.latlonh.html" class="tsd-signature-type">LatLonH</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -284,7 +261,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/common/referential.ts#L175">src/application/common/referential.ts:175</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/common/referential.ts#L175">src/application/common/referential.ts:175</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -307,19 +284,19 @@
 					<a name="getclock" class="tsd-anchor"></a>
 					<h3>get<wbr>Clock</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Clock<span class="tsd-signature-symbol">(</span>pos<span class="tsd-signature-symbol">: </span><a href="_common_utils_.cartographic.html" class="tsd-signature-type">Cartographic</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Clock<span class="tsd-signature-symbol">(</span>pos<span class="tsd-signature-symbol">: </span><a href="_common_utils_.latlonh.html" class="tsd-signature-type">LatLonH</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/common/referential.ts#L169">src/application/common/referential.ts:169</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/common/referential.ts#L169">src/application/common/referential.ts:169</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>pos: <a href="_common_utils_.cartographic.html" class="tsd-signature-type">Cartographic</a></h5>
+									<h5>pos: <a href="_common_utils_.latlonh.html" class="tsd-signature-type">LatLonH</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -327,16 +304,39 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="project" class="tsd-anchor"></a>
-					<h3>project</h3>
+					<a name="latlonh2ned" class="tsd-anchor"></a>
+					<h3>lat<wbr>Lon<wbr>H2NED</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">project<span class="tsd-signature-symbol">(</span>clock<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, alpha<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, distance<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_common_utils_.cartographic.html" class="tsd-signature-type">Cartographic</a></li>
+						<li class="tsd-signature tsd-kind-icon">lat<wbr>Lon<wbr>H2NED<span class="tsd-signature-symbol">(</span>pos<span class="tsd-signature-symbol">: </span><a href="_common_utils_.latlonh.html" class="tsd-signature-type">LatLonH</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_common_referential_.coordinate.html" class="tsd-signature-type">Coordinate</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/common/referential.ts#L187">src/application/common/referential.ts:187</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/common/referential.ts#L149">src/application/common/referential.ts:149</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>pos: <a href="_common_utils_.latlonh.html" class="tsd-signature-type">LatLonH</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_common_referential_.coordinate.html" class="tsd-signature-type">Coordinate</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="project" class="tsd-anchor"></a>
+					<h3>project</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">project<span class="tsd-signature-symbol">(</span>clock<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, alpha<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, distance<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_common_utils_.latlonh.html" class="tsd-signature-type">LatLonH</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/common/referential.ts#L187">src/application/common/referential.ts:187</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -351,7 +351,7 @@
 									<h5>distance: <span class="tsd-signature-type">number</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_common_utils_.cartographic.html" class="tsd-signature-type">Cartographic</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_common_utils_.latlonh.html" class="tsd-signature-type">LatLonH</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -439,22 +439,22 @@
 								<a href="_common_referential_.nedlocal.html#_matned2ecef" class="tsd-kind-icon">_matNED2ECEF</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_common_referential_.nedlocal.html#cartoref" class="tsd-kind-icon">carto<wbr>Ref</a>
+								<a href="_common_referential_.nedlocal.html#latlonhref" class="tsd-kind-icon">lat<wbr>LonHRef</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="_common_referential_.nedlocal.html#ned2ecefmatrix" class="tsd-kind-icon">ned2ECEFMatrix</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_common_referential_.nedlocal.html#ned2cartographic" class="tsd-kind-icon">NED2<wbr>Cartographic</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_common_referential_.nedlocal.html#cartographic2ned" class="tsd-kind-icon">cartographic2NED</a>
+								<a href="_common_referential_.nedlocal.html#ned2latlonh" class="tsd-kind-icon">NED2<wbr>Lat<wbr>LonH</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_common_referential_.nedlocal.html#direction2position" class="tsd-kind-icon">direction2<wbr>Position</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_common_referential_.nedlocal.html#getclock" class="tsd-kind-icon">get<wbr>Clock</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_common_referential_.nedlocal.html#latlonh2ned" class="tsd-kind-icon">lat<wbr>Lon<wbr>H2NED</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_common_referential_.nedlocal.html#project" class="tsd-kind-icon">project</a>
@@ -470,10 +470,10 @@
 						<a href="../modules/_common_referential_.html#scrapcoordinate2" class="tsd-kind-icon">scrap<wbr>Coordinate2</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
-						<a href="../modules/_common_referential_.html#cartographic2ecef" class="tsd-kind-icon">Cartographic2ECEF</a>
+						<a href="../modules/_common_referential_.html#ecef2latlonh" class="tsd-kind-icon">ECEF2<wbr>Lat<wbr>LonH</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
-						<a href="../modules/_common_referential_.html#ecef2cartographic" class="tsd-kind-icon">ECEF2<wbr>Cartographic</a>
+						<a href="../modules/_common_referential_.html#latlonh2ecef" class="tsd-kind-icon">Lat<wbr>Lon<wbr>H2ECEF</a>
 					</li>
 				</ul>
 			</nav>

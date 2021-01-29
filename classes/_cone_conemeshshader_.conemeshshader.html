@@ -149,8 +149,8 @@
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite"><a href="_cone_conemeshshader_.conemeshshader.html#cartographicposition" class="tsd-kind-icon">cartographic<wbr>Position</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite"><a href="_cone_conemeshshader_.conemeshshader.html#citycode" class="tsd-kind-icon">city<wbr>Code</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite"><a href="_cone_conemeshshader_.conemeshshader.html#latlonhposition" class="tsd-kind-icon">lat<wbr>LonHPosition</a></li>
 								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-overwrite"><a href="_cone_conemeshshader_.conemeshshader.html#withlimits" class="tsd-kind-icon">with<wbr>Limits</a></li>
 								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-static"><a href="_cone_conemeshshader_.conemeshshader.html#discriminant" class="tsd-kind-icon">discriminant</a></li>
 							</ul>
@@ -217,14 +217,14 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Cone<wbr>Mesh<wbr>Shader<span class="tsd-signature-symbol">(</span>cityCode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, position<span class="tsd-signature-symbol">: </span><a href="_common_utils_.cartographic.html" class="tsd-signature-type">Cartographic</a>, terrestrialData<span class="tsd-signature-symbol">: </span><a href="../interfaces/_definitions_project_.ilookupconeangles.html" class="tsd-signature-type">ILookupConeAngles</a>, properties<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_cone_conemeshshader_.conemeshshader.html" class="tsd-signature-type">ConeMeshShader</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Cone<wbr>Mesh<wbr>Shader<span class="tsd-signature-symbol">(</span>cityCode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, position<span class="tsd-signature-symbol">: </span><a href="_common_utils_.latlonh.html" class="tsd-signature-type">LatLonH</a>, terrestrialData<span class="tsd-signature-symbol">: </span><a href="../interfaces/_definitions_project_.ilookupconeangles.html" class="tsd-signature-type">ILookupConeAngles</a>, properties<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_cone_conemeshshader_.conemeshshader.html" class="tsd-signature-type">ConeMeshShader</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_cone_base_.pseudocone.html">PseudoCone</a>.<a href="_cone_base_.pseudocone.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/coneMeshShader.ts#L446">src/application/cone/coneMeshShader.ts:446</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/coneMeshShader.ts#L443">src/application/cone/coneMeshShader.ts:443</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -238,7 +238,7 @@
 									<h5>cityCode: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5>position: <a href="_common_utils_.cartographic.html" class="tsd-signature-type">Cartographic</a></h5>
+									<h5>position: <a href="_common_utils_.latlonh.html" class="tsd-signature-type">LatLonH</a></h5>
 								</li>
 								<li>
 									<h5>terrestrialData: <a href="../interfaces/_definitions_project_.ilookupconeangles.html" class="tsd-signature-type">ILookupConeAngles</a></h5>
@@ -269,7 +269,7 @@
 					<div class="tsd-signature tsd-kind-icon">_city<wbr>Code<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/coneMeshShader.ts#L313">src/application/cone/coneMeshShader.ts:313</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/coneMeshShader.ts#L310">src/application/cone/coneMeshShader.ts:310</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -279,17 +279,17 @@
 					<div class="tsd-signature tsd-kind-icon">_cone<wbr>Angles<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_definitions_project_.ilookupconeangles.html" class="tsd-signature-type">ILookupConeAngles</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/coneMeshShader.ts#L316">src/application/cone/coneMeshShader.ts:316</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/coneMeshShader.ts#L313">src/application/cone/coneMeshShader.ts:313</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="_position" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> _position</h3>
-					<div class="tsd-signature tsd-kind-icon">_position<span class="tsd-signature-symbol">:</span> <a href="_common_utils_.cartographic.html" class="tsd-signature-type">Cartographic</a></div>
+					<div class="tsd-signature tsd-kind-icon">_position<span class="tsd-signature-symbol">:</span> <a href="_common_utils_.latlonh.html" class="tsd-signature-type">LatLonH</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/coneMeshShader.ts#L315">src/application/cone/coneMeshShader.ts:315</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/coneMeshShader.ts#L312">src/application/cone/coneMeshShader.ts:312</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -299,7 +299,7 @@
 					<div class="tsd-signature tsd-kind-icon">_with<wbr>Limits<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/coneMeshShader.ts#L312">src/application/cone/coneMeshShader.ts:312</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/coneMeshShader.ts#L309">src/application/cone/coneMeshShader.ts:309</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -788,7 +788,7 @@
 					<aside class="tsd-sources">
 						<p>Overrides <a href="_cone_base_.pseudocone.html">PseudoCone</a>.<a href="_cone_base_.pseudocone.html#otherproperties">otherProperties</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/coneMeshShader.ts#L311">src/application/cone/coneMeshShader.ts:311</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/coneMeshShader.ts#L308">src/application/cone/coneMeshShader.ts:308</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -1059,24 +1059,6 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Accessors</h2>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
-					<a name="cartographicposition" class="tsd-anchor"></a>
-					<h3>cartographic<wbr>Position</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> cartographicPosition<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_common_utils_.cartographic.html" class="tsd-signature-type">Cartographic</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Overrides <a href="_cone_base_.pseudocone.html">PseudoCone</a>.<a href="_cone_base_.pseudocone.html#cartographicposition">cartographicPosition</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/coneMeshShader.ts#L533">src/application/cone/coneMeshShader.ts:533</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="_common_utils_.cartographic.html" class="tsd-signature-type">Cartographic</a></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
 					<a name="citycode" class="tsd-anchor"></a>
 					<h3>city<wbr>Code</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
@@ -1087,10 +1069,28 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_cone_base_.pseudocone.html">PseudoCone</a>.<a href="_cone_base_.pseudocone.html#citycode">cityCode</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/coneMeshShader.ts#L529">src/application/cone/coneMeshShader.ts:529</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/coneMeshShader.ts#L526">src/application/cone/coneMeshShader.ts:526</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
+					<a name="latlonhposition" class="tsd-anchor"></a>
+					<h3>lat<wbr>LonHPosition</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> latLonHPosition<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_common_utils_.latlonh.html" class="tsd-signature-type">LatLonH</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="_cone_base_.pseudocone.html">PseudoCone</a>.<a href="_cone_base_.pseudocone.html#latlonhposition">latLonHPosition</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/coneMeshShader.ts#L530">src/application/cone/coneMeshShader.ts:530</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="_common_utils_.latlonh.html" class="tsd-signature-type">LatLonH</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -1106,7 +1106,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_cone_base_.pseudocone.html">PseudoCone</a>.<a href="_cone_base_.pseudocone.html#withlimits">withLimits</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/coneMeshShader.ts#L537">src/application/cone/coneMeshShader.ts:537</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/coneMeshShader.ts#L534">src/application/cone/coneMeshShader.ts:534</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -1115,7 +1115,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_cone_base_.pseudocone.html">PseudoCone</a>.<a href="_cone_base_.pseudocone.html#withlimits">withLimits</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/coneMeshShader.ts#L541">src/application/cone/coneMeshShader.ts:541</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/coneMeshShader.ts#L538">src/application/cone/coneMeshShader.ts:538</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1139,7 +1139,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/coneMeshShader.ts#L484">src/application/cone/coneMeshShader.ts:484</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/coneMeshShader.ts#L481">src/application/cone/coneMeshShader.ts:481</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -1147,7 +1147,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/coneMeshShader.ts#L488">src/application/cone/coneMeshShader.ts:488</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/coneMeshShader.ts#L485">src/application/cone/coneMeshShader.ts:485</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1456,7 +1456,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_cone_base_.pseudocone.html">PseudoCone</a>.<a href="_cone_base_.pseudocone.html#dispose">dispose</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/coneMeshShader.ts#L495">src/application/cone/coneMeshShader.ts:495</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/coneMeshShader.ts#L492">src/application/cone/coneMeshShader.ts:492</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -1473,7 +1473,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/coneMeshShader.ts#L525">src/application/cone/coneMeshShader.ts:525</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/coneMeshShader.ts#L522">src/application/cone/coneMeshShader.ts:522</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2089,7 +2089,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/coneMeshShader.ts#L502">src/application/cone/coneMeshShader.ts:502</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/coneMeshShader.ts#L499">src/application/cone/coneMeshShader.ts:499</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2643,7 +2643,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/15d0951/src/application/cone/coneMeshShader.ts#L323">src/application/cone/coneMeshShader.ts:323</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/2769287/src/application/cone/coneMeshShader.ts#L320">src/application/cone/coneMeshShader.ts:320</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -2861,10 +2861,10 @@
 								<a href="_cone_conemeshshader_.conemeshshader.html#defaultup" class="tsd-kind-icon">Default<wbr>Up</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
-								<a href="_cone_conemeshshader_.conemeshshader.html#cartographicposition" class="tsd-kind-icon">cartographic<wbr>Position</a>
+								<a href="_cone_conemeshshader_.conemeshshader.html#citycode" class="tsd-kind-icon">city<wbr>Code</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
-								<a href="_cone_conemeshshader_.conemeshshader.html#citycode" class="tsd-kind-icon">city<wbr>Code</a>
+								<a href="_cone_conemeshshader_.conemeshshader.html#latlonhposition" class="tsd-kind-icon">lat<wbr>LonHPosition</a>
 							</li>
 							<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_cone_conemeshshader_.conemeshshader.html#withlimits" class="tsd-kind-icon">with<wbr>Limits</a>
