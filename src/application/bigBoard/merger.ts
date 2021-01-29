@@ -18,7 +18,7 @@
 'use strict';
 import Papa from 'papaparse';
 import { NEDLocal } from '../common/referential';
-import { interpolator, Cartographic, reviver } from '../common/utils';
+import { interpolator, LatLonH, reviver } from '../common/utils';
 import type {
 	ITranspMode,
 	ICity,
@@ -166,14 +166,14 @@ function getCSV(text: string, isTransportModeCode = false): any {
 }
 
 /**
- * Gets the middle between two Cartographic positions :
+ * Gets the middle between two LatLonH positions :
  * [[posA]] and [[posB]]
  *
- * @param {Cartographic} posA
- * @param {Cartographic} posB
- * @returns {{ middle: Cartographic, theta: number }}
+ * @param {LatLonH} posA
+ * @param {LatLonH} posB
+ * @returns {{ middle: LatLonH, theta: number }}
  */
-function getTheMiddle(posA: Cartographic, posB: Cartographic): { middle: Cartographic; theta: number } {
+function getTheMiddle(posA: LatLonH, posB: LatLonH): { middle: LatLonH; theta: number } {
 	const theta = posA.exactDistance(posB);
 	const deltaLambda = posB.longitude - posA.longitude;
 	const cosPhi2 = Math.cos(posB.latitude);
@@ -182,7 +182,7 @@ function getTheMiddle(posA: Cartographic, posB: Cartographic): { middle: Cartogr
 	const sinPhi1 = Math.sin(posA.latitude);
 	const bx = cosPhi2 * Math.cos(deltaLambda);
 	const by = cosPhi2 * Math.sin(deltaLambda);
-	const result = new Cartographic();
+	const result = new LatLonH();
 	result.latitude = Math.atan2(sinPhi1 + sinPhi2, Math.sqrt((cosPhi1 + bx) * (cosPhi1 + bx) + by * by));
 	result.longitude = posA.longitude + Math.atan2(by, cosPhi1 + bx);
 	return { middle: result, theta };
@@ -307,9 +307,9 @@ function networkFromCities(
 	 */
 	interface ILookupCacheAnchorsEdgeCone {
 		end?: ICityExtremityOfEdge;
-		pointP: Cartographic;
-		pointQ: Cartographic;
-		middle: Cartographic;
+		pointP: LatLonH;
+		pointQ: LatLonH;
+		middle: LatLonH;
 		theta: number;
 		clock: number;
 	}
@@ -396,7 +396,7 @@ function networkFromCities(
 	const lookupPosition: { [cityCode: string]: NEDLocal } = {};
 	const lookupMiddle: { [cityCodeBegin: number]: { [cityCodeEnd: number]: ILookupCacheAnchorsEdgeCone } } = {};
 	cities.forEach((city) => {
-		const position = new Cartographic(city.longitude, city.latitude, 0, false);
+		const position = new LatLonH(city.longitude, city.latitude, 0, false);
 		lookupPosition[city.cityCode] = new NEDLocal(position);
 	});
 	/**
@@ -412,33 +412,36 @@ function networkFromCities(
 	 */
 	function cachedGetTheMiddle(begin: number, end: number): ILookupCacheAnchorsEdgeCone {
 		const result = <ILookupCacheAnchorsEdgeCone>{};
-		result.end = { cityCode: end, position: lookupPosition[end].cartoRef };
+		result.end = { cityCode: end, position: lookupPosition[end].latLonHRef };
 		if (lookupMiddle.hasOwnProperty(begin)) {
 			if (!lookupMiddle[begin].hasOwnProperty(end)) {
-				const { middle, theta } = getTheMiddle(lookupPosition[begin].cartoRef, lookupPosition[end].cartoRef);
-				const pointP = getTheMiddle(lookupPosition[begin].cartoRef, middle).middle;
-				const pointQ = getTheMiddle(middle, lookupPosition[end].cartoRef).middle;
-				let clock = lookupPosition[begin].getClock(lookupPosition[end].cartoRef);
+				const { middle, theta } = getTheMiddle(
+					lookupPosition[begin].latLonHRef,
+					lookupPosition[end].latLonHRef
+				);
+				const pointP = getTheMiddle(lookupPosition[begin].latLonHRef, middle).middle;
+				const pointQ = getTheMiddle(middle, lookupPosition[end].latLonHRef).middle;
+				let clock = lookupPosition[begin].getClock(lookupPosition[end].latLonHRef);
 				lookupMiddle[begin][end] = { pointP, pointQ, middle, theta, clock };
 				if (!lookupMiddle.hasOwnProperty(end)) {
 					lookupMiddle[end] = {};
 				}
 
-				clock = lookupPosition[end].getClock(lookupPosition[begin].cartoRef);
+				clock = lookupPosition[end].getClock(lookupPosition[begin].latLonHRef);
 				lookupMiddle[end][begin] = { pointP: pointQ, pointQ: pointP, middle, theta, clock };
 			}
 		} else {
-			const { middle, theta } = getTheMiddle(lookupPosition[begin].cartoRef, lookupPosition[end].cartoRef);
-			const pointP = getTheMiddle(lookupPosition[begin].cartoRef, middle).middle;
-			const pointQ = getTheMiddle(middle, lookupPosition[end].cartoRef).middle;
-			let clock = lookupPosition[begin].getClock(lookupPosition[end].cartoRef);
+			const { middle, theta } = getTheMiddle(lookupPosition[begin].latLonHRef, lookupPosition[end].latLonHRef);
+			const pointP = getTheMiddle(lookupPosition[begin].latLonHRef, middle).middle;
+			const pointQ = getTheMiddle(middle, lookupPosition[end].latLonHRef).middle;
+			let clock = lookupPosition[begin].getClock(lookupPosition[end].latLonHRef);
 			lookupMiddle[begin] = {};
 			lookupMiddle[begin][end] = { pointP, pointQ, middle, theta, clock };
 			if (!lookupMiddle.hasOwnProperty(end)) {
 				lookupMiddle[end] = {};
 			}
 
-			clock = lookupPosition[end].getClock(lookupPosition[begin].cartoRef);
+			clock = lookupPosition[end].getClock(lookupPosition[begin].latLonHRef);
 			lookupMiddle[end][begin] = { pointP: pointQ, pointQ: pointP, middle, theta, clock };
 		}
 
@@ -462,7 +465,7 @@ function networkFromCities(
 		}
 
 		if (referential instanceof NEDLocal) {
-			const startPoint: ICityExtremityOfEdge = { cityCode: origCityCode, position: referential.cartoRef };
+			const startPoint: ICityExtremityOfEdge = { cityCode: origCityCode, position: referential.latLonHRef };
 			/**
 			 *  List of curves from the considered city (described by their destination cities)
 			 * */

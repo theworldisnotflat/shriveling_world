@@ -2,7 +2,7 @@
 import { CONFIGURATION } from './configuration';
 import type { NEDLocal, Coordinate } from './referential';
 import type {
-	ICartographic,
+	ILatLonH,
 	ISumUpCriteria,
 	IItemCriteria,
 	ICriteria,
@@ -11,24 +11,24 @@ import type {
 	IListFile,
 } from '../definitions/project';
 
-export class Cartographic implements ICartographic {
+export class LatLonH implements ILatLonH {
 	public latitude: number;
 	public longitude: number;
 	public height: number;
 
-	public static approximateDistance(pos1: Cartographic, pos2: Cartographic): number {
+	public static approximateDistance(pos1: LatLonH, pos2: LatLonH): number {
 		const x = (pos1.longitude - pos2.longitude) * Math.cos((pos1.latitude + pos2.latitude) / 2);
 		const y = pos1.latitude - pos2.latitude;
 		return Math.sqrt(x * x + y * y);
 	}
 
-	public static exactDistance(pos1: Cartographic, pos2: Cartographic): number {
+	public static exactDistance(pos1: LatLonH, pos2: LatLonH): number {
 		let result = Math.sin(pos1.latitude) * Math.sin(pos2.latitude);
 		result += Math.cos(pos1.latitude) * Math.cos(pos2.latitude) * Math.cos(pos2.longitude - pos1.longitude);
 		return Math.acos(result);
 	}
 
-	public static isInside(position: Cartographic, boundary: Cartographic[]): boolean {
+	public static isInside(position: LatLonH, boundary: LatLonH[]): boolean {
 		let cn = 0; // The  crossing number counter
 		let iPlus: number;
 		const n = boundary.length;
@@ -54,9 +54,9 @@ export class Cartographic implements ICartographic {
 		return cn % 2 === 1; // 0 if even (out), and 1 if  odd (in)
 	}
 
-	public static lerp(pos1: Cartographic, pos2: Cartographic, fractions: number[] = []): Cartographic[] {
-		const distance = Cartographic.exactDistance(pos1, pos2);
-		const result: Cartographic[] = [];
+	public static lerp(pos1: LatLonH, pos2: LatLonH, fractions: number[] = []): LatLonH[] {
+		const distance = LatLonH.exactDistance(pos1, pos2);
+		const result: LatLonH[] = [];
 		if (distance > 0) {
 			fractions.forEach((fraction) => {
 				const A = Math.sin((1 - fraction) * distance) / Math.sin(distance);
@@ -69,7 +69,7 @@ export class Cartographic implements ICartographic {
 					B * Math.cos(pos2.latitude) * Math.sin(pos2.longitude);
 				const z = A * Math.sin(pos1.latitude) + B * Math.sin(pos2.latitude);
 				result.push(
-					new Cartographic(
+					new LatLonH(
 						Math.atan2(z, Math.sqrt(x * x + y * y)),
 						Math.atan2(y, x),
 						(1 - fraction) * pos1.height + fraction * pos2.height
@@ -81,7 +81,7 @@ export class Cartographic implements ICartographic {
 		return result;
 	}
 
-	public static direction(pos1: Cartographic, pos2: Cartographic): number {
+	public static direction(pos1: LatLonH, pos2: LatLonH): number {
 		return Math.atan2(pos2.latitude - pos1.latitude, pos2.longitude - pos1.longitude);
 	}
 
@@ -96,24 +96,24 @@ export class Cartographic implements ICartographic {
 		this.height = height;
 	}
 
-	public clone(): Cartographic {
-		return new Cartographic(this.longitude, this.latitude, this.height);
+	public clone(): LatLonH {
+		return new LatLonH(this.longitude, this.latitude, this.height);
 	}
 
-	public approximateDistance(pos2: Cartographic): number {
-		return Cartographic.approximateDistance(this, pos2);
+	public approximateDistance(pos2: LatLonH): number {
+		return LatLonH.approximateDistance(this, pos2);
 	}
 
-	public exactDistance(pos2: Cartographic): number {
-		return Cartographic.exactDistance(this, pos2);
+	public exactDistance(pos2: LatLonH): number {
+		return LatLonH.exactDistance(this, pos2);
 	}
 
-	public lerp(pos2: Cartographic, fractions: number[] = []): Cartographic[] {
-		return Cartographic.lerp(this, pos2, fractions);
+	public lerp(pos2: LatLonH, fractions: number[] = []): LatLonH[] {
+		return LatLonH.lerp(this, pos2, fractions);
 	}
 
-	public direction(pos: Cartographic): number {
-		return Cartographic.direction(this, pos);
+	public direction(pos: LatLonH): number {
+		return LatLonH.direction(this, pos);
 	}
 
 	public toThreeGLSL(): number[] {
@@ -121,9 +121,9 @@ export class Cartographic implements ICartographic {
 	}
 }
 
-export const ZERO_CARTOGRAPHIC = new Cartographic();
+export const ZERO_LATLONH = new LatLonH();
 
-Object.freeze(ZERO_CARTOGRAPHIC);
+Object.freeze(ZERO_LATLONH);
 
 function updateSumUpCriteriaByDateOrNumber(subObject: { max: Date | number; min: Date | number }, temporary): void {
 	const comparMin = compare(subObject.min, temporary, true);
@@ -528,7 +528,7 @@ export const reviver: any = <U>(_key: string, value: any): U | any => {
 	return result;
 };
 
-export function matchingBBox(pos: Cartographic, bBoxes: IBBox[]): Cartographic[][] {
+export function matchingBBox(pos: LatLonH, bBoxes: IBBox[]): LatLonH[][] {
 	return bBoxes
 		.filter(
 			(bBox) =>
@@ -536,19 +536,19 @@ export function matchingBBox(pos: Cartographic, bBoxes: IBBox[]): Cartographic[]
 				pos.latitude <= bBox.maxLat &&
 				pos.longitude >= bBox.minLong &&
 				pos.longitude <= bBox.maxLong &&
-				Cartographic.isInside(pos, bBox.boundary)
+				LatLonH.isInside(pos, bBox.boundary)
 		)
 		.map((bBox) => bBox.boundary);
 }
 
 export function getLocalLimits(
-	boundaries: Cartographic[][],
+	boundaries: LatLonH[][],
 	referential: NEDLocal
 ): Array<{ clock: number; distance: number }> {
 	const allPoints: Coordinate[] = [];
 	boundaries.forEach((boundary) => {
 		boundary.forEach((position) => {
-			allPoints.push(referential.cartographic2NED(position));
+			allPoints.push(referential.latLonH2NED(position));
 		});
 	});
 	const clockDistance = allPoints

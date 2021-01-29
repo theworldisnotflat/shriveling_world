@@ -10,7 +10,7 @@ import {
 	PROJECTION_ENUM,
 	CONESSHAPE_ENUM,
 	ICountryTextureURL,
-	ICartographic,
+	ILatLonH,
 	configurationObservableEvt,
 	configurationCallback,
 } from '../definitions/project';
@@ -27,7 +27,7 @@ const _TWO_PI: number = 2 * Math.PI;
 const _earthRadiusMeters = 6371e3;
 const _OVER_PI: number = 1 / Math.PI;
 const _OVER_TWO_PI: number = 1 / (2 * Math.PI);
-const _referenceEquiRectangular: ICartographic = { latitude: 0, longitude: 0, height: 0 };
+const _referenceEquiRectangular: ILatLonH = { latitude: 0, longitude: 0, height: 0 };
 const _referenceEquiRectangularFloat32Array = new Float32Array(3);
 let _standardParallel1: number = 30 * _deg2rad;
 let _standardParallel2: number = 45 * _deg2rad;
@@ -226,10 +226,10 @@ export const CONFIGURATION = {
 		'assets/pz.jpg',
 		'assets/nz.jpg',
 	],
-	get referenceEquiRectangular(): ICartographic {
+	get referenceEquiRectangular(): ILatLonH {
 		return _referenceEquiRectangular;
 	},
-	set referenceEquiRectangular(value: ICartographic) {
+	set referenceEquiRectangular(value: ILatLonH) {
 		let updated = false;
 		for (const attribute in value) {
 			if (_referenceEquiRectangular.hasOwnProperty(attribute)) {
