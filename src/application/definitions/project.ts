@@ -34,6 +34,13 @@ export enum CONESSHAPE_ENUM {
 	complex = 2,
 }
 
+export enum CURVESPOSITION_ENUM {
+	above = 0,
+	below = 1,
+	belowWhenPossible = 2,
+	stickToCone = 3,
+}
+
 export type internalFormatType =
 	| 'R8'
 	| 'R32F'

@@ -352,6 +352,7 @@ function computation(): void {
 	uniforms.representationEnd = CONFIGURATION.projectionEnd;
 	uniforms.percentRepresentation = CONFIGURATION.percentProjection;
 	uniforms.conesShape = CONFIGURATION.conesShape;
+	uniforms.curvesPosition = CONFIGURATION.curvesPosition;
 	uniforms.standardParallel1 = CONFIGURATION.standardParallel1;
 	uniforms.standardParallel2 = CONFIGURATION.standardParallel2;
 	_gpgpu.positions.updateUniforms(uniforms);

@@ -1,6 +1,7 @@
 'use strict';
 import { BufferGeometry, InterleavedBufferAttribute, InterleavedBuffer, Line, Material, DynamicDrawUsage } from 'three';
 import { CONFIGURATION } from '../common/configuration';
+import { CURVESPOSITION_ENUM } from '../definitions/project';
 import { getShader } from '../shaders';
 import { GPUComputer } from '../common/gpuComputer';
 import type { ILookupCurves } from '../definitions/project';
@@ -98,6 +99,7 @@ function computation(): void {
 	uniforms.representationEnd = CONFIGURATION.projectionEnd;
 	uniforms.percentRepresentation = CONFIGURATION.percentProjection;
 	uniforms.conesShape = CONFIGURATION.conesShape;
+	uniforms.curvesPosition = CONFIGURATION.curvesPosition;
 	uniforms.standardParallel1 = CONFIGURATION.standardParallel1;
 	uniforms.standardParallel2 = CONFIGURATION.standardParallel2;
 	uniforms.coefficient = _coefficient;
@@ -157,6 +159,11 @@ export class CurveMeshShader extends Line {
 										computation();
 										break;
 									case 'year':
+										updateYear();
+										computation();
+										break;
+									case 'curvesPosition':
+										regenerateStep();
 										updateYear();
 										computation();
 										break;

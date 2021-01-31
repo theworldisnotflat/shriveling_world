@@ -14,6 +14,7 @@ uniform int representationInit;
 uniform int representationEnd;
 uniform float percentRepresentation;
 uniform int conesShape;
+uniform int curvesPosition;
 
 #pragma glslify: displayConversions =require(./displayConversions.glsl)
 in vec2 pos;
@@ -25,6 +26,6 @@ void main() {
 
   vec3 modelPosition = displayConversions(
       cartoPosition, threeRadius, earthRadius, referenceEquiRectangular,standardParallel1,standardParallel2,
-      representationInit, representationEnd, percentRepresentation, conesShape);
+      representationInit, representationEnd, percentRepresentation, conesShape, curvesPosition);
   myOutputColor = vec4(modelPosition, 0.0);
 }

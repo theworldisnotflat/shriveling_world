@@ -146,14 +146,14 @@ vec3 transit(in vec3 pos, in float threeRadius, in float earthRadius,
   if (representationInit == representationEnd) {
     resultat =
         convertor(pos, threeRadius, earthRadius, reference, standardParallel1,
-                  standardParallel2, representationInit, conesShape);
+                  standardParallel2, representationInit, conesShape, curvesPosition);
   } else {
     vec3 initVec =
         convertor(pos, threeRadius, earthRadius, reference, standardParallel1,
-                  standardParallel2, representationInit, conesShape);
+                  standardParallel2, representationInit, conesShape, curvesPosition);
     vec3 endVec =
         convertor(pos, threeRadius, earthRadius, reference, standardParallel1,
-                  standardParallel2, representationEnd, conesShape);
+                  standardParallel2, representationEnd, conesShape, curvesPosition);
     resultat = mix(initVec, endVec, percent / 100.0);
   }
   return resultat;

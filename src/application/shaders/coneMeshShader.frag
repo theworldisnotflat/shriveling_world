@@ -23,6 +23,7 @@ uniform int representationInit;
 uniform int representationEnd;
 uniform float percentRepresentation;
 uniform int conesShape;
+uniform int curvesPosition;
 
 #pragma glslify: polar2Cartographic = require(./polar2Cartographic.glsl)
 #pragma glslify: displayConversions = require(./displayConversions.glsl)
@@ -60,7 +61,7 @@ void main() {
   vec3 modelPosition = displayConversions(
       cartoPosition, threeRadius, earthRadius, referenceEquiRectangular,
       standardParallel1, standardParallel2, representationInit,
-      representationEnd, percentRepresentation, conesShape);
+      representationEnd, percentRepresentation, conesShape, curvesPosition);
   myOutputColor = vec4(modelPosition, 0.0);
   uvs = vec4(cartoPosition.x / (2.0 * PI) + 0.5, cartoPosition.y /  PI + 0.5,
              0.0, 0.0);
@@ -68,6 +69,6 @@ void main() {
   modelPosition = displayConversions(
       cartoPosition, threeRadius, earthRadius, referenceEquiRectangular,
       standardParallel1, standardParallel2, representationInit,
-      representationEnd, percentRepresentation, conesShape);
+      representationEnd, percentRepresentation, conesShape, curvesPosition);
   base = vec4(modelPosition, 0.0);
 }
