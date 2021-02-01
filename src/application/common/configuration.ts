@@ -4,7 +4,7 @@
  */
 'use strict';
 import type { MeshBasicMaterial, LineBasicMaterial, Material } from 'three';
-import type { TextGeometryParameters } from 'three/src/geometries/TextBufferGeometry';
+import type { TextGeometryParameters } from 'three/src/geometries/TextGeometry';
 import { generateUUID } from './utils';
 import {
 	PROJECTION_ENUM,
