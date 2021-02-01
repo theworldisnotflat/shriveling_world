@@ -536,6 +536,7 @@ function networkFromCities(
 								}
 
 								alpha = edgeTranspModeSpeed.tabSpeedPerYear[year].alpha;
+								// here we add the couple (alpha, clock) for the terrestrial edge
 								coneAngles[year].alphaTab.push({ alpha, clock });
 								destinationsWithModes[destCityCode][edgeTranspModeName].push({
 									year,
@@ -605,7 +606,7 @@ function networkFromCities(
 					}
 				}
 			}
-
+			console.log(city.cityName, coneAngles);
 			// At this stage all cities have been processed
 			// It is necessary to re-order the table of clocks to generate the complex cones
 			// and inserting the result in network and insert the edgeData
