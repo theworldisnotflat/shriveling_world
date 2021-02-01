@@ -323,7 +323,8 @@ export type configurationObservableEvt =
 	| 'year'
 	| 'tick'
 	| 'conesShape'
-	| 'modeSelected';
+	| 'modeSelected'
+	| 'curvesPosition';
 
 export type configurationCallback = (name: configurationObservableEvt, value: unknown) => void;
 export type ShaderTypes = 'fragment' | 'vertex';

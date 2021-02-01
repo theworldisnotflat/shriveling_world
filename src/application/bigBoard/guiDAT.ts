@@ -188,7 +188,7 @@ export class GUI {
 						function curveListener(): void {
 							const opacity = <number>curveOpacity.getValue();
 							const color = Number.parseInt(curveColor.getValue().replace('#', ''), 16);
-							const transpModeSelected = <boolean>modeSelected.getValue();
+							//const transpModeSelected = <boolean>modeSelected.getValue();
 							bigBoard.coneBoard.curveCollection
 								.filter((curve) => transportName === curve.transportName)
 								.forEach((curve) => {
@@ -202,11 +202,17 @@ export class GUI {
 						curveColor.onChange(curveListener);
 						const curveOpacity = folder.add(conf, 'curve transparency', 0, 1, 0.01).name('transparency');
 						curveOpacity.onChange(curveListener);
-						const modeSelected = folder.add(conf, 'modeSelected').onChange((value: boolean) => {
-							conf['transport mode selected'] = value;
+						const modeSelected = folder.add(conf, 'transport mode selected').onChange((value: boolean) => {
+							conf['modeSelected'] = value;
 						});
-						modeSelected.onChange(curveListener);
-						const curvesPosition = folder.add(conf, '');
+						//modeSelected.onChange(curveListener);
+						const curvesPosition = folder
+							.add(CONFIGURATION, 'curvesPosition', conf.curvesPosition)
+							.name('curves position')
+							.onChange((value: CURVESPOSITION_ENUM) => {
+								CONFIGURATION.curvesPosition = value;
+							});
+						//curvesPosition.onChange(curveListener);
 					});
 					// Adding terrestrial networks
 					console.log('Adding terrestrial network');
@@ -217,7 +223,7 @@ export class GUI {
 						function curveListener(): void {
 							const opacity = <number>curveOpacity.getValue();
 							const color = Number.parseInt(curveColor.getValue().replace('#', ''), 16);
-							const transpModeSelected = <boolean>modeSelected.getValue();
+							//const transpModeSelected = <boolean>modeSelected.getValue();
 
 							bigBoard.coneBoard.curveCollection
 								.filter((curve) => transportName === curve.transportName)
@@ -232,10 +238,17 @@ export class GUI {
 						curveColor.onChange(curveListener);
 						const curveOpacity = folder.add(conf, 'curve transparency', 0, 1, 0.01).name('transparency');
 						curveOpacity.onChange(curveListener);
-						const modeSelected = folder.add(conf, 'modeSelected').onChange((value: boolean) => {
-							conf['transport mode selected'] = value;
+						const modeSelected = folder.add(conf, 'transport mode selected').onChange((value: boolean) => {
+							conf['modeSelected'] = value;
 						});
-						modeSelected.onChange(curveListener);
+						//modeSelected.onChange(curveListener);
+						const curvesPosition = folder
+							.add(CONFIGURATION, 'curvesPosition', conf.curvesPosition)
+							.name('curves position')
+							.onChange((value: CURVESPOSITION_ENUM) => {
+								CONFIGURATION.curvesPosition = value;
+							});
+						//curvesPosition.onChange(curveListener);
 					});
 				}
 
