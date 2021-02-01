@@ -1,7 +1,6 @@
 'use strict';
 import {
 	BufferGeometry,
-	Geometry,
 	InterleavedBufferAttribute,
 	BufferAttribute,
 	InterleavedBuffer,
@@ -497,9 +496,7 @@ export class ConeMeshShader extends PseudoCone {
 	 * [[setGeometry]]
 	 */
 	public setGeometry(positions: Float32Array, uv: Float32Array): void {
-		const geometry = <Geometry>this.geometry;
-		geometry.computeFaceNormals();
-		const bufferedGeometry = <BufferGeometry>this.geometry;
+		const bufferedGeometry = this.geometry;
 		let interleavedBuffer = (<InterleavedBufferAttribute>bufferedGeometry.getAttribute('position')).data;
 		interleavedBuffer.set(positions, 0);
 		interleavedBuffer.needsUpdate = true;
