@@ -206,12 +206,12 @@ export class GUI {
 							conf['modeSelected'] = value;
 						});
 						//modeSelected.onChange(curveListener);
-						const curvesPosition = folder
-							.add(CONFIGURATION, 'curvesPosition', conf.curvesPosition)
-							.name('curves position')
-							.onChange((value: CURVESPOSITION_ENUM) => {
-								CONFIGURATION.curvesPosition = value;
-							});
+						// const curvesPosition = folder
+						// 	.add(CONFIGURATION, 'curvesPosition', conf.curvesPosition)
+						// 	.name('curves position')
+						// 	.onChange((value: CURVESPOSITION_ENUM) => {
+						// 		CONFIGURATION.curvesPosition = value;
+						// 	});
 						//curvesPosition.onChange(curveListener);
 					});
 					// Adding terrestrial networks
@@ -245,6 +245,11 @@ export class GUI {
 							.onChange((value: CURVESPOSITION_ENUM) => {
 								CONFIGURATION.curvesPosition = value;
 							});
+						const pointsPerCurveMode = folder
+							.add(CONFIGURATION, 'pointsPerCurve', 0, 200)
+							.step(1)
+							.name('number of points');
+						pointsPerCurveMode.onChange(curveListener);
 					});
 				}
 
