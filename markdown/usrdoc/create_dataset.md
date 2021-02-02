@@ -163,7 +163,7 @@ Column name | Type | Mandatory | Comments
 ----------|----------|-------------|-------------
 _name_|string|yes|mode name
 _code_|number|yes|unique id of the transport mode
-_terrestrial_|number 0 (no) or 1 (yes)|yes|A terrestrial mode will be offered several [options concerning their associated graphical curves](marks/usrdoc/basic_usage-tutorial); a non terrestrial curve will be [subject to thresholds in speed](marks/usrdoc/aerial_speed_threshold)
+_terrestrial_|number 0 (no) or 1 (yes)|yes|A terrestrial mode will be offered several [options concerning their associated graphical curves](marks/usrdoc/basic_usage_tutorial); a non terrestrial curve will be [subject to thresholds in speed](marks/usrdoc/aerial_speed_threshold)
 
 ### Transport mode speed file
 A given transport mode may experience an increase of speed over time, e.g. the five acceleration phases of China classical railways (non High Speed Rail) between 1997 and 2004
