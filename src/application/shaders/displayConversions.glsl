@@ -117,8 +117,7 @@ vec3 winkel(in vec3 pos, in float threeRadius, in float earthRadius,
 
 vec3 convertor(in vec3 pos, in float threeRadius, in float earthRadius,
                in vec3 reference, in float standardParallel1,
-               in float standardParallel2, int representation,
-               in int conesShape, in int curvesPosition) {
+               in float standardParallel2, int representation) {
   vec3 resultat;
   if (representation == 0) {
     resultat = noRepresentation(pos, threeRadius, earthRadius);
@@ -142,20 +141,19 @@ vec3 convertor(in vec3 pos, in float threeRadius, in float earthRadius,
 vec3 transit(in vec3 pos, in float threeRadius, in float earthRadius,
              in vec3 reference, in float standardParallel1,
              in float standardParallel2, in int representationInit,
-             in int representationEnd, in float percent,
-             in int conesShape, in int curvesPosition) {
+             in int representationEnd, in float percent) {
   vec3 resultat;
   if (representationInit == representationEnd) {
     resultat =
         convertor(pos, threeRadius, earthRadius, reference, standardParallel1,
-                  standardParallel2, representationInit, conesShape, curvesPosition);
+                  standardParallel2, representationInit);
   } else {
     vec3 initVec =
         convertor(pos, threeRadius, earthRadius, reference, standardParallel1,
-                  standardParallel2, representationInit, conesShape, curvesPosition);
+                  standardParallel2, representationInit);
     vec3 endVec =
         convertor(pos, threeRadius, earthRadius, reference, standardParallel1,
-                  standardParallel2, representationEnd, conesShape, curvesPosition);
+                  standardParallel2, representationEnd);
     resultat = mix(initVec, endVec, percent / 100.0);
   }
   return resultat;

@@ -39,7 +39,7 @@ let _THREE_EARTH_RADIUS = 0;
 let _projectionInit: PROJECTION_ENUM = PROJECTION_ENUM.none;
 let _projectionEnd: PROJECTION_ENUM = PROJECTION_ENUM.none;
 let _conesShape: CONESSHAPE_ENUM = CONESSHAPE_ENUM.basedOnRoad;
-let _modeSelected: boolean;
+let _modeSelected = true;
 let _curvesPosition: CURVESPOSITION_ENUM = CURVESPOSITION_ENUM.above;
 let _projectionPercent = 0;
 let _year: string | number = 1980;

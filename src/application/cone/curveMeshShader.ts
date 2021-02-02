@@ -1,10 +1,9 @@
 'use strict';
 import { BufferGeometry, InterleavedBufferAttribute, InterleavedBuffer, Line, Material, DynamicDrawUsage } from 'three';
 import { CONFIGURATION } from '../common/configuration';
-import { CURVESPOSITION_ENUM } from '../definitions/project';
 import { getShader } from '../shaders';
 import { GPUComputer } from '../common/gpuComputer';
-import type { ILookupCurves } from '../definitions/project';
+import type { ILookupCurves, CURVESPOSITION_ENUM } from '../definitions/project';
 
 let _curves: CurveMeshShader[];
 
@@ -32,7 +31,7 @@ fullCleanArrays();
 /**
  *
  * formulas of the height of links function of '[[theta]]' and '[[ratio]]'
- * * '[[speedRatio]]' is computed in function '[[getSpeedRatio]]' in file [[bigBoard/merger.ts]]
+ * * '[[speedRatio]]' is computed in function '[[getSpeedRatio]]' in file [merger.ts](bigBoard/merger.ts)
  * * '[[speedRatio]]' is computed with [two formulas](https://timespace.hypotheses.org/121)
  * depending on '[[theta]]' compared with '[[thetaLimit]]'
  *
@@ -43,7 +42,7 @@ fullCleanArrays();
  * @param speedRatio
  * @param theta
  */
-function getHeight(speedRatio: number, theta: number): number {
+function getCurveHeight(speedRatio: number, theta: number, curvesPosition: CURVESPOSITION_ENUM): number {
 	const semiTheta = theta / 2;
 	const sinSemiTheta = Math.sin(semiTheta);
 	const cosSemiTheta = Math.cos(semiTheta);
@@ -52,7 +51,12 @@ function getHeight(speedRatio: number, theta: number): number {
 	// The equation of length om'
 	const result = (cosSemiTheta + secondTerm + thirdTerm) * CONFIGURATION.earthRadiusMeters * _coefficient;
 	// Minus earth radius to compute cm'
-	return result - CONFIGURATION.earthRadiusMeters;
+	switch (curvesPosition) {
+		case 0: // above the surface of the earth
+			return result - CONFIGURATION.earthRadiusMeters;
+		case 1: // below
+			return -(result - CONFIGURATION.earthRadiusMeters);
+	}
 }
 
 /**
@@ -274,7 +278,11 @@ export class CurveMeshShader extends Line {
 		_coefficient = value;
 		for (let i = 0; i < _height; i++) {
 			const curve = _curves[i];
-			_heightTab[i] = getHeight(curve._speedRatio, curve.theta);
+			let curvePosition = 0;
+			if (curve._transportName === 'Train') {
+				curvePosition = 1;
+			}
+			_heightTab[i] = getCurveHeight(curve._speedRatio, curve.theta, curvePosition);
 		}
 
 		computation();
@@ -313,7 +321,11 @@ export class CurveMeshShader extends Line {
 		if (result) {
 			this._speedRatio = speedRatio;
 			const index = _curves.indexOf(this);
-			_heightTab[index] = getHeight(this._speedRatio, this.theta);
+			let curvePosition = 0;
+			if (this._transportName === 'Train') {
+				curvePosition = 1;
+			}
+			_heightTab[index] = getCurveHeight(this._speedRatio, this.theta, curvePosition);
 		}
 
 		return result;

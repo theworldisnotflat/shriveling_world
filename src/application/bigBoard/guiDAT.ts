@@ -215,7 +215,6 @@ export class GUI {
 						//curvesPosition.onChange(curveListener);
 					});
 					// Adding terrestrial networks
-					console.log('Adding terrestrial network');
 					this._merger.transportNames.cones.forEach((transportName) => {
 						const folder = terrestrialFolder.addFolder(transportName);
 						terrestrialControllersList.push(folder);
@@ -223,7 +222,6 @@ export class GUI {
 						function curveListener(): void {
 							const opacity = <number>curveOpacity.getValue();
 							const color = Number.parseInt(curveColor.getValue().replace('#', ''), 16);
-							//const transpModeSelected = <boolean>modeSelected.getValue();
 
 							bigBoard.coneBoard.curveCollection
 								.filter((curve) => transportName === curve.transportName)
@@ -241,14 +239,12 @@ export class GUI {
 						const modeSelected = folder.add(conf, 'transport mode selected').onChange((value: boolean) => {
 							conf['modeSelected'] = value;
 						});
-						//modeSelected.onChange(curveListener);
 						const curvesPosition = folder
 							.add(CONFIGURATION, 'curvesPosition', conf.curvesPosition)
 							.name('curves position')
 							.onChange((value: CURVESPOSITION_ENUM) => {
 								CONFIGURATION.curvesPosition = value;
 							});
-						//curvesPosition.onChange(curveListener);
 					});
 				}
 
