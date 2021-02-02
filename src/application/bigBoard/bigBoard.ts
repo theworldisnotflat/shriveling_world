@@ -627,61 +627,69 @@ export default class BigBoard {
 	}
 
 	public addLegend() {
+		let ctx;
 		// Adding Legend
-		const divs = document.querySelectorAll('.legend');
-		Array.from(divs).forEach((div) => div.remove());
-		const legend = document.createElement('canvas');
-		legend.id = 'legendID';
-		legend.className = 'legend';
-		const styleLegend = legend.style;
-		styleLegend.font = '14px/32px Arial, Halvetica, sans-serif';
-		styleLegend.zIndex = '1000';
-		styleLegend.position = 'absolute';
-		styleLegend.bottom = '3%';
-		styleLegend.right = '2%';
-		styleLegend.width = '100px';
-		styleLegend.height = '100px';
-		document.body.append(legend);
-		const ctx = legend.getContext('2d');
-		/** Const width = legend.width;
-		const height = legend.height;
-		console.log(ctx, width, height); */
+		if (!document.getElementById('legendID')) {
+			//const divs = document.querySelectorAll('.legend');
+			//Array.from(divs).forEach((div) => div.remove());
+			console.log('create legend ! ');
+			const legend = document.createElement('canvas');
+			console.log(legend);
+			legend.id = 'legendID';
+			legend.className = 'legend';
+			const styleLegend = legend.style;
+			styleLegend.font = '14px/32px Arial, Halvetica, sans-serif';
+			styleLegend.zIndex = '1000';
+			styleLegend.position = 'absolute';
+			styleLegend.bottom = '3%';
+			styleLegend.right = '2%';
+			styleLegend.width = '100px';
+			styleLegend.height = '100px';
+			document.body.append(legend);
+			ctx = legend.getContext('2d');
+			const move = new Moveable(document.body, {
+				target: document.getElementById('legendID'),
+				draggable: true,
+				scalable: true,
+				resizable: true,
+				keepRatio: true,
+				rotatable: true,
+			});
+			move.on('drag', ({ target, transform }) => {
+				target.style.transform = transform;
+			});
+			move.on('resize', ({ target, width, height }) => {
+				target.style.width = width + 'px';
+				target.style.height = height + 'px';
+			});
+			move.on('rotate', ({ target, transform }) => {
+				target.style.transform = transform;
+			});
+		} else {
+			console.log('div already exist !');
+			ctx = (<HTMLCanvasElement>document.getElementById('legendID')).getContext('2d');
+			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Clears the canvas
+		}
 		ctx.beginPath();
 		ctx.moveTo(0, 1);
 		ctx.lineTo(300, 1);
 		ctx.lineTo(150, 150);
+		//ctx.strokeStyle = '#' + (0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6);
 		ctx.strokeStyle = '#0000FF';
 		ctx.lineWidth = 3;
 		ctx.closePath();
 		ctx.stroke();
-		const move = new Moveable(document.body, {
-			target: document.getElementById('legendID'),
-			draggable: true,
-			scalable: true,
-			resizable: true,
-			keepRatio: true,
-			rotatable: true,
-		});
-		move.on('drag', ({ target, transform }) => {
-			target.style.transform = transform;
-		});
-		move.on('resize', ({ target, width, height }) => {
-			target.style.width = width + 'px';
-			target.style.height = height + 'px';
-		});
-		move.on('rotate', ({ target, transform }) => {
-			target.style.transform = transform;
-		});
+
 		let title = '';
 		Object.keys(this._merger.codeSpeedPerYear).forEach((el) => {
 			console.log(el);
-			title += el + ' : ' + this._merger.codeSpeedPerYear[el] + ' Kph ' + '\n';
+			title += el + ' : ' + this._merger.codeSpeedPerYear[el].speed + ' Kph ' + '\n';
 		});
 
-		legend.addEventListener(
+		document.getElementById('legendID').addEventListener(
 			'mouseover',
 			function () {
-				legend.title = title;
+				document.getElementById('legendID').title = title;
 			},
 			false
 		);
