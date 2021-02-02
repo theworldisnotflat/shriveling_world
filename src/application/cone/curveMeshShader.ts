@@ -13,7 +13,7 @@ let _ready = false;
 let _width: number;
 let _height: number;
 // Should be 1 for testing purposes
-// affects the value of the height of edges
+// affects the value of the height of curves
 let _coefficient = 1;
 
 const _gpgpu: { [x: string]: GPUComputer } = {};
@@ -29,8 +29,7 @@ function fullCleanArrays(): void {
 fullCleanArrays();
 
 /**
- *
- * formulas of the height of links function of '[[theta]]' and '[[ratio]]'
+ * Retrieves the height of curves function of '[[theta]]' and '[[ratio]]'
  * * '[[speedRatio]]' is computed in function '[[getSpeedRatio]]' in file [merger.ts](bigBoard/merger.ts)
  * * '[[speedRatio]]' is computed with [two formulas](https://timespace.hypotheses.org/121)
  * depending on '[[theta]]' compared with '[[thetaLimit]]'
@@ -60,11 +59,10 @@ function getCurveHeight(speedRatio: number, theta: number, curvesPosition: CURVE
 }
 
 /**
- * xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
- *
- * xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ * regenerate curves based on the UI chosen
+ * [[pointsPerCurve]] parameter
  */
-function regenerateCurves(): void {
+function regenerateCurvesGeometry(): void {
 	const step = 1 / CONFIGURATION.pointsPerCurve;
 	const t: number[] = [];
 	for (let i = 0; i < 1; i += step) {
@@ -81,16 +79,17 @@ function regenerateCurves(): void {
 }
 
 /**
- * * Remove curves from view if [[speedRatioIsAvailable]]
- * based on the reference [[year]]
- * * Calling function [[speedRatioIsAvailable]] will
- * compute curves height
+ * * Update curves geometry and remove curves from view
+ * if [[computeCurveHeightAndTestIfAvailable]] based on
+ * the reference [[year]]
+ * * Function [[computeCurveHeightAndTestIfAvailable]] will
+ * also compute curves height
  */
-function updateYear(): void {
+function updateCurvesYear(): void {
 	const year = CONFIGURATION.year;
 	curvesDonTDisplay = [];
 	for (let i = 0; i < _height; i++) {
-		if (!_curves[i].speedRatioIsAvailable(year)) {
+		if (!_curves[i].computeCurveHeightAndTestIfAvailable(year)) {
 			curvesDonTDisplay.push(_curves[i]);
 		}
 	}
@@ -166,17 +165,17 @@ export class CurveMeshShader extends Line {
 								switch (name) {
 									case 'pointsPerCurve':
 										_t = new Float32Array(0);
-										regenerateCurves();
-										updateYear();
+										regenerateCurvesGeometry();
+										updateCurvesYear();
 										computation();
 										break;
 									case 'year':
-										updateYear();
+										updateCurvesYear();
 										computation();
 										break;
 									case 'curvesPosition':
-										regenerateCurves();
-										updateYear();
+										regenerateCurvesGeometry();
+										updateCurvesYear();
 										computation();
 										break;
 									default:
@@ -240,8 +239,8 @@ export class CurveMeshShader extends Line {
 			u_PControls3: { src: new Float32Array(pControls3), width: 1, height: _height },
 		};
 		_gpgpu.positions.updateTextures(options);
-		regenerateCurves();
-		updateYear();
+		regenerateCurvesGeometry();
+		updateCurvesYear();
 		computation();
 		_ready = true;
 		return [..._curves];
@@ -288,6 +287,7 @@ export class CurveMeshShader extends Line {
 			const curve = _curves[i];
 			let curvePosition = 0;
 			if (curve._transportName === 'Train') {
+				// temporary
 				curvePosition = 1;
 			}
 			_heightTab[i] = getCurveHeight(curve._speedRatio, curve.theta, curvePosition);
@@ -322,12 +322,11 @@ export class CurveMeshShader extends Line {
 		}
 	}
 
-	// Sets the height of edges
 	/**
 	 * Checks is speedRatio is available for the current year
 	 * and if yes call computation of curves height
 	 */
-	public speedRatioIsAvailable(year: string | number): boolean {
+	public computeCurveHeightAndTestIfAvailable(year: string | number): boolean {
 		const speedRatio = this._years[year];
 		const result = speedRatio !== undefined;
 		if (result) {
