@@ -39,7 +39,10 @@ import * as FileSaver from 'file-saver';
 import { ConeBoard } from '../cone/coneBoard';
 
 interface ICodeSpeedPerYear {
-	[code: string]: number;
+	[code: string]: {
+		speed: number;
+		alpha?: number;
+	};
 }
 let codeSpeedPerYear: ICodeSpeedPerYear = {};
 /**
@@ -376,27 +379,10 @@ function networkFromCities(
 			terrestrial: transpMode.terrestrial,
 		};
 	});
-	codeSpeedPerYear = {};
-	Object.keys(speedPerTransportPerYear).forEach((key) => {
-		let isExist = false;
-		console.log(speedPerTransportPerYear[key]);
-		Object.keys(speedPerTransportPerYear[key].tabSpeedPerYear).forEach((elem) => {
-			if (elem == CONFIGURATION.year) {
-				isExist = true;
-				codeSpeedPerYear[speedPerTransportPerYear[key].name] =
-					speedPerTransportPerYear[key].tabSpeedPerYear[CONFIGURATION.year].speed;
-				console.log(speedPerTransportPerYear[key].name);
-				console.log(speedPerTransportPerYear[key].tabSpeedPerYear[CONFIGURATION.year].speed);
-			}
-		});
-		console.log(isExist);
-	});
-	console.log(codeSpeedPerYear);
 	// Balayer speedPerTransportPerYear pour chaque mode de transport terrestre
 	// et compléter avec l'angle de la pente alpha en accord avec l'équation 1!
 	_firstYear = firstYear;
 	_lastYear = lastYear;
-
 	// for each transport mode, for each year determine [alpha]
 	// using maximumSpeed and mode Speed based on [equation 1](http://bit.ly/2tLfehC)
 	for (const transportCode in speedPerTransportPerYear) {
@@ -413,6 +399,7 @@ function networkFromCities(
 				tabSpeedPerYear[year].alpha = alpha;
 			}
 		}
+		console.log(tabSpedPerYear[CONFIGURATION.year]);
 	}
 	// Faire lookup des latLonH/referential par cityCode. OK
 	const lookupPosition: { [cityCode: string]: NEDLocal } = {};
@@ -421,6 +408,25 @@ function networkFromCities(
 		const position = new LatLonH(city.longitude, city.latitude, 0, false);
 		lookupPosition[city.cityCode] = new NEDLocal(position);
 	});
+	codeSpeedPerYear = {};
+	Object.keys(speedPerTransportPerYear).forEach((key) => {
+		let isExist = false;
+		console.log(speedPerTransportPerYear[key]);
+		Object.keys(speedPerTransportPerYear[key].tabSpeedPerYear).forEach((elem) => {
+			if (elem == CONFIGURATION.year) {
+				isExist = true;
+				const speed = speedPerTransportPerYear[key].tabSpeedPerYear[CONFIGURATION.year].speed;
+				const alpha = speedPerTransportPerYear[key].tabSpeedPerYear[CONFIGURATION.year].alpha;
+				codeSpeedPerYear[speedPerTransportPerYear[key].name] = { speed, alpha };
+				//codeSpeedPerYear[speedPerTransportPerYear[key].name].speed =
+				//	speedPerTransportPerYear[key].tabSpeedPerYear[CONFIGURATION.year].speed;
+				//console.log(speedPerTransportPerYear[key].name);
+				//console.log(speedPerTransportPerYear[key].tabSpeedPerYear[CONFIGURATION.year].speed);
+			}
+		});
+		console.log(isExist);
+	});
+	console.log(codeSpeedPerYear);
 	/**
 	 *
 	 * Function putting in cache the unit triangles (clock) of the cone
