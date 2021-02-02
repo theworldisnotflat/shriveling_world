@@ -105,7 +105,7 @@ export class ConeBoard {
 				this._renderer.render(this._scene, this._camera);
 			});
 		});
-		void CurveMeshShader.generateCones(lookup.curvesData).then((curves) => {
+		void CurveMeshShader.generateCurves(lookup.curvesData).then((curves) => {
 			curves.forEach((curve) => {
 				this.curveCollection.push(curve);
 				curve.visible = this._show;

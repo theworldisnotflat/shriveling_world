@@ -60,11 +60,11 @@ function getCurveHeight(speedRatio: number, theta: number, curvesPosition: CURVE
 }
 
 /**
- * Step is the number of facets forming the cones, default value is 15
+ * xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
  *
- * higher values will consume processor load
+ * xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
  */
-function regenerateStep(): void {
+function regenerateCurves(): void {
 	const step = 1 / CONFIGURATION.pointsPerCurve;
 	const t: number[] = [];
 	for (let i = 0; i < 1; i += step) {
@@ -81,13 +81,16 @@ function regenerateStep(): void {
 }
 
 /**
- * Update curves height based on the reference year
+ * * Remove curves from view if [[speedRatioIsAvailable]]
+ * based on the reference [[year]]
+ * * Calling function [[speedRatioIsAvailable]] will
+ * compute curves height
  */
 function updateYear(): void {
 	const year = CONFIGURATION.year;
 	curvesDonTDisplay = [];
 	for (let i = 0; i < _height; i++) {
-		if (!_curves[i].isAvailable(year)) {
+		if (!_curves[i].speedRatioIsAvailable(year)) {
 			curvesDonTDisplay.push(_curves[i]);
 		}
 	}
@@ -127,7 +130,12 @@ export class CurveMeshShader extends Line {
 	private readonly _transportName: string;
 	private _speedRatio: number;
 
-	public static async generateCones(lookup: ILookupCurves): Promise<CurveMeshShader[]> {
+	/**
+	 * Will [[generateCurves]] according to the UI
+	 * parameters
+	 * @param lookup
+	 */
+	public static async generateCurves(lookup: ILookupCurves): Promise<CurveMeshShader[]> {
 		_ready = false;
 		_curves = [];
 		fullCleanArrays();
@@ -158,7 +166,7 @@ export class CurveMeshShader extends Line {
 								switch (name) {
 									case 'pointsPerCurve':
 										_t = new Float32Array(0);
-										regenerateStep();
+										regenerateCurves();
 										updateYear();
 										computation();
 										break;
@@ -167,7 +175,7 @@ export class CurveMeshShader extends Line {
 										computation();
 										break;
 									case 'curvesPosition':
-										regenerateStep();
+										regenerateCurves();
 										updateYear();
 										computation();
 										break;
@@ -232,7 +240,7 @@ export class CurveMeshShader extends Line {
 			u_PControls3: { src: new Float32Array(pControls3), width: 1, height: _height },
 		};
 		_gpgpu.positions.updateTextures(options);
-		regenerateStep();
+		regenerateCurves();
 		updateYear();
 		computation();
 		_ready = true;
@@ -315,15 +323,19 @@ export class CurveMeshShader extends Line {
 	}
 
 	// Sets the height of edges
-	public isAvailable(year: string | number): boolean {
+	/**
+	 * Checks is speedRatio is available for the current year
+	 * and if yes call computation of curves height
+	 */
+	public speedRatioIsAvailable(year: string | number): boolean {
 		const speedRatio = this._years[year];
 		const result = speedRatio !== undefined;
 		if (result) {
 			this._speedRatio = speedRatio;
 			const index = _curves.indexOf(this);
-			let curvePosition = 0;
+			let curvePosition = 0; // above
 			if (this._transportName === 'Train') {
-				curvePosition = 1;
+				curvePosition = 1; // below
 			}
 			_heightTab[index] = getCurveHeight(this._speedRatio, this.theta, curvePosition);
 		}
