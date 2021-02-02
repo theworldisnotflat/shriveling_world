@@ -163,6 +163,7 @@ Column name | Type | Mandatory | Comments
 ----------|----------|-------------|-------------
 _name_|string|yes|mode name
 _code_|number|yes|unique id of the transport mode
+_terrestrial_|number 0 (no) or 1 (yes)|yes|A terrestrial mode will be offered several [options concerning their associated graphical curves](marks/usrdoc/basic_usage-tutorial); a non terrestrial curve will be [subject to thresholds in speed](marks/usrdoc/aerial_speed_threshold)
 
 ### Transport mode speed file
 A given transport mode may experience an increase of speed over time, e.g. the five acceleration phases of China classical railways (non High Speed Rail) between 1997 and 2004
@@ -174,6 +175,6 @@ _speedKPH_|number|yes|commercial average speed on the transport network
 
 ### GEOJSON file
 
-The GEOJSON file is needed to cut the cones at the limits of the shores or at the limits of a country or region. 
+The GEOJSON file is needed to cut the cones at the limits of the shores or at the limits of a country or region.
 
 __CAUTION__: for an unknown reason the GEOJSON file may crash the app; as a workaround use the provided world geojson file.

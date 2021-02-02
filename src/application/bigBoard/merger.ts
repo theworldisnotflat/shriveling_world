@@ -985,7 +985,7 @@ function haversine(lat1: number, lon1: number, lat2: number, lon2: number) {
 	return d;
 }
 /**
- * The function determines the [[historicalTimeSpan]]
+ * The function determines the [[historicalTimeSpan]] of the model
  * based on data found in the input files:
  * * [[transportMode]]
  * * [[transpNetwork]]
@@ -1082,6 +1082,6 @@ function historicalTimeSpan(
 			if (transpMode.yearEnd < lastYear) lastYear = transpMode.yearEnd;
 		}
 	});
-	console.log('time span', firstYear, lastYear, transportMode);
+	console.log('historical time span:', firstYear, lastYear, transportMode);
 	return { firstYear, lastYear };
 }

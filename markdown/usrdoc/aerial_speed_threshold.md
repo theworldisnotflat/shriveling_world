@@ -1,0 +1,1 @@
+to be developed: the aerial speed threshold

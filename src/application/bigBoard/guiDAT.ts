@@ -202,6 +202,7 @@ export class GUI {
 						curveColor.onChange(curveListener);
 						const curveOpacity = folder.add(conf, 'curve transparency', 0, 1, 0.01).name('transparency');
 						curveOpacity.onChange(curveListener);
+						//  if (transportName!==CONFIGURATION.roadCode)  // todo (issue #135)
 						const modeSelected = folder.add(conf, 'transport mode selected').onChange((value: boolean) => {
 							conf['modeSelected'] = value;
 						});
