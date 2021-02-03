@@ -5,7 +5,7 @@ The word _shriveling_ was introduced by Waldo Tobler in his comments of Mathis-L
 
 The [scientific blog](https://timespace.hypotheses.org/) contains principles, reflections, references and images related to the project.
 
-Access the [website with app and documentation here](https://theworldisnotflat.github.io/shriveling_world/marks/index).
+Access the [website with __app__ and documentation here](https://theworldisnotflat.github.io/shriveling_world/marks/index).
 
 As an open science initiative the project follows the [GNU General Public License v3.0](https://github.com/theworldisnotflat/shriveling_world/blob/master/LICENSE) rules.
 
