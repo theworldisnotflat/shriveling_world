@@ -670,10 +670,16 @@ export default class BigBoard {
 			ctx = (<HTMLCanvasElement>document.getElementById('legendID')).getContext('2d');
 			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Clears the canvas
 		}
+		const height = 150 * Math.tan(this._merger.codeSpeedPerYear['Road'].alpha);
+		console.log(this._merger.codeSpeedPerYear['Road'].alpha);
+		console.log(height);
+		//ctx.beginPath();
 		ctx.beginPath();
-		ctx.moveTo(0, 1);
-		ctx.lineTo(300, 1);
+		ctx.moveTo(0, 0);
+		ctx.lineTo(300, 0);
 		ctx.lineTo(150, 150);
+		ctx.closePath();
+		//ctx.lineTo(150, height);
 		//ctx.strokeStyle = '#' + (0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6);
 		ctx.strokeStyle = '#0000FF';
 		ctx.lineWidth = 3;
