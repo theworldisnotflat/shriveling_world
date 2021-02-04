@@ -230,7 +230,8 @@ export class GUI {
 									const material = <LineBasicMaterial>curve.material;
 									material.color.setHex(color);
 									material.opacity = opacity;
-									curve.curvePosition = curvesPosition;
+									curve.curvePosition = <CURVESPOSITION_ENUM>curvesPosition.getValue();
+									curve.pointsPerCurve = <number>pointsPerCurveMode.getValue();
 								});
 						}
 
@@ -243,10 +244,10 @@ export class GUI {
 						});
 						const curvesPosition = folder
 							.add(CONFIGURATION, 'curvesPosition', conf.curvesPosition)
-							.name('curves position')
-							.onChange((value: CURVESPOSITION_ENUM) => {
-								CONFIGURATION.curvesPosition = value;
-							});
+							.name('curves position');
+						// .onChange((value: CURVESPOSITION_ENUM) => {
+						// 	CONFIGURATION.curvesPosition = value;
+						// });
 						curvesPosition.onChange(curveListener);
 						const pointsPerCurveMode = folder
 							.add(CONFIGURATION, 'pointsPerCurve', 0, 200)

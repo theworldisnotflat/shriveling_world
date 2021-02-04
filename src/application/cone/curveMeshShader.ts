@@ -212,19 +212,18 @@ export class CurveMeshShader extends Line {
 						for (const transportName in endPoint.speedRatio) {
 							if (endPoint.speedRatio.hasOwnProperty(transportName)) {
 								const ratios = endPoint.speedRatio[transportName];
-								const curvePosition = 0; // connecting to mode data
-								const pointsPerCurve = 50; // connecting to mode data
-								_curves.push(
-									new CurveMeshShader(
-										begin.cityCode,
-										endPoint.end.cityCode,
-										endPoint.theta,
-										ratios,
-										transportName,
-										curvePosition,
-										pointsPerCurve
-									)
-								);
+								this._curves // const pointsPerCurve = 50; // connecting to mode data // const curvePosition: CURVESPOSITION_ENUM =0; // connecting to mode data
+									.push(
+										new CurveMeshShader(
+											begin.cityCode,
+											endPoint.end.cityCode,
+											endPoint.theta,
+											ratios,
+											transportName,
+											curvePosition,
+											pointsPerCurve
+										)
+									);
 								pControls0.push(...beginGLSL);
 								pControls1.push(...pointPGLSL);
 								pControls2.push(...pointQGLSL);
@@ -323,10 +322,17 @@ export class CurveMeshShader extends Line {
 		return this._curvePosition;
 	}
 
+	public set curvePosition(value: CURVESPOSITION_ENUM) {
+		this._curvePosition = value;
+	}
+
 	public get pointsPerCurve(): number {
 		return this._pointsPerCurve;
 	}
 
+	public set pointsPerCurve(value: number) {
+		this._pointsPerCurve = value;
+	}
 	public setGeometry(positions: Float32Array): void {
 		const bufferedGeometry = <BufferGeometry>this.geometry;
 		if (curvesDonTDisplay.includes(this)) {
@@ -350,10 +356,11 @@ export class CurveMeshShader extends Line {
 		if (result) {
 			this._speedRatio = speedRatio;
 			const index = _curves.indexOf(this);
-			let curvePosition = 0; // above
-			if (this._transportName === 'Train') {
-				curvePosition = 1; // below
-			}
+			const curvePosition = _curves[index].curvePosition;
+			// curvePosition = 0; // above
+			// if (this._transportName === 'Train') {
+			// 	curvePosition = 1; // below
+			// }
 			_heightTab[index] = getCurveHeight(this._speedRatio, this.theta, curvePosition);
 		}
 
