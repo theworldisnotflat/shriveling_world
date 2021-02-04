@@ -627,7 +627,7 @@ function networkFromCities(
 			};
 			if (Object.keys(listOfCurves).length > 0) {
 				// Retrieves edges info from origCityCode for curves generation
-				curvesData[origCityCode] = { begin: startPoint, list: listOfCurves };
+				curvesData[origCityCode] = { begin: startPoint, curveList: listOfCurves };
 			}
 		}
 	});

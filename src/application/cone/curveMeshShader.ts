@@ -127,6 +127,8 @@ export class CurveMeshShader extends Line {
 	private readonly theta: number;
 	private readonly _years: { [year: string]: number };
 	private readonly _transportName: string;
+	private _curvePosition: CURVESPOSITION_ENUM;
+	private _pointsPerCurve: number;
 	private _speedRatio: number;
 
 	/**
@@ -199,24 +201,28 @@ export class CurveMeshShader extends Line {
 		for (const cityCodeBegin in lookup) {
 			if (lookup.hasOwnProperty(cityCodeBegin)) {
 				const begin = lookup[cityCodeBegin].begin;
-				const list = lookup[cityCodeBegin].list;
+				const curveList = lookup[cityCodeBegin].curveList;
 				const beginGLSL = begin.position.toThreeGLSL();
-				for (const cityCodeEnd in list) {
-					if (list.hasOwnProperty(cityCodeEnd)) {
-						const endPoint = list[cityCodeEnd];
+				for (const cityCodeEnd in curveList) {
+					if (curveList.hasOwnProperty(cityCodeEnd)) {
+						const endPoint = curveList[cityCodeEnd];
 						const pointPGLSL = endPoint.pointP.toThreeGLSL();
 						const pointQGLSL = endPoint.pointQ.toThreeGLSL();
 						const endGLSL = endPoint.end.position.toThreeGLSL();
 						for (const transportName in endPoint.speedRatio) {
 							if (endPoint.speedRatio.hasOwnProperty(transportName)) {
 								const ratios = endPoint.speedRatio[transportName];
+								const curvePosition = 0; // connecting to mode data
+								const pointsPerCurve = 50; // connecting to mode data
 								_curves.push(
 									new CurveMeshShader(
 										begin.cityCode,
 										endPoint.end.cityCode,
 										endPoint.theta,
 										ratios,
-										transportName
+										transportName,
+										curvePosition,
+										pointsPerCurve
 									)
 								);
 								pControls0.push(...beginGLSL);
@@ -251,7 +257,9 @@ export class CurveMeshShader extends Line {
 		end: string | number,
 		theta: number,
 		years: { [year: string]: number },
-		transportName: string
+		transportName: string,
+		curvePosition: CURVESPOSITION_ENUM,
+		pointsPerCurve: number
 	) {
 		const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(204 * 4), 4).setUsage(
 			DynamicDrawUsage
@@ -273,6 +281,8 @@ export class CurveMeshShader extends Line {
 		this.visible = true;
 		this._transportName = transportName;
 		this._speedRatio = 0;
+		this._curvePosition = curvePosition;
+		this._pointsPerCurve = pointsPerCurve;
 	}
 
 	public static get coefficient(): number {
@@ -307,6 +317,14 @@ export class CurveMeshShader extends Line {
 
 	public get transportName(): string {
 		return this._transportName;
+	}
+
+	public get curvePosition(): CURVESPOSITION_ENUM {
+		return this._curvePosition;
+	}
+
+	public get pointsPerCurve(): number {
+		return this._pointsPerCurve;
 	}
 
 	public setGeometry(positions: Float32Array): void {

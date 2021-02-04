@@ -230,6 +230,7 @@ export class GUI {
 									const material = <LineBasicMaterial>curve.material;
 									material.color.setHex(color);
 									material.opacity = opacity;
+									curve.curvePosition = curvesPosition;
 								});
 						}
 
@@ -246,6 +247,7 @@ export class GUI {
 							.onChange((value: CURVESPOSITION_ENUM) => {
 								CONFIGURATION.curvesPosition = value;
 							});
+						curvesPosition.onChange(curveListener);
 						const pointsPerCurveMode = folder
 							.add(CONFIGURATION, 'pointsPerCurve', 0, 200)
 							.step(1)

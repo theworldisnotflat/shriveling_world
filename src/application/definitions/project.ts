@@ -263,6 +263,8 @@ export interface ITranspMode {
 	maxSYear?: number;
 	yearBegin?: number;
 	yearEnd?: number;
+	curvesPosition?: CURVESPOSITION_ENUM;
+	pointsPerCurve: number;
 }
 
 /**
@@ -366,7 +368,7 @@ export interface ILookupCurveList {
  */
 export interface ILookupCurvesFromCity {
 	begin: ICityExtremityOfEdge;
-	list: { [cityCodeEnd: string]: ILookupCurveList };
+	curveList: { [cityCodeEnd: string]: ILookupCurveList };
 }
 /**
  * A curve and its associated graph edge has a [[cityCodeBegin]]
