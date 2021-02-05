@@ -244,16 +244,17 @@ export class GUI {
 						});
 						const curvesPosition = folder
 							.add(CONFIGURATION, 'curvesPosition', conf.curvesPosition)
-							.name('curves position');
-						// .onChange((value: CURVESPOSITION_ENUM) => {
-						// 	CONFIGURATION.curvesPosition = value;
-						// });
-						curvesPosition.onChange(curveListener);
+							.name('curves position')
+							.onChange((value: CURVESPOSITION_ENUM) => {
+								curveListener();
+							});
 						const pointsPerCurveMode = folder
 							.add(CONFIGURATION, 'pointsPerCurve', 0, 200)
 							.step(1)
-							.name('number of points');
-						pointsPerCurveMode.onChange(curveListener);
+							.name('number of points')
+							.onChange((value: any) => {
+								//curveListener();
+							});
 					});
 				}
 

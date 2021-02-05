@@ -49,6 +49,7 @@ function getCurveHeight(speedRatio: number, theta: number, curvesPosition: CURVE
 	const thirdTerm = 0;
 	// The equation of length om'
 	const result = (cosSemiTheta + secondTerm + thirdTerm) * CONFIGURATION.earthRadiusMeters * _coefficient;
+	console.log(curvesPosition);
 	// Minus earth radius to compute cm'
 	switch (curvesPosition) {
 		case 0: // above the surface of the earth
@@ -92,6 +93,12 @@ function updateCurvesYear(): void {
 		if (!_curves[i].computeCurveHeightAndTestIfAvailable(year)) {
 			curvesDonTDisplay.push(_curves[i]);
 		}
+	}
+}
+
+function updatePosition(): void {
+	for (let i = 0; i < _height; i++) {
+		_curves[i].computeCurveHeightAndTestIfAvailable(CONFIGURATION.year);
 	}
 }
 
@@ -161,7 +168,7 @@ export class CurveMeshShader extends Line {
 				]).then(() => {
 					uuid = CONFIGURATION.addEventListener(
 						'heightRatio intrudedHeightRatio  referenceEquiRectangular THREE_EARTH_RADIUS ' +
-							'projectionBegin projectionEnd projectionPercent year pointsPerCurve',
+							'projectionBegin projectionEnd projectionPercent year pointsPerCurve curvesPosition',
 						(name: string) => {
 							if (_ready) {
 								switch (name) {
@@ -176,8 +183,9 @@ export class CurveMeshShader extends Line {
 										computation();
 										break;
 									case 'curvesPosition':
-										regenerateCurvesGeometry();
-										updateCurvesYear();
+										//regenerateCurvesGeometry();
+										//updateCurvesYear();
+										updatePosition();
 										computation();
 										break;
 									default:
@@ -212,18 +220,18 @@ export class CurveMeshShader extends Line {
 						for (const transportName in endPoint.speedRatio) {
 							if (endPoint.speedRatio.hasOwnProperty(transportName)) {
 								const ratios = endPoint.speedRatio[transportName];
-								this._curves // const pointsPerCurve = 50; // connecting to mode data // const curvePosition: CURVESPOSITION_ENUM =0; // connecting to mode data
-									.push(
-										new CurveMeshShader(
-											begin.cityCode,
-											endPoint.end.cityCode,
-											endPoint.theta,
-											ratios,
-											transportName,
-											curvePosition,
-											pointsPerCurve
-										)
-									);
+								// const pointsPerCurve = 50; // connecting to mode data // const curvePosition: CURVESPOSITION_ENUM =0; // connecting to mode data
+								_curves.push(
+									new CurveMeshShader(
+										begin.cityCode,
+										endPoint.end.cityCode,
+										endPoint.theta,
+										ratios,
+										transportName,
+										0,
+										50
+									)
+								);
 								pControls0.push(...beginGLSL);
 								pControls1.push(...pointPGLSL);
 								pControls2.push(...pointQGLSL);
@@ -357,6 +365,7 @@ export class CurveMeshShader extends Line {
 			this._speedRatio = speedRatio;
 			const index = _curves.indexOf(this);
 			const curvePosition = _curves[index].curvePosition;
+			console.log(_curves[index].curvePosition);
 			// curvePosition = 0; // above
 			// if (this._transportName === 'Train') {
 			// 	curvePosition = 1; // below
