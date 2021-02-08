@@ -378,7 +378,7 @@ export class CountryMeshShader extends Mesh {
 	private _extrudedPercent: number;
 	private readonly _mainProperty: string;
 
-	public static async generator(geoJson: GeoJSON.FeatureCollection): Promise<CountryMeshShader[]> {
+	public static async generateCountries(geoJson: GeoJSON.FeatureCollection): Promise<CountryMeshShader[]> {
 		_ready = false;
 		_countries = [];
 		fullCleanArrays();
@@ -396,7 +396,8 @@ export class CountryMeshShader extends Mesh {
 				]).then(() => {
 					uuid = CONFIGURATION.addEventListener(
 						'heightRatio intrudedHeightRatio referenceEquiRectangular THREE_EARTH_RADIUS ' +
-							'projectionBegin projectionEnd projectionPercent tick',
+							'projectionBegin projectionEnd projectionPercent tick pointsPerCurve' +
+							'modeSelected curvesPosition',
 						(name: string) => {
 							if (_ready === true) {
 								switch (name) {

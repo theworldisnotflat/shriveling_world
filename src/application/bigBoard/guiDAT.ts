@@ -181,7 +181,7 @@ export class GUI {
 						aerialFolder.removeFolder(subGui);
 					}
 
-					// Adding aerial network(s)
+					// Adding aerial network(s) UI
 					this._merger.transportNames.curves.forEach((transportName) => {
 						const folder = aerialFolder.addFolder(transportName);
 						aerialControllersList.push(folder);
@@ -206,21 +206,14 @@ export class GUI {
 						const modeSelected = folder.add(conf, 'transport mode selected').onChange((value: boolean) => {
 							conf['modeSelected'] = value;
 						});
-						//modeSelected.onChange(curveListener);
-						// const curvesPosition = folder
-						// 	.add(CONFIGURATION, 'curvesPosition', conf.curvesPosition)
-						// 	.name('curves position')
-						// 	.onChange((value: CURVESPOSITION_ENUM) => {
-						// 		CONFIGURATION.curvesPosition = value;
-						// 	});
-						//curvesPosition.onChange(curveListener);
 					});
-					// Adding terrestrial networks
+					// Adding terrestrial networks UI
 					this._merger.transportNames.cones.forEach((transportName) => {
 						const folder = terrestrialFolder.addFolder(transportName);
 						terrestrialControllersList.push(folder);
 
 						function curveListener(): void {
+							console.log('passe par curveListener');
 							const opacity = <number>curveOpacity.getValue();
 							const color = Number.parseInt(curveColor.getValue().replace('#', ''), 16);
 
@@ -230,8 +223,8 @@ export class GUI {
 									const material = <LineBasicMaterial>curve.material;
 									material.color.setHex(color);
 									material.opacity = opacity;
-									curve.curvePosition = <CURVESPOSITION_ENUM>curvesPosition.getValue();
-									curve.pointsPerCurve = <number>pointsPerCurveMode.getValue();
+									//curve.curvePosition = <CURVESPOSITION_ENUM>curvesPosition.getValue();
+									//curve.pointsPerCurve = <number>pointsPerCurveMode.getValue();
 								});
 						}
 
@@ -246,14 +239,25 @@ export class GUI {
 							.add(CONFIGURATION, 'curvesPosition', conf.curvesPosition)
 							.name('curves position')
 							.onChange((value: CURVESPOSITION_ENUM) => {
-								curveListener();
+								//curveListener();
+								console.log('value', value);
+								bigBoard.coneAndCurveBoard.curveCollection
+									.filter((curve) => transportName === curve.transportName)
+									.forEach((curve) => {
+										curve.curvePosition = value;
+									});
 							});
 						const pointsPerCurveMode = folder
 							.add(CONFIGURATION, 'pointsPerCurve', 0, 200)
 							.step(1)
 							.name('number of points')
 							.onChange((value: any) => {
-								curveListener();
+								//curveListener();
+								bigBoard.coneAndCurveBoard.curveCollection
+									.filter((curve) => transportName === curve.transportName)
+									.forEach((curve) => {
+										curve.pointsPerCurve = value;
+									});
 							});
 					});
 				}

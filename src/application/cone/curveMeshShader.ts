@@ -48,18 +48,17 @@ function getCurveHeight(speedRatio: number, theta: number, curvesPosition: CURVE
 	const secondTerm = Math.sqrt(speedRatio * speedRatio - sinSemiTheta * sinSemiTheta);
 	const thirdTerm = 0;
 	// The equation of length om'
-	const result = (cosSemiTheta + secondTerm + thirdTerm) * CONFIGURATION.earthRadiusMeters * _coefficient;
-	console.log(curvesPosition, result, CONFIGURATION.earthRadiusMeters, -(result - CONFIGURATION.earthRadiusMeters));
+	const OMPrime = (cosSemiTheta + secondTerm + thirdTerm) * CONFIGURATION.earthRadiusMeters * _coefficient;
 	// Minus earth radius to compute cm'
 	switch (curvesPosition) {
 		case 0: // above the surface of the earth
-			return result - CONFIGURATION.earthRadiusMeters;
+			return OMPrime - CONFIGURATION.earthRadiusMeters;
 		case 1: // below
-			return -(result - CONFIGURATION.earthRadiusMeters);
+			return -(OMPrime - CONFIGURATION.earthRadiusMeters);
 		case 2:
-			return -(result - CONFIGURATION.earthRadiusMeters);
+			return -(OMPrime - CONFIGURATION.earthRadiusMeters);
 		case 3:
-			return -(result - CONFIGURATION.earthRadiusMeters);
+			return -(OMPrime - CONFIGURATION.earthRadiusMeters);
 	}
 }
 
@@ -71,8 +70,8 @@ function regenerateCurvesGeometry(): void {
 	for (let i = 0; i < _height; i++) {
 		const step = 1 / _curves[i].pointsPerCurve;
 		const t: number[] = [];
-		for (let i = 0; i < 1; i += step) {
-			t.push(i);
+		for (let j = 0; j < 1; j += step) {
+			t.push(j);
 		}
 
 		t.push(1);
@@ -173,8 +172,9 @@ export class CurveMeshShader extends Line {
 					}),
 				]).then(() => {
 					uuid = CONFIGURATION.addEventListener(
-						'heightRatio intrudedHeightRatio  referenceEquiRectangular THREE_EARTH_RADIUS ' +
-							'projectionBegin projectionEnd projectionPercent year pointsPerCurve curvesPosition',
+						'heightRatio intrudedHeightRatio referenceEquiRectangular THREE_EARTH_RADIUS ' +
+							'projectionBegin projectionEnd projectionPercent year pointsPerCurve' +
+							'modeSelected curvesPosition',
 						(name: string) => {
 							if (_ready) {
 								switch (name) {
@@ -189,6 +189,7 @@ export class CurveMeshShader extends Line {
 										computation();
 										break;
 									case 'curvesPosition':
+										console.log('addEventListener');
 										regenerateCurvesGeometry();
 										updateCurvesYear();
 										//updatePosition();
@@ -364,17 +365,13 @@ export class CurveMeshShader extends Line {
 	 * and if yes call computation of curves height
 	 */
 	public computeCurveHeightAndTestIfAvailable(year: string | number): boolean {
+		console.log('computeCurveHeightAndTestIfAvailable');
 		const speedRatio = this._years[year];
 		const result = speedRatio !== undefined;
 		if (result) {
 			this._speedRatio = speedRatio;
 			const index = _curves.indexOf(this);
 			const curvePosition = Number(_curves[index].curvePosition);
-			// let curvePosition = 0;
-			// if (this.transportName === 'Train') {
-			// 	curvePosition = 1;
-			// }
-			console.log(this.transportName, _curves[index].curvePosition, curvePosition);
 			_heightTab[index] = getCurveHeight(this._speedRatio, this.theta, curvePosition);
 		}
 

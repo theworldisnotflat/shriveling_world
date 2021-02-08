@@ -81,7 +81,7 @@ export class CountryBoard {
 	public async add(geoJson: GeoJSON.FeatureCollection): Promise<void> {
 		this.ready = false;
 		this.clean();
-		const collection = await CountryMeshShader.generator(geoJson);
+		const collection = await CountryMeshShader.generateCountries(geoJson);
 		collection.forEach((mesh) => {
 			this.countryMeshCollection.push(mesh);
 			this._scene.add(mesh);
