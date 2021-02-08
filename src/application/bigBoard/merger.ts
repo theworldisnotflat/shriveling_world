@@ -35,7 +35,7 @@ import type {
 	ILookupConeAngles,
 } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
-import { ConeBoard } from '../cone/coneBoard';
+import { ConeAndCurveBoard } from '../cone/coneBoard';
 /**
  * Realizes the merge of two tables base on an attribute. The key for the merge is renamed.
  * At the end of the process the recipient table is enriched.

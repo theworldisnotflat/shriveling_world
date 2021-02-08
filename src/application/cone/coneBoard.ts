@@ -9,7 +9,7 @@ import type { CountryBoard } from '../country/countryBoard';
 import { CurveMeshShader } from './curveMeshShader';
 const forbiddenAttributes = ['referential', 'position'];
 
-export class ConeBoard {
+export class ConeAndCurveBoard {
 	public coneMeshCollection: PseudoCone[] = [];
 	public curveCollection: CurveMeshShader[] = [];
 	private readonly _scene: Scene;
@@ -87,10 +87,10 @@ export class ConeBoard {
 	}
 
 	/**
-	 *
+	 * called in bigBoard, once after reading files
 	 * @param lookup
 	 */
-	public add(lookup: ILookupCurvesAndCityGraph): void {
+	public addConesAndCurves(lookup: ILookupCurvesAndCityGraph): void {
 		this.clean();
 		console.log('city network', lookup.lookupCityNetwork);
 		const bBoxes = this._countries.countryMeshCollection.map((country) => country.bBox);

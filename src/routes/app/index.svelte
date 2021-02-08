@@ -18,14 +18,14 @@
 	export let datasets;
 	import { onDestroy } from 'svelte';
 
-	async function addSet(event: MouseEvent) {
-		const name = (event.target as HTMLElement).dataset.name;
-		if (name !== undefined) {
-			const zip = await fetch('datasets/' + name).then(async (raw) =>
+	async function addDataset(event: MouseEvent) {
+		const datasetName = (event.target as HTMLElement).dataset.name;
+		if (datasetName !== undefined) {
+			const zip = await fetch('datasets/' + datasetName).then(async (raw) =>
 				raw.arrayBuffer().then((buf) => new Uint8Array(buf))
 			);
 			const unzipped: IListFile[] = JSON.parse(new TextDecoder('utf-8').decode(inflate(zip)));
-			bigBoard.cleanAll(unzipped);
+			bigBoard.cleanAllAndReload(unzipped);
 		}
 	}
 	onMount(async () => {
@@ -69,7 +69,7 @@
 
 <Menu fixed={false}>
 	<div bind:this={board} class="app" />
-	<div class="dataset" on:click={addSet}>
+	<div class="dataset" on:click={addDataset}>
 		{#each datasets as dataset, i}
 			<div data-name={dataset}>{dataset}</div>
 		{/each}
