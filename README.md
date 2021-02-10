@@ -11,6 +11,6 @@ As an open science initiative the project follows the [GNU General Public Licens
 
 # Road map
 
--   A [roadmap is maintained up to date here](https://github.com/theworldisnotflat/shriveling_world/wiki)
+-   The project has a [roadmap maintained up to date](https://github.com/theworldisnotflat/shriveling_world/wiki)
 -   Development is [organised for the coming release](https://github.com/theworldisnotflat/shriveling_world/projects)
     
