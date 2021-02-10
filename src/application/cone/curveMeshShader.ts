@@ -177,6 +177,7 @@ export class CurveMeshShader extends Line {
 							'modeSelected curvesPosition',
 						(name: string) => {
 							if (_ready) {
+								console.log('addEventListener');
 								switch (name) {
 									case 'pointsPerCurve':
 										_t = new Float32Array(0);
@@ -189,7 +190,6 @@ export class CurveMeshShader extends Line {
 										computation();
 										break;
 									case 'curvesPosition':
-										console.log('addEventListener');
 										regenerateCurvesGeometry();
 										updateCurvesYear();
 										//updatePosition();
