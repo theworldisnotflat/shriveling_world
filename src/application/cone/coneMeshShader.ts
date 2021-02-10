@@ -347,8 +347,7 @@ export class ConeMeshShader extends PseudoCone {
 				]).then(() => {
 					uuid = CONFIGURATION.addEventListener(
 						'heightRatio intrudedHeightRatio coneStep referenceEquiRectangular THREE_EARTH_RADIUS ' +
-							'projectionBegin projectionEnd projectionPercent year tick conesShape pointsPerCurve ' +
-							'modeSelected curvesPosition',
+							'projectionBegin projectionEnd projectionPercent year tick conesShape ',
 						(name: string) => {
 							if (_ready) {
 								switch (name) {

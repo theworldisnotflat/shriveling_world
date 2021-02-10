@@ -11,7 +11,7 @@ let curvesDonTDisplay: CurveMeshShader[] = [];
 let uuid: string;
 let _ready = false;
 let _width: number;
-let _height: number;
+let _nbCurves: number;
 // Should be 1 for testing purposes
 // affects the value of the height of curves
 let _coefficient = 1;
@@ -67,7 +67,7 @@ function getCurveHeight(speedRatio: number, theta: number, curvesPosition: CURVE
  * [[pointsPerCurve]] parameter
  */
 function regenerateCurvesGeometry(): void {
-	for (let i = 0; i < _height; i++) {
+	for (let i = 0; i < _nbCurves; i++) {
 		const step = 1 / _curves[i].pointsPerCurve;
 		const t: number[] = [];
 		for (let j = 0; j < 1; j += step) {
@@ -77,6 +77,7 @@ function regenerateCurvesGeometry(): void {
 		t.push(1);
 		_t = new Float32Array(t);
 		_width = _t.length;
+		console.log('step', step, _curves[i].transportName);
 		const options = {
 			u_tSample: { src: _t, width: _width, height: 1 },
 		};
@@ -94,7 +95,7 @@ function regenerateCurvesGeometry(): void {
 function updateCurvesYear(): void {
 	const year = CONFIGURATION.year;
 	curvesDonTDisplay = [];
-	for (let i = 0; i < _height; i++) {
+	for (let i = 0; i < _nbCurves; i++) {
 		if (!_curves[i].computeCurveHeightAndTestIfAvailable(year)) {
 			curvesDonTDisplay.push(_curves[i]);
 		}
@@ -102,7 +103,7 @@ function updateCurvesYear(): void {
 }
 
 function updatePosition(): void {
-	for (let i = 0; i < _height; i++) {
+	for (let i = 0; i < _nbCurves; i++) {
 		_curves[i].computeCurveHeightAndTestIfAvailable(CONFIGURATION.year);
 	}
 }
@@ -123,12 +124,12 @@ function computation(): void {
 	uniforms.coefficient = _coefficient;
 	_gpgpu.positions.updateUniforms(uniforms);
 	const options = {
-		u_height: { src: _heightTab, width: 1, height: _height },
+		u_height: { src: _heightTab, width: 1, height: _nbCurves },
 	};
 	_gpgpu.positions.updateTextures(options);
-	const tempo = _gpgpu.positions.calculate(_width, _height);
+	const tempo = _gpgpu.positions.calculate(_width, _nbCurves);
 	const allPositions = tempo[0];
-	for (let i = 0; i < _height; i++) {
+	for (let i = 0; i < _nbCurves; i++) {
 		_curves[i].setGeometry(allPositions.subarray(i * _width * 4, (i + 1) * _width * 4));
 	}
 }
@@ -177,7 +178,7 @@ export class CurveMeshShader extends Line {
 							'modeSelected curvesPosition',
 						(name: string) => {
 							if (_ready) {
-								console.log('addEventListener');
+								console.log('addEventListener', name);
 								switch (name) {
 									case 'pointsPerCurve':
 										_t = new Float32Array(0);
@@ -249,13 +250,14 @@ export class CurveMeshShader extends Line {
 			}
 		}
 
-		_height = _curves.length;
-		_heightTab = new Float32Array(_height);
+		_nbCurves = _curves.length;
+		console.log('_nbCurves', _nbCurves);
+		_heightTab = new Float32Array(_nbCurves);
 		const options = {
-			u_PControls0: { src: new Float32Array(pControls0), width: 1, height: _height },
-			u_PControls1: { src: new Float32Array(pControls1), width: 1, height: _height },
-			u_PControls2: { src: new Float32Array(pControls2), width: 1, height: _height },
-			u_PControls3: { src: new Float32Array(pControls3), width: 1, height: _height },
+			u_PControls0: { src: new Float32Array(pControls0), width: 1, height: _nbCurves },
+			u_PControls1: { src: new Float32Array(pControls1), width: 1, height: _nbCurves },
+			u_PControls2: { src: new Float32Array(pControls2), width: 1, height: _nbCurves },
+			u_PControls3: { src: new Float32Array(pControls3), width: 1, height: _nbCurves },
 		};
 		_gpgpu.positions.updateTextures(options);
 		regenerateCurvesGeometry();
@@ -306,7 +308,7 @@ export class CurveMeshShader extends Line {
 	// for testing purposes only
 	public static set coefficient(value: number) {
 		_coefficient = value;
-		for (let i = 0; i < _height; i++) {
+		for (let i = 0; i < _nbCurves; i++) {
 			const curve = _curves[i];
 			let curvePosition = 0;
 			if (curve._transportName === 'Train') {
