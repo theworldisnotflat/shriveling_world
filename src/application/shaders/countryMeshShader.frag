@@ -10,9 +10,9 @@ uniform float earthRadius;
 uniform vec3 referenceEquiRectangular;
 uniform float standardParallel1;
 uniform float standardParallel2;
-uniform int representationInit;
-uniform int representationEnd;
-uniform float percentRepresentation;
+uniform int projectionInit;
+uniform int projectionEnd;
+uniform float percentProjection;
 
 #pragma glslify: displayConversions =require(./displayConversions.glsl)
 in vec2 pos;
@@ -24,6 +24,6 @@ void main() {
 
   vec3 modelPosition = displayConversions(
       cartoPosition, threeRadius, earthRadius, referenceEquiRectangular,standardParallel1,standardParallel2,
-      representationInit, representationEnd, percentRepresentation);
+      projectionInit, projectionEnd, percentProjection);
   myOutputColor = vec4(modelPosition, 0.0);
 }

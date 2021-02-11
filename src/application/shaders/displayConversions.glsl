@@ -140,20 +140,20 @@ vec3 convertor(in vec3 pos, in float threeRadius, in float earthRadius,
 
 vec3 transit(in vec3 pos, in float threeRadius, in float earthRadius,
              in vec3 reference, in float standardParallel1,
-             in float standardParallel2, in int representationInit,
-             in int representationEnd, in float percent) {
+             in float standardParallel2, in int projectionInit,
+             in int projectionEnd, in float percent) {
   vec3 resultat;
-  if (representationInit == representationEnd) {
+  if (projectionInit == projectionEnd) {
     resultat =
         convertor(pos, threeRadius, earthRadius, reference, standardParallel1,
-                  standardParallel2, representationInit);
+                  standardParallel2, projectionInit);
   } else {
     vec3 initVec =
         convertor(pos, threeRadius, earthRadius, reference, standardParallel1,
-                  standardParallel2, representationInit);
+                  standardParallel2, projectionInit);
     vec3 endVec =
         convertor(pos, threeRadius, earthRadius, reference, standardParallel1,
-                  standardParallel2, representationEnd);
+                  standardParallel2, projectionEnd);
     resultat = mix(initVec, endVec, percent / 100.0);
   }
   return resultat;

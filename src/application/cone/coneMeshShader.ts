@@ -183,6 +183,7 @@ function regenerateFromConeStep(): void {
  * and deals with cones that shouldn't be displayed
  *
  * will call function [[getConeAngles]]
+ * In the end will send the geometry to the GPU
  */
 function updateConesAlphas(): void {
 	const year = CONFIGURATION.year;
@@ -195,7 +196,7 @@ function updateConesAlphas(): void {
 		const tempAlphas = new Float32Array(_height * _width);
 		for (let i = 0; i < _height; i++) {
 			const coneAngles = _cones[i].getConeAngles(year);
-			const coneRoadAlpha = coneAngles.coneRoadAlpha;
+			const coneRoadAlpha = (coneAngles.coneRoadAlpha + Math.PI / 2) / 2; // grosse triche
 			const coneFastTerrModeAlpha = coneAngles.coneFastTerrModeAlpha;
 			const coneAnglesTab = [...coneAngles.tab];
 			let subAlphas: Float32Array;
@@ -275,9 +276,9 @@ function computation(): void {
 	uniforms.threeRadius = CONFIGURATION.THREE_EARTH_RADIUS;
 	uniforms.earthRadius = CONFIGURATION.earthRadiusMeters;
 	uniforms.referenceEquiRectangular = CONFIGURATION.referenceEquiRectangularArray;
-	uniforms.representationInit = CONFIGURATION.projectionInit;
-	uniforms.representationEnd = CONFIGURATION.projectionEnd;
-	uniforms.percentRepresentation = CONFIGURATION.percentProjection;
+	uniforms.projectionInit = CONFIGURATION.projectionInit;
+	uniforms.projectionEnd = CONFIGURATION.projectionEnd;
+	uniforms.percentProjection = CONFIGURATION.percentProjection;
 	uniforms.conesShape = CONFIGURATION.conesShape;
 	uniforms.curvesPosition = CONFIGURATION.curvesPosition;
 	uniforms.standardParallel1 = CONFIGURATION.standardParallel1;
