@@ -67,7 +67,7 @@ vec3 conicEquidistant(in vec3 pos, in float threeRadius, in float earthRadius,
   return resultat;
 }
 
-vec3 noRepresentation(in vec3 pos, in float threeRadius, in float earthRadius) {
+vec3 noProjection(in vec3 pos, in float threeRadius, in float earthRadius) {
   float radius = (earthRadius + pos.z) / earthRadius * threeRadius;
   vec3 resultat = vec3(0.0);
   resultat.x = -cos(pos.x) * radius * cos(pos.y);
@@ -120,7 +120,7 @@ vec3 convertor(in vec3 pos, in float threeRadius, in float earthRadius,
                in float standardParallel2, int representation) {
   vec3 resultat;
   if (representation == 0) {
-    resultat = noRepresentation(pos, threeRadius, earthRadius);
+    resultat = noProjection(pos, threeRadius, earthRadius);
   } else if (representation == 1) {
     resultat = equirectangular(pos, threeRadius, earthRadius, reference);
   } else if (representation == 2) {
