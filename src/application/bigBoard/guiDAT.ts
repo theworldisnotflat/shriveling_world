@@ -228,10 +228,11 @@ export class GUI {
 								bigBoard.coneBoard.curveCollection
 									.filter((curve) => transportName === curve.transportName)
 									.forEach((curve) => {
-										curve.curvesPosition = value;
 										CONFIGURATION.curvesPosition = value;
+										curve.curvesPosition = value;
 										console.log(curve.curvesPosition);
 									});
+								CONFIGURATION.curvesPosition = conf.curvesPosition.above;
 							});
 					});
 				}
