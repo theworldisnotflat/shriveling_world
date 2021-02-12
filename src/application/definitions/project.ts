@@ -264,8 +264,6 @@ export interface ITranspMode {
 	yearBegin?: number;
 	yearEnd?: number;
 	curvesPosition?: CURVESPOSITION_ENUM;
-	pointsPerCurve?: number;
-	pointsPerCurveAll: number;
 }
 
 /**

@@ -42,7 +42,6 @@ let conf = {
 		belowWhenPossible: 2,
 		stickToCone: 3,
 	},
-	pointsPerCurve: CONFIGURATION.pointsPerCurve,
 	'transport type': '',
 	'cones color': '#',
 	'cones transparency': 0,
@@ -91,7 +90,6 @@ export class GUI {
 				belowWhenPossible: 2,
 				stickToCone: 3,
 			},
-			pointsPerCurve: CONFIGURATION.pointsPerCurve,
 			'transport type': '',
 			'cones color': '#' + (<any>CONFIGURATION.BASIC_CONE_MATERIAL).color.getHex().toString(16),
 			'cones transparency': CONFIGURATION.BASIC_CONE_MATERIAL.opacity,
@@ -233,19 +231,6 @@ export class GUI {
 										curve.curvesPosition = value;
 										CONFIGURATION.curvesPosition = value;
 										console.log(curve.curvesPosition);
-									});
-							});
-						const pointsPerCurveMode = folder
-							.add(CONFIGURATION, 'pointsPerCurve', 0, 200)
-							.step(1)
-							.name('number of points')
-							.onChange((value: any) => {
-								bigBoard.coneBoard.curveCollection
-									.filter((curve) => transportName === curve.transportName)
-									.forEach((curve) => {
-										curve.pointsPerCurve = value;
-										CONFIGURATION.pointsPerCurve = value;
-										console.log(curve.pointsPerCurve);
 									});
 							});
 					});
@@ -391,7 +376,7 @@ export class GUI {
 
 		// curves
 		aerialFolder = gui.addFolder('Curves');
-		aerialFolder.add(CONFIGURATION, 'pointsPerCurveAll', 0, 200).step(1).name('number of points');
+		aerialFolder.add(CONFIGURATION, 'pointsPerCurve', 0, 200).step(1).name('number of points');
 		terrestrialFolder = aerialFolder.addFolder('terrestrial modes');
 
 		// Pays /mise en exergue avec listen?

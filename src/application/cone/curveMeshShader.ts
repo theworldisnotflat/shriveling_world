@@ -68,23 +68,19 @@ function getHeight(speedRatio: number, theta: number, curvesPosition: CURVESPOSI
  * higher values will consume processor load
  */
 function regenerateStep(): void {
-	for (let i = 0; i < _height; i++) {
-		const index = _curves.indexOf(this);
-		const step = 1 / _curves[i].pointsPerCurve;
-		console.log(_curves[i].transportName, _curves[i].pointsPerCurve);
-		const t: number[] = [];
-		for (let i = 0; i < 1; i += step) {
-			t.push(i);
-		}
-
-		t.push(1);
-		_t = new Float32Array(t);
-		_width = _t.length;
-		const options = {
-			u_tSample: { src: _t, width: _width, height: 1 },
-		};
-		_gpgpu.positions.updateTextures(options);
+	const step = 1 / CONFIGURATION.pointsPerCurve;
+	const t: number[] = [];
+	for (let i = 0; i < 1; i += step) {
+		t.push(i);
 	}
+
+	t.push(1);
+	_t = new Float32Array(t);
+	_width = _t.length;
+	const options = {
+		u_tSample: { src: _t, width: _width, height: 1 },
+	};
+	_gpgpu.positions.updateTextures(options);
 }
 
 /**
@@ -139,7 +135,6 @@ export class CurveMeshShader extends Line {
 	private readonly _transportName: string;
 	private _speedRatio: number;
 	private _curvePosition: CURVESPOSITION_ENUM;
-	private _pointsPerCurve: number;
 
 	public static async generateCones(lookup: ILookupCurves): Promise<CurveMeshShader[]> {
 		_ready = false;
@@ -166,15 +161,10 @@ export class CurveMeshShader extends Line {
 				]).then(() => {
 					uuid = CONFIGURATION.addEventListener(
 						'heightRatio intrudedHeightRatio  referenceEquiRectangular THREE_EARTH_RADIUS ' +
-							'projectionBegin projectionEnd projectionPercent year curvesPosition pointsPerCurve pointsPerCurveAll',
+							'projectionBegin projectionEnd projectionPercent year curvesPosition pointsPerCurve',
 						(name: string) => {
 							if (_ready) {
 								switch (name) {
-									case 'pointsPerCurveAll':
-										_t = new Float32Array(0);
-										regenerateStep();
-										computation();
-										break;
 									case 'pointsPerCurve':
 										_t = new Float32Array(0);
 										regenerateStep();
@@ -229,8 +219,7 @@ export class CurveMeshShader extends Line {
 										endPoint.theta,
 										ratios,
 										transportName,
-										CONFIGURATION.curvesPosition,
-										CONFIGURATION.pointsPerCurve
+										CONFIGURATION.curvesPosition
 									)
 								);
 								pControls0.push(...beginGLSL);
@@ -266,8 +255,7 @@ export class CurveMeshShader extends Line {
 		theta: number,
 		years: { [year: string]: number },
 		transportName: string,
-		curvePosition: CURVESPOSITION_ENUM,
-		pointsPerCurve: number
+		curvePosition: CURVESPOSITION_ENUM
 	) {
 		const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(204 * 4), 4).setUsage(
 			DynamicDrawUsage
@@ -290,7 +278,6 @@ export class CurveMeshShader extends Line {
 		this._transportName = transportName;
 		this._speedRatio = 0;
 		this._curvePosition = curvePosition;
-		this._pointsPerCurve = pointsPerCurve;
 	}
 
 	public get curvesPosition(): CURVESPOSITION_ENUM {
@@ -299,15 +286,6 @@ export class CurveMeshShader extends Line {
 
 	public set curvesPosition(value: CURVESPOSITION_ENUM) {
 		this._curvePosition = value;
-		console.log(value);
-	}
-
-	public get pointsPerCurve(): number {
-		return this._pointsPerCurve;
-	}
-
-	public set pointsPerCurve(value: number) {
-		this._pointsPerCurve = value;
 	}
 
 	public static get coefficient(): number {
