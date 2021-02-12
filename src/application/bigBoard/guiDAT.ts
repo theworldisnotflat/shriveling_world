@@ -306,6 +306,8 @@ export class GUI {
 		years = generalFolder.add(conf, 'year', 1930, 2030).step(1);
 		years.onChange((v: string | number) => {
 			CONFIGURATION.year = v;
+			bigBoard.getMergerI.merge();
+			bigBoard.addLegend();
 		});
 
 		// Toggle Camera Orthographic/Perspective View
