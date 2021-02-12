@@ -2,7 +2,7 @@
 import type { LineBasicMaterial, MeshPhongMaterial } from 'three';
 import type { Merger } from './merger';
 import { DragNDrop as DragNDrop } from '../common/utils';
-import type { IListFile, CONESSHAPE_ENUM } from '../definitions/project';
+import type { IListFile, CONESSHAPE_ENUM, CURVESPOSITION_ENUM } from '../definitions/project';
 import type BigBoard from './bigBoard';
 import { ConeMeshShader } from '../cone/coneMeshShader';
 import * as dat from 'dat.gui';
@@ -36,6 +36,13 @@ let conf = {
 		'based on the fastest terrestrial mode': 1,
 		complex: 2,
 	},
+	curvesPosition: {
+		above: 0,
+		below: 1,
+		belowWhenPossible: 2,
+		stickToCone: 3,
+	},
+	pointsPerCurve: CONFIGURATION.pointsPerCurve,
 	'transport type': '',
 	'cones color': '#',
 	'cones transparency': 0,
@@ -78,6 +85,13 @@ export class GUI {
 				'based on the fastest terrestrial mode': 1,
 				complex: 2,
 			},
+			curvesPosition: {
+				above: 0,
+				below: 1,
+				belowWhenPossible: 2,
+				stickToCone: 3,
+			},
+			pointsPerCurve: CONFIGURATION.pointsPerCurve,
 			'transport type': '',
 			'cones color': '#' + (<any>CONFIGURATION.BASIC_CONE_MATERIAL).color.getHex().toString(16),
 			'cones transparency': CONFIGURATION.BASIC_CONE_MATERIAL.opacity,
@@ -209,6 +223,31 @@ export class GUI {
 						curveColor.onChange(curveListener);
 						const curveOpacity = folder.add(conf, 'curve transparency', 0, 1, 0.01).name('transparency');
 						curveOpacity.onChange(curveListener);
+						const curvesPosition = folder
+							.add(CONFIGURATION, 'curvesPosition', conf.curvesPosition)
+							.name('curves position')
+							.onChange((value: CURVESPOSITION_ENUM) => {
+								bigBoard.coneBoard.curveCollection
+									.filter((curve) => transportName === curve.transportName)
+									.forEach((curve) => {
+										curve.curvesPosition = value;
+										CONFIGURATION.curvesPosition = value;
+										console.log(curve.curvesPosition);
+									});
+							});
+						const pointsPerCurveMode = folder
+							.add(CONFIGURATION, 'pointsPerCurve', 0, 200)
+							.step(1)
+							.name('number of points')
+							.onChange((value: any) => {
+								bigBoard.coneBoard.curveCollection
+									.filter((curve) => transportName === curve.transportName)
+									.forEach((curve) => {
+										curve.pointsPerCurve = value;
+										CONFIGURATION.pointsPerCurve = value;
+										console.log(curve.pointsPerCurve);
+									});
+							});
 					});
 				}
 
@@ -352,7 +391,7 @@ export class GUI {
 
 		// curves
 		aerialFolder = gui.addFolder('Curves');
-		aerialFolder.add(CONFIGURATION, 'pointsPerCurve', 0, 200).step(1).name('number of points');
+		aerialFolder.add(CONFIGURATION, 'pointsPerCurveAll', 0, 200).step(1).name('number of points');
 		terrestrialFolder = aerialFolder.addFolder('terrestrial modes');
 
 		// Pays /mise en exergue avec listen?
