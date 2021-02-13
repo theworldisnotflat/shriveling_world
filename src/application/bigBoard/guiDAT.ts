@@ -2,7 +2,7 @@
 import type { LineBasicMaterial, MeshPhongMaterial } from 'three';
 import type { Merger } from './merger';
 import { DragNDrop as DragNDrop } from '../common/utils';
-import type { IListFile, CONESSHAPE_ENUM } from '../definitions/project';
+import type { IListFile, CONESSHAPE_ENUM, CURVESPOSITION_ENUM } from '../definitions/project';
 import type BigBoard from './bigBoard';
 import { ConeMeshShader } from '../cone/coneMeshShader';
 import * as dat from 'dat.gui';
@@ -35,6 +35,12 @@ let conf = {
 		'based on road': 0,
 		'based on the fastest terrestrial mode': 1,
 		complex: 2,
+	},
+	curvesPosition: {
+		above: 0,
+		below: 1,
+		belowWhenPossible: 2,
+		stickToCone: 3,
 	},
 	'transport type': '',
 	'cones color': '#',
@@ -77,6 +83,12 @@ export class GUI {
 				'based on road': 0,
 				'based on the fastest terrestrial mode': 1,
 				complex: 2,
+			},
+			curvesPosition: {
+				above: 0,
+				below: 1,
+				belowWhenPossible: 2,
+				stickToCone: 3,
 			},
 			'transport type': '',
 			'cones color': '#' + (<any>CONFIGURATION.BASIC_CONE_MATERIAL).color.getHex().toString(16),
@@ -209,6 +221,19 @@ export class GUI {
 						curveColor.onChange(curveListener);
 						const curveOpacity = folder.add(conf, 'curve transparency', 0, 1, 0.01).name('transparency');
 						curveOpacity.onChange(curveListener);
+						const curvesPosition = folder
+							.add(CONFIGURATION, 'curvesPosition', conf.curvesPosition)
+							.name('curves position')
+							.onChange((value: CURVESPOSITION_ENUM) => {
+								bigBoard.coneBoard.curveCollection
+									.filter((curve) => transportName === curve.transportName)
+									.forEach((curve) => {
+										CONFIGURATION.curvesPosition = value;
+										curve.curvesPosition = value;
+										console.log(curve.curvesPosition);
+									});
+								CONFIGURATION.curvesPosition = conf.curvesPosition.above;
+							});
 					});
 				}
 
