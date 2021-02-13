@@ -1,8 +1,8 @@
 'use strict';
-import { Cartographic, ZERO_CARTOGRAPHIC } from './utils';
+import { LatLonH, ZERO_LATLONH } from './utils';
 import { CONFIGURATION } from './configuration';
 import type { INEDLocalGLSL } from '../definitions/project';
-function Cartographic2ECEF(pos: Cartographic): Coordinate {
+function LatLonH2ECEF(pos: LatLonH): Coordinate {
 	const radius = CONFIGURATION.earthRadiusMeters + pos.height;
 	return new Coordinate(
 		Math.cos(pos.longitude) * radius * Math.cos(pos.latitude),
@@ -11,8 +11,8 @@ function Cartographic2ECEF(pos: Cartographic): Coordinate {
 	);
 }
 
-function ECEF2Cartographic(pos: Coordinate): Cartographic {
-	const out = new Cartographic();
+function ECEF2LatLonH(pos: Coordinate): LatLonH {
+	const out = new LatLonH();
 	const radius = Math.sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z);
 	out.height = radius - CONFIGURATION.earthRadiusMeters;
 	if (radius > 0) {
@@ -121,19 +121,19 @@ const scrapCoordinate2 = new Coordinate();
  * and on a projected plane
  */
 export class NEDLocal {
-	public cartoRef: Cartographic;
+	public latLonHRef: LatLonH;
 	private readonly _ECEFRef: Coordinate;
 	private readonly _matECEF2NED: Coordinate[];
 	private readonly _matNED2ECEF: Coordinate[];
 	private _glslData: INEDLocalGLSL;
 
-	public constructor(summit: Cartographic = ZERO_CARTOGRAPHIC) {
+	public constructor(summit: LatLonH = ZERO_LATLONH) {
 		const sinLong = Math.sin(summit.longitude);
 		const cosLong = Math.cos(summit.longitude);
 		const sinLat = Math.sin(summit.latitude);
 		const cosLat = Math.cos(summit.latitude);
-		this.cartoRef = summit;
-		this._ECEFRef = Cartographic2ECEF(summit);
+		this.latLonHRef = summit;
+		this._ECEFRef = LatLonH2ECEF(summit);
 
 		this._matECEF2NED = [];
 		this._matECEF2NED.push(new Coordinate(-cosLong * sinLat, -sinLong * sinLat, cosLat)); // North
@@ -146,8 +146,8 @@ export class NEDLocal {
 		this._matNED2ECEF.push(new Coordinate(cosLat, 0, -sinLat));
 	}
 
-	public cartographic2NED(pos: Cartographic): Coordinate {
-		const ecefPos = Cartographic2ECEF(pos);
+	public latLonH2NED(pos: LatLonH): Coordinate {
+		const ecefPos = LatLonH2ECEF(pos);
 		const relativeECEF = ecefPos.add(this._ECEFRef.scalar(-1, scrapCoordinate), scrapCoordinate);
 		return new Coordinate(
 			this._matECEF2NED[0].dot(relativeECEF),
@@ -156,18 +156,18 @@ export class NEDLocal {
 		);
 	}
 
-	public NED2Cartographic(pos: Coordinate): Cartographic {
+	public NED2LatLonH(pos: Coordinate): LatLonH {
 		const relativeECEF = new Coordinate(
 			this._matNED2ECEF[0].dot(pos),
 			this._matNED2ECEF[1].dot(pos),
 			this._matNED2ECEF[2].dot(pos)
 		);
 		const ecefPos = relativeECEF.add(this._ECEFRef, scrapCoordinate);
-		return ECEF2Cartographic(ecefPos);
+		return ECEF2LatLonH(ecefPos);
 	}
 
-	public getClock(pos: Cartographic): number {
-		const temp = this.cartographic2NED(pos);
+	public getClock(pos: LatLonH): number {
+		const temp = this.latLonH2NED(pos);
 		const clock = Math.atan2(temp.y, temp.x);
 		return clock < 0 ? clock + Math.PI * 2 : clock;
 	}
@@ -184,15 +184,15 @@ export class NEDLocal {
 		return result;
 	}
 
-	public project(clock: number, alpha: number, distance: number): Cartographic {
+	public project(clock: number, alpha: number, distance: number): LatLonH {
 		this.direction2Position(clock, alpha, scrapCoordinate2).scalar(distance, scrapCoordinate2);
-		return this.NED2Cartographic(scrapCoordinate2);
+		return this.NED2LatLonH(scrapCoordinate2);
 	}
 
 	get ned2ECEFMatrix(): INEDLocalGLSL {
 		if (this._glslData === undefined) {
 			const mat = this._matECEF2NED;
-			const summit = this.cartoRef.toThreeGLSL();
+			const summit = this.latLonHRef.toThreeGLSL();
 			this._glslData = {
 				ned2ECEF0: [mat[0].x, mat[0].y, mat[0].z],
 				ned2ECEF1: [mat[1].x, mat[1].y, mat[1].z],

@@ -9,7 +9,7 @@ import {
 	DynamicDrawUsage,
 } from 'three';
 import { CONFIGURATION } from '../common/configuration';
-import { Cartographic } from '../common/utils';
+import { LatLonH } from '../common/utils';
 import type { IBBox, IMarkLimits } from '../definitions/project';
 import { GPUComputer } from '../common/gpuComputer';
 import { getShader } from '../shaders';
@@ -20,7 +20,7 @@ interface IPreGeometry {
 	extruded: IMarkLimits; // Position des extruded dans la propriété vertices
 	uvs: Float32Array; // Uvs des vertices
 	indexes: Uint16Array; // Index des vertices!!
-	surfaceBoundary: Cartographic[];
+	surfaceBoundary: LatLonH[];
 }
 interface IPreMesh {
 	geometry: IPreGeometry;
@@ -229,7 +229,7 @@ function generateVertices(geometry: GeoJSON.MultiPolygon | GeoJSON.Polygon): IPr
 		const indexes: number[] = [];
 		triangles.forEach((triangle) => indexes.push(...triangle.getPoints().map((t) => findAndAddVertexIndex(t))));
 		// Index n'a que la surface inférieure!
-		const vertices = verticesPoly2Tri.map((v) => new Cartographic(v.x, v.y, 0, false));
+		const vertices = verticesPoly2Tri.map((v) => new LatLonH(v.x, v.y, 0, false));
 		// Vertices n'a que la surface inférieure!
 		const uvs: number[] = [];
 		vertices.forEach((vertex) =>
@@ -280,7 +280,7 @@ function generateVertices(geometry: GeoJSON.MultiPolygon | GeoJSON.Polygon): IPr
 			},
 			uvs: new Float32Array(uvs),
 			indexes: new Uint16Array(indexes),
-			surfaceBoundary: contour.map((point) => new Cartographic(point.x, point.y, 0, false)),
+			surfaceBoundary: contour.map((point) => new LatLonH(point.x, point.y, 0, false)),
 		};
 
 		return result;
@@ -543,7 +543,7 @@ export class CountryMeshShader extends Mesh {
 		return this._mainProperty;
 	}
 
-	public isInside(pos: Cartographic): boolean {
+	public isInside(pos: LatLonH): boolean {
 		let result = false;
 		if (
 			pos.latitude >= this._boundaryBox.minLat &&
@@ -551,7 +551,7 @@ export class CountryMeshShader extends Mesh {
 			pos.longitude >= this._boundaryBox.minLong &&
 			pos.longitude <= this._boundaryBox.maxLong
 		) {
-			result = Cartographic.isInside(pos, this._boundaryBox.boundary);
+			result = LatLonH.isInside(pos, this._boundaryBox.boundary);
 		}
 
 		return result;

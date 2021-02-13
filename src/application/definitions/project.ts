@@ -5,7 +5,7 @@
  * the [data model can be seen here](https://github.com/theworldisnotflat/shriveling_world/blob/master/model/modeles7.png)
  * Explanations about the [terminology choices can be found here](https://timespace.hypotheses.org/177)
  */
-import type { Cartographic } from '../common/utils';
+import type { LatLonH } from '../common/utils';
 import type { NEDLocal } from '../common/referential';
 export interface ICountryTextureURL {
 	map: string;
@@ -69,7 +69,7 @@ export interface INEDLocalGLSL {
 /**
  * In geographic (lat, lon, height) coordinates
  */
-export interface ICartographic {
+export interface ILatLonH {
 	latitude?: number;
 	longitude?: number;
 	height?: number;
@@ -93,7 +93,7 @@ export interface IConeAnglesItem {
 	 * array is a clock in direction of the destination city and a slope
 	 * corresponding to the transport speed linking the two cities. This array can have zero item.
 	 */
-	tab: Array<{ clock: number; alpha: number }>;
+	alphaTab: Array<{ clock: number; alpha: number }>;
 }
 
 /**
@@ -287,7 +287,7 @@ export interface IBBox {
 	maxLat: number;
 	minLong: number;
 	maxLong: number;
-	boundary: Cartographic[];
+	boundary: LatLonH[];
 }
 
 export interface IPseudoGeometry {
@@ -335,7 +335,7 @@ export interface ILookupCurvesAndCityGraph {
  */
 export interface ICityExtremityOfEdge {
 	cityCode: string | number;
-	position: Cartographic;
+	position: LatLonH;
 }
 /**
  * Curve data associated to an edge from a given city
@@ -346,9 +346,9 @@ export interface ICityExtremityOfEdge {
  */
 export interface ILookupCurveList {
 	end: ICityExtremityOfEdge;
-	pointP: Cartographic;
-	pointQ: Cartographic;
-	middle: Cartographic;
+	pointP: LatLonH;
+	pointQ: LatLonH;
+	middle: LatLonH;
 	speedRatio: { [transportName: string]: { [year: string]: number } };
 	theta: number;
 }
