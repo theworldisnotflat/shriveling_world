@@ -272,7 +272,7 @@ function updateWithLimits(): void {
 
 function computation(): void {
 	const uniforms: { [x: string]: number | ArrayBufferView } = {};
-	uniforms.longueurMaxi = CONFIGURATION.extrudedHeight;
+	uniforms.extrudedHeight = CONFIGURATION.extrudedHeight;
 	uniforms.threeRadius = CONFIGURATION.THREE_EARTH_RADIUS;
 	uniforms.earthRadius = CONFIGURATION.earthRadiusMeters;
 	uniforms.referenceEquiRectangular = CONFIGURATION.referenceEquiRectangularArray;

@@ -7,7 +7,7 @@ uniform sampler2D u_clocks;
 uniform sampler2D u_alphas;
 uniform sampler2D u_boundaryLimits;
 
-uniform float longueurMaxi;
+uniform float extrudedHeight;
 uniform sampler2D u_summits;
 uniform sampler2D u_ned2ECEF0s;
 uniform sampler2D u_ned2ECEF1s;
@@ -44,16 +44,16 @@ void main() {
   float withLimits = texelFetch(u_withLimits, cityPos, 0).r;
 
   vec3 cartoPosition;
-  float longueur = longueurMaxi;
-  float cosEl = cos(alpha);
-  float hauteurBase = longueur * sin(alpha);
+  float coneHeight = extrudedHeight;
+  float cosAlpha = cos(alpha);
+  float hauteurBase = coneHeight * sin(alpha);
   if (clock < 0.0) {
     cartoPosition = summit;
   } else {
-    if (withLimits > 0.0 && cosEl > 0.0) {
-      longueur = min(longueurMaxi, boundaryLimit / cosEl);
+    if (withLimits > 0.0 && cosAlpha > 0.0) {
+      coneHeight = min(extrudedHeight, boundaryLimit / cosAlpha);
     }
-    cartoPosition = polar2Cartographic(clock, alpha, longueur, summit,
+    cartoPosition = polar2Cartographic(clock, alpha, coneHeight, summit,
                                        ned2ECEF, earthRadius);
   }
   vec3 modelPosition = displayConversions(

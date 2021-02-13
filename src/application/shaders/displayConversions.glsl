@@ -117,21 +117,21 @@ vec3 winkel(in vec3 pos, in float threeRadius, in float earthRadius,
 
 vec3 convertor(in vec3 pos, in float threeRadius, in float earthRadius,
                in vec3 reference, in float standardParallel1,
-               in float standardParallel2, int representation) {
+               in float standardParallel2, int projection) {
   vec3 resultat;
-  if (representation == 0) {
+  if (projection == 0) {
     resultat = noProjection(pos, threeRadius, earthRadius);
-  } else if (representation == 1) {
+  } else if (projection == 1) {
     resultat = equirectangular(pos, threeRadius, earthRadius, reference);
-  } else if (representation == 2) {
+  } else if (projection == 2) {
     resultat = mercator(pos, threeRadius, earthRadius, reference.x);
-  } else if (representation == 3) {
+  } else if (projection == 3) {
     resultat = winkel(pos, threeRadius, earthRadius, reference);
-  } else if (representation == 4) {
+  } else if (projection == 4) {
     resultat = eckert(pos, threeRadius, earthRadius, reference);
-  } else if (representation == 5) {
+  } else if (projection == 5) {
     resultat = vanDerGrinten(pos, threeRadius, earthRadius, reference);
-  } else if (representation == 6) {
+  } else if (projection == 6) {
     resultat = conicEquidistant(pos, threeRadius, earthRadius, reference,
                                 standardParallel1, standardParallel2);
   }
