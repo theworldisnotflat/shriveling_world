@@ -95,6 +95,7 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_cone_curvemeshshader_.curvemeshshader.html#_curveposition" class="tsd-kind-icon">_curve<wbr>Position</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_cone_curvemeshshader_.curvemeshshader.html#_speedratio" class="tsd-kind-icon">_speed<wbr>Ratio</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_cone_curvemeshshader_.curvemeshshader.html#_transportname" class="tsd-kind-icon">_transport<wbr>Name</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_cone_curvemeshshader_.curvemeshshader.html#_years" class="tsd-kind-icon">_years</a></li>
@@ -143,6 +144,7 @@
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="_cone_curvemeshshader_.curvemeshshader.html#curvesposition" class="tsd-kind-icon">curves<wbr>Position</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_cone_curvemeshshader_.curvemeshshader.html#gettheta" class="tsd-kind-icon">get<wbr>Theta</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_cone_curvemeshshader_.curvemeshshader.html#transportname" class="tsd-kind-icon">transport<wbr>Name</a></li>
 								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-static"><a href="_cone_curvemeshshader_.curvemeshshader.html#coefficient" class="tsd-kind-icon">coefficient</a></li>
@@ -211,14 +213,14 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Curve<wbr>Mesh<wbr>Shader<span class="tsd-signature-symbol">(</span>begin<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, end<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, theta<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, years<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{}</span>, transportName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_cone_curvemeshshader_.curvemeshshader.html" class="tsd-signature-type">CurveMeshShader</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Curve<wbr>Mesh<wbr>Shader<span class="tsd-signature-symbol">(</span>begin<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, end<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, theta<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, years<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{}</span>, transportName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, curvePosition<span class="tsd-signature-symbol">: </span><a href="../enums/_definitions_project_.curvesposition_enum.html" class="tsd-signature-type">CURVESPOSITION_ENUM</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_cone_curvemeshshader_.curvemeshshader.html" class="tsd-signature-type">CurveMeshShader</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides Line.__constructor</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/4bc6f99/src/application/cone/curveMeshShader.ts#L229">src/application/cone/curveMeshShader.ts:229</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1509ced/src/application/cone/curveMeshShader.ts#L250">src/application/cone/curveMeshShader.ts:250</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -243,6 +245,9 @@
 								<li>
 									<h5>transportName: <span class="tsd-signature-type">string</span></h5>
 								</li>
+								<li>
+									<h5>curvePosition: <a href="../enums/_definitions_project_.curvesposition_enum.html" class="tsd-signature-type">CURVESPOSITION_ENUM</a></h5>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_cone_curvemeshshader_.curvemeshshader.html" class="tsd-signature-type">CurveMeshShader</a></h4>
 						</li>
@@ -252,12 +257,22 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_curveposition" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _curve<wbr>Position</h3>
+					<div class="tsd-signature tsd-kind-icon">_curve<wbr>Position<span class="tsd-signature-symbol">:</span> <a href="../enums/_definitions_project_.curvesposition_enum.html" class="tsd-signature-type">CURVESPOSITION_ENUM</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1509ced/src/application/cone/curveMeshShader.ts#L137">src/application/cone/curveMeshShader.ts:137</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="_speedratio" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _speed<wbr>Ratio</h3>
 					<div class="tsd-signature tsd-kind-icon">_speed<wbr>Ratio<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/4bc6f99/src/application/cone/curveMeshShader.ts#L122">src/application/cone/curveMeshShader.ts:122</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1509ced/src/application/cone/curveMeshShader.ts#L136">src/application/cone/curveMeshShader.ts:136</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -267,7 +282,7 @@
 					<div class="tsd-signature tsd-kind-icon">_transport<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/4bc6f99/src/application/cone/curveMeshShader.ts#L121">src/application/cone/curveMeshShader.ts:121</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1509ced/src/application/cone/curveMeshShader.ts#L135">src/application/cone/curveMeshShader.ts:135</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -277,7 +292,7 @@
 					<div class="tsd-signature tsd-kind-icon">_years<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{}</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/4bc6f99/src/application/cone/curveMeshShader.ts#L120">src/application/cone/curveMeshShader.ts:120</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1509ced/src/application/cone/curveMeshShader.ts#L134">src/application/cone/curveMeshShader.ts:134</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -316,7 +331,7 @@
 					<div class="tsd-signature tsd-kind-icon">begin<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/4bc6f99/src/application/cone/curveMeshShader.ts#L117">src/application/cone/curveMeshShader.ts:117</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1509ced/src/application/cone/curveMeshShader.ts#L131">src/application/cone/curveMeshShader.ts:131</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -403,7 +418,7 @@
 					<div class="tsd-signature tsd-kind-icon">end<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/4bc6f99/src/application/cone/curveMeshShader.ts#L118">src/application/cone/curveMeshShader.ts:118</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1509ced/src/application/cone/curveMeshShader.ts#L132">src/application/cone/curveMeshShader.ts:132</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -940,7 +955,7 @@
 					<div class="tsd-signature tsd-kind-icon">theta<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/4bc6f99/src/application/cone/curveMeshShader.ts#L119">src/application/cone/curveMeshShader.ts:119</a></li>
+							<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1509ced/src/application/cone/curveMeshShader.ts#L133">src/application/cone/curveMeshShader.ts:133</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -1063,6 +1078,38 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
+					<a name="curvesposition" class="tsd-anchor"></a>
+					<h3>curves<wbr>Position</h3>
+					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> curvesPosition<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../enums/_definitions_project_.curvesposition_enum.html" class="tsd-signature-type">CURVESPOSITION_ENUM</a></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> curvesPosition<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><a href="../enums/_definitions_project_.curvesposition_enum.html" class="tsd-signature-type">CURVESPOSITION_ENUM</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1509ced/src/application/cone/curveMeshShader.ts#L283">src/application/cone/curveMeshShader.ts:283</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../enums/_definitions_project_.curvesposition_enum.html" class="tsd-signature-type">CURVESPOSITION_ENUM</a></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1509ced/src/application/cone/curveMeshShader.ts#L287">src/application/cone/curveMeshShader.ts:287</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <a href="../enums/_definitions_project_.curvesposition_enum.html" class="tsd-signature-type">CURVESPOSITION_ENUM</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
 					<a name="gettheta" class="tsd-anchor"></a>
 					<h3>get<wbr>Theta</h3>
@@ -1073,7 +1120,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/4bc6f99/src/application/cone/curveMeshShader.ts#L281">src/application/cone/curveMeshShader.ts:281</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1509ced/src/application/cone/curveMeshShader.ts#L312">src/application/cone/curveMeshShader.ts:312</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -1090,7 +1137,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/4bc6f99/src/application/cone/curveMeshShader.ts#L285">src/application/cone/curveMeshShader.ts:285</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1509ced/src/application/cone/curveMeshShader.ts#L316">src/application/cone/curveMeshShader.ts:316</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -1108,7 +1155,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/4bc6f99/src/application/cone/curveMeshShader.ts#L260">src/application/cone/curveMeshShader.ts:260</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1509ced/src/application/cone/curveMeshShader.ts#L291">src/application/cone/curveMeshShader.ts:291</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -1116,7 +1163,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/4bc6f99/src/application/cone/curveMeshShader.ts#L266">src/application/cone/curveMeshShader.ts:266</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1509ced/src/application/cone/curveMeshShader.ts#L297">src/application/cone/curveMeshShader.ts:297</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1442,7 +1489,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/4bc6f99/src/application/cone/curveMeshShader.ts#L276">src/application/cone/curveMeshShader.ts:276</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1509ced/src/application/cone/curveMeshShader.ts#L307">src/application/cone/curveMeshShader.ts:307</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -1702,7 +1749,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/4bc6f99/src/application/cone/curveMeshShader.ts#L303">src/application/cone/curveMeshShader.ts:303</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1509ced/src/application/cone/curveMeshShader.ts#L334">src/application/cone/curveMeshShader.ts:334</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -2068,7 +2115,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/4bc6f99/src/application/cone/curveMeshShader.ts#L289">src/application/cone/curveMeshShader.ts:289</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1509ced/src/application/cone/curveMeshShader.ts#L320">src/application/cone/curveMeshShader.ts:320</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -2614,7 +2661,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/4bc6f99/src/application/cone/curveMeshShader.ts#L124">src/application/cone/curveMeshShader.ts:124</a></li>
+									<li>Defined in <a href="https://github.com/theworldisnotflat/shriveling_world/blob/1509ced/src/application/cone/curveMeshShader.ts#L139">src/application/cone/curveMeshShader.ts:139</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -2694,6 +2741,9 @@
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-is-private">
 								<a href="_cone_curvemeshshader_.curvemeshshader.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_cone_curvemeshshader_.curvemeshshader.html#_curveposition" class="tsd-kind-icon">_curve<wbr>Position</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_cone_curvemeshshader_.curvemeshshader.html#_speedratio" class="tsd-kind-icon">_speed<wbr>Ratio</a>
@@ -2823,6 +2873,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 								<a href="_cone_curvemeshshader_.curvemeshshader.html#defaultup" class="tsd-kind-icon">Default<wbr>Up</a>
+							</li>
+							<li class=" tsd-kind-accessor tsd-parent-kind-class">
+								<a href="_cone_curvemeshshader_.curvemeshshader.html#curvesposition" class="tsd-kind-icon">curves<wbr>Position</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="_cone_curvemeshshader_.curvemeshshader.html#gettheta" class="tsd-kind-icon">get<wbr>Theta</a>
@@ -3027,6 +3080,9 @@
 						<a href="../modules/_cone_curvemeshshader_.html#regeneratestep" class="tsd-kind-icon">regenerate<wbr>Step</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<a href="../modules/_cone_curvemeshshader_.html#updateposition" class="tsd-kind-icon">update<wbr>Position</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
 						<a href="../modules/_cone_curvemeshshader_.html#updateyear" class="tsd-kind-icon">update<wbr>Year</a>
 					</li>
 				</ul>
@@ -3049,6 +3105,7 @@
 				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
 				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
