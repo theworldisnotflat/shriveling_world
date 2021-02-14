@@ -9,6 +9,7 @@ import { generateUUID } from './utils';
 import {
 	PROJECTION_ENUM,
 	CONESSHAPE_ENUM,
+	CURVESPOSITION_ENUM,
 	ICountryTextureURL,
 	ILatLonH,
 	configurationObservableEvt,
@@ -45,6 +46,7 @@ let _COUNTRY_MATERIAL: Material;
 let _BASIC_CONE_MATERIAL: Material;
 let _BASIC_TEXT_MATERIAL: MeshBasicMaterial;
 let _BASIC_LINE_MATERIAL: LineBasicMaterial;
+let _curvesPosition: CURVESPOSITION_ENUM = CURVESPOSITION_ENUM.above;
 let _pointsPerCurve = 50;
 let _SIZE_TEXT: number;
 let _TEXT_GEOMETRY_OPTIONS: TextGeometryParameters;
@@ -64,6 +66,7 @@ const _listeners: {
 	tick: IEventListItem[];
 	pointsPerCurve: IEventListItem[];
 	conesShape: IEventListItem[];
+	curvesPosition: IEventListItem[];
 } = {
 	heightRatio: [],
 	intrudedHeightRatio: [],
@@ -77,6 +80,7 @@ const _listeners: {
 	tick: [],
 	pointsPerCurve: [],
 	conesShape: [],
+	curvesPosition: [],
 };
 function fireEvents(attribute: configurationObservableEvt, value: any): void {
 	if (_listeners.hasOwnProperty(attribute)) {
@@ -311,6 +315,13 @@ export const CONFIGURATION = {
 	set conesShape(value: CONESSHAPE_ENUM) {
 		_conesShape = value;
 		fireEvents('conesShape', _conesShape);
+	},
+	get curvesPosition(): CURVESPOSITION_ENUM {
+		return _curvesPosition;
+	},
+	set curvesPosition(value: CURVESPOSITION_ENUM) {
+		_curvesPosition = value;
+		fireEvents('curvesPosition', _curvesPosition);
 	},
 	/**
 	 * Move from [[projectionInit]] to [[projectionEnd]]
