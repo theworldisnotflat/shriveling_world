@@ -34,6 +34,13 @@ export enum CONESSHAPE_ENUM {
 	complex = 2,
 }
 
+export enum CURVESPOSITION_ENUM {
+	above = 0,
+	below = 1,
+	belowWhenPossible = 2,
+	stickToCone = 3,
+}
+
 export type internalFormatType =
 	| 'R8'
 	| 'R32F'
@@ -256,6 +263,7 @@ export interface ITranspMode {
 	maxSYear?: number;
 	yearBegin?: number;
 	yearEnd?: number;
+	curvesPosition?: CURVESPOSITION_ENUM;
 }
 
 /**
@@ -308,6 +316,7 @@ export type configurationObservableEvt =
 	| 'coneStep'
 	| 'referenceEquiRectangular'
 	| 'pointsPerCurve'
+	| 'pointsPerCurveAll'
 	| 'THREE_EARTH_RADIUS'
 	| 'projectionBegin'
 	| 'projectionEnd'
@@ -315,7 +324,7 @@ export type configurationObservableEvt =
 	| 'projectionPercent'
 	| 'year'
 	| 'tick'
-	| 'conesShape';
+	| 'curvesPosition';
 
 export type configurationCallback = (name: configurationObservableEvt, value: unknown) => void;
 export type ShaderTypes = 'fragment' | 'vertex';
