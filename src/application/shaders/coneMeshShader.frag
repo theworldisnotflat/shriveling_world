@@ -47,6 +47,7 @@ void main() {
   float coneHeight = extrudedHeight;
   float cosAlpha = cos(alpha);
   float hauteurBase = coneHeight * sin(alpha);
+  hauteurBase = coneHeight;
   if (clock < 0.0) {
     cartoPosition = summit;
   } else {

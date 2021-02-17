@@ -186,6 +186,8 @@ export const CONFIGURATION = {
 	 * produce a more readable image/map
 	 *
 	 * the main paramter of this operation is [[extrudedHeight]]
+	 * [[extrudedHeight]] is the height of continents shapes turned into
+	 * thick 'slices'; these three d forms will be used to cut cones
 	 */
 	get extrudedHeight(): number {
 		return _extrudedHeight;
