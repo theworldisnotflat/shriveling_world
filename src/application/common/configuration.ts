@@ -83,7 +83,6 @@ const _listeners: {
 	pointsPerCurve: [],
 	conesShape: [],
 	curvesPosition: [],
-	zCoeff: [],
 };
 function fireEvents(attribute: configurationObservableEvt, value: any): void {
 	if (_listeners.hasOwnProperty(attribute)) {
