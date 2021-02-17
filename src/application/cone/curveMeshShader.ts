@@ -102,7 +102,7 @@ function updatePosition(): void {
 	}
 }
 
-function computation(): void {
+function computation(transName?: any): void {
 	const uniforms: { [x: string]: number | ArrayBufferView } = {};
 	uniforms.longueurMaxi = CONFIGURATION.extrudedHeight;
 	uniforms.threeRadius = CONFIGURATION.THREE_EARTH_RADIUS;
@@ -123,7 +123,13 @@ function computation(): void {
 	const tempo = _gpgpu.positions.calculate(_width, _height);
 	const allPositions = tempo[0];
 	for (let i = 0; i < _height; i++) {
-		_curves[i].setGeometry(allPositions.subarray(i * _width * 4, (i + 1) * _width * 4));
+		if (transName) {
+			if (_curves[i].transportName == transName) {
+				_curves[i].setGeometry(allPositions.subarray(i * _width * 4, (i + 1) * _width * 4));
+			}
+		} else {
+			_curves[i].setGeometry(allPositions.subarray(i * _width * 4, (i + 1) * _width * 4));
+		}
 	}
 }
 
@@ -135,6 +141,7 @@ export class CurveMeshShader extends Line {
 	private readonly _transportName: string;
 	private _speedRatio: number;
 	private _curvePosition: CURVESPOSITION_ENUM;
+	private _pointsPerCurve: number;
 
 	public static async generateCones(lookup: ILookupCurves): Promise<CurveMeshShader[]> {
 		_ready = false;
@@ -161,21 +168,10 @@ export class CurveMeshShader extends Line {
 				]).then(() => {
 					uuid = CONFIGURATION.addEventListener(
 						'heightRatio intrudedHeightRatio  referenceEquiRectangular THREE_EARTH_RADIUS ' +
-							'projectionBegin projectionEnd projectionPercent year curvesPosition pointsPerCurve',
+							'projectionBegin projectionEnd projectionPercent year',
 						(name: string) => {
 							if (_ready) {
 								switch (name) {
-									case 'pointsPerCurve':
-										_t = new Float32Array(0);
-										regenerateStep();
-										computation();
-										break;
-									case 'curvesPosition':
-										//regenerateStep();
-										//updateYear();
-										updatePosition();
-										computation();
-										break;
 									case 'year':
 										updateYear();
 										computation();
@@ -219,7 +215,8 @@ export class CurveMeshShader extends Line {
 										endPoint.theta,
 										ratios,
 										transportName,
-										CONFIGURATION.curvesPosition
+										CONFIGURATION.curvesPosition,
+										CONFIGURATION.pointsPerCurve
 									)
 								);
 								pControls0.push(...beginGLSL);
@@ -255,7 +252,8 @@ export class CurveMeshShader extends Line {
 		theta: number,
 		years: { [year: string]: number },
 		transportName: string,
-		curvePosition: CURVESPOSITION_ENUM
+		curvePosition: CURVESPOSITION_ENUM,
+		pointsPerCurve: number
 	) {
 		const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(204 * 4), 4).setUsage(
 			DynamicDrawUsage
@@ -278,6 +276,7 @@ export class CurveMeshShader extends Line {
 		this._transportName = transportName;
 		this._speedRatio = 0;
 		this._curvePosition = curvePosition;
+		this._pointsPerCurve = pointsPerCurve;
 	}
 
 	public get curvesPosition(): CURVESPOSITION_ENUM {
@@ -286,6 +285,21 @@ export class CurveMeshShader extends Line {
 
 	public set curvesPosition(value: CURVESPOSITION_ENUM) {
 		this._curvePosition = value;
+		updatePosition();
+		computation();
+	}
+
+	public get pointsPerCurve(): number {
+		return this._pointsPerCurve;
+	}
+
+	public set pointsPerCurve(value: number) {
+		this._pointsPerCurve = value;
+		if (value >= 1 && value <= 200) {
+			_t = new Float32Array(0);
+			regenerateStep();
+			computation(this.transportName);
+		}
 	}
 
 	public static get coefficient(): number {

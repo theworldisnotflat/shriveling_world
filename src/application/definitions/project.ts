@@ -263,7 +263,6 @@ export interface ITranspMode {
 	maxSYear?: number;
 	yearBegin?: number;
 	yearEnd?: number;
-	curvesPosition?: CURVESPOSITION_ENUM;
 }
 
 /**
@@ -316,16 +315,13 @@ export type configurationObservableEvt =
 	| 'coneStep'
 	| 'referenceEquiRectangular'
 	| 'pointsPerCurve'
-	| 'pointsPerCurveAll'
 	| 'THREE_EARTH_RADIUS'
 	| 'projectionBegin'
 	| 'projectionEnd'
 	| 'conesShape'
 	| 'projectionPercent'
 	| 'year'
-	| 'tick'
-	| 'curvesPosition';
-
+	| 'tick';
 export type configurationCallback = (name: configurationObservableEvt, value: unknown) => void;
 export type ShaderTypes = 'fragment' | 'vertex';
 /**

@@ -66,7 +66,6 @@ const _listeners: {
 	tick: IEventListItem[];
 	pointsPerCurve: IEventListItem[];
 	conesShape: IEventListItem[];
-	curvesPosition: IEventListItem[];
 } = {
 	heightRatio: [],
 	intrudedHeightRatio: [],
@@ -80,7 +79,6 @@ const _listeners: {
 	tick: [],
 	pointsPerCurve: [],
 	conesShape: [],
-	curvesPosition: [],
 };
 function fireEvents(attribute: configurationObservableEvt, value: any): void {
 	if (_listeners.hasOwnProperty(attribute)) {
@@ -168,7 +166,6 @@ export const CONFIGURATION = {
 	set pointsPerCurve(value: number) {
 		if (value >= 1 && value <= 200) {
 			_pointsPerCurve = value;
-			fireEvents('pointsPerCurve', value);
 		}
 	},
 	/**
@@ -321,7 +318,6 @@ export const CONFIGURATION = {
 	},
 	set curvesPosition(value: CURVESPOSITION_ENUM) {
 		_curvesPosition = value;
-		fireEvents('curvesPosition', _curvesPosition);
 	},
 	/**
 	 * Move from [[projectionInit]] to [[projectionEnd]]
