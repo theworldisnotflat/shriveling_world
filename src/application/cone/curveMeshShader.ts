@@ -3,7 +3,7 @@ import { BufferGeometry, InterleavedBufferAttribute, InterleavedBuffer, Line, Ma
 import { CONFIGURATION } from '../common/configuration';
 import { getShader } from '../shaders';
 import { GPUComputer } from '../common/gpuComputer';
-import type { ILookupCurves, CURVESPOSITION_ENUM } from '../definitions/project';
+import type { ILookupCurves } from '../definitions/project';
 
 let _curves: CurveMeshShader[];
 
@@ -41,7 +41,7 @@ fullCleanArrays();
  * @param speedRatio
  * @param theta
  */
-function getCurveHeight(speedRatio: number, theta: number, curvesPosition: CURVESPOSITION_ENUM): number {
+function getCurveHeight(speedRatio: number, theta: number): number {
 	const semiTheta = theta / 2;
 	const sinSemiTheta = Math.sin(semiTheta);
 	const cosSemiTheta = Math.cos(semiTheta);
@@ -50,16 +50,8 @@ function getCurveHeight(speedRatio: number, theta: number, curvesPosition: CURVE
 	// The equation of length om'
 	const OMPrime = (cosSemiTheta + secondTerm + thirdTerm) * CONFIGURATION.earthRadiusMeters * _coefficient;
 	// Minus earth radius to compute cm'
-	switch (curvesPosition) {
-		case 0: // above the surface of the earth
-			return OMPrime - CONFIGURATION.earthRadiusMeters;
-		case 1: // below
-			return -(OMPrime - CONFIGURATION.earthRadiusMeters);
-		case 2:
-			return -(OMPrime - CONFIGURATION.earthRadiusMeters);
-		case 3:
-			return -(OMPrime - CONFIGURATION.earthRadiusMeters);
-	}
+
+	return OMPrime - CONFIGURATION.earthRadiusMeters;
 }
 
 /**
@@ -67,22 +59,19 @@ function getCurveHeight(speedRatio: number, theta: number, curvesPosition: CURVE
  * [[pointsPerCurve]] parameter
  */
 function regenerateCurvesGeometry(): void {
-	for (let i = 0; i < _nbCurves; i++) {
-		const step = 1 / _curves[i].pointsPerCurve;
-		const t: number[] = [];
-		for (let j = 0; j < 1; j += step) {
-			t.push(j);
-		}
-
-		t.push(1);
-		_t = new Float32Array(t);
-		_width = _t.length;
-		console.log('step', step, _curves[i].transportName);
-		const options = {
-			u_tSample: { src: _t, width: _width, height: 1 },
-		};
-		_gpgpu.positions.updateTextures(options);
+	const step = 1 / CONFIGURATION.pointsPerCurve;
+	const t: number[] = [];
+	for (let j = 0; j < 1; j += step) {
+		t.push(j);
 	}
+
+	t.push(1);
+	_t = new Float32Array(t);
+	_width = _t.length;
+	const options = {
+		u_tSample: { src: _t, width: _width, height: 1 },
+	};
+	_gpgpu.positions.updateTextures(options);
 }
 
 /**
@@ -102,12 +91,6 @@ function updateCurvesYear(): void {
 	}
 }
 
-function updatePosition(): void {
-	for (let i = 0; i < _nbCurves; i++) {
-		_curves[i].computeCurveHeightAndTestIfAvailable(CONFIGURATION.year);
-	}
-}
-
 function computation(): void {
 	const uniforms: { [x: string]: number | ArrayBufferView } = {};
 	uniforms.extrudedHeight = CONFIGURATION.extrudedHeight;
@@ -118,7 +101,6 @@ function computation(): void {
 	uniforms.projectionEnd = CONFIGURATION.projectionEnd;
 	uniforms.percentProjection = CONFIGURATION.percentProjection;
 	uniforms.conesShape = CONFIGURATION.conesShape;
-	uniforms.curvesPosition = CONFIGURATION.curvesPosition;
 	uniforms.standardParallel1 = CONFIGURATION.standardParallel1;
 	uniforms.standardParallel2 = CONFIGURATION.standardParallel2;
 	uniforms.coefficient = _coefficient;
@@ -140,8 +122,6 @@ export class CurveMeshShader extends Line {
 	private readonly theta: number;
 	private readonly _years: { [year: string]: number };
 	private readonly _transportName: string;
-	private _curvePosition: CURVESPOSITION_ENUM;
-	private _pointsPerCurve: number;
 	private _speedRatio: number;
 
 	/**
@@ -174,11 +154,9 @@ export class CurveMeshShader extends Line {
 				]).then(() => {
 					uuid = CONFIGURATION.addEventListener(
 						'heightRatio intrudedHeightRatio referenceEquiRectangular THREE_EARTH_RADIUS ' +
-							'projectionBegin projectionEnd projectionPercent year pointsPerCurve' +
-							'modeSelected curvesPosition',
+							'projectionBegin projectionEnd projectionPercent year pointsPerCurve',
 						(name: string) => {
 							if (_ready) {
-								console.log('addEventListener', name);
 								switch (name) {
 									case 'pointsPerCurve':
 										_t = new Float32Array(0);
@@ -188,12 +166,6 @@ export class CurveMeshShader extends Line {
 										break;
 									case 'year':
 										updateCurvesYear();
-										computation();
-										break;
-									case 'curvesPosition':
-										regenerateCurvesGeometry();
-										updateCurvesYear();
-										//updatePosition();
 										computation();
 										break;
 									default:
@@ -234,9 +206,7 @@ export class CurveMeshShader extends Line {
 										endPoint.end.cityCode,
 										endPoint.theta,
 										ratios,
-										transportName,
-										CONFIGURATION.curvesPosition,
-										CONFIGURATION.pointsPerCurve
+										transportName
 									)
 								);
 								pControls0.push(...beginGLSL);
@@ -251,7 +221,6 @@ export class CurveMeshShader extends Line {
 		}
 
 		_nbCurves = _curves.length;
-		console.log('_nbCurves', _nbCurves);
 		_heightTab = new Float32Array(_nbCurves);
 		const options = {
 			u_PControls0: { src: new Float32Array(pControls0), width: 1, height: _nbCurves },
@@ -272,9 +241,7 @@ export class CurveMeshShader extends Line {
 		end: string | number,
 		theta: number,
 		years: { [year: string]: number },
-		transportName: string,
-		curvePosition: CURVESPOSITION_ENUM,
-		pointsPerCurve: number
+		transportName: string
 	) {
 		const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(204 * 4), 4).setUsage(
 			DynamicDrawUsage
@@ -296,8 +263,6 @@ export class CurveMeshShader extends Line {
 		this.visible = true;
 		this._transportName = transportName;
 		this._speedRatio = 0;
-		this._curvePosition = curvePosition;
-		this._pointsPerCurve = pointsPerCurve;
 	}
 
 	public static get coefficient(): number {
@@ -310,12 +275,7 @@ export class CurveMeshShader extends Line {
 		_coefficient = value;
 		for (let i = 0; i < _nbCurves; i++) {
 			const curve = _curves[i];
-			let curvePosition = 0;
-			if (curve._transportName === 'Train') {
-				// temporary
-				curvePosition = 1;
-			}
-			_heightTab[i] = getCurveHeight(curve._speedRatio, curve.theta, curvePosition);
+			_heightTab[i] = getCurveHeight(curve._speedRatio, curve.theta);
 		}
 
 		computation();
@@ -334,21 +294,6 @@ export class CurveMeshShader extends Line {
 		return this._transportName;
 	}
 
-	public get curvePosition(): CURVESPOSITION_ENUM {
-		return this._curvePosition;
-	}
-
-	public set curvePosition(value: CURVESPOSITION_ENUM) {
-		this._curvePosition = value;
-	}
-
-	public get pointsPerCurve(): number {
-		return this._pointsPerCurve;
-	}
-
-	public set pointsPerCurve(value: number) {
-		this._pointsPerCurve = value;
-	}
 	public setGeometry(positions: Float32Array): void {
 		const bufferedGeometry = <BufferGeometry>this.geometry;
 		if (curvesDonTDisplay.includes(this)) {
@@ -367,14 +312,12 @@ export class CurveMeshShader extends Line {
 	 * and if yes call computation of curves height
 	 */
 	public computeCurveHeightAndTestIfAvailable(year: string | number): boolean {
-		console.log('computeCurveHeightAndTestIfAvailable');
 		const speedRatio = this._years[year];
 		const result = speedRatio !== undefined;
 		if (result) {
 			this._speedRatio = speedRatio;
 			const index = _curves.indexOf(this);
-			const curvePosition = Number(_curves[index].curvePosition);
-			_heightTab[index] = getCurveHeight(this._speedRatio, this.theta, curvePosition);
+			_heightTab[index] = getCurveHeight(this._speedRatio, this.theta);
 		}
 
 		return result;

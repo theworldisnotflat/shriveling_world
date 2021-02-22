@@ -2,7 +2,7 @@
 import type { LineBasicMaterial, MeshPhongMaterial } from 'three';
 import type { Merger } from './merger';
 import { DragNDrop as DragNDrop } from '../common/utils';
-import type { IListFile, CONESSHAPE_ENUM, CURVESPOSITION_ENUM } from '../definitions/project';
+import type { IListFile, CONESSHAPE_ENUM } from '../definitions/project';
 import type BigBoard from './bigBoard';
 import { ConeMeshShader } from '../cone/coneMeshShader';
 import * as dat from 'dat.gui';
@@ -44,12 +44,6 @@ let conf = {
 	'text color': '#',
 	'curve transparency': 0,
 	'transport mode selected': true,
-	curvesPosition: {
-		above: 0,
-		below: 1,
-		belowWhenPossible: 2,
-		stickToCone: 3,
-	},
 	'light color': '#',
 	intensity: 0,
 	'ambient color': '#',
@@ -94,12 +88,6 @@ export class GUI {
 			'text color': '#' + CONFIGURATION.BASIC_TEXT_MATERIAL.color.getHex().toString(16),
 			'curve transparency': CONFIGURATION.BASIC_LINE_MATERIAL.opacity,
 			'transport mode selected': CONFIGURATION.modeSelected,
-			curvesPosition: {
-				above: 0,
-				below: 1,
-				belowWhenPossible: 2,
-				stickToCone: 3,
-			},
 			'light color': '#' + bigBoard.light.color.getHex().toString(16),
 			intensity: bigBoard.light.intensity,
 			'ambient color': '#' + bigBoard.ambient.color.getHex().toString(16),
@@ -213,7 +201,6 @@ export class GUI {
 						terrestrialControllersList.push(folder);
 
 						function curveListener(): void {
-							console.log('passe par curveListener');
 							const opacity = <number>curveOpacity.getValue();
 							const color = Number.parseInt(curveColor.getValue().replace('#', ''), 16);
 
@@ -223,8 +210,6 @@ export class GUI {
 									const material = <LineBasicMaterial>curve.material;
 									material.color.setHex(color);
 									material.opacity = opacity;
-									//curve.curvePosition = <CURVESPOSITION_ENUM>curvesPosition.getValue();
-									//curve.pointsPerCurve = <number>pointsPerCurveMode.getValue();
 								});
 						}
 
@@ -235,30 +220,6 @@ export class GUI {
 						const modeSelected = folder.add(conf, 'transport mode selected').onChange((value: boolean) => {
 							conf['modeSelected'] = value;
 						});
-						const curvesPosition = folder
-							.add(CONFIGURATION, 'curvesPosition', conf.curvesPosition)
-							.name('curves position')
-							.onChange((value: CURVESPOSITION_ENUM) => {
-								//curveListener();
-								console.log('value', value);
-								bigBoard.coneAndCurveBoard.curveCollection
-									.filter((curve) => transportName === curve.transportName)
-									.forEach((curve) => {
-										curve.curvePosition = value;
-									});
-							});
-						const pointsPerCurveMode = folder
-							.add(CONFIGURATION, 'pointsPerCurve', 0, 200)
-							.step(1)
-							.name('number of points')
-							.onChange((value: any) => {
-								//curveListener();
-								bigBoard.coneAndCurveBoard.curveCollection
-									.filter((curve) => transportName === curve.transportName)
-									.forEach((curve) => {
-										curve.pointsPerCurve = value;
-									});
-							});
 					});
 				}
 

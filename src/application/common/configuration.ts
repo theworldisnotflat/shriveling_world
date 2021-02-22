@@ -9,7 +9,6 @@ import { generateUUID } from './utils';
 import {
 	PROJECTION_ENUM,
 	CONESSHAPE_ENUM,
-	CURVESPOSITION_ENUM,
 	ICountryTextureURL,
 	ICartographic,
 	configurationObservableEvt,
@@ -40,7 +39,6 @@ let _projectionInit: PROJECTION_ENUM = PROJECTION_ENUM.none;
 let _projectionEnd: PROJECTION_ENUM = PROJECTION_ENUM.none;
 let _conesShape: CONESSHAPE_ENUM = CONESSHAPE_ENUM.basedOnRoad;
 let _modeSelected = true;
-let _curvesPosition: CURVESPOSITION_ENUM = CURVESPOSITION_ENUM.above;
 let _projectionPercent = 0;
 let _year: string | number = 1980;
 let _highLightedMaterial: MeshBasicMaterial;
@@ -68,7 +66,6 @@ const _listeners: {
 	pointsPerCurve: IEventListItem[];
 	conesShape: IEventListItem[];
 	modeSelected: IEventListItem[];
-	curvesPosition: IEventListItem[];
 } = {
 	heightRatio: [],
 	intrudedHeightRatio: [],
@@ -83,7 +80,6 @@ const _listeners: {
 	pointsPerCurve: [],
 	conesShape: [],
 	modeSelected: [],
-	curvesPosition: [],
 };
 function fireEvents(attribute: configurationObservableEvt, value: any): void {
 	if (_listeners.hasOwnProperty(attribute)) {
@@ -327,14 +323,6 @@ export const CONFIGURATION = {
 	set conesShape(value: CONESSHAPE_ENUM) {
 		_conesShape = value;
 		fireEvents('conesShape', _conesShape);
-	},
-
-	get curvesPosition(): CURVESPOSITION_ENUM {
-		return _curvesPosition;
-	},
-	set curvesPosition(value: CURVESPOSITION_ENUM) {
-		_curvesPosition = value;
-		fireEvents('curvesPosition', _curvesPosition);
 	},
 	/**
 	 * Move from [[projectionInit]] to [[projectionEnd]]

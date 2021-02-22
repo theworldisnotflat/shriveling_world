@@ -352,7 +352,6 @@ function computation(): void {
 	uniforms.projectionEnd = CONFIGURATION.projectionEnd;
 	uniforms.percentProjection = CONFIGURATION.percentProjection;
 	uniforms.conesShape = CONFIGURATION.conesShape;
-	uniforms.curvesPosition = CONFIGURATION.curvesPosition;
 	uniforms.standardParallel1 = CONFIGURATION.standardParallel1;
 	uniforms.standardParallel2 = CONFIGURATION.standardParallel2;
 	_gpgpu.positions.updateUniforms(uniforms);
@@ -397,7 +396,7 @@ export class CountryMeshShader extends Mesh {
 					uuid = CONFIGURATION.addEventListener(
 						'heightRatio intrudedHeightRatio referenceEquiRectangular THREE_EARTH_RADIUS ' +
 							'projectionBegin projectionEnd projectionPercent tick pointsPerCurve' +
-							'modeSelected curvesPosition',
+							'modeSelected ',
 						(name: string) => {
 							if (_ready === true) {
 								switch (name) {
