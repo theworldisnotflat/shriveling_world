@@ -115,6 +115,7 @@ function computation(transName?: any): void {
 	uniforms.standardParallel1 = CONFIGURATION.standardParallel1;
 	uniforms.standardParallel2 = CONFIGURATION.standardParallel2;
 	uniforms.coefficient = _coefficient;
+	uniforms.zCoeff = CONFIGURATION.zCoeff;
 	_gpgpu.positions.updateUniforms(uniforms);
 	const options = {
 		u_height: { src: _heightTab, width: 1, height: _height },

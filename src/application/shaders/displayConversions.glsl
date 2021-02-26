@@ -6,11 +6,11 @@ const float exckert_delta_const = 2.57079632679489661923;
 
 float deltaEckert(in float theta, in float phi) {
   return -(theta + sin(theta) - exckert_delta_const * sin(phi)) /
-         (1.0 + cos(theta));
+        (1.0 + cos(theta));
 }
 
 vec3 eckert(in vec3 pos, in float threeRadius, in float earthRadius,
-            in vec3 reference) {
+            in vec3 reference, in float zzCoeff) {
   vec3 resultat = vec3(0.0);
   float theta = reference.y;
   for (int i = 0; i < ECKERT_ITERATION; i++) {
@@ -19,14 +19,14 @@ vec3 eckert(in vec3 pos, in float threeRadius, in float earthRadius,
   resultat.x =
       (pos.x - reference.x) * (1.0 + cos(theta)) / ECKERT_CONST * threeRadius;
   resultat.y = 2.0 * theta / ECKERT_CONST * threeRadius;
-  resultat.z = (pos.z - reference.z) / earthRadius * threeRadius;
+  resultat.z = (pos.z - reference.z) / earthRadius * threeRadius * zzCoeff;
   return resultat;
 }
 
 vec3 vanDerGrinten(in vec3 pos, in float threeRadius, in float earthRadius,
-                   in vec3 reference) {
+                  in vec3 reference, in float zzCoeff) {
   vec3 resultat = vec3(0.0);
-  resultat.z = (pos.z - reference.z) / earthRadius * threeRadius;
+  resultat.z = (pos.z - reference.z) / earthRadius * threeRadius * zzCoeff;
   float theta = asin(abs(2.0 * pos.y / PI));
   if (abs(pos.x - reference.x) < 0.000001 || abs(theta - PI / 2.0) < 0.000001) {
     resultat.y = sign(pos.y) * PI * threeRadius * tan(theta / 2.0);
@@ -53,7 +53,7 @@ vec3 vanDerGrinten(in vec3 pos, in float threeRadius, in float earthRadius,
 
 vec3 conicEquidistant(in vec3 pos, in float threeRadius, in float earthRadius,
                       in vec3 reference, in float standardParallel1,
-                      in float standardParallel2) {
+                      in float standardParallel2, in float zzCoeff) {
   vec3 resultat = vec3(0.0);
   float n = (cos(standardParallel1) - cos(standardParallel2)) /
             (standardParallel2 - standardParallel1);
@@ -63,7 +63,7 @@ vec3 conicEquidistant(in vec3 pos, in float threeRadius, in float earthRadius,
   float rho = G - pos.y;
   resultat.x = rho * sin(theta) * threeRadius;
   resultat.y = (rho0 - rho * cos(theta)) * threeRadius;
-  resultat.z = (pos.z - reference.z) / earthRadius * threeRadius;
+  resultat.z = (pos.z - reference.z) / earthRadius * threeRadius * zzCoeff;
   return resultat;
 }
 
@@ -77,25 +77,25 @@ vec3 noRepresentation(in vec3 pos, in float threeRadius, in float earthRadius) {
 }
 
 vec3 equirectangular(in vec3 pos, in float threeRadius, in float earthRadius,
-                     in vec3 reference) {
+                    in vec3 reference, in float zzCoeff) {
   vec3 resultat = vec3(0.0);
   resultat.x = (pos.x - reference.x) * cos(reference.y) * threeRadius;
   resultat.y = (pos.y - reference.y) * threeRadius;
-  resultat.z = (pos.z - reference.z) / earthRadius * threeRadius;
+  resultat.z = (pos.z - reference.z) / earthRadius * threeRadius * zzCoeff;
   return resultat;
 }
 
 vec3 mercator(in vec3 pos, in float threeRadius, in float earthRadius,
-              in float lambda0) {
+              in float lambda0, in float zzCoeff) {
   vec3 resultat = vec3(0.0);
   resultat.x = (pos.x - lambda0) * threeRadius;
   resultat.y = log(tan(PI / 4.0 + pos.y / 2.0)) * threeRadius;
-  resultat.z = pos.z / earthRadius * threeRadius;
+  resultat.z = pos.z / earthRadius * threeRadius * zzCoeff;
   return resultat;
 }
 
 vec3 winkel(in vec3 pos, in float threeRadius, in float earthRadius,
-            in vec3 reference) {
+            in vec3 reference, in float zzCoeff) {
   vec3 resultat = vec3(0.0);
   float cosPhi = cos(pos.y);
   float sinPhi = sin(pos.y);
@@ -107,53 +107,52 @@ vec3 winkel(in vec3 pos, in float threeRadius, in float earthRadius,
     cardinalAlpha = sin(alpha) / alpha;
   }
   resultat.x = ((pos.x - reference.x) * cos(reference.y) +
-                2.0 * cosPhi * sin(pos.x / 2.0) / cardinalAlpha) *
-               threeRadius / 2.0;
+                2.0 * cosPhi * sin(pos.x / 2.0) / cardinalAlpha) * threeRadius / 2.0;
   resultat.y =
       ((pos.y - reference.y) + sinPhi / cardinalAlpha) * threeRadius / 2.0;
-  resultat.z = (pos.z - reference.z) / earthRadius * threeRadius;
+  resultat.z = (pos.z - reference.z) / earthRadius * threeRadius * zzCoeff;
   return resultat;
 }
 
 vec3 convertor(in vec3 pos, in float threeRadius, in float earthRadius,
-               in vec3 reference, in float standardParallel1,
-               in float standardParallel2, int representation, in int conesShape) {
+              in vec3 reference, in float standardParallel1,
+              in float standardParallel2, int representation, in int conesShape, in float zzCoeff) {
   vec3 resultat;
   if (representation == 0) {
     resultat = noRepresentation(pos, threeRadius, earthRadius);
   } else if (representation == 1) {
-    resultat = equirectangular(pos, threeRadius, earthRadius, reference);
+    resultat = equirectangular(pos, threeRadius, earthRadius, reference, zzCoeff);
   } else if (representation == 2) {
-    resultat = mercator(pos, threeRadius, earthRadius, reference.x);
+    resultat = mercator(pos, threeRadius, earthRadius, reference.x, zzCoeff);
   } else if (representation == 3) {
-    resultat = winkel(pos, threeRadius, earthRadius, reference);
+    resultat = winkel(pos, threeRadius, earthRadius, reference, zzCoeff);
   } else if (representation == 4) {
-    resultat = eckert(pos, threeRadius, earthRadius, reference);
+    resultat = eckert(pos, threeRadius, earthRadius, reference, zzCoeff);
   } else if (representation == 5) {
-    resultat = vanDerGrinten(pos, threeRadius, earthRadius, reference);
+    resultat = vanDerGrinten(pos, threeRadius, earthRadius, reference, zzCoeff);
   } else if (representation == 6) {
     resultat = conicEquidistant(pos, threeRadius, earthRadius, reference,
-                                standardParallel1, standardParallel2);
+                                standardParallel1, standardParallel2, zzCoeff);
   }
   return resultat;
 }
 
 vec3 transit(in vec3 pos, in float threeRadius, in float earthRadius,
-             in vec3 reference, in float standardParallel1,
-             in float standardParallel2, in int representationInit,
-             in int representationEnd, in float percent, in int conesShape) {
+            in vec3 reference, in float standardParallel1,
+            in float standardParallel2, in int representationInit,
+            in int representationEnd, in float percent, in int conesShape, in float zzCoeff) {
   vec3 resultat;
   if (representationInit == representationEnd) {
     resultat =
         convertor(pos, threeRadius, earthRadius, reference, standardParallel1,
-                  standardParallel2, representationInit, conesShape);
+                  standardParallel2, representationInit, conesShape,zzCoeff);
   } else {
     vec3 initVec =
         convertor(pos, threeRadius, earthRadius, reference, standardParallel1,
-                  standardParallel2, representationInit, conesShape);
+                  standardParallel2, representationInit, conesShape,zzCoeff);
     vec3 endVec =
         convertor(pos, threeRadius, earthRadius, reference, standardParallel1,
-                  standardParallel2, representationEnd, conesShape);
+                  standardParallel2, representationEnd, conesShape,zzCoeff);
     resultat = mix(initVec, endVec, percent / 100.0);
   }
   return resultat;

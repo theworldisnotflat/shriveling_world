@@ -50,6 +50,7 @@ let _curvesPosition: CURVESPOSITION_ENUM = CURVESPOSITION_ENUM.above;
 let _pointsPerCurve = 50;
 let _SIZE_TEXT: number;
 let _TEXT_GEOMETRY_OPTIONS: TextGeometryParameters;
+let _zCoeff = 1;
 
 let _extrudedHeight = 0;
 let _hatHeight = 0;
@@ -66,6 +67,8 @@ const _listeners: {
 	tick: IEventListItem[];
 	pointsPerCurve: IEventListItem[];
 	conesShape: IEventListItem[];
+	curvesPosition: IEventListItem[];
+	zCoeff: IEventListItem[];
 } = {
 	heightRatio: [],
 	intrudedHeightRatio: [],
@@ -79,6 +82,8 @@ const _listeners: {
 	tick: [],
 	pointsPerCurve: [],
 	conesShape: [],
+	curvesPosition: [],
+	zCoeff: [],
 };
 function fireEvents(attribute: configurationObservableEvt, value: any): void {
 	if (_listeners.hasOwnProperty(attribute)) {
@@ -128,6 +133,9 @@ export const CONFIGURATION = {
 	},
 	get heightRatio(): number {
 		return _heightRatio;
+	},
+	get zCoeff(): number {
+		return _zCoeff;
 	},
 	set heightRatio(value: number) {
 		_heightRatio = value;
@@ -318,6 +326,10 @@ export const CONFIGURATION = {
 	},
 	set curvesPosition(value: CURVESPOSITION_ENUM) {
 		_curvesPosition = value;
+	},
+	set zCoeff(value: number) {
+		_zCoeff = value;
+		fireEvents('zCoeff', _zCoeff);
 	},
 	/**
 	 * Move from [[projectionInit]] to [[projectionEnd]]

@@ -23,6 +23,7 @@ uniform int representationInit;
 uniform int representationEnd;
 uniform float percentRepresentation;
 uniform int conesShape;
+uniform float zCoeff;
 
 #pragma glslify: polar2Cartographic = require(./polar2Cartographic.glsl)
 #pragma glslify: displayConversions = require(./displayConversions.glsl)
@@ -54,20 +55,18 @@ void main() {
     if (withLimits > 0.0 && cosEl > 0.0) {
       longueur = min(longueurMaxi, boundaryLimit / cosEl);
     }
-    cartoPosition = polar2Cartographic(clock, alpha, longueur, summit,
-                                       ned2ECEF, earthRadius);
+    cartoPosition = polar2Cartographic(clock, alpha, longueur, summit, ned2ECEF, earthRadius);
   }
   vec3 modelPosition = displayConversions(
       cartoPosition, threeRadius, earthRadius, referenceEquiRectangular,
       standardParallel1, standardParallel2, representationInit,
-      representationEnd, percentRepresentation, conesShape);
+      representationEnd, percentRepresentation, conesShape, zCoeff);
   myOutputColor = vec4(modelPosition, 0.0);
-  uvs = vec4(cartoPosition.x / (2.0 * PI) + 0.5, cartoPosition.y /  PI + 0.5,
-             0.0, 0.0);
+  uvs = vec4(cartoPosition.x / (2.0 * PI) + 0.5, cartoPosition.y /  PI + 0.5, 0.0, 0.0);
   cartoPosition.z = - hauteurBase;
   modelPosition = displayConversions(
       cartoPosition, threeRadius, earthRadius, referenceEquiRectangular,
       standardParallel1, standardParallel2, representationInit,
-      representationEnd, percentRepresentation, conesShape);
+      representationEnd, percentRepresentation, conesShape,zCoeff);
   base = vec4(modelPosition, 0.0);
 }
