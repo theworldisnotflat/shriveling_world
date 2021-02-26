@@ -278,6 +278,8 @@ function computation(): void {
 	uniforms.conesShape = CONFIGURATION.conesShape;
 	uniforms.standardParallel1 = CONFIGURATION.standardParallel1;
 	uniforms.standardParallel2 = CONFIGURATION.standardParallel2;
+	uniforms.zCoeff = CONFIGURATION.zCoeff;
+
 	_gpgpu.positions.updateUniforms(uniforms);
 	const [begins, uvs, bases] = _gpgpu.positions.calculate(_width, _height);
 
@@ -343,7 +345,7 @@ export class ConeMeshShader extends PseudoCone {
 				]).then(() => {
 					uuid = CONFIGURATION.addEventListener(
 						'heightRatio intrudedHeightRatio coneStep  referenceEquiRectangular THREE_EARTH_RADIUS ' +
-							'projectionBegin projectionEnd projectionPercent year tick conesShape',
+							'projectionBegin projectionEnd projectionPercent year tick conesShape zCoeff',
 						(name: string) => {
 							if (_ready) {
 								switch (name) {

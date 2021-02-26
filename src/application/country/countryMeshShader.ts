@@ -354,6 +354,7 @@ function computation(): void {
 	uniforms.conesShape = CONFIGURATION.conesShape;
 	uniforms.standardParallel1 = CONFIGURATION.standardParallel1;
 	uniforms.standardParallel2 = CONFIGURATION.standardParallel2;
+	uniforms.zCoeff = CONFIGURATION.zCoeff;
 	_gpgpu.positions.updateUniforms(uniforms);
 	const options: { [x: string]: { src: ArrayBufferView; width: number; height: number; depth?: number } } = {
 		u_Positions: { src: _vertexArrayEntries, width: _width, height: _height },
@@ -395,7 +396,7 @@ export class CountryMeshShader extends Mesh {
 				]).then(() => {
 					uuid = CONFIGURATION.addEventListener(
 						'heightRatio intrudedHeightRatio referenceEquiRectangular THREE_EARTH_RADIUS ' +
-							'projectionBegin projectionEnd projectionPercent tick',
+							'projectionBegin projectionEnd projectionPercent tick zCoeff',
 						(name: string) => {
 							if (_ready === true) {
 								switch (name) {
