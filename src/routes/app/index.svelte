@@ -10,7 +10,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import Menu from '../../components/menu.svelte';
-	import { inflate } from 'pako/lib/inflate';
+	import { inflate } from 'pako';
 	import type { IListFile } from '../../application/definitions/project';
 	let bigBoard;
 	let board: HTMLElement;
@@ -34,6 +34,16 @@
 		window.bigBoard = bigBoard;
 	});
 </script>
+
+<Menu fixed={false}>
+	<div bind:this={board} class="app" />
+	<div class="dataset" on:click={addSet}>
+		{#each datasets as dataset, i}
+			<div data-name={dataset}>{dataset}</div>
+		{/each}
+	</div>
+	<div class="dat" bind:this={dat} />
+</Menu>
 
 <style>
 	.app {
@@ -67,13 +77,3 @@
 		right: 0px;
 	}
 </style>
-
-<Menu fixed={false}>
-	<div bind:this={board} class="app" />
-	<div class="dataset" on:click={addSet}>
-		{#each datasets as dataset, i}
-			<div data-name={dataset}>{dataset}</div>
-		{/each}
-	</div>
-	<div class="dat" bind:this={dat} />
-</Menu>

@@ -58,6 +58,7 @@ let conf = {
 	'standard parrallel 2': 0,
 	'with limits': true,
 	exportCountry: true,
+	'z coefficient': 0,
 };
 
 export class GUI {
@@ -106,6 +107,7 @@ export class GUI {
 			'standard parrallel 2': CONFIGURATION.standardParallel2 * CONFIGURATION.rad2deg,
 			'with limits': true,
 			exportCountry: bigBoard.orthographic,
+			'z coefficient': CONFIGURATION.zCoeff,
 		};
 		this._initInteraction(container);
 	}
@@ -301,6 +303,10 @@ export class GUI {
 
 		// Generalities
 		generalFolder = gui.addFolder('Generalities');
+		generalFolder
+			.add(conf, 'z coefficient', 0, 100)
+			.step(0.1)
+			.onChange((v) => (CONFIGURATION.zCoeff = v));
 		const projectionFolder = generalFolder.addFolder('projection');
 		const referenceFolder = projectionFolder.addFolder('references');
 		const radius = CONFIGURATION.earthRadiusMeters;

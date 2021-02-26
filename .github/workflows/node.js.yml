@@ -25,13 +25,6 @@ jobs:
                   node-version: ${{ matrix.node-version }}
             - run: npm i --legacy-peer-deps
             - run: npm run export
-            - name: full Deploy
-              if: ${{ github.event.pull_request.merged == true }}
-              uses: peaceiris/actions-gh-pages@v3
-              with:
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
-                  external_repository: theworldisnotflat/shriveling_world_documentation
-                  publish_dir: '__sapper__/export/shriveling_world'
             - name: local Deploy
               uses: peaceiris/actions-gh-pages@v3
               with:
