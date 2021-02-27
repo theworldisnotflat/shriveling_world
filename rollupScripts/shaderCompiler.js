@@ -104,11 +104,11 @@ export function compileShaders() {
         }
         const temp = glsl.compile(fileContent, { basedir: __dirname + '/src/application/shaders' });
 
-        try {
-            testSharder(temp, typeShader === 'fragment');
-        } catch (error) {
-            throw file + '\n' + error;
-        }
+        // try {
+        //     testSharder(temp, typeShader === 'fragment');
+        // } catch (error) {
+        //     throw file + '\n' + error;
+        // }
         shaders[name][typeShader] = commentStripper(temp);
     });
     return shaders;
