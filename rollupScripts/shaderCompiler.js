@@ -1,50 +1,50 @@
-import nodeGles from 'node-gles';
-import { addExtensionsToContext } from 'twgl.js';
+// import nodeGles from 'node-gles';
+// import { addExtensionsToContext } from 'twgl.js';
 import * as glsl from 'glslify';
 import * as glob from 'glob';
 import { readFileSync } from 'fs-extra';
 
-const gl = nodeGles.createWebGLRenderingContext();
-addExtensionsToContext(gl);
-const errorReg = /\d+:(\d+): /g;
+// const gl = nodeGles.createWebGLRenderingContext();
+// addExtensionsToContext(gl);
+// const errorReg = /\d+:(\d+): /g;
 
 const shaderGlob = [__dirname + '/src/application/shaders/**/*.frag', __dirname + '/src/application/shaders/**/*.vert'];
 
-function testSharder(text = '', isFragment = true) {
-    const shaderType = isFragment ? gl.FRAGMENT_SHADER : gl.VERTEX_SHADER;
-    const shader = gl.createShader(shaderType);
-    gl.shaderSource(shader, text);
-    gl.compileShader(shader);
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        const errAccumlator = {};
-        gl.getShaderInfoLog(shader)
-            .split('\n')
-            .forEach((line) => {
-                [...line.matchAll(errorReg)].map((m) => {
-                    const num = Number.parseInt(m[1]);
-                    if (!errAccumlator.hasOwnProperty(num)) {
-                        errAccumlator[num] = [];
-                    }
-                    errAccumlator[num].push(line);
-                });
-            });
-        let sortie = '';
-        text.split('\n').forEach((line, i, arr) => {
-            const lineNumber = i + 1;
-            if (errAccumlator.hasOwnProperty(lineNumber)) {
-                for (let j = Math.max(0, i - 5); j < lineNumber; j++) {
-                    sortie += `\n${j + 1} : ${arr[j]}`;
-                }
-                sortie += '\n~~~~~~~~~~~~~~~~~~~~~~~~';
-                errAccumlator[lineNumber].forEach((err) => {
-                    sortie += `\n${err}`;
-                });
-            }
-        });
-        sortie += '\n\n' + text;
-        throw sortie;
-    }
-}
+// function testSharder(text = '', isFragment = true) {
+//     const shaderType = isFragment ? gl.FRAGMENT_SHADER : gl.VERTEX_SHADER;
+//     const shader = gl.createShader(shaderType);
+//     gl.shaderSource(shader, text);
+//     gl.compileShader(shader);
+//     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+//         const errAccumlator = {};
+//         gl.getShaderInfoLog(shader)
+//             .split('\n')
+//             .forEach((line) => {
+//                 [...line.matchAll(errorReg)].map((m) => {
+//                     const num = Number.parseInt(m[1]);
+//                     if (!errAccumlator.hasOwnProperty(num)) {
+//                         errAccumlator[num] = [];
+//                     }
+//                     errAccumlator[num].push(line);
+//                 });
+//             });
+//         let sortie = '';
+//         text.split('\n').forEach((line, i, arr) => {
+//             const lineNumber = i + 1;
+//             if (errAccumlator.hasOwnProperty(lineNumber)) {
+//                 for (let j = Math.max(0, i - 5); j < lineNumber; j++) {
+//                     sortie += `\n${j + 1} : ${arr[j]}`;
+//                 }
+//                 sortie += '\n~~~~~~~~~~~~~~~~~~~~~~~~';
+//                 errAccumlator[lineNumber].forEach((err) => {
+//                     sortie += `\n${err}`;
+//                 });
+//             }
+//         });
+//         sortie += '\n\n' + text;
+//         throw sortie;
+//     }
+// }
 
 function commentStripper(contents) {
     let newContents = [];
