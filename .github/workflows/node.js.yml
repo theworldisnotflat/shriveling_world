@@ -20,7 +20,7 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
             - run: npm i --legacy-peer-deps
-            - run: npm run export
+            - run: npm run export --verbose
             - name: local Deploy
               uses: peaceiris/actions-gh-pages@v3
               with:
