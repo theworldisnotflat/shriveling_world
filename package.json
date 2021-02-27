@@ -19,11 +19,11 @@
         "sirv": "^1.0.11"
     },
     "devDependencies": {
-        "@babel/core": "^7.12.17",
+        "@babel/core": "^7.13.8",
         "@babel/plugin-syntax-dynamic-import": "^7.0.0",
-        "@babel/plugin-transform-runtime": "^7.12.17",
-        "@babel/preset-env": "^7.12.17",
-        "@babel/runtime": "^7.12.18",
+        "@babel/plugin-transform-runtime": "^7.13.8",
+        "@babel/preset-env": "^7.13.8",
+        "@babel/runtime": "^7.13.8",
         "@fortawesome/free-solid-svg-icons": "^5.15.2",
         "@rollup/plugin-babel": "^5.3.0",
         "@rollup/plugin-commonjs": "^17.1.0",
@@ -78,7 +78,7 @@
         "twgl.js": "^4.19.1",
         "typedoc": "^0.20.27",
         "typedoc-neo-theme": "^1.1.0",
-        "typescript": "^4.1.5",
+        "typescript": "^4.2.2",
         "yargs": "^16.2.0"
     },
     "browserslist": [
