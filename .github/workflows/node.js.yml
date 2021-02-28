@@ -3,19 +3,15 @@
 
 name: Node.js CI
 
-on:
-    push:
-        branches: [master, sapper]
-    pull_request:
-        branches: master
+on: [push, pull_request]
 
 jobs:
     build:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-20.04
 
         strategy:
             matrix:
-                node-version: [14.x]
+                node-version: [15.X]
 
         steps:
             - uses: actions/checkout@v2
@@ -24,7 +20,7 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
             - run: npm i --legacy-peer-deps
-            - run: npm run export
+            - run: npm run export --verbose
             - name: local Deploy
               uses: peaceiris/actions-gh-pages@v3
               with:

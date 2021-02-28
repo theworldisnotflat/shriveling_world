@@ -23,12 +23,15 @@ import { execSync } from 'child_process';
 const mode = process.env.NODE_ENV;
 const dev = mode === 'development';
 const legacy = !!process.env.SAPPER_LEGACY_BUILD;
+let shadersDict = JSON.stringify(compileShaders());
 
 const preparerStatic = (options = {}) => {
     const { targets = [], hook = 'buildStart' } = options; // hook = buildStart or hook = buildEnd
     return {
         name: 'preparerStatic',
         [hook]: async() => {
+            console.log('shaders');
+            shadersDict = JSON.stringify(compileShaders());
             console.log('lint');
             execSync('eslint src --ext .ts --fix', { stdio: 'inherit' });
             console.log('dataset generation');
@@ -76,7 +79,7 @@ export default {
             }),
             modify({
                 find: /.__SHADERS_HERE__./,
-                replace: JSON.stringify(compileShaders())
+                replace: shadersDict
             }),
             svelte({
                 preprocess: sveltePreprocess(),
@@ -129,10 +132,6 @@ export default {
             replace({
                 'process.browser': false,
                 'process.env.NODE_ENV': JSON.stringify(mode),
-            }),
-            modify({
-                find: /.__SHADERS_HERE__./,
-                replace: JSON.stringify(compileShaders())
             }),
             svelte({
                 preprocess: sveltePreprocess(),
