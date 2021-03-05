@@ -636,17 +636,20 @@ export default class BigBoard {
 			const legend = document.createElement('canvas');
 			console.log(legend);
 			legend.id = 'legendID';
-			legend.className = 'legend';
+			//legend.className = 'legend';
 			const styleLegend = legend.style;
 			styleLegend.font = '14px/32px Arial, Halvetica, sans-serif';
 			styleLegend.zIndex = '1000';
 			styleLegend.position = 'absolute';
 			styleLegend.bottom = '3%';
 			styleLegend.right = '2%';
-			styleLegend.width = '100px';
-			styleLegend.height = '100px';
+			legend.width = 50;
+			legend.height = 375;
+			//styleLegend.width = '100px';
+			//styleLegend.height = '100px';
 			document.body.append(legend);
-			ctx = legend.getContext('2d');
+			ctx = this.setupCanvas(legend);
+			console.log(document.getElementById('legendID'));
 			const move = new Moveable(document.body, {
 				target: document.getElementById('legendID'),
 				draggable: true,
@@ -667,24 +670,19 @@ export default class BigBoard {
 			});
 		} else {
 			console.log('div already exist !');
-			ctx = (<HTMLCanvasElement>document.getElementById('legendID')).getContext('2d');
+			ctx = this.setupCanvas(<HTMLCanvasElement>document.getElementById('legendID'));
 			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Clears the canvas
 		}
-		const height = 150 * Math.tan(this._merger.codeSpeedPerYear['Road'].alpha);
-		console.log(this._merger.codeSpeedPerYear['Road'].alpha);
-		console.log(height);
-		//ctx.beginPath();
-		ctx.beginPath();
-		ctx.moveTo(0, 0);
-		ctx.lineTo(300, 0);
-		ctx.lineTo(150, 150);
-		ctx.closePath();
-		//ctx.lineTo(150, height);
-		//ctx.strokeStyle = '#' + (0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6);
-		ctx.strokeStyle = '#0000FF';
-		ctx.lineWidth = 3;
-		ctx.closePath();
-		ctx.stroke();
+		const alpha = this._merger.codeSpeedPerYear['Road'].alpha;
+		//const color = '#' + (0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6);
+		const drawer = this.Drawer('legendID');
+		console.log(alpha);
+		// Test for (alpha,ymin) = (1.463926345, -7.5) & (1.433926345, -7.5)
+
+		//drawer(1.463926345, -7.5, '#0000FF'); // la valeur -7,5 correspond à la valeur trouvée par déduction
+		drawer(alpha, -7.5, '#0000FF');
+
+		// display speed of each means of transport existing for a given year ( Configuration.year)
 
 		let title = '';
 		Object.keys(this._merger.codeSpeedPerYear).forEach((el) => {
@@ -699,5 +697,61 @@ export default class BigBoard {
 			},
 			false
 		);
+	}
+
+	private setupCanvas(canvas) {
+		// Get the device pixel ratio, falling back to 1.
+		const dpr = window.devicePixelRatio || 1;
+		// Get the size of the canvas in CSS pixels.
+		const rect = canvas.getBoundingClientRect();
+		console.log(rect);
+		// Give the canvas pixel dimensions of their CSS
+		// size * the device pixel ratio.
+		canvas.width = rect.width * dpr;
+		canvas.height = rect.height * dpr;
+		const ctx = canvas.getContext('2d');
+		// Scale all drawing operations by the dpr, so you
+		// don't have to worry about the difference.
+		ctx.scale(dpr, dpr);
+		return ctx;
+	}
+	private Drawer(canvasId) {
+		const canvas = <HTMLCanvasElement>document.getElementById(canvasId);
+		//const devicePixelRatio = canvas.height / canvas.width;
+		canvas.height = (7.5 * canvas.width) / devicePixelRatio;
+		const ctx = this.setupCanvas(canvas);
+		const A = 1; // A=1 c'est une valeur comme une autre qui a peu d'importance pour la suite car tout est proportionel!
+		const xmin = -A / 2;
+		const xmax = A / 2;
+		const ymax = 0;
+		console.log(devicePixelRatio);
+		return function (alpha, ymin = null, color = '#0000FF') {
+			const Height = canvas.height;
+			const Width = canvas.width;
+			ymin = ymin === null ? (Height / Width) * 20 : ymin;
+			function toCnv(x, y) {
+				return [(Width * (x - xmin)) / (xmax - xmin), (Height * (ymax - y)) / (ymax - ymin)];
+			}
+			const H = Math.tan(alpha) * xmax;
+			console.log(H);
+			ctx.beginPath();
+			ctx.moveTo(...toCnv(xmin, 0)); // point en haut à gauche
+			ctx.lineTo(...toCnv(xmax, 0)); // point en haut droite
+			ctx.lineTo(...toCnv(0, -H)); //point bas milieu
+			ctx.closePath();
+			ctx.strokeStyle = color;
+			ctx.lineWidth = 3;
+			ctx.stroke();
+			console.log(toCnv(xmin, 0), toCnv(xmax, 0), toCnv(0, -H));
+			/*ctx.beginPath();
+			ctx.moveTo(...toCnv(0, 0));
+			ctx.lineTo(...toCnv(xmax, 0));
+			ctx.lineTo(...toCnv(xmax, -xmax));
+			ctx.lineTo(...toCnv(0, -xmax));
+			ctx.closePath();
+			ctx.strokeStyle = 'yellow';
+			ctx.lineWidth = 1;
+			ctx.stroke();*/
+		};
 	}
 }
