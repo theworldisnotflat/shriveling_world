@@ -627,16 +627,12 @@ export default class BigBoard {
 	}
 
 	public addLegend() {
-		let ctx;
-		// Adding Legend
+		const alpha = this._merger.codeSpeedPerYear['Road'].alpha;
+
 		if (!document.getElementById('legendID')) {
-			//const divs = document.querySelectorAll('.legend');
-			//Array.from(divs).forEach((div) => div.remove());
 			console.log('create legend ! ');
 			const legend = document.createElement('canvas');
-			console.log(legend);
 			legend.id = 'legendID';
-			//legend.className = 'legend';
 			const styleLegend = legend.style;
 			styleLegend.font = '14px/32px Arial, Halvetica, sans-serif';
 			styleLegend.zIndex = '1000';
@@ -644,47 +640,23 @@ export default class BigBoard {
 			styleLegend.bottom = '3%';
 			styleLegend.right = '2%';
 			legend.width = 50;
-			legend.height = 375;
-			//styleLegend.width = '100px';
-			//styleLegend.height = '100px';
+			legend.height = Math.tan(alpha) * (legend.width / 2);
 			document.body.append(legend);
-			ctx = this.setupCanvas(legend);
-			console.log(document.getElementById('legendID'));
-			const move = new Moveable(document.body, {
-				target: document.getElementById('legendID'),
-				draggable: true,
-				scalable: true,
-				resizable: true,
-				keepRatio: true,
-				rotatable: true,
-			});
-			move.on('drag', ({ target, transform }) => {
-				target.style.transform = transform;
-			});
-			move.on('resize', ({ target, width, height }) => {
-				target.style.width = width + 'px';
-				target.style.height = height + 'px';
-			});
-			move.on('rotate', ({ target, transform }) => {
-				target.style.transform = transform;
-			});
 		} else {
-			console.log('div already exist !');
-			ctx = this.setupCanvas(<HTMLCanvasElement>document.getElementById('legendID'));
-			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Clears the canvas
+			const canvas = <HTMLCanvasElement>document.getElementById('legendID');
+			this.resetDimensions(alpha, canvas);
 		}
-		const alpha = this._merger.codeSpeedPerYear['Road'].alpha;
+
 		//const color = '#' + (0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6);
-		const drawer = this.Drawer('legendID');
+		const drawer = this.Drawer('legendID', alpha);
 		console.log(alpha);
-		// Test for (alpha,ymin) = (1.463926345, -7.5) & (1.433926345, -7.5)
+		const move = this.createMoveable('legendID');
+		move.updateRect();
+		//drawer(alpha, -7.5, '#0000FF'); // la valeur -7,5 correspond à la valeur trouvée par déduction
+		drawer(alpha, -(Math.tan(alpha) / 2), '#0000FF');
 
-		//drawer(1.463926345, -7.5, '#0000FF'); // la valeur -7,5 correspond à la valeur trouvée par déduction
-		drawer(alpha, -7.5, '#0000FF');
-
-		// display speed of each means of transport existing for a given year ( Configuration.year)
-
-		let title = '';
+		// display the slope and speed of each means of transport existing for a given year ( Configuration.year)
+		let title = 'Slope : ' + Math.round(((alpha * 180) / Math.PI) * 10) / 10 + '° \n';
 		Object.keys(this._merger.codeSpeedPerYear).forEach((el) => {
 			console.log(el);
 			title += el + ' : ' + this._merger.codeSpeedPerYear[el].speed + ' Kph ' + '\n';
@@ -715,16 +687,16 @@ export default class BigBoard {
 		ctx.scale(dpr, dpr);
 		return ctx;
 	}
-	private Drawer(canvasId) {
+	private Drawer(canvasId, alphaM) {
 		const canvas = <HTMLCanvasElement>document.getElementById(canvasId);
-		//const devicePixelRatio = canvas.height / canvas.width;
-		canvas.height = (7.5 * canvas.width) / devicePixelRatio;
+		//canvas.height = (7.5 * canvas.width) / devicePixelRatio;
+		canvas.height = (Math.tan(alphaM) * (canvas.width / 2)) / devicePixelRatio;
 		const ctx = this.setupCanvas(canvas);
+		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 		const A = 1; // A=1 c'est une valeur comme une autre qui a peu d'importance pour la suite car tout est proportionel!
 		const xmin = -A / 2;
 		const xmax = A / 2;
 		const ymax = 0;
-		console.log(devicePixelRatio);
 		return function (alpha, ymin = null, color = '#0000FF') {
 			const Height = canvas.height;
 			const Width = canvas.width;
@@ -732,6 +704,7 @@ export default class BigBoard {
 			function toCnv(x, y) {
 				return [(Width * (x - xmin)) / (xmax - xmin), (Height * (ymax - y)) / (ymax - ymin)];
 			}
+			console.log('[', canvas.width, ',', canvas.height, ']');
 			const H = Math.tan(alpha) * xmax;
 			console.log(H);
 			ctx.beginPath();
@@ -740,18 +713,46 @@ export default class BigBoard {
 			ctx.lineTo(...toCnv(0, -H)); //point bas milieu
 			ctx.closePath();
 			ctx.strokeStyle = color;
-			ctx.lineWidth = 3;
+			ctx.lineWidth = 2;
 			ctx.stroke();
 			console.log(toCnv(xmin, 0), toCnv(xmax, 0), toCnv(0, -H));
-			/*ctx.beginPath();
-			ctx.moveTo(...toCnv(0, 0));
-			ctx.lineTo(...toCnv(xmax, 0));
-			ctx.lineTo(...toCnv(xmax, -xmax));
-			ctx.lineTo(...toCnv(0, -xmax));
-			ctx.closePath();
-			ctx.strokeStyle = 'yellow';
-			ctx.lineWidth = 1;
-			ctx.stroke();*/
 		};
+	}
+	private createMoveable(canvasID) {
+		// remove any previous moveable
+		const divs = document.querySelectorAll('.moveable1');
+		Array.from(divs).forEach((div) => div.remove());
+		const canvas = <HTMLCanvasElement>document.getElementById(canvasID);
+		// create new moveable
+		const move = new Moveable(document.body, {
+			target: document.getElementById(canvasID),
+			className: 'moveable1',
+			origin: false,
+			draggable: true,
+			scalable: true,
+			resizable: true,
+			keepRatio: true,
+			rotatable: true,
+		});
+		move.on('drag', ({ target, transform }) => {
+			target.style.transform = transform;
+			move.updateRect();
+		});
+		move.on('resize', ({ target, width, height }) => {
+			target.style.width = width + 'px';
+			target.style.height = height + 'px';
+			move.updateRect();
+		});
+		move.on('rotate', ({ target, transform }) => {
+			target.style.transform = transform;
+			move.updateRect();
+		});
+		return move;
+	}
+	private resetDimensions(alpha, canvas) {
+		canvas.width = 50;
+		canvas.height = Math.tan(alpha) * (canvas.width / 2);
+		canvas.style.width = canvas.width + 'px';
+		canvas.style.height = canvas.height + 'px';
 	}
 }

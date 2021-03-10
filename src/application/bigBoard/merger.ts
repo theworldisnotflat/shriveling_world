@@ -399,7 +399,6 @@ function networkFromCities(
 				tabSpeedPerYear[year].alpha = alpha;
 			}
 		}
-		console.log(tabSpedPerYear[CONFIGURATION.year]);
 	}
 	// Faire lookup des latLonH/referential par cityCode. OK
 	const lookupPosition: { [cityCode: string]: NEDLocal } = {};
@@ -410,21 +409,13 @@ function networkFromCities(
 	});
 	codeSpeedPerYear = {};
 	Object.keys(speedPerTransportPerYear).forEach((key) => {
-		let isExist = false;
-		console.log(speedPerTransportPerYear[key]);
 		Object.keys(speedPerTransportPerYear[key].tabSpeedPerYear).forEach((elem) => {
 			if (elem == CONFIGURATION.year) {
-				isExist = true;
 				const speed = speedPerTransportPerYear[key].tabSpeedPerYear[CONFIGURATION.year].speed;
 				const alpha = speedPerTransportPerYear[key].tabSpeedPerYear[CONFIGURATION.year].alpha;
 				codeSpeedPerYear[speedPerTransportPerYear[key].name] = { speed, alpha };
-				//codeSpeedPerYear[speedPerTransportPerYear[key].name].speed =
-				//	speedPerTransportPerYear[key].tabSpeedPerYear[CONFIGURATION.year].speed;
-				//console.log(speedPerTransportPerYear[key].name);
-				//console.log(speedPerTransportPerYear[key].tabSpeedPerYear[CONFIGURATION.year].speed);
 			}
 		});
-		console.log(isExist);
 	});
 	console.log(codeSpeedPerYear);
 	/**
