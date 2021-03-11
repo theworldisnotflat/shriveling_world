@@ -324,7 +324,8 @@ export type configurationObservableEvt =
 	| 'projectionPercent'
 	| 'year'
 	| 'tick'
-	| 'curvesPosition';
+	| 'curvesPosition'
+	| 'zCoeff';
 
 export type configurationCallback = (name: configurationObservableEvt, value: unknown) => void;
 export type ShaderTypes = 'fragment' | 'vertex';

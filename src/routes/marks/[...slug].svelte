@@ -8,6 +8,7 @@
 
 <script>
 	import 'tocbot/dist/tocbot.css';
+	import tocbot from 'tocbot';
 	import Menu from '../../components/menu.svelte';
 	import { onMount, afterUpdate } from 'svelte';
 	export let article;
@@ -16,44 +17,36 @@
 		tocSelector: '#toc',
 		contentSelector: '#content',
 		headingSelector: 'h1, h2, h3',
+		onClick: (e) => console.log(e),
 	};
-	// let tocbot;
 	onMount(async () => {
-		await import('tocbot/dist/tocbot');
+		tocbot.init(options);
+	});
 
-		window.tocbot.init(options);
+	afterUpdate(async () => {
+		tocbot.refresh();
 	});
 </script>
 
-<style>
-	/* The sidebar menu */
-	aside {
-		position: fixed;
-		left: 10px;
-		top: 25px;
-		/* bottom: 0; */
-		box-shadow: inset 5px 0 5px -5px #29627e;
-		font-style: italic;
-		color: #29627e;
-		font-family: 'Fira Sans', sans-serif;
-		background-color: grey;
-	}
-	article {
-		margin-left: 160px; /* Same as the width of the sidebar */
-		padding: 0px 10px;
-	}
+<Menu>
+	<div style="height:100vh;">
+		<aside id="toc" />
+		<article id="content">
+			{@html article.html}
+		</article>
+	</div>
+</Menu>
 
-	/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
-	@media screen and (max-height: 450px) {
-		aside {
-			padding-top: 15px;
-		}
+<style>
+	#content {
+		position: relative;
+		width: 80%;
+		float: right;
+		height: 100vh;
+	}
+	#toc {
+		position: fixed;
+		width: 20%;
+		height: 100vh;
 	}
 </style>
-
-<Menu>
-	<aside id="toc" />
-	<article id="content">
-		{@html article.html}
-	</article>
-</Menu>

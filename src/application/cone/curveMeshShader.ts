@@ -115,6 +115,7 @@ function computation(): void {
 	uniforms.standardParallel1 = CONFIGURATION.standardParallel1;
 	uniforms.standardParallel2 = CONFIGURATION.standardParallel2;
 	uniforms.coefficient = _coefficient;
+	uniforms.zCoeff = CONFIGURATION.zCoeff;
 	_gpgpu.positions.updateUniforms(uniforms);
 	const options = {
 		u_height: { src: _heightTab, width: 1, height: _height },
@@ -161,7 +162,7 @@ export class CurveMeshShader extends Line {
 				]).then(() => {
 					uuid = CONFIGURATION.addEventListener(
 						'heightRatio intrudedHeightRatio  referenceEquiRectangular THREE_EARTH_RADIUS ' +
-							'projectionBegin projectionEnd projectionPercent year curvesPosition pointsPerCurve',
+							'projectionBegin projectionEnd projectionPercent year curvesPosition pointsPerCurve zCoeff',
 						(name: string) => {
 							if (_ready) {
 								switch (name) {
