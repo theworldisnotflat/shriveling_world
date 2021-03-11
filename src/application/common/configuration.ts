@@ -4,13 +4,14 @@
  */
 'use strict';
 import type { MeshBasicMaterial, LineBasicMaterial, Material } from 'three';
-import type { TextGeometryParameters } from 'three/src/geometries/TextBufferGeometry';
+import type { TextGeometryParameters } from 'three/src/geometries/TextGeometry';
 import { generateUUID } from './utils';
 import {
 	PROJECTION_ENUM,
 	CONESSHAPE_ENUM,
+	CURVESPOSITION_ENUM,
 	ICountryTextureURL,
-	ICartographic,
+	ILatLonH,
 	configurationObservableEvt,
 	configurationCallback,
 } from '../definitions/project';
@@ -27,7 +28,7 @@ const _TWO_PI: number = 2 * Math.PI;
 const _earthRadiusMeters = 6371e3;
 const _OVER_PI: number = 1 / Math.PI;
 const _OVER_TWO_PI: number = 1 / (2 * Math.PI);
-const _referenceEquiRectangular: ICartographic = { latitude: 0, longitude: 0, height: 0 };
+const _referenceEquiRectangular: ILatLonH = { latitude: 0, longitude: 0, height: 0 };
 const _referenceEquiRectangularFloat32Array = new Float32Array(3);
 let _standardParallel1: number = 30 * _deg2rad;
 let _standardParallel2: number = 45 * _deg2rad;
@@ -45,9 +46,11 @@ let _COUNTRY_MATERIAL: Material;
 let _BASIC_CONE_MATERIAL: Material;
 let _BASIC_TEXT_MATERIAL: MeshBasicMaterial;
 let _BASIC_LINE_MATERIAL: LineBasicMaterial;
+let _curvesPosition: CURVESPOSITION_ENUM = CURVESPOSITION_ENUM.above;
 let _pointsPerCurve = 50;
 let _SIZE_TEXT: number;
 let _TEXT_GEOMETRY_OPTIONS: TextGeometryParameters;
+let _zCoeff = 1;
 
 let _extrudedHeight = 0;
 let _hatHeight = 0;
@@ -64,6 +67,8 @@ const _listeners: {
 	tick: IEventListItem[];
 	pointsPerCurve: IEventListItem[];
 	conesShape: IEventListItem[];
+	curvesPosition: IEventListItem[];
+	zCoeff: IEventListItem[];
 } = {
 	heightRatio: [],
 	intrudedHeightRatio: [],
@@ -77,6 +82,8 @@ const _listeners: {
 	tick: [],
 	pointsPerCurve: [],
 	conesShape: [],
+	curvesPosition: [],
+	zCoeff: [],
 };
 function fireEvents(attribute: configurationObservableEvt, value: any): void {
 	if (_listeners.hasOwnProperty(attribute)) {
@@ -126,6 +133,9 @@ export const CONFIGURATION = {
 	},
 	get heightRatio(): number {
 		return _heightRatio;
+	},
+	get zCoeff(): number {
+		return _zCoeff;
 	},
 	set heightRatio(value: number) {
 		_heightRatio = value;
@@ -226,10 +236,10 @@ export const CONFIGURATION = {
 		'assets/pz.jpg',
 		'assets/nz.jpg',
 	],
-	get referenceEquiRectangular(): ICartographic {
+	get referenceEquiRectangular(): ILatLonH {
 		return _referenceEquiRectangular;
 	},
-	set referenceEquiRectangular(value: ICartographic) {
+	set referenceEquiRectangular(value: ILatLonH) {
 		let updated = false;
 		for (const attribute in value) {
 			if (_referenceEquiRectangular.hasOwnProperty(attribute)) {
@@ -311,6 +321,17 @@ export const CONFIGURATION = {
 	set conesShape(value: CONESSHAPE_ENUM) {
 		_conesShape = value;
 		fireEvents('conesShape', _conesShape);
+	},
+	get curvesPosition(): CURVESPOSITION_ENUM {
+		return _curvesPosition;
+	},
+	set curvesPosition(value: CURVESPOSITION_ENUM) {
+		_curvesPosition = value;
+		fireEvents('curvesPosition', _curvesPosition);
+	},
+	set zCoeff(value: number) {
+		_zCoeff = value;
+		fireEvents('zCoeff', _zCoeff);
 	},
 	/**
 	 * Move from [[projectionInit]] to [[projectionEnd]]

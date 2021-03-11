@@ -3,7 +3,7 @@ import { Scene, Camera, WebGLRenderer, Raycaster, Mesh, Vector2, BufferGeometry,
 import { CONFIGURATION } from '../common/configuration';
 import type { PseudoCone } from './base';
 import { ConeMeshShader } from './coneMeshShader';
-import { Cartographic, searchCriteria } from '../common/utils';
+import { LatLonH, searchCriteria } from '../common/utils';
 import type { ISumUpCriteria, ILookupCurvesAndCityGraph, ICriteria as ICriteria } from '../definitions/project';
 import type { CountryBoard } from '../country/countryBoard';
 import { CurveMeshShader } from './curveMeshShader';
@@ -187,11 +187,11 @@ export class ConeBoard {
 		});
 	}
 
-	public searchMesh(criteria: ICriteria | Cartographic, path = ''): PseudoCone[] {
+	public searchMesh(criteria: ICriteria | LatLonH, path = ''): PseudoCone[] {
 		let result: PseudoCone[];
-		if (criteria instanceof Cartographic) {
+		if (criteria instanceof LatLonH) {
 			result = this.coneMeshCollection.filter(
-				(cone) => cone.cartographicPosition.approximateDistance(criteria) < 1e-13
+				(cone) => cone.latLonHPosition.approximateDistance(criteria) < 1e-13
 			);
 		} else {
 			result = searchCriteria(this.coneMeshCollection, criteria, forbiddenAttributes, 'otherProperties.' + path);

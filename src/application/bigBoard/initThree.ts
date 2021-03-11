@@ -66,8 +66,8 @@ export async function prepareConfiguration(): Promise<void> {
 const semiHeight = 1024;
 const longLat2XY = semiHeight / 90;
 async function loadBoundaries(url: string): Promise<HTMLCanvasElement> {
-	const requete = new Request(url);
-	const json: GeoJSON.FeatureCollection = await fetch(requete).then(async (response) => response.json());
+	const request = new Request(url);
+	const json: GeoJSON.FeatureCollection = await fetch(request).then(async (response) => response.json());
 	const canvas = document.createElement('canvas');
 	canvas.height = semiHeight * 2;
 	canvas.width = semiHeight * 4;
@@ -94,10 +94,10 @@ async function loadBoundaries(url: string): Promise<HTMLCanvasElement> {
 		}
 
 		coordinates.forEach((polygons) => {
-			let xmin = Infinity;
-			let xmax = -Infinity;
-			let ymin = Infinity;
-			let ymax = -Infinity;
+			let xMin = Infinity;
+			let xMax = -Infinity;
+			let yMin = Infinity;
+			let yMax = -Infinity;
 			const hue = Math.floor(Math.random() * 360 + 0.5);
 			const saturation = Math.floor(Math.random() * 100 + 0.5);
 			const lightness = Math.floor(Math.random() * 100 + 0.5);
@@ -108,10 +108,10 @@ async function loadBoundaries(url: string): Promise<HTMLCanvasElement> {
 					const [longitude, latitude] = point;
 					const x = longitude * longLat2XY + 2 * semiHeight;
 					const y = -latitude * longLat2XY + semiHeight;
-					xmin = xmin > x ? x : xmin;
-					xmax = xmax < x ? x : xmax;
-					ymin = ymin > y ? y : ymin;
-					ymax = ymax < y ? y : ymax;
+					xMin = xMin > x ? x : xMin;
+					xMax = xMax < x ? x : xMax;
+					yMin = yMin > y ? y : yMin;
+					yMax = yMax < y ? y : yMax;
 					return { x, y };
 				});
 				context.beginPath();
@@ -127,12 +127,12 @@ async function loadBoundaries(url: string): Promise<HTMLCanvasElement> {
 				context.fillStyle = contain;
 				context.fill();
 			});
-			const deltaX = xmax - xmin;
-			const deltaY = ymax - ymin;
+			const deltaX = xMax - xMin;
+			const deltaY = yMax - yMin;
 			context.font = deltaX / 4 + 'px/' + deltaY / 2 + 'px serif';
 			context.fillStyle = `hsl(${(hue + 180) % 360},${saturation}%,${lightness}%)`;
 			if (deltaX > semiHeight / 100 && deltaY > semiHeight / 100) {
-				context.fillText(name, xmin + deltaX / 4, ymax - deltaY / 2, deltaX / 2);
+				context.fillText(name, xMin + deltaX / 4, yMax - deltaY / 2, deltaX / 2);
 			}
 		});
 	});

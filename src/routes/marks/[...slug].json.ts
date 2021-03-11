@@ -4,6 +4,21 @@ import showdown from 'showdown';
 import type { request, ServerResponse } from 'http';
 
 const getPost = (fileName: string) => fs.readFileSync(path.resolve('markdown', `${fileName}.md`), 'utf-8');
+const classMap = {
+	h1: 'title is-1',
+	h2: 'title is-2',
+	h3: 'title is-3',
+	h4: 'title is-4',
+	h5: 'title is-5',
+	table: 'table is-bordered is-striped is-narrow is-hoverable is-fullwidth',
+};
+
+const bindings = Object.keys(classMap).map((key) => ({
+	type: 'output',
+	regex: new RegExp(`<${key}(.*)>`, 'g'),
+	replace: `<${key} class="${classMap[key]}" $1>`,
+}));
+
 const converter = new showdown.Converter({
 	omitExtraWLInCodeBlocks: true,
 	ghCompatibleHeaderId: true,
@@ -13,6 +28,7 @@ const converter = new showdown.Converter({
 	simpleLineBreaks: true,
 	ghMentions: true,
 	metadata: true,
+	extensions: [...bindings],
 });
 converter.setFlavor('github');
 

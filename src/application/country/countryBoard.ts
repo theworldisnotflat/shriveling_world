@@ -1,6 +1,6 @@
 'use strict';
 import { Scene, Camera, Raycaster as Raycaster, Mesh, Vector2, Material } from 'three';
-import { updateSumUpCriteria, Cartographic, searchCriteria as searchCriteria } from '../common/utils';
+import { updateSumUpCriteria, LatLonH, searchCriteria as searchCriteria } from '../common/utils';
 import type { ISumUpCriteria, ICriteria as ICriteria } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
 import { CountryMeshShader } from './countryMeshShader';
@@ -157,9 +157,9 @@ export class CountryBoard {
 		});
 	}
 
-	public searchMesh(criterias: ICriteria | Cartographic, path = ''): CountryMeshShader[] {
+	public searchMesh(criterias: ICriteria | LatLonH, path = ''): CountryMeshShader[] {
 		let resultat: CountryMeshShader[];
-		if (criterias instanceof Cartographic) {
+		if (criterias instanceof LatLonH) {
 			resultat = this.countryMeshCollection.filter((country) => country.isInside(criterias));
 		} else {
 			resultat = searchCriteria(this.countryMeshCollection, criterias, [], 'otherProperties.' + path);
