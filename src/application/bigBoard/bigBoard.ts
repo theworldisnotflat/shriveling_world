@@ -656,7 +656,9 @@ export default class BigBoard {
 		drawer(alpha, -(Math.tan(alpha) / 2), '#0000FF');
 
 		// display the slope and speed of each means of transport existing for a given year ( Configuration.year)
-		let title = 'Slope : ' + Math.round(((alpha * 180) / Math.PI) * 10) / 10 + '° \n';
+		const alphaDeg = Math.round(((alpha * 180) / Math.PI) * 10) / 10;
+		let title = 'Slope (α) : ' + alphaDeg + '° \n';
+		title += 'Between cones : ' + Math.round(2 * (90 - alphaDeg) * 10) / 10 + '° \n';
 		Object.keys(this._merger.codeSpeedPerYear).forEach((el) => {
 			console.log(el);
 			title += el + ' : ' + this._merger.codeSpeedPerYear[el].speed + ' Kph ' + '\n';
