@@ -86,7 +86,8 @@
         "last 1 version",
         "> 0.5%"
     ],
-    "toCopy": [{
+    "toCopy": [
+        {
             "in": "./src/toStatic/",
             "out": "./static/"
         },
