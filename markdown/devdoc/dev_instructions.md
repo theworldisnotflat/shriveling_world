@@ -34,6 +34,12 @@ Then open in a browser this address http://localhost:3000.
 
 On the left of GitKraken window, right-click on _master_, select _Create branch here_, and then write a name for the branch (in the example the branch will be named _TestDataSet_).
 
+## Test a Pull Request before merging
+
+1. In GitHub find the ID number of the PR after the PR's title and the '#'
+2. In terminal execute 'git fetch origin pull/ID/head:BRANCHNAME'
+3. This 'BRANCHNAME' is the code proposed in the PR
+
 ## Merge branch into distant _Master_
 
 Once all changes are considered worth being pushed to _master_, _stage_ and _commit_ changes to the branch.
