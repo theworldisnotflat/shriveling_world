@@ -630,7 +630,6 @@ export default class BigBoard {
 		const alpha = this._merger.codeSpeedPerYear['Road'].alpha;
 
 		if (!document.getElementById('legendID')) {
-			console.log('create legend ! ');
 			const legend = document.createElement('canvas');
 			legend.id = 'legendID';
 			const styleLegend = legend.style;
@@ -649,18 +648,16 @@ export default class BigBoard {
 
 		//const color = '#' + (0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6);
 		const drawer = this.Drawer('legendID', alpha);
-		console.log(alpha);
 		const move = this.createMoveable('legendID');
 		move.updateRect();
-		//drawer(alpha, -7.5, '#0000FF'); // la valeur -7,5 correspond à la valeur trouvée par déduction
-		drawer(alpha, -(Math.tan(alpha) / 2), '#0000FF');
+		drawer(-(Math.tan(alpha) / 2), '#0000FF');
 
 		// display the slope and speed of each means of transport existing for a given year ( Configuration.year)
 		const alphaDeg = Math.round(((alpha * 180) / Math.PI) * 10) / 10;
 		let title = 'Slope (α) : ' + alphaDeg + '° \n';
 		title += 'Between cones : ' + Math.round(2 * (90 - alphaDeg) * 10) / 10 + '° \n';
+		title += 'Fastest speed = ' + Math.round((1 / Math.cos(alpha)) * 100) / 100 + ' x road speed\n';
 		Object.keys(this._merger.codeSpeedPerYear).forEach((el) => {
-			console.log(el);
 			title += el + ' : ' + this._merger.codeSpeedPerYear[el].speed + ' Kph ' + '\n';
 		});
 
@@ -678,7 +675,6 @@ export default class BigBoard {
 		const dpr = window.devicePixelRatio || 1;
 		// Get the size of the canvas in CSS pixels.
 		const rect = canvas.getBoundingClientRect();
-		console.log(rect);
 		// Give the canvas pixel dimensions of their CSS
 		// size * the device pixel ratio.
 		canvas.width = rect.width * dpr;
@@ -689,26 +685,24 @@ export default class BigBoard {
 		ctx.scale(dpr, dpr);
 		return ctx;
 	}
-	private Drawer(canvasId, alphaM) {
+	private Drawer(canvasId, alpha) {
 		const canvas = <HTMLCanvasElement>document.getElementById(canvasId);
 		//canvas.height = (7.5 * canvas.width) / devicePixelRatio;
-		canvas.height = (Math.tan(alphaM) * (canvas.width / 2)) / devicePixelRatio;
+		canvas.height = (Math.tan(alpha) * (canvas.width / 2)) / devicePixelRatio;
 		const ctx = this.setupCanvas(canvas);
 		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 		const A = 1; // A=1 c'est une valeur comme une autre qui a peu d'importance pour la suite car tout est proportionel!
 		const xmin = -A / 2;
 		const xmax = A / 2;
 		const ymax = 0;
-		return function (alpha, ymin = null, color = '#0000FF') {
+		return function (ymin = null, color = '#0000FF') {
 			const Height = canvas.height;
 			const Width = canvas.width;
 			ymin = ymin === null ? (Height / Width) * 20 : ymin;
 			function toCnv(x, y) {
 				return [(Width * (x - xmin)) / (xmax - xmin), (Height * (ymax - y)) / (ymax - ymin)];
 			}
-			console.log('[', canvas.width, ',', canvas.height, ']');
 			const H = Math.tan(alpha) * xmax;
-			console.log(H);
 			ctx.beginPath();
 			ctx.moveTo(...toCnv(xmin, 0)); // point en haut à gauche
 			ctx.lineTo(...toCnv(xmax, 0)); // point en haut droite
@@ -717,7 +711,6 @@ export default class BigBoard {
 			ctx.strokeStyle = color;
 			ctx.lineWidth = 2;
 			ctx.stroke();
-			console.log(toCnv(xmin, 0), toCnv(xmax, 0), toCnv(0, -H));
 		};
 	}
 	private createMoveable(canvasID) {
