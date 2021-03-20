@@ -30,6 +30,7 @@ import { GUI } from './guiDAT';
 import jszip from 'jszip/dist/jszip';
 import type * as GeoJSON from 'geojson';
 import type { IListFile } from '../definitions/project';
+import Moveable from 'moveable';
 
 /**
  * This class controls all the application:
@@ -250,6 +251,7 @@ export default class BigBoard {
 		this.cleanCountries();
 		this._merger.clear();
 		this._gui.filesToInsert(list);
+		this.addLegend();
 	}
 
 	/**
@@ -622,5 +624,130 @@ export default class BigBoard {
 		this._stats.update();
 		this._controls.update();
 		CONFIGURATION.tick();
+	}
+
+	public addLegend() {
+		const alpha = this._merger.codeSpeedPerYear['Road'].alpha;
+
+		if (!document.getElementById('legendID')) {
+			const legend = document.createElement('canvas');
+			legend.id = 'legendID';
+			const styleLegend = legend.style;
+			styleLegend.font = '14px/32px Arial, Halvetica, sans-serif';
+			styleLegend.zIndex = '1000';
+			styleLegend.position = 'absolute';
+			styleLegend.bottom = '3%';
+			styleLegend.right = '2%';
+			legend.width = 50;
+			legend.height = Math.tan(alpha) * (legend.width / 2);
+			document.body.append(legend);
+		} else {
+			const canvas = <HTMLCanvasElement>document.getElementById('legendID');
+			this.resetDimensions(alpha, canvas);
+		}
+
+		//const color = '#' + (0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6);
+		const drawer = this.Drawer('legendID', alpha);
+		const move = this.createMoveable('legendID');
+		move.updateRect();
+		drawer(-(Math.tan(alpha) / 2), '#0000FF');
+
+		// display the slope and speed of each means of transport existing for a given year ( Configuration.year)
+		const alphaDeg = Math.round(((alpha * 180) / Math.PI) * 10) / 10;
+		let title = 'Slope (α) : ' + alphaDeg + '° \n';
+		title += 'Between cones : ' + Math.round(2 * (90 - alphaDeg) * 10) / 10 + '° \n';
+		title += 'Fastest speed = ' + Math.round((1 / Math.cos(alpha)) * 100) / 100 + ' x road speed\n';
+		Object.keys(this._merger.codeSpeedPerYear).forEach((el) => {
+			title += el + ' : ' + this._merger.codeSpeedPerYear[el].speed + ' Kph ' + '\n';
+		});
+
+		document.getElementById('legendID').addEventListener(
+			'mouseover',
+			function () {
+				document.getElementById('legendID').title = title;
+			},
+			false
+		);
+	}
+
+	private setupCanvas(canvas) {
+		// Get the device pixel ratio, falling back to 1.
+		const dpr = window.devicePixelRatio || 1;
+		// Get the size of the canvas in CSS pixels.
+		const rect = canvas.getBoundingClientRect();
+		// Give the canvas pixel dimensions of their CSS
+		// size * the device pixel ratio.
+		canvas.width = rect.width * dpr;
+		canvas.height = rect.height * dpr;
+		const ctx = canvas.getContext('2d');
+		// Scale all drawing operations by the dpr, so you
+		// don't have to worry about the difference.
+		ctx.scale(dpr, dpr);
+		return ctx;
+	}
+	private Drawer(canvasId, alpha) {
+		const canvas = <HTMLCanvasElement>document.getElementById(canvasId);
+		//canvas.height = (7.5 * canvas.width) / devicePixelRatio;
+		canvas.height = (Math.tan(alpha) * (canvas.width / 2)) / devicePixelRatio;
+		const ctx = this.setupCanvas(canvas);
+		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+		const A = 1; // A=1 c'est une valeur comme une autre qui a peu d'importance pour la suite car tout est proportionel!
+		const xmin = -A / 2;
+		const xmax = A / 2;
+		const ymax = 0;
+		return function (ymin = null, color = '#0000FF') {
+			const Height = canvas.height;
+			const Width = canvas.width;
+			ymin = ymin === null ? (Height / Width) * 20 : ymin;
+			function toCnv(x, y) {
+				return [(Width * (x - xmin)) / (xmax - xmin), (Height * (ymax - y)) / (ymax - ymin)];
+			}
+			const H = Math.tan(alpha) * xmax;
+			ctx.beginPath();
+			ctx.moveTo(...toCnv(xmin, 0)); // point en haut à gauche
+			ctx.lineTo(...toCnv(xmax, 0)); // point en haut droite
+			ctx.lineTo(...toCnv(0, -H)); //point bas milieu
+			ctx.closePath();
+			ctx.strokeStyle = color;
+			ctx.lineWidth = 2;
+			ctx.stroke();
+		};
+	}
+	private createMoveable(canvasID) {
+		// remove any previous moveable
+		const divs = document.querySelectorAll('.moveable1');
+		Array.from(divs).forEach((div) => div.remove());
+		const canvas = <HTMLCanvasElement>document.getElementById(canvasID);
+		// create new moveable
+		const move = new Moveable(document.body, {
+			target: document.getElementById(canvasID),
+			className: 'moveable1',
+			origin: false,
+			draggable: true,
+			scalable: true,
+			resizable: true,
+			keepRatio: true,
+			rotatable: true,
+		});
+		move.on('drag', ({ target, transform }) => {
+			target.style.transform = transform;
+			move.updateRect();
+		});
+		move.on('resize', ({ target, width, height }) => {
+			target.style.width = width + 'px';
+			target.style.height = height + 'px';
+			move.updateRect();
+		});
+		move.on('rotate', ({ target, transform }) => {
+			target.style.transform = transform;
+			move.updateRect();
+		});
+		return move;
+	}
+	private resetDimensions(alpha, canvas) {
+		canvas.width = 50;
+		canvas.height = Math.tan(alpha) * (canvas.width / 2);
+		canvas.style.width = canvas.width + 'px';
+		canvas.style.height = canvas.height + 'px';
 	}
 }

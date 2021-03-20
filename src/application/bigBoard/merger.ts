@@ -37,6 +37,14 @@ import type {
 import { CONFIGURATION } from '../common/configuration';
 import * as FileSaver from 'file-saver';
 import { ConeBoard } from '../cone/coneBoard';
+
+interface ICodeSpeedPerYear {
+	[code: string]: {
+		speed: number;
+		alpha?: number;
+	};
+}
+let codeSpeedPerYear: ICodeSpeedPerYear = {};
 /**
  * Realizes the merge of two tables base on an attribute. The key for the merge is renamed.
  * At the end of the process the recipient table is enriched.
@@ -365,16 +373,16 @@ function networkFromCities(
 				maximumSpeed[year] = speed;
 			}
 		}
-
 		speedPerTransportPerYear[transportCode] = {
 			tabSpeedPerYear: tabSpeedPerYear,
 			name: modeName,
 			terrestrial: transpMode.terrestrial,
 		};
 	});
+	// Balayer speedPerTransportPerYear pour chaque mode de transport terrestre
+	// et compléter avec l'angle de la pente alpha en accord avec l'équation 1!
 	_firstYear = firstYear;
 	_lastYear = lastYear;
-
 	// for each transport mode, for each year determine [alpha]
 	// using maximumSpeed and mode Speed based on [equation 1](http://bit.ly/2tLfehC)
 	for (const transportCode in speedPerTransportPerYear) {
@@ -399,6 +407,17 @@ function networkFromCities(
 		const position = new LatLonH(city.longitude, city.latitude, 0, false);
 		lookupPosition[city.cityCode] = new NEDLocal(position);
 	});
+	codeSpeedPerYear = {};
+	Object.keys(speedPerTransportPerYear).forEach((key) => {
+		Object.keys(speedPerTransportPerYear[key].tabSpeedPerYear).forEach((elem) => {
+			if (elem == CONFIGURATION.year) {
+				const speed = speedPerTransportPerYear[key].tabSpeedPerYear[CONFIGURATION.year].speed;
+				const alpha = speedPerTransportPerYear[key].tabSpeedPerYear[CONFIGURATION.year].alpha;
+				codeSpeedPerYear[speedPerTransportPerYear[key].name] = { speed, alpha };
+			}
+		});
+	});
+	console.log(codeSpeedPerYear);
 	/**
 	 *
 	 * Function putting in cache the unit triangles (clock) of the cone
@@ -697,6 +716,9 @@ export class Merger {
 		return _transportName;
 	}
 
+	public get codeSpeedPerYear(): ICodeSpeedPerYear {
+		return codeSpeedPerYear;
+	}
 	public clear(): void {
 		this._cities = [];
 		this._populations = [];
