@@ -35,7 +35,7 @@
 <h1>{status}</h1>
 
 <p>{error.message}</p>
-yolo
+oops something went wrong, we are sorry, don't hesitate to create an issue in the [github](https://github.com/theworldisnotflat/shriveling_world/issues), we are still in beta mode
 {#if dev && error.stack}
 	<pre>{error.stack}</pre>
 {/if}
