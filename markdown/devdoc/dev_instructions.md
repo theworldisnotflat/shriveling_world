@@ -20,13 +20,16 @@ In your IDE, need to install xo extension :
 First you need to download sources from this github page. Copy the folder on your machine.
 Go inside the application folder and open a terminal, execute the following lines, one by one:
 
-`npm i` (update nodejs)
+* `npm i` (update nodejs)
 
-`npm run build` (compile sources)
+* `npm run build` (compile sources)
 
-`npm run dev` (quick compile sources, launch server)
+* `npm run dev` (quick compile sources, launch server)
 
 Then open in a browser this address http://localhost:3000.
+
+Test each modification of the code with
+* `npm run dev`
 
 # Git tutorial
 
