@@ -1,5 +1,12 @@
 # Basic usage tutorial
 
+## Further help
+
+Beyond the basic instructions provided here, more detailed instructions can be found
+
+* in the user doc section of the website
+* in the [discussion forum](https://github.com/theworldisnotflat/shriveling_world/discussions)
+
 ## First steps
 
 **Step #1**:The app runs in a browser from this address:
