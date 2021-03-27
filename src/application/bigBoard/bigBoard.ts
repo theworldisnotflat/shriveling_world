@@ -19,7 +19,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { OBJExporter } from 'three/examples/jsm/exporters/OBJExporter';
 import Stats from 'three/examples/js/libs/stats.min';
 import { prepareConfiguration } from './initThree';
-import { ConeBoard } from '../cone/coneBoard';
+import { ConeAndCurveBoard } from '../cone/coneBoard';
 import { CountryBoard } from '../country/countryBoard';
 import { Merger } from './merger';
 import type { IMergerState, ISumUpCriteria, ILookupCurvesAndCityGraph, ICriteria } from '../definitions/project';
@@ -50,7 +50,7 @@ export default class BigBoard {
 	/**
 	 * set of cones: a [[_cone]] corresponds to a city and a mode of terrestrial transport
 	 */
-	public coneBoard: ConeBoard;
+	public coneAndCurveBoard: ConeAndCurveBoard;
 	/**
 	 * list of countries generated from a geojson file
 	 */
@@ -87,7 +87,12 @@ export default class BigBoard {
 
 			this.countryBoard = new CountryBoard(this._scene, this._cameraO);
 			this.countryBoard.show = false;
-			this.coneBoard = new ConeBoard(this._scene, this._cameraO, this.countryBoard, this._renderer);
+			this.coneAndCurveBoard = new ConeAndCurveBoard(
+				this._scene,
+				this._cameraO,
+				this.countryBoard,
+				this._renderer
+			);
 			CONFIGURATION.year = '2010';
 			this._showCitiesName = false;
 
@@ -142,7 +147,7 @@ export default class BigBoard {
 	 * @memberof BigBoard
 	 */
 	get scaleCones(): number {
-		return this.coneBoard.scale;
+		return this.coneAndCurveBoard.scale;
 	}
 
 	/**
@@ -151,7 +156,7 @@ export default class BigBoard {
 	 * @memberof BigBoard
 	 */
 	set scaleCones(value: number) {
-		this.coneBoard.scale = value;
+		this.coneAndCurveBoard.scale = value;
 	}
 
 	/**
@@ -177,7 +182,7 @@ export default class BigBoard {
 	 * @memberof BigBoard
 	 */
 	get showCones(): boolean {
-		return this.coneBoard.show;
+		return this.coneAndCurveBoard.show;
 	}
 
 	/**
@@ -186,7 +191,7 @@ export default class BigBoard {
 	 * @memberof BigBoard
 	 */
 	set showCones(value: boolean) {
-		this.coneBoard.show = value;
+		this.coneAndCurveBoard.show = value;
 	}
 
 	get lookupCountries(): ISumUpCriteria {
@@ -194,7 +199,7 @@ export default class BigBoard {
 	}
 
 	get lookupCones(): ISumUpCriteria {
-		return this.coneBoard.lookupCriteria;
+		return this.coneAndCurveBoard.lookupCriteria;
 	}
 
 	/**
@@ -203,7 +208,7 @@ export default class BigBoard {
 	 * @memberof BigBoard
 	 */
 	get withLimits(): boolean {
-		return this.coneBoard.withLimits;
+		return this.coneAndCurveBoard.withLimits;
 	}
 
 	/**
@@ -212,7 +217,7 @@ export default class BigBoard {
 	 * @memberof BigBoard
 	 */
 	set withLimits(value: boolean) {
-		this.coneBoard.withLimits = value;
+		this.coneAndCurveBoard.withLimits = value;
 	}
 
 	/**
@@ -242,12 +247,12 @@ export default class BigBoard {
 	 * @see coneBoard :  cleanCones method
 	 * @memberof BigBoard
 	 */
-	public cleanCones(): void {
-		this.coneBoard.clean();
+	public cleanConesAndCurves(): void {
+		this.coneAndCurveBoard.clean();
 	}
 
 	public cleanAll(list: IListFile[]): void {
-		this.cleanCones();
+		this.cleanConesAndCurves();
 		this.cleanCountries();
 		this._merger.clear();
 		this._gui.filesToInsert(list);
@@ -261,7 +266,7 @@ export default class BigBoard {
 	 * @memberof BigBoard
 	 */
 	public addCones(lookup: ILookupCurvesAndCityGraph): void {
-		this.coneBoard.add(lookup);
+		this.coneAndCurveBoard.add(lookup);
 	}
 
 	/**
@@ -285,7 +290,7 @@ export default class BigBoard {
 	 * @memberof BigBoard
 	 */
 	public getConeByMouse(event: MouseEvent, highLight = false): PseudoCone {
-		return this.coneBoard.getMeshByMouse(event, highLight);
+		return this.coneAndCurveBoard.getMeshByMouse(event, highLight);
 	}
 
 	/**
@@ -307,7 +312,7 @@ export default class BigBoard {
 	 * @memberof BigBoard
 	 */
 	public highLightCones(criteria: ICriteria, light = true): void {
-		this.coneBoard.highLight(criteria, light);
+		this.coneAndCurveBoard.highLight(criteria, light);
 	}
 
 	/**
@@ -318,7 +323,7 @@ export default class BigBoard {
 	 * @memberof BigBoard
 	 */
 	public setLimits(criteria: ICriteria, limit: boolean): void {
-		this.coneBoard.setLimits(criteria, limit);
+		this.coneAndCurveBoard.setLimits(criteria, limit);
 	}
 
 	/**
@@ -340,7 +345,7 @@ export default class BigBoard {
 	 * @memberof BigBoard
 	 */
 	public showConesCriteria(criteria: ICriteria, state: boolean): void {
-		this.coneBoard.showCriteria(criteria, state);
+		this.coneAndCurveBoard.showCriteria(criteria, state);
 	}
 
 	/**
@@ -366,8 +371,8 @@ export default class BigBoard {
 	 */
 	public getCones(criteria: ICriteria): PseudoCone[] {
 		let result: PseudoCone[] = [];
-		if (this.coneBoard.show) {
-			result = this.coneBoard.searchMesh(criteria);
+		if (this.coneAndCurveBoard.show) {
+			result = this.coneAndCurveBoard.searchMesh(criteria);
 		}
 
 		return result;
@@ -576,9 +581,9 @@ export default class BigBoard {
 		const groupCone = new Group();
 		const groupCurveShortHaul = new Group();
 		const groupCurvesLongHaul = new Group();
-		this.coneBoard.coneMeshCollection.forEach((cone) => groupCone.add(cone));
+		this.coneAndCurveBoard.coneMeshCollection.forEach((cone) => groupCone.add(cone));
 		this.countryBoard.countryMeshCollection.forEach((country) => groupCountry.add(country));
-		this.coneBoard.curveCollection.forEach((curve) => {
+		this.coneAndCurveBoard.curveCollection.forEach((curve) => {
 			if (curve.getTheta < 2000 / (CONFIGURATION.earthRadiusMeters / 1000)) {
 				groupCurveShortHaul.add(curve);
 			} else {

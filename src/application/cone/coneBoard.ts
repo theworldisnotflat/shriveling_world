@@ -9,7 +9,7 @@ import type { CountryBoard } from '../country/countryBoard';
 import { CurveMeshShader } from './curveMeshShader';
 const forbiddenAttributes = ['referential', 'position'];
 
-export class ConeBoard {
+export class ConeAndCurveBoard {
 	public coneMeshCollection: PseudoCone[] = [];
 	public curveCollection: CurveMeshShader[] = [];
 	private readonly _scene: Scene;
