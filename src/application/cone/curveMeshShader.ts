@@ -11,7 +11,7 @@ let curvesDonTDisplay: CurveMeshShader[] = [];
 let uuid: string;
 let _ready = false;
 let _width: number;
-let _height: number;
+let _nbCurves: number;
 // Should be 1 for testing purposes
 // affects the value of the height of edges
 let _coefficient = 1;
@@ -41,24 +41,25 @@ fullCleanArrays();
  * @param speedRatio
  * @param theta
  */
-function getHeight(speedRatio: number, theta: number, curvesPosition: CURVESPOSITION_ENUM): number {
+function getCurveHeight(speedRatio: number, theta: number, curvesPosition: CURVESPOSITION_ENUM): number {
 	const semiTheta = theta / 2;
 	const sinSemiTheta = Math.sin(semiTheta);
 	const cosSemiTheta = Math.cos(semiTheta);
 	const secondTerm = Math.sqrt(speedRatio * speedRatio - sinSemiTheta * sinSemiTheta);
 	const thirdTerm = 0;
 	// The equation of length om'
-	const result = (cosSemiTheta + secondTerm + thirdTerm) * CONFIGURATION.earthRadiusMeters * _coefficient;
+	const OMPrime = (cosSemiTheta + secondTerm + thirdTerm) * CONFIGURATION.earthRadiusMeters * _coefficient;
 	// Minus earth radius to compute cm'
+
 	switch (curvesPosition) {
 		case 0: // above the surface of the earth
-			return result - CONFIGURATION.earthRadiusMeters;
+			return OMPrime - CONFIGURATION.earthRadiusMeters; // Minus earth radius to compute cm'
 		case 1: // below
-			return -(result - CONFIGURATION.earthRadiusMeters);
+			return -(OMPrime - CONFIGURATION.earthRadiusMeters);
 		case 2:
-			return -(result - CONFIGURATION.earthRadiusMeters);
+			return -(OMPrime - CONFIGURATION.earthRadiusMeters);
 		case 3:
-			return -(result - CONFIGURATION.earthRadiusMeters);
+			return -(OMPrime - CONFIGURATION.earthRadiusMeters);
 	}
 }
 
@@ -67,7 +68,7 @@ function getHeight(speedRatio: number, theta: number, curvesPosition: CURVESPOSI
  *
  * higher values will consume processor load
  */
-function regenerateStep(): void {
+function regenerateCurvesGeometry(): void {
 	const step = 1 / CONFIGURATION.pointsPerCurve;
 	const t: number[] = [];
 	for (let i = 0; i < 1; i += step) {
@@ -84,13 +85,17 @@ function regenerateStep(): void {
 }
 
 /**
- * Update curves height based on the reference year
+ * * Update curves geometry and remove curves from view
+ * if [[computeCurveHeightAndTestIfAvailable]] based on
+ * the reference [[year]]
+ * * Function [[computeCurveHeightAndTestIfAvailable]] will
+ * also compute curves height
  */
-function updateYear(): void {
+function updateCurvesYear(): void {
 	const year = CONFIGURATION.year;
 	curvesDonTDisplay = [];
-	for (let i = 0; i < _height; i++) {
-		if (!_curves[i].isAvailable(year)) {
+	for (let i = 0; i < _nbCurves; i++) {
+		if (!_curves[i].computeCurveHeightAndTestIfAvailable(year)) {
 			curvesDonTDisplay.push(_curves[i]);
 		}
 	}
@@ -118,10 +123,10 @@ function computation(transName?: any): void {
 	uniforms.zCoeff = CONFIGURATION.zCoeff;
 	_gpgpu.positions.updateUniforms(uniforms);
 	const options = {
-		u_height: { src: _heightTab, width: 1, height: _height },
+		u_height: { src: _heightTab, width: 1, height: _nbCurves },
 	};
 	_gpgpu.positions.updateTextures(options);
-	const tempo = _gpgpu.positions.calculate(_width, _height);
+	const tempo = _gpgpu.positions.calculate(_width, _nbCurves);
 	const allPositions = tempo[0];
 	for (let i = 0; i < _height; i++) {
 		if (transName) {
@@ -144,7 +149,7 @@ export class CurveMeshShader extends Line {
 	private _curvePosition: CURVESPOSITION_ENUM;
 	private _pointsPerCurve: number;
 
-	public static async generateCones(lookup: ILookupCurves): Promise<CurveMeshShader[]> {
+	public static async generateCurves(lookup: ILookupCurves): Promise<CurveMeshShader[]> {
 		_ready = false;
 		_curves = [];
 		fullCleanArrays();
@@ -174,7 +179,7 @@ export class CurveMeshShader extends Line {
 							if (_ready) {
 								switch (name) {
 									case 'year':
-										updateYear();
+										updateCurvesYear();
 										computation();
 										break;
 									default:
@@ -231,17 +236,17 @@ export class CurveMeshShader extends Line {
 			}
 		}
 
-		_height = _curves.length;
-		_heightTab = new Float32Array(_height);
+		_nbCurves = _curves.length;
+		_heightTab = new Float32Array(_nbCurves);
 		const options = {
-			u_PControls0: { src: new Float32Array(pControls0), width: 1, height: _height },
-			u_PControls1: { src: new Float32Array(pControls1), width: 1, height: _height },
-			u_PControls2: { src: new Float32Array(pControls2), width: 1, height: _height },
-			u_PControls3: { src: new Float32Array(pControls3), width: 1, height: _height },
+			u_PControls0: { src: new Float32Array(pControls0), width: 1, height: _nbCurves },
+			u_PControls1: { src: new Float32Array(pControls1), width: 1, height: _nbCurves },
+			u_PControls2: { src: new Float32Array(pControls2), width: 1, height: _nbCurves },
+			u_PControls3: { src: new Float32Array(pControls3), width: 1, height: _nbCurves },
 		};
 		_gpgpu.positions.updateTextures(options);
-		regenerateStep();
-		updateYear();
+		regenerateCurvesGeometry();
+		updateCurvesYear();
 		computation();
 		_ready = true;
 		return [..._curves];
@@ -280,11 +285,11 @@ export class CurveMeshShader extends Line {
 		this._pointsPerCurve = pointsPerCurve;
 	}
 
-	public get curvesPosition(): CURVESPOSITION_ENUM {
+	public get curvePosition(): CURVESPOSITION_ENUM {
 		return this._curvePosition;
 	}
 
-	public set curvesPosition(value: CURVESPOSITION_ENUM) {
+	public set curvePosition(value: CURVESPOSITION_ENUM) {
 		this._curvePosition = value;
 		updatePosition();
 		computation();
@@ -311,9 +316,9 @@ export class CurveMeshShader extends Line {
 	// for testing purposes only
 	public static set coefficient(value: number) {
 		_coefficient = value;
-		for (let i = 0; i < _height; i++) {
+		for (let i = 0; i < _nbCurves; i++) {
 			const curve = _curves[i];
-			_heightTab[i] = getHeight(curve._speedRatio, curve.theta, curve.curvesPosition);
+			_heightTab[i] = getCurveHeight(curve._speedRatio, curve.theta, curve.curvePosition);
 		}
 
 		computation();
@@ -346,14 +351,14 @@ export class CurveMeshShader extends Line {
 	}
 
 	// Sets the height of edges
-	public isAvailable(year: string | number): boolean {
+	public computeCurveHeightAndTestIfAvailable(year: string | number): boolean {
 		const speedRatio = this._years[year];
-		const result = speedRatio !== undefined;
+		const result = speedRatio !== undefined; // if speedRatio is undefined, the curve shouldn't be displayed
 		if (result) {
 			this._speedRatio = speedRatio;
 			const index = _curves.indexOf(this);
-			const curvePosition = Number(_curves[index].curvesPosition);
-			_heightTab[index] = getHeight(this._speedRatio, this.theta, curvePosition);
+			const curvePosition = Number(_curves[index].curvePosition);
+			_heightTab[index] = getCurveHeight(this._speedRatio, this.theta, curvePosition);
 		}
 
 		return result;

@@ -255,7 +255,7 @@ export class GUI {
 			if (bigBoard.countryBoard.ready && bigBoard.state === 'complete') {
 				flagTransportDone = false;
 				years.min(this._merger.firstYear).max(this._merger.lastYear).updateDisplay();
-				bigBoard.coneAndCurveBoard.add(this._merger.conesAndCurvesData);
+				bigBoard.coneAndCurveBoard.addConesAndCurves(this._merger.conesAndCurvesData);
 				// This._merger.clear();
 				const sizeText = generalFolder.add(bigBoard, '_sizeText', 0, 2).name('taille du texte').step(0.1);
 				sizeText.onChange(() => bigBoard.rescaleText());

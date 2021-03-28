@@ -266,7 +266,7 @@ export default class BigBoard {
 	 * @memberof BigBoard
 	 */
 	public addCones(lookup: ILookupCurvesAndCityGraph): void {
-		this.coneAndCurveBoard.add(lookup);
+		this.coneAndCurveBoard.addConesAndCurves(lookup);
 	}
 
 	/**
@@ -429,7 +429,7 @@ export default class BigBoard {
 			const obj = JSON.parse(JSON.stringify(this.getMergerI.Cities[j]));
 			const pop = JSON.parse(
 				JSON.stringify(
-					this._merger.edgesWithTranspModes.lookupCityNetwork[this.getMergerI.Cities[j].cityCode]
+					this._merger.edgesWithTranspModes.lookupCityGraph[this.getMergerI.Cities[j].cityCode]
 						.origCityProperties.populations
 				)
 			);
@@ -437,7 +437,7 @@ export default class BigBoard {
 			if (population > this._populations) {
 				const geometry = new TextGeometry(obj.cityName, CONFIGURATION.TEXT_GEOMETRY_OPTIONS);
 				mesh = new Mesh(geometry, CONFIGURATION.BASIC_TEXT_MATERIAL);
-				const cart = this._merger.edgesWithTranspModes.lookupCityNetwork[this.getMergerI.Cities[j].cityCode]
+				const cart = this._merger.edgesWithTranspModes.lookupCityGraph[this.getMergerI.Cities[j].cityCode]
 					.referential.latLonHRef;
 				const x =
 					-CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.cos(cart.latitude * 0.95) * Math.cos(cart.longitude);
