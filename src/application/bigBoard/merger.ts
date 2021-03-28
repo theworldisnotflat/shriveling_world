@@ -655,7 +655,7 @@ function networkFromCities(
 			}
 		}
 	});
-	return { lookupCityNetwork: network, curvesData };
+	return { lookupCityGraph: network, curvesData };
 }
 
 /**

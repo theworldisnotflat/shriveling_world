@@ -83,8 +83,9 @@ export interface ILatLonH {
 }
 
 /**
- * An item grouping for a fixed year and a fixed origin city data to generate
- * a complex cone the slope for road and slope for each
+ * An item grouping for a fixed year and a fixed origin city,
+ * all the data needed to generate a simple or
+ * a complex cone with the slope for road and the slope for each
  * destination city (clock) using a terrestrial transport.
  */
 export interface IConeAnglesItem {
@@ -337,7 +338,7 @@ export type ShaderTypes = 'fragment' | 'vertex';
  * (some duplication but the purposes are different)
  */
 export interface ILookupCurvesAndCityGraph {
-	lookupCityNetwork: ILookupCityGraph;
+	lookupCityGraph: ILookupCityGraph;
 	curvesData: ILookupCurves;
 }
 /**
