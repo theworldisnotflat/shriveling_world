@@ -9,7 +9,7 @@ import type { CountryBoard } from '../country/countryBoard';
 import { CurveMeshShader } from './curveMeshShader';
 const forbiddenAttributes = ['referential', 'position'];
 
-export class ConeBoard {
+export class ConeAndCurveBoard {
 	public coneMeshCollection: PseudoCone[] = [];
 	public curveCollection: CurveMeshShader[] = [];
 	private readonly _scene: Scene;
@@ -90,11 +90,11 @@ export class ConeBoard {
 	 *
 	 * @param lookup
 	 */
-	public add(lookup: ILookupCurvesAndCityGraph): void {
+	public addConesAndCurves(lookup: ILookupCurvesAndCityGraph): void {
 		this.clean();
-		console.log('city network', lookup.lookupCityNetwork);
+		console.log('city network', lookup.lookupCityGraph);
 		const bBoxes = this._countries.countryMeshCollection.map((country) => country.bBox);
-		void ConeMeshShader.generateCones(lookup.lookupCityNetwork, bBoxes).then((cones) => {
+		void ConeMeshShader.generateCones(lookup.lookupCityGraph, bBoxes).then((cones) => {
 			cones.forEach((cone) => {
 				// UpdateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
 				// add object name to cone
@@ -105,7 +105,7 @@ export class ConeBoard {
 				this._renderer.render(this._scene, this._camera);
 			});
 		});
-		void CurveMeshShader.generateCones(lookup.curvesData).then((curves) => {
+		void CurveMeshShader.generateCurves(lookup.curvesData).then((curves) => {
 			curves.forEach((curve) => {
 				this.curveCollection.push(curve);
 				curve.visible = this._show;
