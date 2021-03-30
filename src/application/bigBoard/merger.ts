@@ -36,7 +36,7 @@ import type {
 } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
 import * as FileSaver from 'file-saver';
-import { ConeBoard } from '../cone/coneBoard';
+import { ConeAndCurveBoard } from '../cone/coneBoard';
 
 interface ICodeSpeedPerYear {
 	[code: string]: {
@@ -655,7 +655,7 @@ function networkFromCities(
 			}
 		}
 	});
-	return { lookupCityNetwork: network, curvesData };
+	return { lookupCityGraph: network, curvesData };
 }
 
 /**

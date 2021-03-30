@@ -186,7 +186,7 @@ export class GUI {
 						function curveListener(): void {
 							const opacity = <number>curveOpacity.getValue();
 							const color = Number.parseInt(curveColor.getValue().replace('#', ''), 16);
-							bigBoard.coneBoard.curveCollection
+							bigBoard.coneAndCurveBoard.curveCollection
 								.filter((curve) => transportName === curve.transportName)
 								.forEach((curve) => {
 									const material = <LineBasicMaterial>curve.material;
@@ -210,7 +210,7 @@ export class GUI {
 							const opacity = <number>curveOpacity.getValue();
 							const color = Number.parseInt(curveColor.getValue().replace('#', ''), 16);
 
-							bigBoard.coneBoard.curveCollection
+							bigBoard.coneAndCurveBoard.curveCollection
 								.filter((curve) => transportName === curve.transportName)
 								.forEach((curve) => {
 									const material = <LineBasicMaterial>curve.material;
@@ -227,12 +227,12 @@ export class GUI {
 							.add(CONFIGURATION, 'curvesPosition', conf.curvesPosition)
 							.name('curves position')
 							.onChange((value: CURVESPOSITION_ENUM) => {
-								bigBoard.coneBoard.curveCollection
+								bigBoard.coneAndCurveBoard.curveCollection
 									.filter((curve) => transportName === curve.transportName)
 									.forEach((curve) => {
 										CONFIGURATION.curvesPosition = value;
-										curve.curvesPosition = value;
-										console.log(curve.curvesPosition);
+										curve.curvePosition = value;
+										console.log(curve.curvePosition);
 									});
 								CONFIGURATION.curvesPosition = conf.curvesPosition.above;
 							});
@@ -245,7 +245,7 @@ export class GUI {
 			if (bigBoard.countryBoard.ready && bigBoard.state === 'complete') {
 				flagTransportDone = false;
 				years.min(this._merger.firstYear).max(this._merger.lastYear).updateDisplay();
-				bigBoard.coneBoard.add(this._merger.conesAndCurvesData);
+				bigBoard.coneAndCurveBoard.addConesAndCurves(this._merger.conesAndCurvesData);
 				// This._merger.clear();
 				const sizeText = generalFolder.add(bigBoard, '_sizeText', 0, 2).name('taille du texte').step(0.1);
 				sizeText.onChange(() => bigBoard.rescaleText());
@@ -370,10 +370,10 @@ export class GUI {
 			.onChange((v: CONESSHAPE_ENUM) => {
 				CONFIGURATION.conesShape = v;
 			});
-		coneFolder.add(bigBoard.coneBoard, 'opacity', 0, 1).step(0.01);
+		coneFolder.add(bigBoard.coneAndCurveBoard, 'opacity', 0, 1).step(0.01);
 		coneFolder.addColor(conf, 'cones color').onChange((v: string) => {
 			const color = Number.parseInt(v.replace('#', ''), 16);
-			bigBoard.coneBoard.coneMeshCollection.forEach((cone) => {
+			bigBoard.coneAndCurveBoard.coneMeshCollection.forEach((cone) => {
 				const material = <MeshPhongMaterial>cone.material;
 				material.color.setHex(color);
 				material.emissive.setHex(color);
