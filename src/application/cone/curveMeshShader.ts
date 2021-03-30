@@ -102,8 +102,8 @@ function updateCurvesYear(): void {
 }
 
 function updatePosition(): void {
-	for (let i = 0; i < _height; i++) {
-		_curves[i].isAvailable(CONFIGURATION.year);
+	for (let i = 0; i < _nbCurves; i++) {
+		_curves[i].computeCurveHeightAndTestIfAvailable(CONFIGURATION.year);
 	}
 }
 
@@ -128,7 +128,7 @@ function computation(transName?: any): void {
 	_gpgpu.positions.updateTextures(options);
 	const tempo = _gpgpu.positions.calculate(_width, _nbCurves);
 	const allPositions = tempo[0];
-	for (let i = 0; i < _height; i++) {
+	for (let i = 0; i < _nbCurves; i++) {
 		if (transName) {
 			if (_curves[i].transportName == transName) {
 				_curves[i].setGeometry(allPositions.subarray(i * _width * 4, (i + 1) * _width * 4));
@@ -303,7 +303,7 @@ export class CurveMeshShader extends Line {
 		this._pointsPerCurve = value;
 		if (value >= 1 && value <= 200) {
 			_t = new Float32Array(0);
-			regenerateStep();
+			regenerateCurvesGeometry();
 			computation(this.transportName);
 		}
 	}

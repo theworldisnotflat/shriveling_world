@@ -230,7 +230,7 @@ export class GUI {
 								bigBoard.coneAndCurveBoard.curveCollection
 									.filter((curve) => transportName === curve.transportName)
 									.forEach((curve) => {
-										curve.curvesPosition = value;
+										curve.curvePosition = value;
 									});
 								CONFIGURATION.curvesPosition = conf.curvesPosition.above;
 							});
@@ -239,7 +239,7 @@ export class GUI {
 							.step(1)
 							.name('number of points')
 							.onChange((value: number) => {
-								bigBoard.coneBoard.curveCollection
+								bigBoard.coneAndCurveBoard.curveCollection
 									.filter((curve) => transportName === curve.transportName)
 									.forEach((curve) => {
 										curve.pointsPerCurve = value;
@@ -400,7 +400,7 @@ export class GUI {
 			.step(1)
 			.name('number of points')
 			.onChange((value: number) => {
-				bigBoard.coneBoard.curveCollection.forEach((curve) => {
+				bigBoard.coneAndCurveBoard.curveCollection.forEach((curve) => {
 					curve.pointsPerCurve = value;
 				});
 			});
