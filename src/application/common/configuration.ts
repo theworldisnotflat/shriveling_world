@@ -331,10 +331,6 @@ export const CONFIGURATION = {
 		_zCoeff = value;
 		fireEvents('zCoeff', _zCoeff);
 	},
-	set zCoeff(value: number) {
-		_zCoeff = value;
-		fireEvents('zCoeff', _zCoeff);
-	},
 	/**
 	 * Move from [[projectionInit]] to [[projectionEnd]]
 	 * with steps in [[percentProjection]]
