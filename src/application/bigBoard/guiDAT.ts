@@ -223,19 +223,29 @@ export class GUI {
 						curveColor.onChange(curveListener);
 						const curveOpacity = folder.add(conf, 'curve transparency', 0, 1, 0.01).name('transparency');
 						curveOpacity.onChange(curveListener);
-						const curvesPosition = folder
+						folder
 							.add(CONFIGURATION, 'curvesPosition', conf.curvesPosition)
 							.name('curves position')
 							.onChange((value: CURVESPOSITION_ENUM) => {
 								bigBoard.coneAndCurveBoard.curveCollection
 									.filter((curve) => transportName === curve.transportName)
 									.forEach((curve) => {
-										CONFIGURATION.curvesPosition = value;
 										curve.curvePosition = value;
-										console.log(curve.curvePosition);
 									});
 								CONFIGURATION.curvesPosition = conf.curvesPosition.above;
 							});
+						folder
+							.add(CONFIGURATION, 'pointsPerCurve', 0, 200)
+							.step(1)
+							.name('number of points')
+							.onChange((value: number) => {
+								bigBoard.coneAndCurveBoard.curveCollection
+									.filter((curve) => transportName === curve.transportName)
+									.forEach((curve) => {
+										curve.pointsPerCurve = value;
+									});
+							});
+						CONFIGURATION.pointsPerCurve = 50;
 					});
 				}
 
@@ -385,7 +395,16 @@ export class GUI {
 
 		// curves
 		aerialFolder = gui.addFolder('Curves');
-		aerialFolder.add(CONFIGURATION, 'pointsPerCurve', 0, 200).step(1).name('number of points');
+		aerialFolder
+			.add(CONFIGURATION, 'pointsPerCurve', 0, 200)
+			.step(1)
+			.name('number of points')
+			.onChange((value: number) => {
+				bigBoard.coneAndCurveBoard.curveCollection.forEach((curve) => {
+					curve.pointsPerCurve = value;
+				});
+			});
+
 		terrestrialFolder = aerialFolder.addFolder('terrestrial modes');
 
 		// Pays /mise en exergue avec listen?
