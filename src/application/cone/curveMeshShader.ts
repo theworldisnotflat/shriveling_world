@@ -101,21 +101,15 @@ function updateCurvesYear(): void {
 	}
 }
 
-function updatePosition(): void {
-	for (let i = 0; i < _nbCurves; i++) {
-		_curves[i].computeCurveHeightAndTestIfAvailable(CONFIGURATION.year);
-	}
-}
-
 function computation(transName?: any): void {
 	const uniforms: { [x: string]: number | ArrayBufferView } = {};
 	uniforms.longueurMaxi = CONFIGURATION.extrudedHeight;
 	uniforms.threeRadius = CONFIGURATION.THREE_EARTH_RADIUS;
 	uniforms.earthRadius = CONFIGURATION.earthRadiusMeters;
 	uniforms.referenceEquiRectangular = CONFIGURATION.referenceEquiRectangularArray;
-	uniforms.representationInit = CONFIGURATION.projectionInit;
-	uniforms.representationEnd = CONFIGURATION.projectionEnd;
-	uniforms.percentRepresentation = CONFIGURATION.percentProjection;
+	uniforms.projectionInit = CONFIGURATION.projectionInit;
+	uniforms.projectionEnd = CONFIGURATION.projectionEnd;
+	uniforms.percentProjection = CONFIGURATION.percentProjection;
 	uniforms.conesShape = CONFIGURATION.conesShape;
 	uniforms.standardParallel1 = CONFIGURATION.standardParallel1;
 	uniforms.standardParallel2 = CONFIGURATION.standardParallel2;
@@ -291,7 +285,7 @@ export class CurveMeshShader extends Line {
 
 	public set curvePosition(value: CURVESPOSITION_ENUM) {
 		this._curvePosition = value;
-		updatePosition();
+		updateCurvesYear();
 		computation();
 	}
 
