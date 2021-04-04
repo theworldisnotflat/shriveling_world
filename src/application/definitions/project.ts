@@ -264,7 +264,6 @@ export interface ITranspMode {
 	maxSYear?: number;
 	yearBegin?: number;
 	yearEnd?: number;
-	curvesPosition?: CURVESPOSITION_ENUM;
 }
 
 /**
@@ -317,7 +316,6 @@ export type configurationObservableEvt =
 	| 'coneStep'
 	| 'referenceEquiRectangular'
 	| 'pointsPerCurve'
-	| 'pointsPerCurveAll'
 	| 'THREE_EARTH_RADIUS'
 	| 'projectionBegin'
 	| 'projectionEnd'
