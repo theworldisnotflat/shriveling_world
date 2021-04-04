@@ -19,9 +19,9 @@ uniform float earthRadius;
 uniform vec3 referenceEquiRectangular;
 uniform float standardParallel1;
 uniform float standardParallel2;
-uniform int representationInit;
-uniform int representationEnd;
-uniform float percentRepresentation;
+uniform int projectionInit;
+uniform int projectionEnd;
+uniform float percentProjection;
 uniform int conesShape;
 uniform float zCoeff;
 
@@ -59,14 +59,14 @@ void main() {
   }
   vec3 modelPosition = displayConversions(
       cartoPosition, threeRadius, earthRadius, referenceEquiRectangular,
-      standardParallel1, standardParallel2, representationInit,
-      representationEnd, percentRepresentation, conesShape, zCoeff);
+      standardParallel1, standardParallel2, projectionInit,
+      projectionEnd, percentProjection, conesShape, zCoeff);
   myOutputColor = vec4(modelPosition, 0.0);
   uvs = vec4(cartoPosition.x / (2.0 * PI) + 0.5, cartoPosition.y /  PI + 0.5, 0.0, 0.0);
   cartoPosition.z = - hauteurBase;
   modelPosition = displayConversions(
       cartoPosition, threeRadius, earthRadius, referenceEquiRectangular,
-      standardParallel1, standardParallel2, representationInit,
-      representationEnd, percentRepresentation, conesShape,zCoeff);
+      standardParallel1, standardParallel2, projectionInit,
+      projectionEnd, percentProjection, conesShape, zCoeff);
   base = vec4(modelPosition, 0.0);
 }

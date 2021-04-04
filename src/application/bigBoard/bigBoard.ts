@@ -251,7 +251,7 @@ export default class BigBoard {
 		this.coneAndCurveBoard.clean();
 	}
 
-	public cleanAll(list: IListFile[]): void {
+	public cleanAllAndReload(list: IListFile[]): void {
 		this.cleanConesAndCurves();
 		this.cleanCountries();
 		this._merger.clear();
