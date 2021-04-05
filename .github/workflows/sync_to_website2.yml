@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Sync to public website shriveling.github.io
 
 # Controls when the action will run. 
 on:
@@ -27,7 +27,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source-branch: 'gh-pages'
+          source-directory: 'gh-pages'
           destination-github-username: 'shriveling'
           destination-repository-name: 'shriveling.github.io'
           target-branch: 'gh_pages'
