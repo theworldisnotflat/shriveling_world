@@ -27,9 +27,11 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source-directory: 'gh-pages'
-          destination-github-username: 'shriveling'
+          source-directory: ''
+          destination-github-username: 'cpina'
           destination-repository-name: 'shriveling.github.io'
-          target-branch: 'gh_pages'
+          destination-repository-username: 'shriveling'
           user-email: alain.lhostis@univ-eiffel.fr
-
+          commit-message: See ORIGIN_COMMIT
+      - name: Test get variable exported by shriveling_world
+        run: echo $DESTINATION_CLONED_DIRECTORY
