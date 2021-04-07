@@ -1,0 +1,28 @@
+name: Sync to public website shriveling.github.io
+
+# Controls when the action will run. 
+on:
+  push:
+    branches: [ gh-pages ]
+  pull_request:
+    branches: [ gh-pages ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  
+jobs:
+  git-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: git-sync
+        uses: wei/git-sync@v3
+        with:
+          source_repo: " theworldisnotflat/shriveling_world "
+          source_branch: "gh-pages"
+          destination_repo: "shriveling/shriveling.github.io"
+          destination_branch: "gh-pages"
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY_RSA }} # optional
+          # ssh_private_key: ${{ secrets.API_TOKEN_GITHUB }} # optional
+          # source_ssh_private_key: ${{ secrets.SOURCE_SSH_PRIVATE_KEY }} # optional, will override `SSH_PRIVATE_KEY`
+          # destination_ssh_private_key: ${{ secrets.DESTINATION_SSH_PRIVATE_KEY }} # optional, will override `SSH_PRIVATE_KEY`
+          
