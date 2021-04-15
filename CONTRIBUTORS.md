@@ -5,14 +5,17 @@
   * Owner
 * **[Billel Helali](https://github.com/CodeInLight)**
   * Code contributor
-  * development, debugging
+  * debugging
+  * development
+     * export
   * Blender rendering
 * **[Nicolas Roelandt](https://github.com/Bakaniko)**
   * Code contributor
   * strategy and communication
 * **[Jeff Barbier](https://github.com/phbrbr)**
   * Code contributor
-  * import export debugging
+  * debugging
+    * export
   * graphic design
   * Blender rendering
 * **[Fabian Wenner](https://github.com/fwenner)**
@@ -21,4 +24,7 @@
   * deployment
 * **[Fatima Fattouh](https://github.com/saamus)**
   * Code contributor
-  * development, debugging
+  * debugging
+  * development:
+    * export
+    * legend 
