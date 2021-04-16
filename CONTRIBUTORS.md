@@ -8,6 +8,7 @@
   * debugging
   * development
      * export
+     * orthographic view
   * Blender rendering
 * **[Nicolas Roelandt](https://github.com/Bakaniko)**
   * Code contributor
@@ -28,3 +29,4 @@
   * development:
     * export
     * legend 
+    * UI
