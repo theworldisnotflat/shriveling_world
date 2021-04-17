@@ -13,7 +13,7 @@ As an open science initiative the project follows the [GNU General Public Licens
 
 -   The project has a [roadmap maintained up to date](https://github.com/theworldisnotflat/shriveling_world/wiki)
 -   Development is [organised for the coming release](https://github.com/theworldisnotflat/shriveling_world/projects)
--   The first pre-release v0.9-alpha can be ferred to as: [![DOI](https://zenodo.org/badge/66025665.svg)](https://zenodo.org/badge/latestdoi/66025665)
+-   The first pre-release v0.9-alpha can be refered to as: [![DOI](https://zenodo.org/badge/66025665.svg)](https://zenodo.org/badge/latestdoi/66025665)
 
 
     
