@@ -1,7 +1,6 @@
 # Shriveling world
 
-The __shriveling world__ project aims at producing images of the global geographical time-space, using the third dimension, as in time-space relief maps.
-The word _shriveling_ was introduced by Waldo Tobler in [his comments](https://people.geog.ucsb.edu/~tobler/presentations/The-shriveling-world.pdf) of Mathis-L'Hostis time-space relief image, in order to describe the complex contraction process suggested by the model. The project consists in:
+The __shriveling world__ project aims at producing images of _geographical time-space_, using the third dimension. The word _shriveling_ was introduced by Waldo Tobler in [his analysis](https://people.geog.ucsb.edu/~tobler/presentations/The-shriveling-world.pdf) of Mathis-L'Hostis time-space relief images, to describe the complex contraction process suggested by the model. The project consists in:
 
 - A [scientific blog](https://timespace.hypotheses.org/) containing principles, reflections, references and images related to the project
 - An [__application__ with documentation](https://theworldisnotflat.github.io/shriveling_world/marks/index).
@@ -10,7 +9,8 @@ The word _shriveling_ was introduced by Waldo Tobler in [his comments](https://p
 For citation please refer to [L’Hostis, A.; Abdou, F. What is the Shape of Geographical Time-Space? A Three Dimensional Model made of Curves and Cones. Preprints 2021, 2021030594](https://www.preprints.org/manuscript/202103.0594/v1).
 
 <img alt="Chinese geographical time space in 2014" src="https://neocarto.hypotheses.org/files/2021/04/f_Chine_v06.png" width="600">
-This is the first representation of geographical time-space with cones and curves, produced by the application __Shriveling world__ with post-treatments in [Blender](https://www.blender.org/), applied to China and Taiwan.
+
+This is the first representation of _geographical time-space_ with cones and curves, produced by the application __Shriveling world__ with post-treatments in [Blender](https://www.blender.org), applied to China and Taiwan.
 
 # Road map
 
