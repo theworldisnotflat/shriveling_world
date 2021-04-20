@@ -9,7 +9,7 @@ The word _shriveling_ was introduced by Waldo Tobler in his comments of Mathis-L
 
 As an open science initiative the project follows the [GNU General Public License v3.0](https://github.com/theworldisnotflat/shriveling_world/blob/master/LICENSE) rules.
 
-For citation please refer to [L’Hostis, A.; Abdou, F. What is the Shape of Geographical Time-Space? A Three Dimensional Model made of Curves and Cones. Preprints 2021, 2021030594 (doi: 10.20944/preprints202103.0594.v1)](https://www.preprints.org/manuscript/202103.0594/v1).
+For citation please refer to [L’Hostis, A.; Abdou, F. What is the Shape of Geographical Time-Space? A Three Dimensional Model made of Curves and Cones. Preprints 2021, 2021030594](https://www.preprints.org/manuscript/202103.0594/v1).
 
 
 
