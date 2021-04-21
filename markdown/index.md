@@ -1,13 +1,3 @@
-# Shriveling world project
-
-Welcome to the __Shriveling world__ project website
-
-* The main objective of the project is to develop a functional [Shriveling world application](app)
-* The project has a [scientific blog dedicated to the representation of geographical time-space](https://timespace.hypotheses.org/)
-* The project has a [discussion forum](https://github.com/theworldisnotflat/shriveling_world/discussions) dedicated to users
-* The project has a [github](https://github.com/theworldisnotflat/shriveling_world) open for collaboration
-* Bug reports and features requests should be dealt with in the dedicated [issue section of GitHub](https://github.com/theworldisnotflat/shriveling_world/issues)
-
 # Shriveling world
 
 The __shriveling world__ project aims at producing images of _geographical time-space_, using the third dimension. The word _shriveling_ was introduced by Waldo Tobler in [his analysis](https://people.geog.ucsb.edu/~tobler/presentations/The-shriveling-world.pdf) of Mathis-L'Hostis time-space relief images, to describe the complex contraction process suggested by the model. The project consists in:
