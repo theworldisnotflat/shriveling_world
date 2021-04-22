@@ -4,3 +4,5 @@
 yarn-error.log
 /__sapper__/
 static
+package-lock.json
+package-lock.json~upstream_master
