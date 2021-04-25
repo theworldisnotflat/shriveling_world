@@ -253,20 +253,20 @@ function getModelledSpeed(theta: number, speedMax: number, speed: number, terres
  *
  * More about the [geometry of cones](https://timespace.hypotheses.org/121)
  *
- * @param transportMode
+ * @param transportModes
  * @param cities
  * @param transpNetwork
  */
 function networkFromCities(
-	transportMode: ITranspMode[],
+	transportModes: ITranspMode[],
 	cities: ICity[],
-	transpNetwork: IEdge[],
-	transportModeSpeed: ITransportModeSpeed[]
+	transpNetwork: IEdge[]
+	//transportModeSpeed: ITransportModeSpeed[]
 ): ILookupCurvesAndCityGraph {
-	const network: ILookupCityGraph = {};
+	const cityGraph: ILookupCityGraph = {};
 	const curvesData: ILookupCurves = {};
 	// determining the 'historical time span'
-	const currentYear = new Date().getFullYear();
+	// const currentYear = new Date().getFullYear();
 	let firstYear = -3000;
 	let lastYear = 3000;
 
@@ -327,6 +327,9 @@ function networkFromCities(
 	 * association table linking a transport mode to an object of type [[ITabSpeedPerYearPerTranspModeItem]]
 	 */
 	const speedPerTransportPerYear: { [transportCode: string]: ITabSpeedPerYearPerTranspModeItem } = {};
+
+	// computing transport mode time span variables
+	({ firstYear, lastYear } = historicalTimeSpan(transportModes, transpNetwork, firstYear, lastYear, roadCode));
 	/**
 	 * For each transport mode:
 	 * * we identify the 'Road' mode
@@ -342,13 +345,7 @@ function networkFromCities(
 	 *
 	 * At the end of this loop [[speedPerTransportPerYear]] and [[maximumSpeed]] are populated
 	 */
-
-	// computing transport mode time span variables
-	({ firstYear, lastYear } = historicalTimeSpan(transportMode, transpNetwork, firstYear, lastYear, roadCode));
-
-	// will compute for each year the maximumSpeed and
-	// for each transport mode a table of speed
-	transportMode.forEach((transpMode) => {
+	transportModes.forEach((transpMode) => {
 		const transportCode = transpMode.code;
 		const modeName = transpMode.name;
 
@@ -380,8 +377,6 @@ function networkFromCities(
 			terrestrial: transpMode.terrestrial,
 		};
 	});
-	// Balayer speedPerTransportPerYear pour chaque mode de transport terrestre
-	// et compléter avec l'angle de la pente alpha en accord avec l'équation 1!
 	_firstYear = firstYear;
 	_lastYear = lastYear;
 	// for each transport mode, for each year determine [alpha]
@@ -644,7 +639,7 @@ function networkFromCities(
 				}
 			}
 
-			network[origCityCode] = {
+			cityGraph[origCityCode] = {
 				referential,
 				cone: coneAngles,
 				destinationsWithModes,
@@ -656,7 +651,7 @@ function networkFromCities(
 			}
 		}
 	});
-	return { lookupCityGraph: network, curvesData };
+	return { lookupCityGraph: cityGraph, curvesData };
 }
 
 /**
