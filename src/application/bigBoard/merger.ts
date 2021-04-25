@@ -139,6 +139,7 @@ const hardCodedHeadings: Array<{ fileName: string; headings: string[] }> = [
  * * below "thetaLimit" speed decreases from value "speed" to zero depending on the value of "theta"
  */
 const thetaLimit = 2000 / (CONFIGURATION.earthRadiusMeters / 1000);
+let _maxDistCrowAerial = 0;
 let _firstYear = 2000;
 let _lastYear = 1900;
 let roadCode: number;
@@ -719,6 +720,11 @@ export class Merger {
 	public get codeSpeedPerYear(): ICodeSpeedPerYear {
 		return codeSpeedPerYear;
 	}
+
+	public get maxDistCrowAerial(): number {
+		return _maxDistCrowAerial;
+	}
+
 	public clear(): void {
 		this._cities = [];
 		this._populations = [];
@@ -827,6 +833,23 @@ export class Merger {
 				delete city.inEdges;
 				delete city.outEdges;
 			});
+			// retrieve maxDistCrowAerial in km for connected edges
+			transportNetwork.forEach((edge) => {
+				const cityOri: ICity = cities.find((c) => c.cityCode === edge.cityCodeOri);
+				const cityDes: ICity = cities.find((c) => c.cityCode === edge.cityCodeDes);
+				if (!(cityOri === undefined || cityDes === undefined)) {
+					edge.distCrowKM =
+						haversine(cityOri.latitude, cityOri.longitude, cityDes.latitude, cityDes.longitude) / 1000;
+					const tMode: ITranspMode = transportMode.find((t) => t.code === edge.transportModeCode);
+					if (!tMode.terrestrial) {
+						//aerial mode only
+						if (_maxDistCrowAerial < edge.distCrowKM) {
+							_maxDistCrowAerial = edge.distCrowKM;
+						}
+					}
+				}
+			});
+
 			// The main function that generates geometries (cones, curves) by exploring the subgraphs from cities
 			this._curvesAndCityGraph = networkFromCities(transportMode, cities, transportNetwork, transportModeSpeed);
 			// for input data reading debugging
