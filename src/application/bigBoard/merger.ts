@@ -841,11 +841,11 @@ export class Merger {
 					ttMat[cities.indexOf(city) + 1][0] = city.cityName;
 				});
 				const Q: ICity[] = [];
-				// populate distKM for existing edges
+				// populate distCrowKM for existing edges
 				transportNetwork.forEach((edge) => {
 					const cityOri: ICity = cities.find((c) => c.cityCode === edge.cityCodeOri);
 					const cityDes: ICity = cities.find((c) => c.cityCode === edge.cityCodeDes);
-					edge.distKM =
+					edge.distCrowKM =
 						haversine(cityOri.latitude, cityOri.longitude, cityDes.latitude, cityDes.longitude) / 1000;
 				});
 				// TODO: use year as function parameter
@@ -879,7 +879,7 @@ export class Merger {
 									(t) => t.transportModeCode == edge.transportModeCode && t.year == CONFIGURATION.year
 								);
 								// zero cost for changing transport mode
-								const edgeDuration = edge.distKM / transportSpeed.speedKPH;
+								const edgeDuration = edge.distCrowKM / transportSpeed.speedKPH;
 								const pathDuration = miniCityDist + edgeDuration;
 								if (pathDuration < dCity.timeDist) {
 									dCity.timeDist = pathDuration;
@@ -925,7 +925,7 @@ export class Merger {
 						cityCodeOri: oCity.cityCode,
 						cityCodeDes: dCity.cityCode,
 						transportModeCode: roadCode,
-						distKM: crowKM,
+						distCrowKM: crowKM,
 					});
 				}
 			});
