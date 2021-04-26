@@ -127,7 +127,7 @@ function merger<U, V>(
 const hardCodedHeadings: Array<{ fileName: string; headings: string[] }> = [
 	{ fileName: '_cities', headings: ['cityCode', 'latitude', 'longitude', 'radius'] },
 	{ fileName: '_transportModeSpeed', headings: ['transportModeCode', 'year', 'speedKPH'] },
-	{ fileName: '_transportMode', headings: ['code', 'name', 'terrestrial'] },
+	{ fileName: '_transportModes', headings: ['code', 'name', 'terrestrial'] },
 	{ fileName: '_transportNetwork', headings: ['transportModeCode', 'cityCodeDes', 'cityCodeOri'] },
 	{ fileName: '_populations', headings: ['cityCode'] },
 ];
@@ -674,7 +674,7 @@ export class Merger {
 	private _cities: ICity[] = [];
 	private _populations: IPopulation[] = [];
 	private _transportModeSpeed: ITransportModeSpeed[] = [];
-	private _transportMode: ITranspMode[] = [];
+	private _transportModes: ITranspMode[] = [];
 	private _transportNetwork: IEdge[] = [];
 	private _state: IMergerState = 'missing';
 	private _curvesAndCityGraph: ILookupCurvesAndCityGraph = <ILookupCurvesAndCityGraph>{};
@@ -727,7 +727,7 @@ export class Merger {
 		this._cities = [];
 		this._populations = [];
 		this._transportModeSpeed = [];
-		this._transportMode = [];
+		this._transportModes = [];
 		this._transportNetwork = [];
 		this._curvesAndCityGraph = <ILookupCurvesAndCityGraph>{};
 		this._state = 'missing';
@@ -798,7 +798,7 @@ export class Merger {
 			// Csv parsing into tables
 			const cities: ICity[] = JSON.parse(JSON.stringify(this._cities), reviver);
 			const population: IPopulation[] = JSON.parse(JSON.stringify(this._populations), reviver);
-			const transportModes: ITranspMode[] = JSON.parse(JSON.stringify(this._transportMode), reviver);
+			const transportModes: ITranspMode[] = JSON.parse(JSON.stringify(this._transportModes), reviver);
 			const transportModeSpeeds: ITransportModeSpeed[] = JSON.parse(
 				JSON.stringify(this._transportModeSpeed),
 				reviver
@@ -984,7 +984,7 @@ export class Merger {
 				this._cities.length > 0 &&
 				this._populations.length > 0 &&
 				this._transportModeSpeed.length > 0 &&
-				this._transportMode.length > 0 &&
+				this._transportModes.length > 0 &&
 				this._transportNetwork.length > 0
 			) {
 				state = 'ready';
