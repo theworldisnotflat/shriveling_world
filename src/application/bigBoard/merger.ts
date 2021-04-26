@@ -200,7 +200,8 @@ function getMidPointAndTheta(posA: LatLonH, posB: LatLonH): { middle: LatLonH; t
 
 /**
  * [[getModelledSpeed]] computes a new speed for aerial ([[terrestrial]] = false)
- * links having a length less than [[thetaThreshold]]
+ * links having a length less than distCrowThreshold, implying
+ * a [[theta]] < [[thetaThreshold]]
  * this modelled speed will be lower than the considered mode speed
  *
  * [[theta]] is the angle between the two cities
@@ -226,14 +227,10 @@ function getModelledSpeed(theta: number, speedMax: number, speed: number, terres
 		? // Usual terrestrial mode situation
 		  speed
 		: // Aerial case ([[terrestrial]] = false)
-		theta < thetaThreshold
-		? // In the general case 2000 km / 750 kph (factor 0.375)
-		  // for Germany based on Hamburg-Munich route 600 km, 1h20 = 450 kph (factor 0.75)
-		  // (CONFIGURATION.earthRadiusMeters / 1000) * theta * 0.375 :
-		  // ((CONFIGURATION.earthRadiusMeters / 1000) * theta * 450) / 600 :
-		  //((CONFIGURATION.earthRadiusMeters / 1000) * theta * 750) / 2000
-		  ((CONFIGURATION.earthRadiusMeters / 1000) * theta * speedMax) / 2000
-		: speed;
+		theta < thetaThreshold //case [[theta]] < [[thetaThreshold]]
+		? // In the general case  750 kph / 2000 km (factor 0.375)
+		  ((CONFIGURATION.earthRadiusMeters / 1000) * theta * speedMax) / distCrowThreshold
+		: speed; // case [[theta]] > [[thetaThreshold]]
 }
 
 /**
