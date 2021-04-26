@@ -138,7 +138,8 @@ const hardCodedHeadings: Array<{ fileName: string; headings: string[] }> = [
  * * beyond "thetaLimit" speed has the constant value "speed"
  * * below "thetaLimit" speed decreases from value "speed" to zero depending on the value of "theta"
  */
-const thetaLimit = 2000 / (CONFIGURATION.earthRadiusMeters / 1000);
+let distCrowThreshold = 2000;
+let thetaLimit = distCrowThreshold / (CONFIGURATION.earthRadiusMeters / 1000);
 let _maxDistCrowAerial = 0;
 let _firstYear = 2000;
 let _lastYear = 1900;
@@ -182,7 +183,7 @@ function getCSV(text: string, isTransportModeCode = false): any {
  * @param {LatLonH} posB
  * @returns {{ middle: LatLonH, theta: number }}
  */
-function getTheMiddle(posA: LatLonH, posB: LatLonH): { middle: LatLonH; theta: number } {
+function getMidPointAndTheta(posA: LatLonH, posB: LatLonH): { middle: LatLonH; theta: number } {
 	const theta = posA.exactDistance(posB);
 	const deltaLambda = posB.longitude - posA.longitude;
 	const cosPhi2 = Math.cos(posB.latitude);
@@ -426,17 +427,17 @@ function networkFromCities(
 	 * @return returns the result of the computation with the two cities as input
 	 * (opening theta, points P Q and midpoint)
 	 */
-	function cachedGetTheMiddle(begin: number, end: number): ILookupCacheAnchorsEdgeCone {
+	function cachedGetBezierPointsThetaAndClock(begin: number, end: number): ILookupCacheAnchorsEdgeCone {
 		const result = <ILookupCacheAnchorsEdgeCone>{};
 		result.end = { cityCode: end, position: lookupPosition[end].latLonHRef };
 		if (lookupMiddle.hasOwnProperty(begin)) {
 			if (!lookupMiddle[begin].hasOwnProperty(end)) {
-				const { middle, theta } = getTheMiddle(
+				const { middle, theta } = getMidPointAndTheta(
 					lookupPosition[begin].latLonHRef,
 					lookupPosition[end].latLonHRef
 				);
-				const pointP = getTheMiddle(lookupPosition[begin].latLonHRef, middle).middle;
-				const pointQ = getTheMiddle(middle, lookupPosition[end].latLonHRef).middle;
+				const pointP = getMidPointAndTheta(lookupPosition[begin].latLonHRef, middle).middle;
+				const pointQ = getMidPointAndTheta(middle, lookupPosition[end].latLonHRef).middle;
 				let clock = lookupPosition[begin].getClock(lookupPosition[end].latLonHRef);
 				lookupMiddle[begin][end] = { pointP, pointQ, middle, theta, clock };
 				if (!lookupMiddle.hasOwnProperty(end)) {
@@ -447,9 +448,12 @@ function networkFromCities(
 				lookupMiddle[end][begin] = { pointP: pointQ, pointQ: pointP, middle, theta, clock };
 			}
 		} else {
-			const { middle, theta } = getTheMiddle(lookupPosition[begin].latLonHRef, lookupPosition[end].latLonHRef);
-			const pointP = getTheMiddle(lookupPosition[begin].latLonHRef, middle).middle;
-			const pointQ = getTheMiddle(middle, lookupPosition[end].latLonHRef).middle;
+			const { middle, theta } = getMidPointAndTheta(
+				lookupPosition[begin].latLonHRef,
+				lookupPosition[end].latLonHRef
+			);
+			const pointP = getMidPointAndTheta(lookupPosition[begin].latLonHRef, middle).middle;
+			const pointQ = getMidPointAndTheta(middle, lookupPosition[end].latLonHRef).middle;
 			let clock = lookupPosition[begin].getClock(lookupPosition[end].latLonHRef);
 			lookupMiddle[begin] = {};
 			lookupMiddle[begin][end] = { pointP, pointQ, middle, theta, clock };
@@ -517,7 +521,8 @@ function networkFromCities(
 					processedODs[destCityCode][origCityCode] = []; // D-o edge to avoid
 				}
 				if (lookupPosition.hasOwnProperty(destCityCode)) {
-					const { end, middle, theta, pointP, pointQ, clock } = cachedGetTheMiddle(
+					// computing the geometry of the curve
+					const { end, middle, theta, pointP, pointQ, clock } = cachedGetBezierPointsThetaAndClock(
 						origCityCode,
 						destCityCode
 					);
@@ -845,6 +850,13 @@ export class Merger {
 					}
 				}
 			});
+			// for cases of countries of less than 2000 km length
+			if (_maxDistCrowAerial < distCrowThreshold) {
+				console.log(distCrowThreshold, thetaLimit);
+				distCrowThreshold = _maxDistCrowAerial;
+				thetaLimit = distCrowThreshold / (CONFIGURATION.earthRadiusMeters / 1000);
+				console.log(distCrowThreshold, thetaLimit);
+			}
 
 			// The main function that generates geometries (cones, curves) by exploring the subgraphs from cities
 			this._curvesAndCityGraph = networkFromCities(transportMode, cities, transportNetwork, transportModeSpeed);
