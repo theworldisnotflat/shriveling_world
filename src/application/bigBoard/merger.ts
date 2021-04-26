@@ -783,8 +783,8 @@ export class Merger {
 	 * * introduce the data into tables:
 	 *   * [[cities]],
 	 *   * [[population]],
-	 *   * [[transportModeSpeed]],
-	 *   * [[transportModeCode]],
+	 *   * [[transportModeSpeeds]],
+	 *   * [[transportModes]],
 	 *   * [[transportNetwork]],
 	 *   * [[_state]]
 	 * * link all these tables to each other
@@ -799,7 +799,7 @@ export class Merger {
 			const cities: ICity[] = JSON.parse(JSON.stringify(this._cities), reviver);
 			const population: IPopulation[] = JSON.parse(JSON.stringify(this._populations), reviver);
 			const transportModes: ITranspMode[] = JSON.parse(JSON.stringify(this._transportMode), reviver);
-			const transportModeSpeed: ITransportModeSpeed[] = JSON.parse(
+			const transportModeSpeeds: ITransportModeSpeed[] = JSON.parse(
 				JSON.stringify(this._transportModeSpeed),
 				reviver
 			);
@@ -807,7 +807,7 @@ export class Merger {
 
 			// Linking tables to each other
 			// merger(mother,     girl,               motherProp., girlProp.,      newName, forceArray, removeMotherProp., removeGirlProp.)
-			merger(transportModes, transportModeSpeed, 'code', 'transportModeCode', 'speedTab', true, true, false);
+			merger(transportModes, transportModeSpeeds, 'code', 'transportModeCode', 'speedTab', true, true, false);
 			// identifying Road in the dataset
 			roadCode = identifyingRoadMode(transportModes);
 			merger(cities, population, 'cityCode', 'cityCode', 'populations', false, true, false);
@@ -854,7 +854,7 @@ export class Merger {
 			}
 
 			// The main function that generates geometries (cones, curves) by exploring the subgraphs from cities
-			this._curvesAndCityGraph = networkFromCities(transportModes, cities, transportNetwork, transportModeSpeed);
+			this._curvesAndCityGraph = networkFromCities(transportModes, cities, transportNetwork, transportModeSpeeds);
 			// for input data reading debugging
 			console.log('curves & cityGraph', this._curvesAndCityGraph);
 
