@@ -126,7 +126,7 @@ function merger<U, V>(
  */
 const hardCodedHeadings: Array<{ fileName: string; headings: string[] }> = [
 	{ fileName: '_cities', headings: ['cityCode', 'latitude', 'longitude', 'radius'] },
-	{ fileName: '_transportModeSpeed', headings: ['transportModeCode', 'year', 'speedKPH'] },
+	{ fileName: '_transportModeSpeeds', headings: ['transportModeCode', 'year', 'speedKPH'] },
 	{ fileName: '_transportModes', headings: ['code', 'name', 'terrestrial'] },
 	{ fileName: '_transportNetwork', headings: ['transportModeCode', 'cityCodeDes', 'cityCodeOri'] },
 	{ fileName: '_populations', headings: ['cityCode'] },
@@ -673,7 +673,7 @@ function networkFromCities(
 export class Merger {
 	private _cities: ICity[] = [];
 	private _populations: IPopulation[] = [];
-	private _transportModeSpeed: ITransportModeSpeed[] = [];
+	private _transportModeSpeeds: ITransportModeSpeed[] = [];
 	private _transportModes: ITranspMode[] = [];
 	private _transportNetwork: IEdge[] = [];
 	private _state: IMergerState = 'missing';
@@ -726,7 +726,7 @@ export class Merger {
 	public clear(): void {
 		this._cities = [];
 		this._populations = [];
-		this._transportModeSpeed = [];
+		this._transportModeSpeeds = [];
 		this._transportModes = [];
 		this._transportNetwork = [];
 		this._curvesAndCityGraph = <ILookupCurvesAndCityGraph>{};
@@ -800,7 +800,7 @@ export class Merger {
 			const population: IPopulation[] = JSON.parse(JSON.stringify(this._populations), reviver);
 			const transportModes: ITranspMode[] = JSON.parse(JSON.stringify(this._transportModes), reviver);
 			const transportModeSpeeds: ITransportModeSpeed[] = JSON.parse(
-				JSON.stringify(this._transportModeSpeed),
+				JSON.stringify(this._transportModeSpeeds),
 				reviver
 			);
 			const transportNetwork: IEdge[] = JSON.parse(JSON.stringify(this._transportNetwork), reviver);
@@ -901,7 +901,7 @@ export class Merger {
 								oCity = cityDes;
 							}
 							if (oCity !== undefined || dCity !== undefined) {
-								const transportSpeed = this._transportModeSpeed.find(
+								const transportSpeed = this._transportModeSpeeds.find(
 									(t) => t.transportModeCode == edge.transportModeCode && t.year == CONFIGURATION.year
 								);
 								// zero cost for changing transport mode
@@ -983,7 +983,7 @@ export class Merger {
 			if (
 				this._cities.length > 0 &&
 				this._populations.length > 0 &&
-				this._transportModeSpeed.length > 0 &&
+				this._transportModeSpeeds.length > 0 &&
 				this._transportModes.length > 0 &&
 				this._transportNetwork.length > 0
 			) {
