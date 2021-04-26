@@ -798,7 +798,7 @@ export class Merger {
 			// Csv parsing into tables
 			const cities: ICity[] = JSON.parse(JSON.stringify(this._cities), reviver);
 			const population: IPopulation[] = JSON.parse(JSON.stringify(this._populations), reviver);
-			const transportMode: ITranspMode[] = JSON.parse(JSON.stringify(this._transportMode), reviver);
+			const transportModes: ITranspMode[] = JSON.parse(JSON.stringify(this._transportMode), reviver);
 			const transportModeSpeed: ITransportModeSpeed[] = JSON.parse(
 				JSON.stringify(this._transportModeSpeed),
 				reviver
@@ -807,9 +807,9 @@ export class Merger {
 
 			// Linking tables to each other
 			// merger(mother,     girl,               motherProp., girlProp.,      newName, forceArray, removeMotherProp., removeGirlProp.)
-			merger(transportMode, transportModeSpeed, 'code', 'transportModeCode', 'speedTab', true, true, false);
+			merger(transportModes, transportModeSpeed, 'code', 'transportModeCode', 'speedTab', true, true, false);
 			// identifying Road in the dataset
-			roadCode = identifyingRoadMode(transportMode);
+			roadCode = identifyingRoadMode(transportModes);
 			merger(cities, population, 'cityCode', 'cityCode', 'populations', false, true, false);
 			if (generateTraveTimeMatrix) {
 				//generate all straight line trips by road between cities (for travel time matrix)
@@ -838,7 +838,7 @@ export class Merger {
 				if (!(cityOri === undefined || cityDes === undefined)) {
 					edge.distCrowKM =
 						haversine(cityOri.latitude, cityOri.longitude, cityDes.latitude, cityDes.longitude) / 1000;
-					const tMode: ITranspMode = transportMode.find((t) => t.code === edge.transportModeCode);
+					const tMode: ITranspMode = transportModes.find((t) => t.code === edge.transportModeCode);
 					if (!tMode.terrestrial) {
 						//aerial mode only
 						if (_maxDistCrowAerial < edge.distCrowKM) {
@@ -849,14 +849,12 @@ export class Merger {
 			});
 			// for cases of countries of less than 2000 km length
 			if (_maxDistCrowAerial < distCrowThreshold) {
-				console.log(distCrowThreshold, thetaThreshold);
 				distCrowThreshold = _maxDistCrowAerial;
 				thetaThreshold = distCrowThreshold / (CONFIGURATION.earthRadiusMeters / 1000);
-				console.log(distCrowThreshold, thetaThreshold);
 			}
 
 			// The main function that generates geometries (cones, curves) by exploring the subgraphs from cities
-			this._curvesAndCityGraph = networkFromCities(transportMode, cities, transportNetwork, transportModeSpeed);
+			this._curvesAndCityGraph = networkFromCities(transportModes, cities, transportNetwork, transportModeSpeed);
 			// for input data reading debugging
 			console.log('curves & cityGraph', this._curvesAndCityGraph);
 
