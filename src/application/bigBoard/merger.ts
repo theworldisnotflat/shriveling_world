@@ -198,8 +198,8 @@ function getTheMiddle(posA: LatLonH, posB: LatLonH): { middle: LatLonH; theta: n
 }
 
 /**
- * [[getModelledSpeed]] computes a new speed for aerial links
- * having a length less than [[thetaLimit]]
+ * [[getModelledSpeed]] computes a new speed for aerial ([[terrestrial]] = false)
+ * links having a length less than [[thetaLimit]]
  * this modelled speed will be lower than the considered mode speed
  *
  * [[theta]] is the angle between the two cities
@@ -224,13 +224,14 @@ function getModelledSpeed(theta: number, speedMax: number, speed: number, terres
 	return terrestrial
 		? // Usual terrestrial mode situation
 		  speed
-		: // Aerial case
+		: // Aerial case ([[terrestrial]] = false)
 		theta < thetaLimit
 		? // In the general case 2000 km / 750 kph (factor 0.375)
 		  // for Germany based on Hamburg-Munich route 600 km, 1h20 = 450 kph (factor 0.75)
 		  // (CONFIGURATION.earthRadiusMeters / 1000) * theta * 0.375 :
 		  // ((CONFIGURATION.earthRadiusMeters / 1000) * theta * 450) / 600 :
-		  ((CONFIGURATION.earthRadiusMeters / 1000) * theta * 750) / 2000
+		  //((CONFIGURATION.earthRadiusMeters / 1000) * theta * 750) / 2000
+		  ((CONFIGURATION.earthRadiusMeters / 1000) * theta * speedMax) / 2000
 		: speed;
 }
 
@@ -260,8 +261,8 @@ function getModelledSpeed(theta: number, speedMax: number, speed: number, terres
 function networkFromCities(
 	transportModes: ITranspMode[],
 	cities: ICity[],
-	transpNetwork: IEdge[]
-	//transportModeSpeed: ITransportModeSpeed[]
+	transpNetwork: IEdge[],
+	transportModeSpeed: ITransportModeSpeed[]
 ): ILookupCurvesAndCityGraph {
 	const cityGraph: ILookupCityGraph = {};
 	const curvesData: ILookupCurves = {};

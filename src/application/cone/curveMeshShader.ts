@@ -30,7 +30,7 @@ fullCleanArrays();
 /**
  *
  * formulas of the height of links function of '[[theta]]' and '[[ratio]]'
- * * '[[speedRatio]]' is computed in function '[[getSpeedRatio]]' in file [[bigBoard/merger.ts]]
+ * * '[[speedRatio]]' is computed in function '[[getModelledSpeed]]' in file [[bigBoard/merger.ts]]
  * * '[[speedRatio]]' is computed with [two formulas](https://timespace.hypotheses.org/121)
  * depending on '[[theta]]' compared with '[[thetaLimit]]'
  *
@@ -56,9 +56,9 @@ function getCurveHeight(speedRatio: number, theta: number, curvesPosition: CURVE
 			return OMPrime - CONFIGURATION.earthRadiusMeters; // Minus earth radius to compute cm'
 		case 1: // below
 			return -(OMPrime - CONFIGURATION.earthRadiusMeters);
-		case 2:
+		case 2: // TODO
 			return -(OMPrime - CONFIGURATION.earthRadiusMeters);
-		case 3:
+		case 3: // TODO
 			return -(OMPrime - CONFIGURATION.earthRadiusMeters);
 	}
 }
@@ -306,8 +306,10 @@ export class CurveMeshShader extends Line {
 		return _coefficient;
 	}
 
-	// Update edges height when 'coefficient' changes
-	// for testing purposes only
+	/**
+	 * Update edges height when 'coefficient' changes
+	 * for testing purposes only
+	 */
 	public static set coefficient(value: number) {
 		_coefficient = value;
 		for (let i = 0; i < _nbCurves; i++) {
@@ -344,7 +346,9 @@ export class CurveMeshShader extends Line {
 		}
 	}
 
-	// Sets the height of edges
+	/**
+	 * Sets the height of edges
+	 */
 	public computeCurveHeightAndTestIfAvailable(year: string | number): boolean {
 		const speedRatio = this._years[year];
 		const result = speedRatio !== undefined; // if speedRatio is undefined, the curve shouldn't be displayed
