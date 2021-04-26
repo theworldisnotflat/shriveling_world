@@ -133,13 +133,13 @@ const hardCodedHeadings: Array<{ fileName: string; headings: string[] }> = [
 ];
 
 /**
- * "thetaLimit" = threshold angle of the modelled air services speed.
+ * "thetaThreshold" = threshold angle of the modelled air services speed.
  * The threshold length is fixed at 2000 km for the current (2010) air system
- * * beyond "thetaLimit" speed has the constant value "speed"
- * * below "thetaLimit" speed decreases from value "speed" to zero depending on the value of "theta"
+ * * beyond "thetaThreshold" speed has the constant value "speed"
+ * * below "thetaThreshold" speed decreases from value "speed" to zero depending on the value of "theta"
  */
 let distCrowThreshold = 2000;
-let thetaLimit = distCrowThreshold / (CONFIGURATION.earthRadiusMeters / 1000);
+let thetaThreshold = distCrowThreshold / (CONFIGURATION.earthRadiusMeters / 1000);
 let _maxDistCrowAerial = 0;
 let _firstYear = 2000;
 let _lastYear = 1900;
@@ -200,7 +200,7 @@ function getMidPointAndTheta(posA: LatLonH, posB: LatLonH): { middle: LatLonH; t
 
 /**
  * [[getModelledSpeed]] computes a new speed for aerial ([[terrestrial]] = false)
- * links having a length less than [[thetaLimit]]
+ * links having a length less than [[thetaThreshold]]
  * this modelled speed will be lower than the considered mode speed
  *
  * [[theta]] is the angle between the two cities
@@ -226,7 +226,7 @@ function getModelledSpeed(theta: number, speedMax: number, speed: number, terres
 		? // Usual terrestrial mode situation
 		  speed
 		: // Aerial case ([[terrestrial]] = false)
-		theta < thetaLimit
+		theta < thetaThreshold
 		? // In the general case 2000 km / 750 kph (factor 0.375)
 		  // for Germany based on Hamburg-Munich route 600 km, 1h20 = 450 kph (factor 0.75)
 		  // (CONFIGURATION.earthRadiusMeters / 1000) * theta * 0.375 :
@@ -852,10 +852,10 @@ export class Merger {
 			});
 			// for cases of countries of less than 2000 km length
 			if (_maxDistCrowAerial < distCrowThreshold) {
-				console.log(distCrowThreshold, thetaLimit);
+				console.log(distCrowThreshold, thetaThreshold);
 				distCrowThreshold = _maxDistCrowAerial;
-				thetaLimit = distCrowThreshold / (CONFIGURATION.earthRadiusMeters / 1000);
-				console.log(distCrowThreshold, thetaLimit);
+				thetaThreshold = distCrowThreshold / (CONFIGURATION.earthRadiusMeters / 1000);
+				console.log(distCrowThreshold, thetaThreshold);
 			}
 
 			// The main function that generates geometries (cones, curves) by exploring the subgraphs from cities

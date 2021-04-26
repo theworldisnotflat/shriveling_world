@@ -32,10 +32,10 @@ fullCleanArrays();
  * formulas of the height of links function of '[[theta]]' and '[[ratio]]'
  * * '[[speedRatio]]' is computed in function '[[getModelledSpeed]]' in file [[bigBoard/merger.ts]]
  * * '[[speedRatio]]' is computed with [two formulas](https://timespace.hypotheses.org/121)
- * depending on '[[theta]]' compared with '[[thetaLimit]]'
+ * depending on '[[theta]]' compared with '[[thetaThreshold]]'
  *
- * * below [[thetaLimit]]: ![below](http://bit.ly/2Xu3kGF)
- * * beyond [[thetaLimit]]: ![beyond](http://bit.ly/2EejFpW)
+ * * below [[thetaThreshold]]: ![below](http://bit.ly/2Xu3kGF)
+ * * beyond [[thetaThreshold]]: ![beyond](http://bit.ly/2EejFpW)
  * * the figure: ![2](http://bit.ly/2H4FOKw)
  *
  * @param speedRatio
