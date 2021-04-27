@@ -852,6 +852,7 @@ export class Merger {
 			if (_maxDistCrowAerial < distCrowThreshold) {
 				distCrowThreshold = _maxDistCrowAerial;
 				thetaThreshold = distCrowThreshold / (CONFIGURATION.earthRadiusMeters / 1000);
+				CONFIGURATION.intrudedHeightRatio = 0.2;
 			}
 
 			// The main function that generates geometries (cones, curves) by exploring the subgraphs from cities
