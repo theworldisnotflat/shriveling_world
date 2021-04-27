@@ -1042,23 +1042,24 @@ function haversine(lat1: number, lon1: number, lat2: number, lon2: number) {
  * based on data found in the input files:
  * * [[transportMode]]
  * * [[transpNetwork]]
- * @param transportMode
+ * @param transportModes
  * @param transpNetwork
  * @param firstYear
  * @param lastYear
  * @param roadCode
  */
 function historicalTimeSpan(
-	transportMode: ITranspMode[],
+	transportModes: ITranspMode[],
 	transpNetwork: IEdge[],
 	firstYear: number,
 	lastYear: number,
 	roadCode: number
 ) {
-	transportMode.forEach((transpMode) => {
+	transportModes.forEach((transpMode) => {
 		// initializing the variables
 		let oneUndefinedEYearBegin = false;
 		let oneUndefinedEYearEnd = false;
+		// first retrieve dates indicated in the speeds file
 		transpMode.minSYear = transpMode.speedTab[0].year;
 		transpMode.maxSYear = transpMode.speedTab[0].year;
 		transpMode.speedTab.forEach((transpSpeed) => {
@@ -1069,6 +1070,7 @@ function historicalTimeSpan(
 				transpMode.maxSYear = transpSpeed.year;
 			}
 		});
+		// second retrieve dates indicated in the network file
 		transpMode.minEYear = null;
 		transpMode.maxEYear = null;
 		transpNetwork.forEach((edge) => {
@@ -1107,7 +1109,7 @@ function historicalTimeSpan(
 
 	// computing the valid time span of transport modes considering:
 	// range of operation AND available speed data
-	transportMode.forEach((transpMode) => {
+	transportModes.forEach((transpMode) => {
 		transpMode.yearBegin = Math.max(
 			transpMode.minSYear === null ? -Infinity : transpMode.minSYear,
 			transpMode.minEYear === null ? -Infinity : transpMode.minEYear
@@ -1121,7 +1123,7 @@ function historicalTimeSpan(
 	// computing the historical time span of the model
 	firstYear = Infinity;
 	lastYear = -Infinity;
-	transportMode.forEach((transpMode) => {
+	transportModes.forEach((transpMode) => {
 		if (transpMode.code !== roadCode) {
 			if (transpMode.yearBegin < firstYear) firstYear = transpMode.yearBegin;
 			if (transpMode.yearEnd > lastYear) lastYear = transpMode.yearEnd;
@@ -1129,12 +1131,12 @@ function historicalTimeSpan(
 	});
 
 	// unlikely case when road times are not consistent
-	transportMode.forEach((transpMode) => {
+	transportModes.forEach((transpMode) => {
 		if (transpMode.code === roadCode) {
 			if (transpMode.yearBegin > firstYear) firstYear = transpMode.yearBegin;
 			if (transpMode.yearEnd < lastYear) lastYear = transpMode.yearEnd;
 		}
 	});
-	console.log('time span', firstYear, lastYear, transportMode);
+	console.log('time span', firstYear, lastYear, transportModes);
 	return { firstYear, lastYear };
 }
