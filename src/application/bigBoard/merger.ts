@@ -836,7 +836,6 @@ export class Merger {
 				const cityOri: ICity = cities.find((c) => c.cityCode === edge.cityCodeOri);
 				const cityDes: ICity = cities.find((c) => c.cityCode === edge.cityCodeDes);
 				if (!(cityOri === undefined || cityDes === undefined)) {
-					console.log('transportModes', transportModes, edge.transportModeCode);
 					edge.distCrowKM =
 						haversine(cityOri.latitude, cityOri.longitude, cityDes.latitude, cityDes.longitude) / 1000;
 					const tMode: ITranspMode = transportModes.find((t) => t.code === edge.transportModeCode);
