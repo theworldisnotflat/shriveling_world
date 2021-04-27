@@ -2,5 +2,7 @@ name,code,terrestrial
 Supersonic,11,0
 Aircraft,1,0
 Train,3,1
+HST,31,1
 Road,7,1
+Expressway,6,1
 Rocket,12,0

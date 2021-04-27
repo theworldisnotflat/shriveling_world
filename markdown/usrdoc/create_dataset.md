@@ -12,7 +12,7 @@ According to the data model, _Shriveling world_ datasets are composed of six fil
 2. [population file](#population-file)
 3. [transport network file](#transport-network-file)
 4. [transport modes file](#transport-modes-file)
-5. [transport mode speed file](#transport-mode-speed-file)
+5. [transport mode speed file](#transport-mode-speeds-file)
 6. [GEOJSON file](#geojson-file) with the contour of continents or countries
 
 The files describe a **graph** modelling a transport network between cities with **speed** as a key parameter. The content of the files is [described below](#content-of-files-columns).
@@ -118,10 +118,14 @@ General **common sense** instructions:
 
 Specific **critical** instructions:
 
--   The file [_transport mode_](#transport-mode-file) **MUST** contain a mode named _Road_ that will define the slope of cones; cones is the geographic surface and the _Road_ speed is attached to this surface
--   For the same reason the file [_transport mode speed_](#transport-mode-speed-file) **MUST** contain speed information for the mode _road_
+-   The file [_transport modes_](#transport-modes-file) **MUST** contain a mode named _Road_ that will define the slope of cones; cones is the geographic surface and the _Road_ speed is attached to this surface
+-   For the same reason the file [_transport mode speeds_](#transport-mode-speeds-file) **MUST** contain speed information for the mode _road_
 -   The mode _road_ **MUST** be _terrestrial_ (property _terrestrial_ = 1)
--   The model being by design [differential](#a-differential-model), at least one other transport mode with a speed **MUST** be described (in both files [_transport mode_](#transport-mode-file) and [_transport mode speed_](#transport-mode-speed-file))
+-   The model being by design [differential](#a-differential-model), at least one other transport mode with a speed **MUST** be described (in both files [_transport modes_](#transport-modes-file) and [_transport mode speeds_](#transport-mode-speeds-file))
+
+## Typical errors in datasets
+
+- If a mode of transport is used in the [_transport network file_](#transport-network-file), identified by a numerical code, all the relevant information about this transport mode MUST be found in the  [_transport modes_](#transport-modes-file) and [_transport mode speeds_](#transport-mode-speeds-file) files
 
 ## Content of files columns
 
@@ -163,14 +167,14 @@ _eYearEnd_|number|no|may be used for a service no longer operated, e.g. superson
 
 For the sake of readability this file usually contains two optional columns of _oriName_ and _desName_.
 
-### Transport mode file
+### Transport modes file
 
 | Column name | Type   | Mandatory | Comments                        |
 | ----------- | ------ | --------- | ------------------------------- |
 | _name_      | string | yes       | mode name                       |
 | _code_      | number | yes       | unique id of the transport mode |
 
-### Transport mode speed file
+### Transport mode speeds file
 
 A given transport mode may experience an increase of speed over time, e.g. the five acceleration phases of China classical railways (non High Speed Rail) between 1997 and 2004
 Column name | Type | Mandatory | Comments
