@@ -3,7 +3,7 @@
 The __shriveling world__ project aims at producing images of _geographical time-space_, using the third dimension. The word _shriveling_ was introduced by Waldo Tobler in [his analysis](https://people.geog.ucsb.edu/~tobler/presentations/The-shriveling-world.pdf) of Mathis-L'Hostis time-space relief images, to describe the complex contraction process suggested by the model. The project consists in:
 
 - A [scientific blog](https://timespace.hypotheses.org/) containing principles, reflections, references and images related to the project
-- An [__application__ with documentation](https://theworldisnotflat.github.io/shriveling_world/marks/index).
+- An [__application__ with documentation](https://theworldisnotflat.github.io/shriveling_world/marks/index)
 - A [users forum](https://github.com/theworldisnotflat/shriveling_world/discussions)
 
 For citation please refer to [L’Hostis, A.; Abdou, F. What is the Shape of Geographical Time-Space? A Three Dimensional Model made of Curves and Cones. Preprints 2021, 2021030594](https://www.preprints.org/manuscript/202103.0594/v1).
