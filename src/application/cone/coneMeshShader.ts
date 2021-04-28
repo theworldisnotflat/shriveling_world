@@ -191,6 +191,7 @@ function updateConesAngles(): void {
 		const tempAlphas = new Float32Array(_height * _width);
 		for (let i = 0; i < _height; i++) {
 			const coneAngles = _cones[i].getConeAngles(year);
+			console.log('coneAngles', year, coneAngles);
 			const coneRoadAlpha = coneAngles.coneRoadAlpha;
 			const coneFastTerrModeAlpha = coneAngles.coneFastTerrModeAlpha;
 			const coneAnglesTab = [...coneAngles.alphaTab];
@@ -447,10 +448,10 @@ export class ConeMeshShader extends PseudoCone {
 	 * Constructor
 	 * @param cityCode
 	 * @param position
-	 * @param terrestrialData // cone angles
+	 * @param coneAngles
 	 * @param properties
 	 */
-	private constructor(cityCode: string, position: LatLonH, terrestrialData: ILookupConeAngles, properties: any) {
+	private constructor(cityCode: string, position: LatLonH, coneAngles: ILookupConeAngles, properties: any) {
 		const interleavedBufferPosition = new InterleavedBuffer(new Float32Array(400 * 4 * 2), 4).setUsage(
 			DynamicDrawUsage
 		);
@@ -472,7 +473,7 @@ export class ConeMeshShader extends PseudoCone {
 		this._cityCode = cityCode;
 		this._position = position;
 		this.otherProperties = properties;
-		this._coneAngles = terrestrialData;
+		this._coneAngles = coneAngles;
 		this._withLimits = true;
 		this.visible = true;
 		this.castShadow = true;
