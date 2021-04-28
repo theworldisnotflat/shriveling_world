@@ -629,9 +629,9 @@ function networkFromCities(
 			// At this stage all cities have been processed
 			// It is necessary to re-order the table of clocks to generate the complex cones
 			// and inserting the result in network and insert the edgeData
-			for (const yearC in coneAngles) {
-				if (coneAngles.hasOwnProperty(yearC)) {
-					coneAngles[yearC].alphaTab = coneAngles[yearC].alphaTab.sort((a, b) => a.clock - b.clock);
+			for (const year in coneAngles) {
+				if (coneAngles.hasOwnProperty(year)) {
+					coneAngles[year].alphaTab = coneAngles[year].alphaTab.sort((a, b) => a.clock - b.clock);
 				}
 			}
 			if (Object.keys(coneAngles).length === 0) {
