@@ -498,6 +498,13 @@ function networkFromCities(
 			if (city.edges.length === 0) {
 				city.edges.push({ eYearBegin: firstYear, cityCodeDes: -Infinity, transportModeCode: roadCode });
 			}
+			// first step: applying default values to [[coneAngles]],
+			// valid even if zero edge connects to the city
+			for (let year = firstYear; year <= lastYear; year++) {
+				const coneRoadAlpha = speedPerTranspModePerYear[roadCode].tabSpeedPerYear[year].alpha;
+				coneAngles[year] = { coneRoadAlpha: coneRoadAlpha, coneFastTerrModeAlpha: null, alphaTab: [] };
+			}
+
 			// For each edge incident to the city considered
 			for (let i = 0; i < city.edges.length; i++) {
 				edge = city.edges[i];
@@ -538,21 +545,19 @@ function networkFromCities(
 					const edgeToBeProcessed = !processedODs[origCityCode][destCityCode].includes(edgeTranspModeName);
 					processedODs[origCityCode][destCityCode].push(edgeTranspModeName);
 					processedODs[destCityCode][origCityCode].push(edgeTranspModeName);
-					// For each year the cone angles will be retrieved
+					// For each year in the time span the cone angles will be retrieved
 					for (let year = firstYear; year <= lastYear; year++) {
+						// condition if [[edgeTranspModeSpeed.tabSpeedPerYear[year]]] is defined
 						if (edgeTranspModeSpeed.tabSpeedPerYear[year]) {
 							if (edgeTranspModeSpeed.terrestrial) {
-								if (!coneAngles.hasOwnProperty(year)) {
-									const coneRoadAlpha =
-										speedPerTranspModePerYear[roadCode].tabSpeedPerYear[year].alpha;
-									const coneFastTerrModeAlpha =
-										speedPerTranspModePerYear[edge.transportModeCode].tabSpeedPerYear[year].alpha;
-									coneAngles[year] = {
-										coneRoadAlpha: coneRoadAlpha,
-										coneFastTerrModeAlpha: coneFastTerrModeAlpha,
-										alphaTab: [],
-									};
-								}
+								const coneRoadAlpha = speedPerTranspModePerYear[roadCode].tabSpeedPerYear[year].alpha;
+								const coneFastTerrModeAlpha =
+									speedPerTranspModePerYear[edge.transportModeCode].tabSpeedPerYear[year].alpha;
+								coneAngles[year] = {
+									coneRoadAlpha: coneRoadAlpha,
+									coneFastTerrModeAlpha: coneFastTerrModeAlpha,
+									alphaTab: [],
+								};
 
 								alpha = edgeTranspModeSpeed.tabSpeedPerYear[year].alpha;
 								// here we add the couple (alpha, clock) for the terrestrial edge
@@ -625,21 +630,12 @@ function networkFromCities(
 					}
 				}
 			}
-			// console.log(city.cityName, coneAngles);
 			// At this stage all cities have been processed
 			// It is necessary to re-order the table of clocks to generate the complex cones
 			// and inserting the result in network and insert the edgeData
 			for (const year in coneAngles) {
 				if (coneAngles.hasOwnProperty(year)) {
 					coneAngles[year].alphaTab = coneAngles[year].alphaTab.sort((a, b) => a.clock - b.clock);
-				}
-			}
-			if (Object.keys(coneAngles).length === 0) {
-				// The case of cities not being origin or destinations in the network
-				// or only by aerial mode
-				for (let year = firstYear; year <= lastYear; year++) {
-					const coneRoadAlpha = speedPerTranspModePerYear[roadCode].tabSpeedPerYear[year].alpha;
-					coneAngles[year] = { coneRoadAlpha: coneRoadAlpha, coneFastTerrModeAlpha: null, alphaTab: [] };
 				}
 			}
 
