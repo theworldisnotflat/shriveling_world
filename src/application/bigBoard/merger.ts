@@ -413,7 +413,7 @@ function networkFromCities(
 			}
 		});
 	});
-	console.log(codeSpeedPerYear);
+	console.log('for the legend: ', codeSpeedPerYear);
 	/**
 	 *
 	 * Function putting in cache the unit triangles (clock) of the cone
@@ -625,7 +625,7 @@ function networkFromCities(
 					}
 				}
 			}
-			console.log(city.cityName, coneAngles);
+			// console.log(city.cityName, coneAngles);
 			// At this stage all cities have been processed
 			// It is necessary to re-order the table of clocks to generate the complex cones
 			// and inserting the result in network and insert the edgeData
