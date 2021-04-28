@@ -201,7 +201,6 @@ export class GUI {
 						curveOpacity.onChange(curveListener);
 					});
 					// Adding terrestrial networks
-					console.log('Adding terrestrial network');
 					this._merger.transportNames.cones.forEach((transportName) => {
 						const folder = terrestrialFolder.addFolder(transportName);
 						terrestrialControllersList.push(folder);
