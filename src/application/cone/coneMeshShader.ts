@@ -407,7 +407,7 @@ export class ConeMeshShader extends PseudoCone {
 				const cityTransport = lookup[cityCode];
 				const position = cityTransport.referential.latLonHRef;
 				const referentialGLSL = cityTransport.referential.ned2ECEFMatrix;
-				const terrestrialData = cityTransport.cone;
+				const coneAngles = cityTransport.cone;
 				_localLimitsLookup[cityCode] = localLimitsRaw(
 					matchingBBox(position, bBoxes),
 					cityTransport.referential
@@ -419,7 +419,7 @@ export class ConeMeshShader extends PseudoCone {
 					}
 				}
 
-				_cones.push(new ConeMeshShader(cityCode, position, terrestrialData, commonProperties));
+				_cones.push(new ConeMeshShader(cityCode, position, coneAngles, commonProperties));
 				_cityCodeOrder.push(cityCode);
 				summits.push(...referentialGLSL.summit);
 				ned2ECEF0.push(...referentialGLSL.ned2ECEF0);
