@@ -413,7 +413,7 @@ function networkFromCities(
 			}
 		});
 	});
-	console.log('for the legend: ', codeSpeedPerYear);
+	console.log('Info for the legend: ', codeSpeedPerYear);
 	/**
 	 *
 	 * Function putting in cache the unit triangles (clock) of the cone
@@ -1139,6 +1139,6 @@ function historicalTimeSpan(
 			if (transpMode.yearEnd < lastYear) lastYear = transpMode.yearEnd;
 		}
 	});
-	console.log('time span', firstYear, lastYear, transportModes);
+	console.log('Dataset time span: ', firstYear, lastYear, transportModes);
 	return { firstYear, lastYear };
 }
