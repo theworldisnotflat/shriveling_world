@@ -1121,6 +1121,7 @@ function historicalTimeSpan(
 	});
 
 	// computing the historical time span of the model
+	// at this step time span = span of non Road modes
 	firstYear = Infinity;
 	lastYear = -Infinity;
 	transportModes.forEach((transpMode) => {
