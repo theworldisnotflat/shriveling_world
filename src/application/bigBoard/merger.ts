@@ -219,18 +219,18 @@ function getMidPointAndTheta(posA: LatLonH, posB: LatLonH): { middle: LatLonH; t
  *
  * @param theta
  * @param speedMax
- * @param speed
+ * @param transpModeSpeed
  * @param terrestrial
  */
-function getModelledSpeed(theta: number, speedMax: number, speed: number, terrestrial: boolean): number {
+function getModelledSpeed(theta: number, transpModeSpeed: number, terrestrial: boolean): number {
 	return terrestrial
 		? // Usual terrestrial mode situation
-		  speed
+		  transpModeSpeed
 		: // Aerial case ([[terrestrial]] = false)
 		theta < thetaThreshold //case [[theta]] < [[thetaThreshold]]
 		? // In the general case  750 kph / 2000 km (factor 0.375)
-		  ((CONFIGURATION.earthRadiusMeters / 1000) * theta * speedMax) / distCrowThreshold
-		: speed; // case [[theta]] > [[thetaThreshold]]
+		  ((CONFIGURATION.earthRadiusMeters / 1000) * theta * transpModeSpeed) / distCrowThreshold
+		: transpModeSpeed; // case [[theta]] > [[thetaThreshold]]
 }
 
 /**
@@ -279,7 +279,7 @@ function networkFromCities(
 	 *
 	 * association table indicating the maximum available speed on a given year
 	 */
-	const maximumSpeed: IMaxSpeedPerYear = {};
+	const maxSpeedPerYear: IMaxSpeedPerYear = {};
 	/**
 	 * [[ITransportCodeItem]] has
 	 * * a [[speed]] and
@@ -362,12 +362,12 @@ function networkFromCities(
 		for (let year = minYearTransport; year <= maxYearTransport; year++) {
 			speed = interpolation(year);
 			tabSpeedPerYear[year] = { speed };
-			if (maximumSpeed.hasOwnProperty(year)) {
-				if (maximumSpeed[year] < speed) {
-					maximumSpeed[year] = speed;
+			if (maxSpeedPerYear.hasOwnProperty(year)) {
+				if (maxSpeedPerYear[year] < speed) {
+					maxSpeedPerYear[year] = speed;
 				}
 			} else {
-				maximumSpeed[year] = speed;
+				maxSpeedPerYear[year] = speed;
 			}
 		}
 		speedPerTranspModePerYear[transportCode] = {
@@ -376,6 +376,7 @@ function networkFromCities(
 			terrestrial: transpMode.terrestrial,
 		};
 	});
+	console.log('speedPerTranspModePerYear', speedPerTranspModePerYear, 'maxSpeedPerYear', maxSpeedPerYear);
 	_firstYear = firstYear;
 	_lastYear = lastYear;
 	// for each transport mode, for each year determine [alpha]
@@ -383,8 +384,8 @@ function networkFromCities(
 	for (const transportCode in speedPerTranspModePerYear) {
 		const tabSpeedPerYear = speedPerTranspModePerYear[transportCode].tabSpeedPerYear;
 		for (const year in tabSpeedPerYear) {
-			if (maximumSpeed.hasOwnProperty(year)) {
-				const maxSpeed = maximumSpeed[year];
+			if (maxSpeedPerYear.hasOwnProperty(year)) {
+				const maxSpeed = maxSpeedPerYear[year];
 				const speedAmb = tabSpeedPerYear[year].speed;
 				let alpha = Math.atan(Math.sqrt((maxSpeed / speedAmb) * (maxSpeed / speedAmb) - 1));
 				if (alpha < 0) {
@@ -570,13 +571,12 @@ function networkFromCities(
 									// Condition to avoid visual duplication of curves!
 									const modelledSpeed = getModelledSpeed(
 										theta,
-										maximumSpeed[year],
 										edgeModeSpeed[year].speed,
 										edgeTranspModeSpeed.terrestrial
 									);
 									// The ratio linking the current speed and maxSpeed is
 									// computed according to this ![equation](http://bit.ly/2EejFpW)
-									const speedRatio = (maximumSpeed[year] * theta) / (2 * modelledSpeed);
+									const speedRatio = (maxSpeedPerYear[year] * theta) / (2 * modelledSpeed);
 									if (!listOfCurves.hasOwnProperty(destCityCode)) {
 										listOfCurves[destCityCode] = <ILookupCurveList>{
 											end,
@@ -600,13 +600,12 @@ function networkFromCities(
 								// condition to avoid duplicating curves
 								const modelledSpeed = getModelledSpeed(
 									theta,
-									maximumSpeed[year],
 									edgeModeSpeed[year].speed,
 									edgeTranspModeSpeed.terrestrial
 								);
 								// The ratio linking the current speed and maxSpeed is
 								// computed according to this ![equation](http://bit.ly/2EejFpW)
-								const speedRatio = (maximumSpeed[year] * theta) / (2 * modelledSpeed);
+								const speedRatio = (maxSpeedPerYear[year] * theta) / (2 * modelledSpeed);
 								if (!listOfCurves.hasOwnProperty(destCityCode)) {
 									listOfCurves[destCityCode] = <ILookupCurveList>{
 										end,
