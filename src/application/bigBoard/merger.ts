@@ -848,8 +848,22 @@ export class Merger {
 			if (_maxDistCrowAerial < distCrowThreshold) {
 				distCrowThreshold = _maxDistCrowAerial;
 				thetaThreshold = distCrowThreshold / (CONFIGURATION.earthRadiusMeters / 1000);
-				CONFIGURATION.intrudedHeightRatio = 0.2;
 			}
+
+			// adjusting the height of cones based on the size or the area
+			let diameterKm = 0;
+			cities.forEach((cityA) => {
+				cities.forEach((cityB) => {
+					const crowKm = haversine(cityA.latitude, cityA.longitude, cityB.latitude, cityB.longitude) / 1000;
+					if (crowKm > diameterKm) {
+						diameterKm = crowKm;
+					}
+				});
+			});
+			CONFIGURATION.intrudedHeightRatio = Math.min(
+				0.99,
+				(1.5 * diameterKm) / (CONFIGURATION.earthRadiusMeters / 1000)
+			);
 
 			// The main function that generates geometries (cones, curves) by exploring the subgraphs from cities
 			this._curvesAndCityGraph = networkFromCities(transportModes, cities, transportNetwork, transportModeSpeeds);
