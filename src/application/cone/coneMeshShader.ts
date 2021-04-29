@@ -191,7 +191,6 @@ function updateConesAngles(): void {
 		const tempAlphas = new Float32Array(_height * _width);
 		for (let i = 0; i < _height; i++) {
 			const coneAngles = _cones[i].getConeAngles(year);
-			console.log('coneAngles', year, coneAngles);
 			const coneRoadAlpha = coneAngles.coneRoadAlpha;
 			const coneFastTerrModeAlpha = coneAngles.coneFastTerrModeAlpha;
 			const coneAnglesTab = [...coneAngles.alphaTab];
