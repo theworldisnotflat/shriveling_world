@@ -73,7 +73,7 @@ More detail about the three dimensional geometry of the model, [here](/marks/usr
 
 ## Navigation
 * mouse scroll = zoom in or out
-* left click + move = rotation
+* left click + move = rotation (around the center of the earth)
 * right click + move = translation
 
 
