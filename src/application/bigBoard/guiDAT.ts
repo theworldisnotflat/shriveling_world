@@ -370,6 +370,7 @@ export class GUI {
 				CONFIGURATION.coneStep = value * CONFIGURATION.deg2rad;
 			});
 		coneFolder.add(ConeMeshShader, 'discriminant', 1, 20).step(1);
+		//coneFolder.add(CONFIGURATION.intrudedHeightRatio, 'height', 0, 1).step(0.01);
 		coneFolder.add(bigBoard, 'withLimits').onChange((value: boolean) => {
 			conf['with limits'] = value;
 		});
