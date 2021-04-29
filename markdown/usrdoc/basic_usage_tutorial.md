@@ -72,9 +72,9 @@ More detail about the three dimensional geometry of the model, [here](/marks/usr
     - A value superior to __2__ will interpolate a Bézier curve of the desired length. This curve can be a geodesic in the non projected case, or can be a longer curve. Recommended value is superior to __50__ for a high quality graphic
 
 ## Navigation
-* click + scroll
-* alt scroll = rotation
-* ctrl scroll = translation
+* mouse scroll = zoom in or out
+* left click + move = rotation
+* right click + move = translation
 
 
 ## Exports
