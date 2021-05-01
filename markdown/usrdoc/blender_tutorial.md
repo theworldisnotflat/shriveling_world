@@ -21,8 +21,9 @@ The tutorial below is designed as a quick start to import data from the Shriveli
 
 ## Step by step [(ooh 🔊)](https://www.youtube.com/watch?v=iCrargw1rrM)
 
-After exporting from app you should have 3 files:
+After exporting from app you should have a zip file containing 4 files:
 
+- _country.obj_, the country limits contained in the 'geojson' input file
 - _sceneCones.obj_, base geometry for terrestrial transport
 - _sceneCurvesLongHaul.obj_, long distance flights
 - _sceneCurvesShortHaul.obj_, short distance flights
@@ -116,6 +117,6 @@ WIP PBR vs NPR, shadeless, transparency, colors…
 WIP Set guidelines, hints…
 
 
-[^version]: Note: Blender evolves quickly. Since version 2.79b the whole interface has changed and a lot of new features are implemented. The base concepts stay the same so you could get interesting results with any version suited to your computer. However, this tutorial is clearly geared towards recent versions (since 2.80).
+[^version]: Note: Blender evolves quickly. Since version 2.79b the whole interface has changed and a lot of new features are implemented. The base concepts remain the same so you could get interesting results with any version suited to your computer. However, this tutorial is clearly geared towards recent versions (since 2.80).
 
 [^naming]: In the web-app the naming could be subject to change. “There are only two hard things in Computer Science: cache invalidation and naming things.” -- Phil Karlton. [Some jokes about that infamous quote](https://martinfowler.com/bliki/TwoHardThings.html), [Reference from David Karlton (Phil’s son)](https://www.karlton.org/2017/12/naming-things-hard/ ) and BTW [Stack exchange is your second best friend after Google](https://skeptics.stackexchange.com/questions/19836/has-phil-karlton-ever-said-there-are-only-two-hard-things-in-computer-science)
