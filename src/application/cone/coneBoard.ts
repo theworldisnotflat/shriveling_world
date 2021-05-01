@@ -109,6 +109,7 @@ export class ConeAndCurveBoard {
 			curves.forEach((curve) => {
 				this.curveCollection.push(curve);
 				curve.visible = this._show;
+				curve.name = curve.transportName;
 				curve.scale.setScalar(this._scale);
 				this._scene.add(curve);
 				this._renderer.render(this._scene, this._camera);
