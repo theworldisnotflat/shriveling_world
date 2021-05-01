@@ -98,7 +98,7 @@ export class ConeAndCurveBoard {
 			cones.forEach((cone) => {
 				// UpdateSumUpCriteria(that._sumUpProperties, cone.otherProperties);
 				// add object name to cone
-				cone.name = cone.otherProperties.origCityProperties.cityName;
+				cone.name = 'cone ' + cone.otherProperties.origCityProperties.cityName;
 				this.coneMeshCollection.push(cone);
 				cone.scale.setScalar(this._scale);
 				this._scene.add(cone);
@@ -109,7 +109,7 @@ export class ConeAndCurveBoard {
 			curves.forEach((curve) => {
 				this.curveCollection.push(curve);
 				curve.visible = this._show;
-				curve.name = curve.transportName;
+				curve.name = 'curve ' + curve.transportName;
 				curve.scale.setScalar(this._scale);
 				this._scene.add(curve);
 				this._renderer.render(this._scene, this._camera);
