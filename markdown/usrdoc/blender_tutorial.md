@@ -41,7 +41,17 @@ Let’s get started.
 
  In the _Blender File View_, find and select the .obj file on your system, then click **Import OBJ** or press **Enter**. The OBJ import allows only one file at a time.
 
- For the sake of organization we will import each .obj file in a [collection](https://docs.blender.org/manual/en/latest/scene_layout/collections/introduction.html). We could do this by creating a collection for each additional import and renaming each collection to our needs in the [_Outliner_](https://docs.blender.org/manual/en/latest/editors/outliner.html).
+Objects are named before exportation from 'Shriveling world' and will show in the right [_Outliner_](https://docs.blender.org/manual/en/latest/editors/outliner.html) panel:
+
+ * _cone Tokyo_
+ * _cone Hiroshima_
+ * ...
+ * _curve HST 001_
+ * _curve HST 002_
+ * _curve Aircraft 001_
+ * ...
+
+ For the sake of organization we can import each .obj file in a [collection](https://docs.blender.org/manual/en/latest/scene_layout/collections/introduction.html). We could do this by creating a collection for each additional import and renaming each collection to our needs in the [_Outliner_](https://docs.blender.org/manual/en/latest/editors/outliner.html).
 
  Select the desired collection in the _Outliner_ before importing the corresponding file as mentioned before.
 
@@ -57,7 +67,9 @@ However a few tips could be helpful.
 
 #### Cones
 
-The shriveled topology exported as .obj file is composed of individual “cones” each named by city.
+The shriveled topology exported as .obj file is composed of individual “cones” each named by the city on top.
+
+Our intention here is to turn the collection of cones into a single multi-cones surface and remove the unneeded artifacts below the surface.
 
 It is quite hard to keep accurate geometry when trying to model the mesh surface depending of the source file and its complexity. But one method looks promising.
 
@@ -72,14 +84,16 @@ It is quite hard to keep accurate geometry when trying to model the mesh surface
 
 #### Parabolas / Curves
 
-Depending on the value set for _Curves > number of_[^naming] before exporting, results may vary (higher number should give more accurate curves).
+Depending on the value set for _Curves > number of points_[^naming] before exporting, results may vary (higher number should give more accurate curves).
 
 In Blender, the straightforward way to work with things that looks like curve is using, guess what, _[Curves](https://docs.blender.org/manual/en/latest/modeling/curves/introduction.html)_! We are going to convert our faceless meshes to real curves… but before that:
 
 <small>Temporary comment:</small>
-For now the exported mesh geometry for “curves” include center reference vertex for each “curve”. If we find a solution it would be nice to export the .obj file without those center vertices.
+For now the exported mesh geometry for “curves” include center of the earth reference vertex for each “curve”. If we find a solution it would be nice to export the .obj file without those center vertices.
 
-Let’s remove those vertex in Blender:
+Let’s remove those vertex in Blender.
+
+#### Remove center vertex
 
 1. Toggle X-Ray (with your mouse in the top right corner of the  _3D Viewport_ press **Alt+Z** or click on the <img src="./img/icon_x-ray@2x.png" alt="X-Ray Icon Inactive" title="X-Ray Icon Inactive" width="20" height="20" /> icon) to enable the selection of overlapping elements.
 2. Select all the “curve” objects. Either :
@@ -89,12 +103,15 @@ Let’s remove those vertex in Blender:
 	**Warning:** depending on context (for example if the last active object was hidden from view), one pitfall could be a selection with no active object at all (with only orange outline). Be sure to have an [active object](https://docs.blender.org/manual/en/latest/scene_layout/object/selecting.html#selections-and-the-active-object) (with yellow outline) in the selection before continuing.
 3. Switch to _Edit Mode_ (Press **Tab**).
 4. Select all the vertices located at the World Origin with the _Select Box_ tool.
-5. Delete them (Press **X** then **Enter**).
-6. Switch to _Object Mode_ (Press **Tab**).
-7. Convert still selected objects to curve (_Object > Convert to > Curve from Mesh/Text_ or press **F3** (Menu Search), type “convert” and choose corresponding function).
-8. Open _Object Data Properties_ [tab](https://docs.blender.org/manual/en/latest/interface/window_system/tabs_panels.html) located at the bottom right.
-9. Check that _Fill Mode_ is set to “Full”.
-10. Open _[Geometry](https://docs.blender.org/manual/en/latest/modeling/curves/properties/geometry.html#)_ panel and in the _Bevel_ [subpanel](https://docs.blender.org/manual/en/latest/interface/window_system/tabs_panels.html#panels) set _Depth_.
+5. Delete them (Press **X** then **Enter**)
+
+#### Convert objects to curves
+
+1. Switch to _Object Mode_ (Press **Tab**).
+2. Convert still selected objects to curve (_Object > Convert to > Curve from Mesh/Text_ or press **F3** (Menu Search), type “convert” and choose corresponding function).
+3. Open _Object Data Properties_ [tab](https://docs.blender.org/manual/en/latest/interface/window_system/tabs_panels.html) located at the bottom right.
+4. Check that _Fill Mode_ is set to “Full”.
+5. Open _[Geometry](https://docs.blender.org/manual/en/latest/modeling/curves/properties/geometry.html#)_ panel and in the _Bevel_ [subpanel](https://docs.blender.org/manual/en/latest/interface/window_system/tabs_panels.html#panels) set _Depth_.
 
 To apply properties to all selected objects (because changes you make in _Object Data Properties_ only affect active object) **right click** on the modified _[Fields](https://docs.blender.org/manual/en/latest/interface/controls/buttons/fields.html)_ to open a contextual menu and choose _Copy to Selected_. 🎉
 
@@ -105,6 +122,19 @@ WIP Define basic setups for effective renders (with [EEVEE](https://docs.blender
 #### Camera
 
 WIP Explain different [Camera](https://docs.blender.org/manual/en/latest/render/cameras.html#properties) settings (*Orthographic* vs *Perspective* for example) specific to Shriveling.
+
+If in the [first step](#import-obj) you removed the default camera, you will need to create a new one.
+
+#### Create camera
+
+1. In Modelling mode
+2. In top left part of the _3D viewport_ click on __Add__ and then on __Camera__
+
+#### Update camera view
+
+__Ctrl+Alt+0__ in case you have a numpad
+
+
 
 #### Materials / Shading / Lighting
 
