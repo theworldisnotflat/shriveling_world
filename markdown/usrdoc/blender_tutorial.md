@@ -119,6 +119,11 @@ To apply properties to all selected objects (because changes you make in _Object
 
 WIP Define basic setups for effective renders (with [EEVEE](https://docs.blender.org/manual/en/latest/render/eevee/introduction.html), [Cycles](https://docs.blender.org/manual/en/latest/render/cycles/introduction.html) or even _[Workbench](https://docs.blender.org/manual/en/latest/render/workbench/introduction.html)_).
 
+You may remove from rendering several objects, e.g. countries, and keep then for a later use:
+1. in the _Scene collection_ right click on an objet or a collection of objects
+2. in the popup menu choose __Visibility__
+3. in the sub-menu choose __Disable in render__
+
 #### Camera
 
 WIP Explain different [Camera](https://docs.blender.org/manual/en/latest/render/cameras.html#properties) settings (*Orthographic* vs *Perspective* for example) specific to Shriveling.
@@ -134,6 +139,10 @@ If in the [first step](#import-obj) you removed the default camera, you will nee
 
 __Ctrl+Alt+0__ in case you have a numpad
 
+It is possible to lock the camera to the current view:
+1. type __N__, a tiny menu on the right of the viewport shows up
+2. switch to the __View__ section of this menu
+3. then in __View lock__ select __Camera to view__
 
 
 #### Materials / Shading / Lighting
