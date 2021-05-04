@@ -613,6 +613,7 @@ export default class BigBoard {
 		// this._scene.add(groupCone);
 		// this._scene.add(groupCurveShortHaul);
 		// this._scene.add(groupCurvesLongHaul);
+		console.log('Saving scene complete');
 	}
 
 	/**
