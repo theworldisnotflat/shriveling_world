@@ -60,9 +60,24 @@ Tweak the geometry, set materials, lights, cameras and make renders.
 
 However a few tips could be helpful.
 
+### The beauties of Blender interface
+
+The __Viewport__ is the central part of the screen, where all the objects and the scene are.
+
+* It is often useful to toggle on and off __Show overlays__. For instance when a group of objects is selected, modified and you want to see the result in render; then toggle off View overlay hides the yellow selection lighting; here is the way:
+   * in the top right part of the _Viewport_ toggle the __Show overlays__ checkbox. Grids, red and green lines, the orange halo of selection, etc.  will disappear.
+
+#### Navigating in the scene
+* Rotation of the view = maintain __middle click__ and move mouse
+* Translation of the view = maintain __middle click + Shift__ and move mouse
 ### Working with 3D objects
 
 <small>J’inclus (temporairement) une [initiation à la modélisation sous Blender](https://perso.liris.cnrs.fr/vincent.nivoliers/mif27/tuto_blender28.php) en français (comme l’équipe actuelle est essentiellement francophone). Son auteur [Vincent Nivoliers](https://perso.liris.cnrs.fr/vincent.nivoliers/) travaille comme assistant professeur à [LIRIS](https://liris.cnrs.fr) (je suis tombé dessus totalement par hasard) mais revenons à nos moutons…</small>
+
+#### Moving objects
+
+Select objects and then:
+* type __G__ and then mouse movements move selected objects
 
 
 #### Cones
@@ -82,7 +97,7 @@ It is quite hard to keep accurate geometry when trying to model the mesh surface
 7. WIP Boolean the geographic borders. Need source.
 8. WIP Remove vertices of the bases to keep only the surface (non manifold object)
 
-#### Parabolas / Curves
+#### Curves
 
 Depending on the value set for _Curves > number of points_[^naming] before exporting, results may vary (higher number should give more accurate curves).
 
@@ -107,24 +122,46 @@ Let’s remove those vertex in Blender.
 
 #### Convert objects to curves
 
+In order to control size of curves we need to convert the imported meshes int curves objects in Blender:
+
 1. Switch to _Object Mode_ (Press **Tab**).
 2. Convert still selected objects to curve (_Object > Convert to > Curve from Mesh/Text_ or press **F3** (Menu Search), type “convert” and choose corresponding function).
 3. Open _Object Data Properties_ [tab](https://docs.blender.org/manual/en/latest/interface/window_system/tabs_panels.html) located at the bottom right.
 4. Check that _Fill Mode_ is set to “Full”.
-5. Open _[Geometry](https://docs.blender.org/manual/en/latest/modeling/curves/properties/geometry.html#)_ panel and in the _Bevel_ [subpanel](https://docs.blender.org/manual/en/latest/interface/window_system/tabs_panels.html#panels) set _Depth_.
+5. Open _[Geometry](https://docs.blender.org/manual/en/latest/modeling/curves/properties/geometry.html#)_ panel and in the _Bevel_ [subpanel](https://docs.blender.org/manual/en/latest/interface/window_system/tabs_panels.html#panels) set _Depth_. A proposed relevant value can be __0.02 m__.
 
-To apply properties to all selected objects (because changes you make in _Object Data Properties_ only affect active object) **right click** on the modified _[Fields](https://docs.blender.org/manual/en/latest/interface/controls/buttons/fields.html)_ to open a contextual menu and choose _Copy to Selected_. 🎉
+To apply properties to all selected objects (because changes you make in _Object Data Properties_ only affect active object) **right click** on the modified _[Fields](https://docs.blender.org/manual/en/latest/interface/controls/buttons/fields.html)_ to open a contextual menu and choose _Copy to Selected_. In case you have already [joined the curves](#cones), this step is not needed.
 
 ### Rendering
 
-WIP Define basic setups for effective renders (with [EEVEE](https://docs.blender.org/manual/en/latest/render/eevee/introduction.html), [Cycles](https://docs.blender.org/manual/en/latest/render/cycles/introduction.html) or even _[Workbench](https://docs.blender.org/manual/en/latest/render/workbench/introduction.html)_).
-
+#### Removing objects from rendering
 You may remove from rendering several objects, e.g. countries, and keep then for a later use:
 1. in the _Scene collection_ right click on an objet or a collection of objects
 2. in the popup menu choose __Visibility__
 3. in the sub-menu choose __Disable in render__
 
-#### Camera
+A quicker and more convenient way consists in adding columns in objects box on top right. Click the tiny funnel on top right, and select the __Disable in Renders__ selection toggle.
+
+#### Rendering parameters
+
+Rendering parameters can be accessed in the properties box, down right. Click on the __Render properties__ tab.
+
+* In Blender two main __Rendering engines__ are available:
+  * [EEVEE](https://docs.blender.org/manual/en/latest/render/eevee/introduction.html), by default, is fast with decent result
+  * [Cycles](https://docs.blender.org/manual/en/latest/render/cycles/introduction.html) allows to reach photorealism but can be slow
+* It is preferable to synchronize the values of sampling between _Render_ and _Viewport_, at the level __64__. Shadows should be better rendered while working on the scene.
+
+#### Transparent background
+
+So far a __transparent background__ gives good results in rendering. In order to get this:
+* Set _background_ to _black_
+  * In the down right properties box select __World properties__
+  * Change __Color__ to black (so that the background oes not interfere with the objects in scene)
+* You'll also need to remove the background from the render:
+   * In the down right properties box select __Render properties__
+   * Down below in section __Film__ click __Transparent__ (Film refers to the historical celluloid ribbon on which cartoons where drawn)
+
+### Camera
 
 WIP Explain different [Camera](https://docs.blender.org/manual/en/latest/render/cameras.html#properties) settings (*Orthographic* vs *Perspective* for example) specific to Shriveling.
 
@@ -145,15 +182,43 @@ It is possible to lock the camera to the current view:
 3. then in __View lock__ select __Camera to view__
 
 
-#### Materials / Shading / Lighting
+### Materials / Shading / Lighting
 
 WIP Explain briefly which _[Materials](https://docs.blender.org/manual/en/latest/render/materials/introduction.html)_ and/or _[Shaders](https://docs.blender.org/manual/en/latest/render/shader_nodes/introduction.html)_ to use to get nice results.
 
 WIP PBR vs NPR, shadeless, transparency, colors…
 
-#### Lights
+#### Curves material
+Good results have been obtained by using an Emission material for curves that allows to set a very bright color.
+* First select a curve
+* In the right down __Properties box__, create (1) or attribute an existing material (2) to the object:
+  1. Or create a __New__ material with:
+     * __Surface__ set to __Emission__
+	 * __Color__ set to Red, Blue or else
+	 * __Strength__ default value of __1__ may be adjusted to __2__ or more. This parameter should be considered together with the width of the curve, [set by the Bevel value](#convert-objects-to-curves)
+  2. A tiny button on the left gives access to _existing_ materials. Beware: if you change the material properties here this will affacte the other objects using this material
 
-WIP Set guidelines, hints…
+#### The shaders with nodes
+
+Shaders can be awfully complicated. This is why the Shaders interface is here to help.
+
+* It is strongly recommended to use the __Node wrangler__ addon
+* It is relevant to [toggle/un-toggle the Overlays](#the-beauties-of-blender-interface)
+* After a click on the material, __Ctrl+T__  will generate a texture. We can remove the __Image texture__ and remake the connection (thanks to Node wrangler)
+* After a click on Mappîng, __Ctrl+Shift+click__ will generate a viewer; connecting the MApping to different variables of the Texture coordinates box will generate colors in the objects that can be used to create gradients; in order to highlight some parts of the geometry we want to emphasize
+* In the end reconnect directly the material to the __Surface__ of __Material output__
+
+### Lights
+
+Good results are obtained by using one or several _suns_ and additional punctual sources (_point_) to highlight some elements of the scene.
+
+#### Creating a light
+* In __Layout view__, click on internal menu __Add__ and then __Light__
+* Existing lights can be turned into _sun_ or _point_ source in the down right box:
+  * click on the __Light__ tab
+  * change __Point__ into __Sun__ or vice-versa
+* __Strength__ may need to be adjusted to higher values than default 1. Value __2__ gives good results
+* In case where two _Suns_ are introduced, their __Angles__ must be adjusted to create the desired effect
 
 
 [^version]: Note: Blender evolves quickly. Since version 2.79b the whole interface has changed and a lot of new features are implemented. The base concepts remain the same so you could get interesting results with any version suited to your computer. However, this tutorial is clearly geared towards recent versions (since 2.80).
