@@ -79,7 +79,7 @@ More detail about the three dimensional geometry of the model, [here](/marks/usr
 
 ## Exports
 
-* The __three dimensional scene__ can be exported. Export to gltf (.obj) file format is available (red button in the bottom). In order to import in Blender the file produced from the app, see [Blender instructions](/marks/usrdoc/blender_instructions).
+* The __three dimensional scene__ can be exported. Export to gltf (.obj) file format is available (red button in the bottom). In order to import in Blender the file produced from the app, see [Blender instructions](/marks/usrdoc/blender_instructions). Beware: creating the file may be a lengthy process.
 
 * A __travel times matrix__ in minutes between the cities of the input dataset can be exported (for generating plastic space maps for instance). _Year_ of reference is fixed in the GUI interface. The matrix computation is preceded by the generation of multiple road edges in order to provide the minimum path algorithm with sufficient input data. The matrix is exported from the browser console (F12, Ctrl + Shift + K or Command + Option + K) with the instruction:
 
