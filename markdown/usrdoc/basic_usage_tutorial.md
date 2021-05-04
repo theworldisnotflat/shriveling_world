@@ -85,17 +85,6 @@ More detail about the three dimensional geometry of the model, [here](/marks/usr
 
   * ```bigBoard._merger.merge(true,'aFileNameForTheMatrix')```
 
-## More parameters with the console
-
-Instructions to the application can also be entered in the console of the browser (F12, Ctrl + Shift + K or Command + Option + K):
-
-```shriveling.configuration.XXX=value```
-
-with ```XXX``` and ```value``` in the following range:
-
--   ```intrudedHeightRatio``` : sets the height of cones, in the range [0,1], a ratio of the earth radius
-
-
 ## Testing lengths and angles
 
 As the final output of the tool is, in the general case, an image, testing the distances and angles is a way to make sure the model is correct:
