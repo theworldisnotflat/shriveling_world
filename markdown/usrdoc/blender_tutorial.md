@@ -88,13 +88,13 @@ Our intention here is to turn the collection of cones into a single multi-cones 
 
 It is quite hard to keep accurate geometry when trying to model the mesh surface depending of the source file and its complexity. But one method looks promising.
 
-1. In the _Outliner_, duplicate the cones collection (so we can keep track of original cones for comparison later).
+1. In the _Outliner_, duplicate the cones collection (so we can keep track of original cones for comparison later)
 2. <a id="hide"></a>Hide everything but the new working collection by **ctrl-clicking** on the **eye icon** next to it (isolate to optimise the viewport)
-3. [Select all objects](https://docs.blender.org/manual/en/latest/editors/outliner.html#selecting-multiple-data-blocks) (cones) of that new collection. One object must be active (yellow) in the objects selection (orange). It will become the main object.
-4. In the _3D Viewport_, join every selected cone meshes in one object (**Ctrl-J** or **Cmd-J** on macOS). You can rename the joined object as you like.
-5. Switch to *Sculpt Mode* and use the **[Remesh](https://docs.blender.org/manual/en/latest/modeling/meshes/retopology.html#remeshing)** tool in the top-right corner of the _3D Viewport_ area (the Blender doc about remeshing is unfortunately not up to date). _Voxel Size_ should be 0.1 or less (**Warning**: it could be computational intensive but a lower value gives more details).
-6. Add *Decimate modifier* to lighten the mesh.
-7. WIP Boolean the geographic borders. Need source.
+3. [Select all objects](https://docs.blender.org/manual/en/latest/editors/outliner.html#selecting-multiple-data-blocks) (cones) of that new collection. One object must be active (yellow) in the objects selection (orange). It will become the main object
+4. In the _3D Viewport_, join every selected cone meshes in one object (**Ctrl-J** or **Cmd-J** on macOS). You can rename the joined object as you like
+5. Switch to *Sculpt Mode* and use the **[Remesh](https://docs.blender.org/manual/en/latest/modeling/meshes/retopology.html#remeshing)** tool in the top-right corner of the _3D Viewport_ area (the Blender doc about remeshing is unfortunately not up to date). _Voxel Size_ should be 0.1 or less (**Warning**: it could be computational intensive but a lower value gives more details)
+6. Add *Decimate modifier* to lighten the mesh
+7. WIP Boolean the geographic borders. Need source
 8. WIP Remove vertices of the bases to keep only the surface (non manifold object)
 
 #### Curves
@@ -124,11 +124,20 @@ Let’s remove those vertex in Blender.
 
 In order to control size of curves we need to convert the imported meshes int curves objects in Blender:
 
-1. Switch to _Object Mode_ (Press **Tab**).
-2. Convert still selected objects to curve (_Object > Convert to > Curve from Mesh/Text_ or press **F3** (Menu Search), type “convert” and choose corresponding function).
-3. Open _Object Data Properties_ [tab](https://docs.blender.org/manual/en/latest/interface/window_system/tabs_panels.html) located at the bottom right.
-4. Check that _Fill Mode_ is set to “Full”.
-5. Open _[Geometry](https://docs.blender.org/manual/en/latest/modeling/curves/properties/geometry.html#)_ panel and in the _Bevel_ [subpanel](https://docs.blender.org/manual/en/latest/interface/window_system/tabs_panels.html#panels) set _Depth_. A proposed relevant value can be __0.02 m__.
+1. Switch to _Object Mode_ (Press **Tab**)
+2. Select all the meshes you want to convert
+   * Beware: you should first manually select one curve in the _Viewport_ before selecting all the others; the first selected should appear in yellow and the others on orange; if you have not done this subsequent operations may not work
+3. Convert still selected objects to curve (_Object > Convert to > Curve from Mesh/Text_ or press **F3** (Menu Search), type “convert” and choose corresponding function)
+
+#### Set curves width
+1. Select the curves you want to modify
+2. Open _Object Data Properties_ [tab](https://docs.blender.org/manual/en/latest/interface/window_system/tabs_panels.html) located at the bottom right
+3. Check that _Fill Mode_ is set to “Full”
+4. Open _[Geometry](https://docs.blender.org/manual/en/latest/modeling/curves/properties/geometry.html#)_ panel and in the _Bevel_ [subpanel](https://docs.blender.org/manual/en/latest/interface/window_system/tabs_panels.html#panels) set _Depth_. A proposed relevant value can be __0.02 m__
+
+This operation may be done on only one object and then [applied to others](#apply-properties-to-all-selected-objects).
+
+#### Apply properties to all selected objects
 
 To apply properties to all selected objects (because changes you make in _Object Data Properties_ only affect active object) **right click** on the modified _[Fields](https://docs.blender.org/manual/en/latest/interface/controls/buttons/fields.html)_ to open a contextual menu and choose _Copy to Selected_. In case you have already [joined the curves](#cones), this step is not needed.
 
@@ -149,14 +158,14 @@ Rendering parameters can be accessed in the properties box, down right. Click on
 * In Blender two main __Rendering engines__ are available:
   * [EEVEE](https://docs.blender.org/manual/en/latest/render/eevee/introduction.html), by default, is fast with decent result
   * [Cycles](https://docs.blender.org/manual/en/latest/render/cycles/introduction.html) allows to reach photorealism but can be slow
-* It is preferable to synchronize the values of sampling between _Render_ and _Viewport_, at the level __64__. Shadows should be better rendered while working on the scene.
+* It is preferable to synchronize the values of sampling between _Render_ and _Viewport_, at the level __64__. Shadows should be better rendered while working on the scene
 
 #### Transparent background
 
 So far a __transparent background__ gives good results in rendering. In order to get this:
 * Set _background_ to _black_
   * In the down right properties box select __World properties__
-  * Change __Color__ to black (so that the background oes not interfere with the objects in scene)
+  * Change __Color__ to black (so that the background does not interfere with the objects in scene)
 * You'll also need to remove the background from the render:
    * In the down right properties box select __Render properties__
    * Down below in section __Film__ click __Transparent__ (Film refers to the historical celluloid ribbon on which cartoons where drawn)
@@ -181,6 +190,15 @@ It is possible to lock the camera to the current view:
 2. switch to the __View__ section of this menu
 3. then in __View lock__ select __Camera to view__
 
+#### Objects lost from sight in Camera view
+
+* The camera view may be lost ot a "user perspective" that is precised in the upper left part of the _Viewport_. Toggling between the two perspectives is done by a click on the __Camera icon__ on the right of the _Viewport_ or by choosing from top left part of the Viewport __View -> Camera -> Active camera__.
+
+* Objects may be lost from view when zooming or de-zooming with the camera view selected. This unintended behavior can be adapted by changing the camera properties:
+  1. Select the camera
+  2. Click on the __Camera tab__ in the Object properties box, down right
+  3. In section __Lens__ set __Clip end__ at a different value, for instance from 100 m to __1000 m__
+
 
 ### Materials / Shading / Lighting
 
@@ -196,7 +214,7 @@ Good results have been obtained by using an Emission material for curves that al
      * __Surface__ set to __Emission__
 	 * __Color__ set to Red, Blue or else
 	 * __Strength__ default value of __1__ may be adjusted to __2__ or more. This parameter should be considered together with the width of the curve, [set by the Bevel value](#convert-objects-to-curves)
-  2. A tiny button on the left gives access to _existing_ materials. Beware: if you change the material properties here this will affacte the other objects using this material
+  2. A tiny button on the left gives access to _existing_ materials. Beware: if you change the material properties here this will affect the other objects using this material
 
 #### The shaders with nodes
 
