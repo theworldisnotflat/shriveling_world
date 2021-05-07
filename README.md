@@ -21,4 +21,4 @@ This is the first representation of _geographical time-space_ with cones and cur
 
 # Licence
 
-As an open science initiative the project follows the [GNU General Public License v3.0](https://github.com/theworldisnotflat/shriveling_world/blob/master/LICENSE) rules.
+As an open science initiative the project follows the [GNU General Public License v3.0](https://github.com/theworldisnotflat/shriveling_world/blob/master/LICENSE) rules. Contributions are welcome!
