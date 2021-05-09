@@ -125,7 +125,7 @@ function merger<U, V>(
  * 'hard coded' headings
  */
 const hardCodedHeadings: Array<{ fileName: string; headings: string[] }> = [
-	{ fileName: '_cities', headings: ['cityCode', 'latitude', 'longitude', 'radius'] },
+	{ fileName: '_cities', headings: ['cityCode', 'latitude', 'longitude'] },
 	{ fileName: '_transportModeSpeeds', headings: ['transportModeCode', 'year', 'speedKPH'] },
 	{ fileName: '_transportModes', headings: ['code', 'name', 'terrestrial'] },
 	{ fileName: '_transportNetwork', headings: ['transportModeCode', 'cityCodeDes', 'cityCodeOri'] },
