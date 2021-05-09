@@ -125,7 +125,7 @@ Specific **critical** instructions:
 
 ## Typical errors in datasets
 
-- If a mode of transport is used in the [_transport network file_](#transport-network-file), identified by a numerical code, all the relevant information about this transport mode MUST be found in the  [_transport modes_](#transport-modes-file) and [_transport mode speeds_](#transport-mode-speeds-file) files
+* If a mode of transport is used in the [_transport network file_](#transport-network-file), identified by a numerical code, all the relevant information about this transport mode MUST be found in the  [_transport modes_](#transport-modes-file) and [_transport mode speeds_](#transport-mode-speeds-file) files
 
 ## Content of files columns
 
@@ -138,11 +138,11 @@ Specific **critical** instructions:
 | -------------- | ------ | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | _cityCode_     | number | __yes__       | city unique id                                                                                                                                                                                                                                      |
 | _cityName_     | string | __yes__       | agglomeration (city) name                                                                                                                                                                                                                           |
-| _countryCode_  | number | yes       | numeric code of country where city belongs                                                                                                                                                                                                          |
-| _countryName_  | string | __yes__       | country name where city belongs                                                                                                                                                                                                                     |
+| _countryCode_  | number | no       | numeric code of country where city belongs                                                                                                                                                                                                          |
+| _countryName_  | string | no       | country name where city belongs                                                                                                                                                                                                                     |
 | _latitude_     | number | __yes__       | numeric with comma, e.g. 35.55597                                                                                                                                                                                                                   |
 | _longitude_    | number | __yes__       | numeric with comma                                                                                                                                                                                                                                  |
-| _radius_       | number | no        | cone radius for the case of islands located close to a coastal area devoid of cities, to avoid island cone overlapping in the coastal area, e.g. Canary Islands close to Maroc                                                                      |
+| _radius_       | number | __yes__        | cone radius for the case of islands located close to a coastal area devoid of cities, to avoid island cone overlapping in the coastal area, e.g. Canary Islands close to Maroc. Values can be omitted, but field is mandatory.                                                                     |
 | _yearMotorway_ | number | no        | in order to affect the slope of this cone (city) from this year, in a variant of the model that changes local cone slope according the connectivity to a faster network (even if not all surrounding space is experiencing this speed of transport) |
 | _yearHST_      | number | no        | same as previous, but here concerning High Speed Rail                                                                                                                                                                                               |
 

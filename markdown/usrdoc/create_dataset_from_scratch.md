@@ -11,4 +11,9 @@ In QGIS
 * Populate each field via the Field calculator with the formulas:
    * latitude: 'x(centroid($geometry))'
    * longitude: 'y(centroid($geometry))'
+
+#### Rename key fields
+As explained in the dataset files reference, you must rename the relevant following mandatory fields:
+* cityCode
+* cityName
 #### Export centroids to csv
