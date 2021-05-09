@@ -136,12 +136,12 @@ Specific **critical** instructions:
 
 | Column name    | Type   | Mandatory | Comments                                                                                                                                                                                                                                            |
 | -------------- | ------ | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| _cityCode_     | number | yes       | city unique id                                                                                                                                                                                                                                      |
-| _cityName_     | string | yes       | agglomeration (city) name                                                                                                                                                                                                                           |
+| _cityCode_     | number | __yes__       | city unique id                                                                                                                                                                                                                                      |
+| _cityName_     | string | __yes__       | agglomeration (city) name                                                                                                                                                                                                                           |
 | _countryCode_  | number | yes       | numeric code of country where city belongs                                                                                                                                                                                                          |
-| _countryName_  | string | yes       | country name where city belongs                                                                                                                                                                                                                     |
-| _latitude_     | number | yes       | numeric with comma, e.g. 35.55597                                                                                                                                                                                                                   |
-| _longitude_    | number | yes       | numeric with comma                                                                                                                                                                                                                                  |
+| _countryName_  | string | __yes__       | country name where city belongs                                                                                                                                                                                                                     |
+| _latitude_     | number | __yes__       | numeric with comma, e.g. 35.55597                                                                                                                                                                                                                   |
+| _longitude_    | number | __yes__       | numeric with comma                                                                                                                                                                                                                                  |
 | _radius_       | number | no        | cone radius for the case of islands located close to a coastal area devoid of cities, to avoid island cone overlapping in the coastal area, e.g. Canary Islands close to Maroc                                                                      |
 | _yearMotorway_ | number | no        | in order to affect the slope of this cone (city) from this year, in a variant of the model that changes local cone slope according the connectivity to a faster network (even if not all surrounding space is experiencing this speed of transport) |
 | _yearHST_      | number | no        | same as previous, but here concerning High Speed Rail                                                                                                                                                                                               |
@@ -150,18 +150,18 @@ Specific **critical** instructions:
 
 | Column name  | Type   | Mandatory | Comments                                                                                                      |
 | ------------ | ------ | --------- | ------------------------------------------------------------------------------------------------------------- |
-| _cityCode_   | number | yes       | id of city                                                                                                    |
-| _year_       | number | yes       | year of census period                                                                                         |
-| _population_ | number | yes       | in thousands inhabitants, at the agglomeration level recommended, e.g. as in UN World Urban Prospect database |
+| _cityCode_   | number | __yes__       | id of city                                                                                                    |
+| _year_       | number | __yes__       | year of census period                                                                                         |
+| _population_ | number | __yes__       | in thousands inhabitants, at the agglomeration level recommended, e.g. as in UN World Urban Prospect database |
 
 ### Transport network file
 
 The _transport network file_ describes the edges of the graph between the cities as nodes. A line in the _transport network file_ describes the existence of an infrastructure or a bi-directional transport service between two cities. See here for [a justification of the terminology choices](https://timespace.hypotheses.org/177).
 Column name | Type | Mandatory | Comments
 ----------|----------|-------------|-------------
-_cityCodeOri_|number|yes|id of origin city; direction (ori-des or des-ori) has no meaning in the model. A line in the network file marks the existence of an infrastructure or a bi-directional transport service between two cities.
-_cityCodeDes_|number|yes|id of destination city
-_transportModeCode_|number|yes|id of the transport mode
+_cityCodeOri_|number|__yes__|id of origin city; direction (ori-des or des-ori) has no meaning in the model. A line in the network file marks the existence of an infrastructure or a bi-directional transport service between two cities.
+_cityCodeDes_|number|__yes__|id of destination city
+_transportModeCode_|number|__yes__|id of the transport mode
 _eYearBegin_|number|no|year of opening of the edge, infrastructure or service, e.g. High Speed Rail in 1964 between Tokyo and Osaka; if _eYearBegin_ is not populated( even only one single edge) , the period _historical time span_ will be determined from the variable _year_ in the _transport speed_ file
 _eYearEnd_|number|no|may be used for a service no longer operated, e.g. supersonic commercial aircraft Concorde between Paris and New-York started in 1977 and stopped operating in 2004; if _eYearEnd_ not populated (even only one single edge), the period _historical time span_ will be determined from the variable _year_ in the _transport speed_ file
 
@@ -171,17 +171,17 @@ For the sake of readability this file usually contains two optional columns of _
 
 | Column name | Type   | Mandatory | Comments                        |
 | ----------- | ------ | --------- | ------------------------------- |
-| _name_      | string | yes       | mode name                       |
-| _code_      | number | yes       | unique id of the transport mode |
+| _name_      | string | __yes__       | mode name                       |
+| _code_      | number | __yes__       | unique id of the transport mode |
 
 ### Transport mode speeds file
 
 A given transport mode may experience an increase of speed over time, e.g. the five acceleration phases of China classical railways (non High Speed Rail) between 1997 and 2004
 Column name | Type | Mandatory | Comments
 ----------|----------|-------------|-------------
-_year_|number|yes|referring to a date when speed changed
-_transportModeCode_|number|yes|id of transport mode
-_speedKPH_|number|yes|commercial average speed on the transport network
+_year_|number|__yes__|referring to a date when speed changed
+_transportModeCode_|number|__yes__|id of transport mode
+_speedKPH_|number|__yes__|commercial average speed on the transport network
 
 ### GEOJSON file
 
