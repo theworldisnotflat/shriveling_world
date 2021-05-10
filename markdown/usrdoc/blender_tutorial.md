@@ -170,6 +170,10 @@ So far a __transparent background__ gives good results in rendering. In order to
    * In the down right properties box select __Render properties__
    * Down below in section __Film__ click __Transparent__ (Film refers to the historical celluloid ribbon on which cartoons where drawn)
 
+### Using HDRI
+
+* Download [a studio HRDI (image)](https://hdrihaven.com/hdri/?c=studio&h=studio_small_03)
+* [Set it inside Blender](https://www.youtube.com/watch?v=sbAj3IFlBL0)
 ### Camera
 
 WIP Explain different [Camera](https://docs.blender.org/manual/en/latest/render/cameras.html#properties) settings (*Orthographic* vs *Perspective* for example) specific to Shriveling.
