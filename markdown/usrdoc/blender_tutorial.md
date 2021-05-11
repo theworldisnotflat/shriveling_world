@@ -172,8 +172,23 @@ So far a __transparent background__ gives good results in rendering. In order to
 
 ### Using HDRI
 
-* Download [a studio HRDI (image)](https://hdrihaven.com/hdri/?c=studio&h=studio_small_03)
-* [Set it inside Blender](https://www.youtube.com/watch?v=sbAj3IFlBL0)
+HDRI, or High Dynamic Range Images, can be used to generate a relevant lighting environment. Good results are obtained with a photo studio lighting environment.
+
+* Download [a studio HRDI (image)](https://hdrihaven.com/hdri/?c=studio&h=studio_small_03). Resolution is not an issue since we only use the HDRI for generating a lighting environment, and not for complex reflections on mirror surfaces, so a small size HDRI will be enough.
+* _The following instructions come from [this extremely useful video tutorial](https://www.youtube.com/watch?v=sbAj3IFlBL0)_
+* Load the HRDI
+     * In _World_ properties click on the colored dot beside __Color__, set it to __Environment texture__
+     * Click __Open__ and catch the HDRI image you have downloaded
+* Move and rotate the HDRI (in order to locate our scene right where it should be in the studio)
+     * Click on the top right corner of the render view to open a second render view
+     * Change to __Shader editor__ from the top left icon
+     * From a menu in the top left part of the _Viewport_ switch from __Object__ to __World__
+     * Add a _Texture coordinate_ node by __Shift+A__ and type __Texture coordinate__
+     * Add a _Mapping_ node by __Shift+A__ and type ___Mapping___
+     * Connect the __Generated output__ of the _Texture coordinate_ to the __Vector__ of the _Mapping_ node
+     * Connect the Vector of the _Mapping_ node to the __Vector__ of the __HDRI__ node
+     * Play around with __Location__ and with __Rotation__ X, Y and Z to locate the objects of the scene right where they should be in the studio :)
+
 ### Camera
 
 WIP Explain different [Camera](https://docs.blender.org/manual/en/latest/render/cameras.html#properties) settings (*Orthographic* vs *Perspective* for example) specific to Shriveling.
