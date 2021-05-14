@@ -861,7 +861,7 @@ export class Merger {
 			});
 			CONFIGURATION.intrudedHeightRatio = Math.min(
 				0.99,
-				(1.5 * diameterKm) / (CONFIGURATION.earthRadiusMeters / 1000)
+				(2 * diameterKm) / (CONFIGURATION.earthRadiusMeters / 1000)
 			);
 
 			// The main function that generates geometries (cones, curves) by exploring the subgraphs from cities
