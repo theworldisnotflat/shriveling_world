@@ -5,10 +5,10 @@
 #### Download GIS file
 #### Generate centroids of communes
 #### Create _latitude_ and _longitude_ fields for the centroids
-In QGIS
+In (QGIS)[https://qgis.org]:
 * Create two numerical fields named _latitude_ and _longitude_
 * The fields should have at least 3 + 3 precision depth
-* Populate each field via the Field calculator with the formulas:
+* Populate each field via the Field calculator with the following formulas:
    * latitude: 'x(centroid($geometry))'
    * longitude: 'y(centroid($geometry))'
 
