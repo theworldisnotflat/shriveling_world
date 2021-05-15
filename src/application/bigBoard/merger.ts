@@ -791,10 +791,12 @@ export class Merger {
 		if (this._state === 'ready' || this._state === 'complete') {
 			let startIndexRoadCrowFlyEdges = undefined;
 			this._state = 'pending';
-			// Csv parsing into tables
+			// parsing Csv files into tables
 			const cities: ICity[] = JSON.parse(JSON.stringify(this._cities), reviver);
+			console.log(cities.length, ' cities');
 			const population: IPopulation[] = JSON.parse(JSON.stringify(this._populations), reviver);
 			const transportModes: ITranspMode[] = JSON.parse(JSON.stringify(this._transportModes), reviver);
+			console.log(transportModes.length, ' transportModes');
 			const transportModeSpeeds: ITransportModeSpeed[] = JSON.parse(
 				JSON.stringify(this._transportModeSpeeds),
 				reviver
@@ -828,10 +830,12 @@ export class Merger {
 				delete city.outEdges;
 			});
 			// retrieve maxDistCrowAerial in km for connected edges
+			let nbConnectedEdges = 0;
 			transportNetwork.forEach((edge) => {
 				const cityOri: ICity = cities.find((c) => c.cityCode === edge.cityCodeOri);
 				const cityDes: ICity = cities.find((c) => c.cityCode === edge.cityCodeDes);
 				if (!(cityOri === undefined || cityDes === undefined)) {
+					nbConnectedEdges++;
 					edge.distCrowKM =
 						haversine(cityOri.latitude, cityOri.longitude, cityDes.latitude, cityDes.longitude) / 1000;
 					const tMode: ITranspMode = transportModes.find((t) => t.code === edge.transportModeCode);
@@ -843,6 +847,7 @@ export class Merger {
 					}
 				}
 			});
+			console.log(nbConnectedEdges, ' connected edges');
 			// for cases of countries of less than 2000 km length
 			if (_maxDistCrowAerial < distCrowThreshold) {
 				distCrowThreshold = _maxDistCrowAerial;
