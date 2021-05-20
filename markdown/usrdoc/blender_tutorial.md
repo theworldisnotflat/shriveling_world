@@ -14,7 +14,7 @@ We chose [Blender](https://www.blender.org) because it’s a free and cross plat
 Of course any 3D tool could be used as long as it supports .obj file.
 
 **[Download Blender](https://www.blender.org/download/)**
-(2.90.1 as of 16 october 2020)
+(At least 2.91.0 Beta as of november 13th 2020)
 
 The tutorial below is designed as a quick start to import data from the Shriveling App and effectively organize your scene in Blender[^version].
 
@@ -80,6 +80,16 @@ Select objects and then:
 * type __G__ and then mouse movements move selected objects
 
 
+#### Export settings in Shriveling world
+
+When working in Blender you want to dispose of highest quality geometries.
+
+* High definition cones: __Cones__, __coneStep__, value __1__
+* Uncut cones (because current algorithm in _Shriveling world_ is, say, un-perfect): __Cones__, __withLimits__, __un-check__ (is checked by default)
+* High definition curves: __Curves__, __number of points__, value __200__ (200 is the maximum, default is 50)
+* Extrude countries: __Countries__, __extruded__, value __- 100__ 
+* Export countries: __Countries__, __Export with__, __check__ (already checked by default)
+
 #### Cones
 
 The shriveled topology exported as .obj file is composed of individual “cones” each named by the city on top.
@@ -94,8 +104,50 @@ It is quite hard to keep accurate geometry when trying to model the mesh surface
 4. In the _3D Viewport_, join every selected cone meshes in one object (**Ctrl-J** or **Cmd-J** on macOS). You can rename the joined object as you like
 5. Switch to *Sculpt Mode* and use the **[Remesh](https://docs.blender.org/manual/en/latest/modeling/meshes/retopology.html#remeshing)** tool in the top-right corner of the _3D Viewport_ area (the Blender doc about remeshing is unfortunately not up to date). _Voxel Size_ should be 0.1 or less (**Warning**: it could be computational intensive but a lower value gives more details)
 6. Add *Decimate modifier* to lighten the mesh
-7. WIP Boolean the geographic borders. Need source
-8. WIP Remove vertices of the bases to keep only the surface (non manifold object)
+
+Make a copy of the cones collection for further use:
+
+1. In the _Outliner_, duplicate the cones collection (so we can keep track of original cones for comparison later). (**right-click** on the collection > *Duplicate Collection*)
+2. Hide everything but the new working collection by **ctrl-clicking** on the **eye icon** next to it (isolate to optimise the viewport)
+
+###### Method 1 : Booleans <small>(Needs at least version 2.91)</small>
+Cones have complex geometry at the base that are complicating any operation on the geometry in Blender. Hence the need to remove it. Fortunately at present cones have a tiny cylindrical bottom that we may cut in a sort of _slice_.
+
+The following instructions have been tested in an __un-projected situation__. In the projected situation a simple cube can replace the sphere.
+
+This method keeps the geometry as close as the original sceneCones.obj file. In the Blender Preferences the *Bool Tool* add-on must be activated.
+We add a simple geometry first to help with the boolean operations.
+
+1. Create an Ico Sphere with a radius encompassing the base of the geometry (Press **Shift + A** together, Mesh > Ico Sphere and in the Add Ico Sphere panel: set *Subdivision* to *6* and *Radius* to about *43.2 m*)
+2. Add Vertex group "Group" to Ico Sphere vertices
+	- Switch to Edit Mode (Press **Tab**)
+	- Select All (Press **A**)
+	- Create a Vertex Group (Object Data Properties Tab)
+	- Click *Assign*
+3. [Select all objects](https://docs.blender.org/manual/en/latest/editors/outliner.html#selecting-multiple-data-blocks) (cones + sphere) of that new collection. The Ico Sphere object must be active (yellow) in the objects selection (orange). It will become the main object.
+4. Use Bool Tool __Union__
+5. Add _Mask Modifier_ select the Vertex Group and click the invert icon (<img src="./img/icon_invert@2x.png" alt="Invert Icon Inactive" title="Invert Icon" width="20" height="20" />) next to it to display the cones
+6. You should get the desired surface
+
+###### Method 2 : Remesh <small>(Could be used before 2.91)</small>
+
+1. In the _Outliner_, duplicate the cones collection (so we can keep track of original cones for comparison later). (**right-click** on the collection > *Duplicate Collection*)
+2. Hide everything but the new working collection by **ctrl-clicking** on the **eye icon** next to it (isolate to optimise the viewport)
+3. [Select all objects](https://docs.blender.org/manual/en/latest/editors/outliner.html#selecting-multiple-data-blocks) (cones) of that new collection. One object must be active (yellow) in the objects selection (orange). It will become the main object.
+4. In the _3D Viewport_, join every  selected cone meshes in one object (**Ctrl-J** or **Cmd-J** on macOS). You can rename the joined object as you like.
+5. Switch to *Sculpt Mode* and use the **[Remesh](https://docs.blender.org/manual/en/latest/modeling/meshes/retopology.html#remeshing)** tool in the top-right corner of the _3D Viewport_ area (the Blender doc about remeshing is unfortunately not up to date). _Voxel Size_ should be 0.1 or less (**Warning**: it could be computational intensive but a lower value gives more details).
+
+
+##### Clean up countries border volumes
+
+Steps from a country volume already extruded in _Shriveling world_. Cleanup step is necessary to have a _clean_ geometry.
+
+1. In __Edit__ mode select all the bottom vertices
+2. Type __m__, click __At center__
+3. Type __n__, select the __Item__ tab and for the vertex coordinate values type __0__, __0__ and __0__
+
+##### Intersect cones with the geographic borders
+
 
 #### Curves
 
@@ -140,6 +192,18 @@ This operation may be done on only one object and then [applied to others](#appl
 #### Apply properties to all selected objects
 
 To apply properties to all selected objects (because changes you make in _Object Data Properties_ only affect active object) **right click** on the modified _[Fields](https://docs.blender.org/manual/en/latest/interface/controls/buttons/fields.html)_ to open a contextual menu and choose _Copy to Selected_. In case you have already [joined the curves](#cones), this step is not needed.
+
+#### Cut cones at continent/countries border
+
+_We consider that you have already extruded the continent shape in _Shiveling world_ before exporting_.
+
+* Select the cones
+* Click in the properties window (bottom right) on the __Modifier__ tab
+* Click __Add modifier__
+* Choose __Boolean__ from the _Generate_ section
+* Select the __Intersect__ transformation
+* Select the continents or countries shape
+
 
 ### Rendering
 
