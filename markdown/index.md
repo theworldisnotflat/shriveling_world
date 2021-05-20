@@ -6,7 +6,7 @@ The __shriveling world__ project aims at producing images of _geographical time-
 - An [__application__ with documentation](https://theworldisnotflat.github.io/shriveling_world/marks/index).
 - A [users forum](https://github.com/theworldisnotflat/shriveling_world/discussions)
 
-For citation please refer to [L’Hostis, A.; Abdou, F. What is the Shape of Geographical Time-Space? A Three Dimensional Model made of Curves and Cones. Preprints 2021, 2021030594](https://www.preprints.org/manuscript/202103.0594/v1).
+For citation please refer to [L’Hostis, A.; Abdou, F. _What is the Shape of Geographical Time-Space? A Three Dimensional Model made of Curves and Cones_. Int. J. Geo-Inf. 2021, 10(5), 340](https://doi.org/10.3390/ijgi10050340).
 
 <img alt="Chinese geographical time space in 2014" src="https://neocarto.hypotheses.org/files/2021/04/f_Chine_v06.png" width="600">
 
