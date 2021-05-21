@@ -21,7 +21,17 @@ The tutorial below is designed as a quick start to import data from the Shriveli
 
 ## Step by step [(ooh 🔊)](https://www.youtube.com/watch?v=iCrargw1rrM)
 
-After exporting from app you should have a zip file containing 4 files:
+#### Export from Shriveling world
+
+When working in Blender you want to dispose of highest quality geometries.
+
+* High definition cones: __Cones__, __coneStep__, value __1__
+* Uncut cones (because current algorithm in _Shriveling world_ is, say, un-perfect): __Cones__, __withLimits__, __un-check__ (is checked by default)
+* High definition curves: __Curves__, __number of points__, value __200__ (200 is the maximum, default is 50)
+* Extrude countries: __Countries__, __extruded__, value __- 100__
+* Export countries: __Countries__, __Export with__, __check__ (already checked by default)
+
+After exporting from the app you should have a zip file containing 4 files:
 
 - _country.obj_, the country limits contained in the 'geojson' input file
 - _sceneCones.obj_, base geometry for terrestrial transport
@@ -35,7 +45,7 @@ Let’s get started.
 1. Open Blender
 2. New File > General
 3. With your mouse in the [_3D Viewport_](https://docs.blender.org/manual/en/latest/interface/window_system/introduction.html) editor’s area **remove everything in the scene**
-    - Press **A** (Select All)
+   - Press **A** (Select All)
 	- Press **X** (then confirm by pressing **D**, **Enter** or click **“Delete”** in the contextual pop-up) or press **BackSpace** (for instant delete)
 4. File > Import > Wavefront (.obj)
 
@@ -80,15 +90,21 @@ Select objects and then:
 * type __G__ and then mouse movements move selected objects
 
 
-#### Export settings in Shriveling world
+#### Test and correct normals
 
-When working in Blender you want to dispose of highest quality geometries.
+At the moment, volumes exported from _Shriveling world_, cones and countries, may exhibit _normals_ issues. Id est, interior and exterior normal vectors may be inverted. This will cause errors and unexpected results with boolean operations on geometries.
 
-* High definition cones: __Cones__, __coneStep__, value __1__
-* Uncut cones (because current algorithm in _Shriveling world_ is, say, un-perfect): __Cones__, __withLimits__, __un-check__ (is checked by default)
-* High definition curves: __Curves__, __number of points__, value __200__ (200 is the maximum, default is 50)
-* Extrude countries: __Countries__, __extruded__, value __- 100__ 
-* Export countries: __Countries__, __Export with__, __check__ (already checked by default)
+* To show normals of objects:
+   * Go to __Viewport overlays__ menu in the top right par of the _Viewport_ window
+   * Select __Face orientation__
+   * From now, exterior faces are _blue_ and interior faces are _red_
+
+* To modify the normals/the orientation of faces
+   * In __Object mode__, select an object
+   * Shift to Edit mode by pressing __Tab__
+   * Select all vertices of the object by typing __A__
+   * Press __Alt+N__ for the _Normals_ menu
+   * Click __Flip__, this inverts the faces orientation from _red_/_interior_ to _blue_/_exterior_
 
 #### Cones
 
@@ -146,6 +162,7 @@ Steps from a country volume already extruded in _Shriveling world_. Cleanup step
 2. Type __m__, click __At center__
 3. Type __n__, select the __Item__ tab and for the vertex coordinate values type __0__, __0__ and __0__
 
+You may also want to [check and correct normals](#test-and-correct-normals)
 ##### Intersect cones with the geographic borders
 
 
