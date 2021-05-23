@@ -104,7 +104,7 @@ At the moment, volumes exported from _Shriveling world_, cones and countries, ma
    * Shift to Edit mode by pressing __Tab__
    * Select all vertices of the object by typing __A__
    * Press __Alt+N__ for the _Normals_ menu
-   * Click __Flip__, this inverts the faces orientation from _red_/_interior_ to _blue_/_exterior_
+   * Click __Recalculate outside__ to force all facets as outside (blue)
 
 #### Cones
 
