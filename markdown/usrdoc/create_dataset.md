@@ -125,6 +125,7 @@ Specific **critical** instructions:
 
 ## Typical errors in datasets
 
+* Do not invert _latitudes_ and _longitudes_ in the _cities_ file
 * If a mode of transport is used in the [_transport network file_](#transport-network-file), identified by a numerical code, all the relevant information about this transport mode MUST be found in the  [_transport modes_](#transport-modes-file) and [_transport mode speeds_](#transport-mode-speeds-file) files
 
 ## Content of files columns
