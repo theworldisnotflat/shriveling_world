@@ -37,6 +37,7 @@ Test each modification of the code with
 ## Known errors
 
 * Sometimes `npm run dev` fails with lots of errors. It may then be necessary to reinstall node dependencies. To do so remove the _node_modules_ folder in the app folder (_shriveling_world_), and run again `npm i`, `npm run build`, and `npm run dev`
+* Sometimes the browser executes and old version of the code. In order to fresh start the client type `CTRL+F5`
 # Git tutorial
 
 ## Create Branch with GitKraken
