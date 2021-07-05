@@ -17,7 +17,7 @@ In your IDE, need to install xo extension :
 
 ## Visual Studio Code tricks
 
-* Using Visual Studio Code in Ubuntu, the integrated terminal may not fully work (e.g. error 134 with `npm run dev`); Solution: __File__ -> __Preferences__ -> __Setting__ -> __Features__ -> __Terminal__ -> __Inherit Env__
+* Using Visual Studio Code in Ubuntu, the integrated terminal may not fully work (e.g. error 134 with `npm run dev`); Solution: __File__ -> __Preferences__ -> __Settings__ -> __Features__ -> __Terminal__ -> __Inherit Env__
 
 # Compiling sources and launching the server
 
