@@ -1,0 +1,387 @@
+# npm audit report
+
+cookie-signature  <=1.0.5
+Severity: moderate
+Timing Attack - https://npmjs.com/advisories/134
+fix available via `npm audit fix`
+node_modules/cookie-signature
+  connect  2.0.0 - 3.6.4
+  Depends on vulnerable versions of cookie-signature
+  Depends on vulnerable versions of debug
+  Depends on vulnerable versions of fresh
+  Depends on vulnerable versions of negotiator
+  Depends on vulnerable versions of qs
+  Depends on vulnerable versions of send
+  node_modules/connect
+    express  <=4.15.4 || 5.0.0-alpha.1 - 5.0.0-alpha.5
+    Depends on vulnerable versions of connect
+    Depends on vulnerable versions of cookie-signature
+    Depends on vulnerable versions of debug
+    Depends on vulnerable versions of fresh
+    Depends on vulnerable versions of send
+    node_modules/express
+      node-inspector  0.1.10 - 0.10.0
+      Depends on vulnerable versions of debug
+      Depends on vulnerable versions of express
+      Depends on vulnerable versions of glob
+      Depends on vulnerable versions of rc
+      Depends on vulnerable versions of socket.io
+      node_modules/node-inspector
+
+dat.gui  *
+Severity: high
+Regular Expression Denial of Service - https://npmjs.com/advisories/1701
+No fix available
+node_modules/dat.gui
+
+debug  <=2.6.8 || 3.0.0 - 3.0.1
+Regular Expression Denial of Service - https://npmjs.com/advisories/534
+fix available via `npm audit fix`
+node_modules/connect/node_modules/debug
+node_modules/express/node_modules/debug
+node_modules/node-inspector/node_modules/debug
+  connect  2.0.0 - 3.6.4
+  Depends on vulnerable versions of cookie-signature
+  Depends on vulnerable versions of debug
+  Depends on vulnerable versions of fresh
+  Depends on vulnerable versions of negotiator
+  Depends on vulnerable versions of qs
+  Depends on vulnerable versions of send
+  node_modules/connect
+    express  <=4.15.4 || 5.0.0-alpha.1 - 5.0.0-alpha.5
+    Depends on vulnerable versions of connect
+    Depends on vulnerable versions of cookie-signature
+    Depends on vulnerable versions of debug
+    Depends on vulnerable versions of fresh
+    Depends on vulnerable versions of send
+    node_modules/express
+      node-inspector  0.1.10 - 0.10.0
+      Depends on vulnerable versions of debug
+      Depends on vulnerable versions of express
+      Depends on vulnerable versions of glob
+      Depends on vulnerable versions of rc
+      Depends on vulnerable versions of socket.io
+      node_modules/node-inspector
+
+deep-extend  <=0.5.0
+Prototype Pollution - https://npmjs.com/advisories/612
+fix available via `npm audit fix`
+node_modules/deep-extend
+  rc  0.1.0 - 1.2.6
+  Depends on vulnerable versions of deep-extend
+  Depends on vulnerable versions of ini
+  Depends on vulnerable versions of minimist
+  node_modules/rc
+    node-inspector  0.1.10 - 0.10.0
+    Depends on vulnerable versions of debug
+    Depends on vulnerable versions of express
+    Depends on vulnerable versions of glob
+    Depends on vulnerable versions of rc
+    Depends on vulnerable versions of socket.io
+    node_modules/node-inspector
+
+express  <=4.15.4 || 5.0.0-alpha.1 - 5.0.0-alpha.5
+Severity: high
+No Charset in Content-Type Header - https://npmjs.com/advisories/8
+Depends on vulnerable versions of connect
+Depends on vulnerable versions of cookie-signature
+Depends on vulnerable versions of debug
+Depends on vulnerable versions of fresh
+Depends on vulnerable versions of send
+fix available via `npm audit fix`
+node_modules/express
+  node-inspector  0.1.10 - 0.10.0
+  Depends on vulnerable versions of debug
+  Depends on vulnerable versions of express
+  Depends on vulnerable versions of glob
+  Depends on vulnerable versions of rc
+  Depends on vulnerable versions of socket.io
+  node_modules/node-inspector
+
+fresh  < 0.5.2
+Severity: high
+Regular Expression Denial of Service - https://npmjs.com/advisories/526
+fix available via `npm audit fix`
+node_modules/fresh
+  connect  2.0.0 - 3.6.4
+  Depends on vulnerable versions of cookie-signature
+  Depends on vulnerable versions of debug
+  Depends on vulnerable versions of fresh
+  Depends on vulnerable versions of negotiator
+  Depends on vulnerable versions of qs
+  Depends on vulnerable versions of send
+  node_modules/connect
+    express  <=4.15.4 || 5.0.0-alpha.1 - 5.0.0-alpha.5
+    Depends on vulnerable versions of connect
+    Depends on vulnerable versions of cookie-signature
+    Depends on vulnerable versions of debug
+    Depends on vulnerable versions of fresh
+    Depends on vulnerable versions of send
+    node_modules/express
+      node-inspector  0.1.10 - 0.10.0
+      Depends on vulnerable versions of debug
+      Depends on vulnerable versions of express
+      Depends on vulnerable versions of glob
+      Depends on vulnerable versions of rc
+      Depends on vulnerable versions of socket.io
+      node_modules/node-inspector
+  send  <=0.15.6
+  Depends on vulnerable versions of fresh
+  Depends on vulnerable versions of mime
+  node_modules/send
+
+ini  <1.3.6
+Prototype Pollution - https://npmjs.com/advisories/1589
+fix available via `npm audit fix`
+node_modules/ini
+  rc  0.1.0 - 1.2.6
+  Depends on vulnerable versions of deep-extend
+  Depends on vulnerable versions of ini
+  Depends on vulnerable versions of minimist
+  node_modules/rc
+    node-inspector  0.1.10 - 0.10.0
+    Depends on vulnerable versions of debug
+    Depends on vulnerable versions of express
+    Depends on vulnerable versions of glob
+    Depends on vulnerable versions of rc
+    Depends on vulnerable versions of socket.io
+    node_modules/node-inspector
+
+merge  <=2.1.0
+Severity: high
+Prototype Pollution - https://npmjs.com/advisories/1666
+Prototype Pollution - https://npmjs.com/advisories/722
+No fix available
+node_modules/merge
+  browser-launcher  <=2.0.0
+  Depends on vulnerable versions of merge
+  Depends on vulnerable versions of minimist
+  node_modules/browser-launcher
+    ni  *
+    Depends on vulnerable versions of browser-launcher
+    node_modules/ni
+
+mime  <=1.4.0 || 2.0.1 - 2.0.2
+Severity: moderate
+Regular Expression Denial of Service - https://npmjs.com/advisories/535
+fix available via `npm audit fix`
+node_modules/send/node_modules/mime
+  send  <=0.15.6
+  Depends on vulnerable versions of fresh
+  Depends on vulnerable versions of mime
+  node_modules/send
+    connect  2.0.0 - 3.6.4
+    Depends on vulnerable versions of cookie-signature
+    Depends on vulnerable versions of debug
+    Depends on vulnerable versions of fresh
+    Depends on vulnerable versions of negotiator
+    Depends on vulnerable versions of qs
+    Depends on vulnerable versions of send
+    node_modules/connect
+      express  <=4.15.4 || 5.0.0-alpha.1 - 5.0.0-alpha.5
+      Depends on vulnerable versions of connect
+      Depends on vulnerable versions of cookie-signature
+      Depends on vulnerable versions of debug
+      Depends on vulnerable versions of fresh
+      Depends on vulnerable versions of send
+      node_modules/express
+        node-inspector  0.1.10 - 0.10.0
+        Depends on vulnerable versions of debug
+        Depends on vulnerable versions of express
+        Depends on vulnerable versions of glob
+        Depends on vulnerable versions of rc
+        Depends on vulnerable versions of socket.io
+        node_modules/node-inspector
+
+minimatch  <=3.0.1
+Severity: high
+Regular Expression Denial of Service - https://npmjs.com/advisories/118
+fix available via `npm audit fix`
+node_modules/node-inspector/node_modules/minimatch
+  glob  3.0.0 - 5.0.14
+  Depends on vulnerable versions of minimatch
+  node_modules/node-inspector/node_modules/glob
+    node-inspector  0.1.10 - 0.10.0
+    Depends on vulnerable versions of debug
+    Depends on vulnerable versions of express
+    Depends on vulnerable versions of glob
+    Depends on vulnerable versions of rc
+    Depends on vulnerable versions of socket.io
+    node_modules/node-inspector
+
+minimist  <0.2.1 || >=1.0.0 <1.2.3
+Prototype Pollution - https://npmjs.com/advisories/1179
+No fix available
+node_modules/browser-launcher/node_modules/minimist
+node_modules/rc/node_modules/minimist
+  browser-launcher  <=2.0.0
+  Depends on vulnerable versions of merge
+  Depends on vulnerable versions of minimist
+  node_modules/browser-launcher
+    ni  *
+    Depends on vulnerable versions of browser-launcher
+    node_modules/ni
+  rc  0.1.0 - 1.2.6
+  Depends on vulnerable versions of deep-extend
+  Depends on vulnerable versions of ini
+  Depends on vulnerable versions of minimist
+  node_modules/rc
+    node-inspector  0.1.10 - 0.10.0
+    Depends on vulnerable versions of debug
+    Depends on vulnerable versions of express
+    Depends on vulnerable versions of glob
+    Depends on vulnerable versions of rc
+    Depends on vulnerable versions of socket.io
+    node_modules/node-inspector
+
+negotiator  <=0.6.0
+Severity: high
+Regular Expression Denial of Service - https://npmjs.com/advisories/106
+fix available via `npm audit fix`
+node_modules/connect/node_modules/negotiator
+  connect  2.0.0 - 3.6.4
+  Depends on vulnerable versions of cookie-signature
+  Depends on vulnerable versions of debug
+  Depends on vulnerable versions of fresh
+  Depends on vulnerable versions of negotiator
+  Depends on vulnerable versions of qs
+  Depends on vulnerable versions of send
+  node_modules/connect
+    express  <=4.15.4 || 5.0.0-alpha.1 - 5.0.0-alpha.5
+    Depends on vulnerable versions of connect
+    Depends on vulnerable versions of cookie-signature
+    Depends on vulnerable versions of debug
+    Depends on vulnerable versions of fresh
+    Depends on vulnerable versions of send
+    node_modules/express
+      node-inspector  0.1.10 - 0.10.0
+      Depends on vulnerable versions of debug
+      Depends on vulnerable versions of express
+      Depends on vulnerable versions of glob
+      Depends on vulnerable versions of rc
+      Depends on vulnerable versions of socket.io
+      node_modules/node-inspector
+
+qs  <=6.0.3 || 6.1.0 - 6.1.1 || 6.2.0 - 6.2.2 || 6.3.0 - 6.3.1
+Severity: high
+Prototype Pollution Protection Bypass - https://npmjs.com/advisories/1469
+Denial-of-Service Memory Exhaustion - https://npmjs.com/advisories/29
+fix available via `npm audit fix`
+node_modules/qs
+  connect  2.0.0 - 3.6.4
+  Depends on vulnerable versions of cookie-signature
+  Depends on vulnerable versions of debug
+  Depends on vulnerable versions of fresh
+  Depends on vulnerable versions of negotiator
+  Depends on vulnerable versions of qs
+  Depends on vulnerable versions of send
+  node_modules/connect
+    express  <=4.15.4 || 5.0.0-alpha.1 - 5.0.0-alpha.5
+    Depends on vulnerable versions of connect
+    Depends on vulnerable versions of cookie-signature
+    Depends on vulnerable versions of debug
+    Depends on vulnerable versions of fresh
+    Depends on vulnerable versions of send
+    node_modules/express
+      node-inspector  0.1.10 - 0.10.0
+      Depends on vulnerable versions of debug
+      Depends on vulnerable versions of express
+      Depends on vulnerable versions of glob
+      Depends on vulnerable versions of rc
+      Depends on vulnerable versions of socket.io
+      node_modules/node-inspector
+
+send  <=0.15.6
+Severity: high
+Directory Traversal - https://npmjs.com/advisories/32
+Root Path Disclosure - https://npmjs.com/advisories/56
+Depends on vulnerable versions of fresh
+Depends on vulnerable versions of mime
+fix available via `npm audit fix`
+node_modules/send
+  connect  2.0.0 - 3.6.4
+  Depends on vulnerable versions of cookie-signature
+  Depends on vulnerable versions of debug
+  Depends on vulnerable versions of fresh
+  Depends on vulnerable versions of negotiator
+  Depends on vulnerable versions of qs
+  Depends on vulnerable versions of send
+  node_modules/connect
+    express  <=4.15.4 || 5.0.0-alpha.1 - 5.0.0-alpha.5
+    Depends on vulnerable versions of connect
+    Depends on vulnerable versions of cookie-signature
+    Depends on vulnerable versions of debug
+    Depends on vulnerable versions of fresh
+    Depends on vulnerable versions of send
+    node_modules/express
+      node-inspector  0.1.10 - 0.10.0
+      Depends on vulnerable versions of debug
+      Depends on vulnerable versions of express
+      Depends on vulnerable versions of glob
+      Depends on vulnerable versions of rc
+      Depends on vulnerable versions of socket.io
+      node_modules/node-inspector
+
+socket.io  <=2.3.0
+Severity: high
+Insecure Default Configuration - https://npmjs.com/advisories/1609
+Depends on vulnerable versions of socket.io-client
+fix available via `npm audit fix`
+node_modules/socket.io
+  node-inspector  0.1.10 - 0.10.0
+  Depends on vulnerable versions of debug
+  Depends on vulnerable versions of express
+  Depends on vulnerable versions of glob
+  Depends on vulnerable versions of rc
+  Depends on vulnerable versions of socket.io
+  node_modules/node-inspector
+
+uglify-js  <=2.5.0
+Incorrect Handling of Non-Boolean Comparisons During Minification - https://npmjs.com/advisories/39
+Regular Expression Denial of Service - https://npmjs.com/advisories/48
+fix available via `npm audit fix`
+node_modules/socket.io-client/node_modules/uglify-js
+  socket.io-client  0.7.4 - 0.9.17
+  Depends on vulnerable versions of uglify-js
+  Depends on vulnerable versions of ws
+  node_modules/socket.io-client
+    socket.io  <=2.3.0
+    Depends on vulnerable versions of socket.io-client
+    node_modules/socket.io
+      node-inspector  0.1.10 - 0.10.0
+      Depends on vulnerable versions of debug
+      Depends on vulnerable versions of express
+      Depends on vulnerable versions of glob
+      Depends on vulnerable versions of rc
+      Depends on vulnerable versions of socket.io
+      node_modules/node-inspector
+
+ws  <=1.1.4 || 2.0.0 - 3.3.0
+Severity: high
+DoS due to excessively large websocket message - https://npmjs.com/advisories/120
+Denial of Service - https://npmjs.com/advisories/550
+Remote Memory Disclosure - https://npmjs.com/advisories/67
+fix available via `npm audit fix`
+node_modules/ws
+  socket.io-client  0.7.4 - 0.9.17
+  Depends on vulnerable versions of uglify-js
+  Depends on vulnerable versions of ws
+  node_modules/socket.io-client
+    socket.io  <=2.3.0
+    Depends on vulnerable versions of socket.io-client
+    node_modules/socket.io
+      node-inspector  0.1.10 - 0.10.0
+      Depends on vulnerable versions of debug
+      Depends on vulnerable versions of express
+      Depends on vulnerable versions of glob
+      Depends on vulnerable versions of rc
+      Depends on vulnerable versions of socket.io
+      node_modules/node-inspector
+
+24 vulnerabilities (8 low, 2 moderate, 14 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+Some issues need review, and may require choosing
+a different dependency.
