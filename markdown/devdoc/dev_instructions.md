@@ -17,7 +17,7 @@ In your IDE, need to install xo extension :
 
 ## Visual Studio Code tricks
 
-* Using Visual Studio Code in Ubuntu, the integrated terminal may not fully work (e.g. error 134 with `npm run dev`); Solution: __File__ -> __Preferences__ -> __Setting__ -> __Features__ -> __Terminal__ -> __Inherit Env__
+* Using Visual Studio Code in Ubuntu, the integrated terminal may not fully work (e.g. error 134 with `npm run dev`); Solution: __File__ -> __Preferences__ -> __Settings__ -> __Features__ -> __Terminal__ -> __Inherit Env__
 
 # Compiling sources and launching the server
 
@@ -36,7 +36,8 @@ Test each modification of the code with
 * `npm run dev`
 ## Known errors
 
-* Sometimes `npm run dev` fails with lots of errors. It may then be necessary to reinstall node dependencies. To do so remove the _node_modules_ folder in the app folder (_shriveling_world_), and run again `npm i`, `npm run build`, and `npm run dev`
+* The instruction `npm i` may fail because of errors in the connfiguration of node or node packages. To solve the issue run `npm audit` and do what the results indicate.
+* The instruction `npm run dev` may fail with lots of errors. It may then be necessary to reinstall node dependencies. To do so remove the _node_modules_ folder in the app folder (_shriveling_world_), and run again `npm i`, `npm run build`, and `npm run dev`
 * Sometimes the browser executes and old version of the code. In order to fresh start the client type `CTRL+F5`
 # Git tutorial
 
