@@ -1,11 +1,25 @@
 ## Generate graph in QGIS
 
 * Starting from a points layer
+* Use QuickOSM plugin
+  * Layer = choose an existing layer in your project
+  * key = 'route'
+  * Value = 'road'
 * Create a new _Vector layer_
 * Toggle _edition_ mode
 * Click _Add linear entity_ button
 * Left click on nodes of the points layer
 * Right click anywhere when the path is finished
+
+* From the 'ToolBox' execute in 'Vectorial Geometry' the tool 'ExplodeLines'; This will generate one line per segment of each polylines
+* Create four new 'real' fields as follows:
+   * start_x with value x(start_point($geometry))
+   * start_y with value y(start_point($geometry))
+   * end_x with value x(end_point($geometry))
+   * end_y with value y(end_point($geometry))
+
+* In the points layer execute script "Add geometry attributes"; this will add columns with x and y of points
+
 
 Solution de Dylan 22 juin 2021:
 Faire une "intersection"
