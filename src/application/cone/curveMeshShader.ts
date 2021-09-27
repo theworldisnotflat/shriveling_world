@@ -201,19 +201,19 @@ export class CurveMeshShader extends Line {
 				const beginGLSL = begin.position.toThreeGLSL();
 				for (const cityCodeEnd in list) {
 					if (list.hasOwnProperty(cityCodeEnd)) {
-						const endPoint = list[cityCodeEnd];
-						const pointPGLSL = endPoint.pointP.toThreeGLSL();
-						const pointQGLSL = endPoint.pointQ.toThreeGLSL();
-						const endGLSL = endPoint.end.position.toThreeGLSL();
-						for (const transportName in endPoint.speedRatio) {
-							if (endPoint.speedRatio.hasOwnProperty(transportName)) {
-								const ratios = endPoint.speedRatio[transportName];
+						const endCity = list[cityCodeEnd];
+						const pointPGLSL = endCity.pointP.toThreeGLSL();
+						const pointQGLSL = endCity.pointQ.toThreeGLSL();
+						const endGLSL = endCity.end.position.toThreeGLSL();
+						for (const transportName in endCity.speedRatio) {
+							if (endCity.speedRatio.hasOwnProperty(transportName)) {
+								const _speedRatio = endCity.speedRatio[transportName];
 								_curves.push(
 									new CurveMeshShader(
 										begin.cityCode,
-										endPoint.end.cityCode,
-										endPoint.theta,
-										ratios,
+										endCity.end.cityCode,
+										endCity.theta,
+										_speedRatio,
 										transportName,
 										CONFIGURATION.curvesPosition,
 										CONFIGURATION.pointsPerCurve
