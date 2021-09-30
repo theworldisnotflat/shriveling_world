@@ -29,7 +29,7 @@ const preparerStatic = (options = {}) => {
     const { targets = [], hook = 'buildStart' } = options; // hook = buildStart or hook = buildEnd
     return {
         name: 'preparerStatic',
-        [hook]: async() => {
+        [hook]: async () => {
             console.log('shaders');
             shadersDict = JSON.stringify(compileShaders());
             console.log('lint');
@@ -38,7 +38,7 @@ const preparerStatic = (options = {}) => {
             zipper();
             pkg.toCopy.forEach(item => copySync(item.in, item.out));
             console.log('documentation generation');
-            execSync(`npx typedoc --plugin typedoc-neo-theme \
+            execSync(`npx typedoc --theme ./node_modules/typedoc-neo-theme/bin/default --plugin typedoc-neo-theme \
             --out static/documentation  \
             --externalPattern node_module\
             --readme markdown/devdoc/README_DEVDOC.md  --name "Shriveling world developer documentation" \
