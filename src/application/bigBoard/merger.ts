@@ -31,12 +31,11 @@ import type {
 	ILookupCurvesAndCityGraph,
 	ILookupCurves,
 	ICityExtremityOfEdge,
-	ILookupCurveList,
+	IlookupCurveGeometry,
 	ILookupConeAngles,
 } from '../definitions/project';
 import { CONFIGURATION } from '../common/configuration';
 import * as FileSaver from 'file-saver';
-import { ConeAndCurveBoard } from '../cone/coneBoard';
 
 interface ICodeSpeedPerYear {
 	[code: string]: {
@@ -45,6 +44,17 @@ interface ICodeSpeedPerYear {
 	};
 }
 let codeSpeedPerYear: ICodeSpeedPerYear = {};
+/**
+ * [[IMaxSpeedPerYear]] is the table of max speed per [[year]]
+ */
+interface IMaxSpeedPerYear {
+	[year: string]: number;
+}
+/**
+ *
+ * association table indicating the maximum available speed on a given year
+ */
+const maxSpeedPerYear: IMaxSpeedPerYear = {};
 /**
  * Realizes the merge of two tables base on an attribute. The key for the merge is renamed.
  * At the end of the process the recipient table is enriched.
@@ -270,17 +280,6 @@ function networkFromCities(
 	let lastYear = 3000;
 
 	/**
-	 * [[ISpeedPerYear]] is the table of max speed per [[year]]
-	 */
-	interface IMaxSpeedPerYear {
-		[year: string]: number;
-	}
-	/**
-	 *
-	 * association table indicating the maximum available speed on a given year
-	 */
-	const maxSpeedPerYear: IMaxSpeedPerYear = {};
-	/**
 	 * [[ITransportCodeItem]] has
 	 * * a [[speed]] and
 	 * * a [[year]]
@@ -488,7 +487,7 @@ function networkFromCities(
 			/**
 			 *  List of curves from the considered city (described by their destination cities)
 			 * */
-			const listOfCurves: { [cityCodeEnd: string]: ILookupCurveList } = {};
+			const listOfCurves: { [cityCodeEnd: string]: IlookupCurveGeometry } = {};
 			const coneAngles: ILookupConeAngles = {};
 			const destinationsWithModes: ILookupDestWithModes = {};
 			let destCityCode: number;
@@ -574,25 +573,30 @@ function networkFromCities(
 										edgeModeSpeed[year].speed,
 										edgeTranspModeSpeed.terrestrial
 									);
-									// The ratio linking the current speed and maxSpeed is
-									// computed according to this ![equation](http://bit.ly/2EejFpW)
-									const speedRatio = (maxSpeedPerYear[year] * theta) / (2 * modelledSpeed);
 									if (!listOfCurves.hasOwnProperty(destCityCode)) {
-										listOfCurves[destCityCode] = <ILookupCurveList>{
-											end,
+										listOfCurves[destCityCode] = <IlookupCurveGeometry>{
+											endCity: end,
 											middle,
 											pointP,
 											pointQ,
 											theta,
-											speedRatio: {},
+											speedPerModePerYear: {},
+											maxSpeedPerYear: {},
 										};
 									}
 
-									if (!listOfCurves[destCityCode].speedRatio.hasOwnProperty(edgeTranspModeName)) {
-										listOfCurves[destCityCode].speedRatio[edgeTranspModeName] = {};
+									if (
+										!listOfCurves[destCityCode].speedPerModePerYear.hasOwnProperty(
+											edgeTranspModeName
+										)
+									) {
+										listOfCurves[destCityCode].speedPerModePerYear[edgeTranspModeName] = {};
+										listOfCurves[destCityCode].maxSpeedPerYear = {};
 									}
 
-									listOfCurves[destCityCode].speedRatio[edgeTranspModeName][year] = speedRatio;
+									listOfCurves[destCityCode].speedPerModePerYear[edgeTranspModeName][year] =
+										modelledSpeed;
+									listOfCurves[destCityCode].maxSpeedPerYear[year] = maxSpeedPerYear[year];
 								}
 							} else if (edgeToBeProcessed) {
 								// Case when edge transport mode is not terrestrial
@@ -603,25 +607,28 @@ function networkFromCities(
 									edgeModeSpeed[year].speed,
 									edgeTranspModeSpeed.terrestrial
 								);
-								// The ratio linking the current speed and maxSpeed is
-								// computed according to this ![equation](http://bit.ly/2EejFpW)
-								const speedRatio = (maxSpeedPerYear[year] * theta) / (2 * modelledSpeed);
 								if (!listOfCurves.hasOwnProperty(destCityCode)) {
-									listOfCurves[destCityCode] = <ILookupCurveList>{
-										end,
+									listOfCurves[destCityCode] = <IlookupCurveGeometry>{
+										endCity: end,
 										middle,
 										pointP,
 										pointQ,
 										theta,
-										speedRatio: {},
+										speedPerModePerYear: {},
+										maxSpeedPerYear: {},
 									};
 								}
 
-								if (!listOfCurves[destCityCode].speedRatio.hasOwnProperty(edgeTranspModeName)) {
-									listOfCurves[destCityCode].speedRatio[edgeTranspModeName] = {};
+								if (
+									!listOfCurves[destCityCode].speedPerModePerYear.hasOwnProperty(edgeTranspModeName)
+								) {
+									listOfCurves[destCityCode].speedPerModePerYear[edgeTranspModeName] = {};
+									listOfCurves[destCityCode].maxSpeedPerYear = {};
 								}
 
-								listOfCurves[destCityCode].speedRatio[edgeTranspModeName][year] = speedRatio;
+								listOfCurves[destCityCode].speedPerModePerYear[edgeTranspModeName][year] =
+									modelledSpeed;
+								listOfCurves[destCityCode].maxSpeedPerYear[year] = maxSpeedPerYear[year];
 							}
 						} else {
 							continue;
@@ -646,7 +653,7 @@ function networkFromCities(
 			};
 			if (Object.keys(listOfCurves).length > 0) {
 				// Retrieves edges info from origCityCode for curves generation
-				curvesData[origCityCode] = { begin: startPoint, list: listOfCurves };
+				curvesData[origCityCode] = { beginCity: startPoint, curvesList: listOfCurves };
 			}
 		}
 	});
@@ -719,6 +726,10 @@ export class Merger {
 		return _maxDistCrowAerial;
 	}
 
+	public get maxSpeedPerYear(): IMaxSpeedPerYear {
+		return maxSpeedPerYear;
+	}
+
 	public clear(): void {
 		this._cities = [];
 		this._populations = [];
@@ -757,7 +768,7 @@ export class Merger {
 			}
 		}
 		if (dataFileType === undefined) {
-			throw new Error('scheme unknown');
+			throw new Error('data file scheme unknown');
 		} else {
 			this[dataFileType] = [];
 			this[dataFileType].push(...getCSV(readString, dataFileType === '_transportMode'));

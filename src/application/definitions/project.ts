@@ -353,20 +353,21 @@ export interface ICityExtremityOfEdge {
  *
  * [[theta]] is the angle between cities
  */
-export interface ILookupCurveList {
-	end: ICityExtremityOfEdge;
+export interface IlookupCurveGeometry {
+	endCity: ICityExtremityOfEdge;
 	pointP: LatLonH;
 	pointQ: LatLonH;
 	middle: LatLonH;
-	speedRatio: { [transportName: string]: { [year: string]: number } };
+	speedPerModePerYear: { [transportName: string]: { [year: string]: number } };
+	maxSpeedPerYear: { [year: string]: number };
 	theta: number;
 }
 /**
  * Curves from a city
  */
 export interface ILookupCurvesFromCity {
-	begin: ICityExtremityOfEdge;
-	list: { [cityCodeEnd: string]: ILookupCurveList };
+	beginCity: ICityExtremityOfEdge;
+	curvesList: { [cityCodeEnd: string]: IlookupCurveGeometry };
 }
 /**
  * A curve and its associated graph edge has a [[cityCodeBegin]]
