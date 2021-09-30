@@ -437,8 +437,9 @@ export default class BigBoard {
 			if (population > this._populations) {
 				const geometry = new TextGeometry(obj.cityName, CONFIGURATION.TEXT_GEOMETRY_OPTIONS);
 				mesh = new Mesh(geometry, CONFIGURATION.BASIC_TEXT_MATERIAL);
-				const cart = this._merger.edgesWithTranspModes.lookupCityGraph[this.getMergerI.Cities[j].cityCode]
-					.referential.latLonHRef;
+				const cart =
+					this._merger.edgesWithTranspModes.lookupCityGraph[this.getMergerI.Cities[j].cityCode].referential
+						.latLonHRef;
 				const x =
 					-CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.cos(cart.latitude * 0.95) * Math.cos(cart.longitude);
 				const y = CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.sin(cart.latitude * 0.95);
