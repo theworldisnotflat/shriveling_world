@@ -633,7 +633,7 @@ export default class BigBoard {
 		CONFIGURATION.tick();
 	}
 
-	public addLegend() {
+	public addLegend(): void {
 		const alpha = this._merger.codeSpeedPerYear['Road'].alpha;
 
 		if (!document.getElementById('legendID')) {
@@ -727,7 +727,7 @@ export default class BigBoard {
 		const canvas = <HTMLCanvasElement>document.getElementById(canvasID);
 		// create new moveable
 		const move = new Moveable(document.body, {
-			target: document.getElementById(canvasID),
+			target: canvas,
 			className: 'moveable1',
 			origin: false,
 			draggable: true,
