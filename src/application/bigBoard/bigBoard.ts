@@ -437,8 +437,9 @@ export default class BigBoard {
 			if (population > this._populations) {
 				const geometry = new TextGeometry(obj.cityName, CONFIGURATION.TEXT_GEOMETRY_OPTIONS);
 				mesh = new Mesh(geometry, CONFIGURATION.BASIC_TEXT_MATERIAL);
-				const cart = this._merger.edgesWithTranspModes.lookupCityGraph[this.getMergerI.Cities[j].cityCode]
-					.referential.latLonHRef;
+				const cart =
+					this._merger.edgesWithTranspModes.lookupCityGraph[this.getMergerI.Cities[j].cityCode].referential
+						.latLonHRef;
 				const x =
 					-CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.cos(cart.latitude * 0.95) * Math.cos(cart.longitude);
 				const y = CONFIGURATION.THREE_EARTH_RADIUS * 1.1 * Math.sin(cart.latitude * 0.95);
@@ -632,7 +633,7 @@ export default class BigBoard {
 		CONFIGURATION.tick();
 	}
 
-	public addLegend() {
+	public addLegend(): void {
 		const alpha = this._merger.codeSpeedPerYear['Road'].alpha;
 
 		if (!document.getElementById('legendID')) {
@@ -726,7 +727,7 @@ export default class BigBoard {
 		const canvas = <HTMLCanvasElement>document.getElementById(canvasID);
 		// create new moveable
 		const move = new Moveable(document.body, {
-			target: document.getElementById(canvasID),
+			target: canvas,
 			className: 'moveable1',
 			origin: false,
 			draggable: true,

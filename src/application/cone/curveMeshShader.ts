@@ -30,27 +30,31 @@ fullCleanArrays();
 /**
  *
  * formulas of the height of links function of '[[theta]]' and '[[ratio]]'
- * * '[[speedRatio]]' is computed in function '[[getModelledSpeed]]' in file [[bigBoard/merger.ts]]
- * * '[[speedRatio]]' is computed with [two formulas](https://timespace.hypotheses.org/121)
+ * * '[[speedAMB]]' is computed in function '[[getModelledSpeed]]' in file [[bigBoard/merger.ts]]
+ * * '[[OMPrime]]' is computed with [two formulas](https://timespace.hypotheses.org/121)
  * depending on '[[theta]]' compared with '[[thetaThreshold]]'
  *
  * * below [[thetaThreshold]]: ![below](http://bit.ly/2Xu3kGF)
  * * beyond [[thetaThreshold]]: ![beyond](http://bit.ly/2EejFpW)
  * * the figure: ![2](http://bit.ly/2H4FOKw)
  *
- * @param speedRatio
+ * @param speedAMB
  * @param theta
  */
-function getCurveHeight(speedRatio: number, theta: number, curvesPosition: CURVESPOSITION_ENUM): number {
+function getCurveHeight(
+	speedAMB: number,
+	maxSpeed: number,
+	theta: number,
+	curvesPosition: CURVESPOSITION_ENUM
+): number {
 	const semiTheta = theta / 2;
 	const sinSemiTheta = Math.sin(semiTheta);
 	const cosSemiTheta = Math.cos(semiTheta);
-	const secondTerm = Math.sqrt(speedRatio * speedRatio - sinSemiTheta * sinSemiTheta);
-	const thirdTerm = 0;
-	// The equation of length om'
-	const OMPrime = (cosSemiTheta + secondTerm + thirdTerm) * CONFIGURATION.earthRadiusMeters * _coefficient;
-	// Minus earth radius to compute cm'
-
+	const ratio = (maxSpeed * theta) / (2 * speedAMB);
+	const secondTerm = Math.sqrt(ratio * ratio - sinSemiTheta * sinSemiTheta);
+	// The equation (2) of length om'
+	const OMPrime = (cosSemiTheta + secondTerm) * CONFIGURATION.earthRadiusMeters * _coefficient;
+	// Minus earth radius to compute cm', the curve height
 	switch (curvesPosition) {
 		case 0: // above the surface of the earth
 			return OMPrime - CONFIGURATION.earthRadiusMeters; // Minus earth radius to compute cm'
@@ -95,7 +99,7 @@ function updateCurvesYear(): void {
 	const year = CONFIGURATION.year;
 	curvesDonTDisplay = [];
 	for (let i = 0; i < _nbCurves; i++) {
-		if (!_curves[i].computeCurveHeightAndTestIfAvailable(year)) {
+		if (!_curves[i].computeCurveHeight(year)) {
 			curvesDonTDisplay.push(_curves[i]);
 		}
 	}
@@ -137,9 +141,11 @@ export class CurveMeshShader extends Line {
 	public begin: string | number;
 	public end: string | number;
 	private readonly theta: number;
-	private readonly _years: { [year: string]: number };
+	private readonly _speedPerYear: { [year: string]: number };
+	private readonly _maxSpeedPerYear: { [year: string]: number };
 	private readonly _transportName: string;
-	private _speedRatio: number;
+	private _speedAMB: number;
+	private _maxSpeed: number;
 	private _curvePosition: CURVESPOSITION_ENUM;
 	private _pointsPerCurve: number;
 
@@ -196,24 +202,26 @@ export class CurveMeshShader extends Line {
 		const pControls3: number[] = [];
 		for (const cityCodeBegin in lookup) {
 			if (lookup.hasOwnProperty(cityCodeBegin)) {
-				const begin = lookup[cityCodeBegin].begin;
-				const list = lookup[cityCodeBegin].list;
+				const begin = lookup[cityCodeBegin].beginCity;
+				const _curveList = lookup[cityCodeBegin].curvesList;
 				const beginGLSL = begin.position.toThreeGLSL();
-				for (const cityCodeEnd in list) {
-					if (list.hasOwnProperty(cityCodeEnd)) {
-						const endCity = list[cityCodeEnd];
-						const pointPGLSL = endCity.pointP.toThreeGLSL();
-						const pointQGLSL = endCity.pointQ.toThreeGLSL();
-						const endGLSL = endCity.end.position.toThreeGLSL();
-						for (const transportName in endCity.speedRatio) {
-							if (endCity.speedRatio.hasOwnProperty(transportName)) {
-								const _speedRatio = endCity.speedRatio[transportName];
+				for (const cityCodeEnd in _curveList) {
+					if (_curveList.hasOwnProperty(cityCodeEnd)) {
+						const _curve = _curveList[cityCodeEnd];
+						const pointPGLSL = _curve.pointP.toThreeGLSL();
+						const pointQGLSL = _curve.pointQ.toThreeGLSL();
+						const endGLSL = _curve.endCity.position.toThreeGLSL();
+						for (const transportName in _curve.speedPerModePerYear) {
+							if (_curve.speedPerModePerYear.hasOwnProperty(transportName)) {
+								const _speedPerYear = _curve.speedPerModePerYear[transportName];
+								const _maxSpeedPerYear = _curve.maxSpeedPerYear;
 								_curves.push(
 									new CurveMeshShader(
 										begin.cityCode,
-										endCity.end.cityCode,
-										endCity.theta,
-										_speedRatio,
+										_curve.endCity.cityCode,
+										_curve.theta,
+										_speedPerYear,
+										_maxSpeedPerYear,
 										transportName,
 										CONFIGURATION.curvesPosition,
 										CONFIGURATION.pointsPerCurve
@@ -250,7 +258,8 @@ export class CurveMeshShader extends Line {
 		begin: string | number,
 		end: string | number,
 		theta: number,
-		years: { [year: string]: number },
+		speedPerYear: { [year: string]: number },
+		maxSpeedPerYear: { [year: string]: number },
 		transportName: string,
 		curvePosition: CURVESPOSITION_ENUM,
 		pointsPerCurve: number
@@ -268,13 +277,15 @@ export class CurveMeshShader extends Line {
 		bufferGeometry.setAttribute('position', interleavedBufferAttributePosition);
 		bufferGeometry.computeBoundingSphere();
 		super(bufferGeometry, CONFIGURATION.BASIC_LINE_MATERIAL.clone());
-		this._years = years;
+		this._speedPerYear = speedPerYear;
+		this._maxSpeedPerYear = maxSpeedPerYear;
 		this.theta = theta;
 		this.end = end;
 		this.begin = begin;
 		this.visible = true;
 		this._transportName = transportName;
-		this._speedRatio = 0;
+		this._speedAMB = 0;
+		this._maxSpeed = 0;
 		this._curvePosition = curvePosition;
 		this._pointsPerCurve = pointsPerCurve;
 	}
@@ -314,7 +325,7 @@ export class CurveMeshShader extends Line {
 		_coefficient = value;
 		for (let i = 0; i < _nbCurves; i++) {
 			const curve = _curves[i];
-			_heightTab[i] = getCurveHeight(curve._speedRatio, curve.theta, curve.curvePosition);
+			_heightTab[i] = getCurveHeight(curve._speedAMB, curve._maxSpeed, curve.theta, curve.curvePosition);
 		}
 
 		computation();
@@ -347,18 +358,37 @@ export class CurveMeshShader extends Line {
 	}
 
 	/**
-	 * Sets the height of edges
+	 * Sets the height of edges:
+	 * for the given [year] will retrieve the
+	 * speeds to be considered in figure: ![2](http://bit.ly/2H4FOKw)
 	 */
-	public computeCurveHeightAndTestIfAvailable(year: string | number): boolean {
-		const speedRatio = this._years[year];
-		const result = speedRatio !== undefined; // if speedRatio is undefined, the curve shouldn't be displayed
-		if (result) {
-			this._speedRatio = speedRatio;
+	public computeCurveHeight(year: string | number): boolean {
+		const speedAMB = this._speedPerYear[year];
+		const maxSpeed = this._maxSpeedPerYear[year];
+		const speedIsUndefined = speedAMB !== undefined; // if speedAMB is undefined, the curve shouldn't be displayed
+		if (speedIsUndefined) {
+			this._speedAMB = speedAMB;
+			this._maxSpeed = maxSpeed;
 			const index = _curves.indexOf(this);
 			const curvePosition = Number(_curves[index].curvePosition);
-			_heightTab[index] = getCurveHeight(this._speedRatio, this.theta, curvePosition);
+			_heightTab[index] = getCurveHeight(this._speedAMB, this._maxSpeed, this.theta, curvePosition);
+			// uncomment to display in console the edge data:
+			// const halfGeodesicLength = (this.theta * CONFIGURATION.earthRadiusMeters) / 2;
+			// const OM = _heightTab[index];
+			// const curveLength = 2 * Math.sqrt(halfGeodesicLength * halfGeodesicLength + OM * OM); //neglecting earth curvature (sorry!)
+			// const graphicalRatio = (2 * halfGeodesicLength) / curveLength;
+			// console.log(
+			// 	'maxSpeed',
+			// 	this._maxSpeed,
+			// 	'speedAMB',
+			// 	this._speedAMB,
+			// 	this._transportName,
+			// 	this.begin,
+			// 	this.end,'graphicalRatio',
+			// 	graphicalRatio
+			// );
 		}
 
-		return result;
+		return speedIsUndefined;
 	}
 }
