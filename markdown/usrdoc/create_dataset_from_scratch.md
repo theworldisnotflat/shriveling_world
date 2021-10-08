@@ -4,16 +4,19 @@
 
 #### Download GIS file
 #### Generate centroids of communes
-#### Create _latitude_ and _longitude_ fields for the centroids
 In (QGIS)[https://qgis.org]:
-* Create two numerical fields named _latitude_ and _longitude_
-* The fields should have at least 3 + 3 precision depth
-* Populate each field via the Field calculator with the following formulas:
-   * latitude: 'x(centroid($geometry))'
-   * longitude: 'y(centroid($geometry))'
+* In the menu _Vector_, then _Geometry tools_, select _Centroids_
 
-
-* Create a table for the network, based on commune centroids
+#### Create graph of the network
+* Create a table for the network:
+   * _Layer_, _Create layer_
+   * With _Geometry type_ as _LineString_
+   * Optionally you may add a _comment_ field to indicate the name of the network entity (e.g. expressway code)
+* In QGIS display only the commune centroids
+* Select network layer, make it editable
+* Click the button _Add line feature_
+* to end this _line_, right click anywhere
+#### Complete network info with node ids
 * rename network table column _trip_id_ into _polyline_id_
 * Execute _Explode lines_
 * In the new table _exploded_ create a new column called _edge_id_
@@ -34,8 +37,4 @@ In (QGIS)[https://qgis.org]:
   * Remove unnecessary fields
   * Rename the city id field into _cityCodeDes_ and its name as _cityNameDes_
 
-#### Rename key fields
-As explained in the dataset files reference, you must rename the relevant following mandatory fields:
-* cityCode
-* cityName
 #### Export centroids to csv
