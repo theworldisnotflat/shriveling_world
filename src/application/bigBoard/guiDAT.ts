@@ -419,6 +419,6 @@ export class GUI {
 			.onChange(() => {
 				bigBoard.orthographic = !bigBoard.orthographic;
 			});
-		DragNDrop(container, this.filesToInsert, this);
+		DragNDrop(document.getElementsByTagName('html')[0], this.filesToInsert, this);
 	}
 }
