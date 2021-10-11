@@ -264,6 +264,7 @@ export class GUI {
 					bigBoard.updateCityName();
 				});
 				_filesData = [];
+				bigBoard.addLegend();
 			}
 		});
 		return 0;
