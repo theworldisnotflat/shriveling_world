@@ -104,24 +104,25 @@ In addition, the transport related period should also be coherent with the dates
 
 General **common sense** instructions:
 
--   Files are in CSV format produced with default export options from LibreOffice Calc.
--   The [six files](#a-system-of-six-files) must all be present in the dataset
--   As shown in the [figure of the data model](#data-model) each file has optional and mandatory columns
-    -   mandatory columns must be populated completely, with no missing data
-    -   optional columns may be left empty or may be completely or partially populated
--   Column names in files **MUST** be rigorously respected
--   Id fields must be carefully populated because they connect files to each other:
-    -   _cityCode_ from the city file is linked to _iOri_ and _iDes_ in the network file
-    -   _transportModeCode_ code from the transport network file is linked to _code_ in the transport mode code file, and _transportModeCode_ in the transport mode speed file
--   text type: _countryName_, _urbanAgglomeration_, _name_ (of transport mode)
--   numeric type: _countryCode_, _cityCode_, _latitude_, _longitude_, etc
+- Files are in CSV format produced with default export options from LibreOffice Calc.
+- The [six files](#a-system-of-six-files) must all be present in the dataset
+- As shown in the [figure of the data model](#data-model) each file has optional and mandatory columns:
+  - mandatory columns must be populated completely, with no missing data
+  - optional columns may be left empty or may be completely or partially populated
+- Column names in files **MUST** be rigorously respected
+- Id fields must be carefully populated because they connect files to each other:
+  - _cityCode_ from the city file is linked to _iOri_ and _iDes_ in the network file
+  - _transportModeCode_ code from the transport network file is linked to _code_ in the transport mode code file, and _transportModeCode_ in the transport mode speed file
+- text type: _countryName_, _urbanAgglomeration_, _name_ (of transport mode)
+- numeric type: _countryCode_, _cityCode_, _latitude_, _longitude_, etc
 
 Specific **critical** instructions:
 
--   The file [_transport modes_](#transport-modes-file) **MUST** contain a mode named _Road_ that will define the slope of cones; cones is the geographic surface and the _Road_ speed is attached to this surface
--   For the same reason the file [_transport mode speeds_](#transport-mode-speeds-file) **MUST** contain speed information for the mode _road_
--   The mode _road_ **MUST** be _terrestrial_ (property _terrestrial_ = 1)
--   The model being by design [differential](#a-differential-model), at least one other transport mode with a speed **MUST** be described (in both files [_transport modes_](#transport-modes-file) and [_transport mode speeds_](#transport-mode-speeds-file))
+- The file [_transport modes_](#transport-modes-file) **MUST** contain a mode named _Road_ that will define the slope of cones; cones is the geographic surface and the _Road_ speed is attached to this surface
+- For the same reason the file [_transport mode speeds_](#transport-mode-speeds-file) **MUST** contain speed information for the mode _road_
+- The mode _road_ **MUST** be _terrestrial_ (property _terrestrial_ = 1)
+- The model being by design [differential](#a-differential-model), at least one other transport mode with a speed **MUST** be described (in both files [_transport modes_](#transport-modes-file) and [_transport mode speeds_](#transport-mode-speeds-file))
+- Only the _Road_ mode can be described only in the [_transport modes_](#transport-modes-file) and [_transport mode speeds_](#transport-mode-speeds-file) files; this is an exception. All the other modes, declared and described in the two  [_transport modes_](#transport-modes-file) and [_transport mode speeds_](#transport-mode-speeds-file) files __MUST__ also have at least one edge described in the [_transport network file_](#transport-network-file). This is due to the fact that _Road_ mode is described by the cones surface while all the other modes are described as a curve for each graph edge
 
 ## Typical errors in datasets
 
