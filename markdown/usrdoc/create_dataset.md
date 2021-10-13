@@ -26,8 +26,8 @@ The _Shriveling world_ model is by design **differential**, id est, it compares 
 The dataset will generate a _historical time span_ during which, for each year, a graphical representation may be built. This _historical time span_ considers the dates attached to the modes and network links but also the coexistence of road and other transport modes. This coexistence of transport modes is necessary to generate the cones slope, [as seen earlier](#a-differential-model). Hence the _historical time span_ is based on data provided about the year of opening and sometimes ending (e.g. supersonic aircraft) of the transport services, an on the period where **road speed and another faster transport mode speed** are known.
 The _historical time span_ needs to fill in the variable _firstYear_ and the variable _lastYear_
 
--   _firstYear_ will be the earliest year when the model can be computed
--   _lastYear_ will be the latest year when the model can be computed
+- _firstYear_ will be the earliest year when the model can be computed
+- _lastYear_ will be the latest year when the model can be computed
 
 There are two sources to determine this _historical time span_:
 Source file | Columns | Rationale
@@ -126,15 +126,15 @@ Specific **critical** instructions:
 
 ## Typical errors in datasets
 
-* Do not invert _latitudes_ and _longitudes_ in the _cities_ file
-* If a mode of transport is used in the [_transport network file_](#transport-network-file), identified by a numerical code, all the relevant information about this transport mode MUST be found in the  [_transport modes_](#transport-modes-file) and [_transport mode speeds_](#transport-mode-speeds-file) files
-* Road mode speed must be provided for all the period in the [_transport mode speeds_](#transport-mode-speeds-file)
-* Make sure that the fields of the CSV files, including the column headings, have no comma (") around the values
+- Do not invert _latitudes_ and _longitudes_ in the _cities_ file
+- If a mode of transport is used in the [_transport network file_](#transport-network-file), identified by a numerical code, all the relevant information about this transport mode MUST be found in the  [_transport modes_](#transport-modes-file) and [_transport mode speeds_](#transport-mode-speeds-file) files
+- Road mode speed must be provided for all the period in the [_transport mode speeds_](#transport-mode-speeds-file)
+- Make sure that the fields of the CSV files, including the column headings, have no comma (") around the values
 
 ## Content of files columns
 
--   The column order in files is not necessarily the same as proposed here.
--   Column names **MUST** be rigorously respected since they are used to identify files at run time.
+- The column order in files is not necessarily the same as proposed here.
+- Column names **MUST** be rigorously respected since they are used to identify files at run time.
 
 ### Cities file
 
