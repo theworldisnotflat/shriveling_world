@@ -264,6 +264,7 @@ export class GUI {
 					bigBoard.updateCityName();
 				});
 				_filesData = [];
+				bigBoard.addLegend();
 			}
 		});
 		return 0;
@@ -419,6 +420,6 @@ export class GUI {
 			.onChange(() => {
 				bigBoard.orthographic = !bigBoard.orthographic;
 			});
-		DragNDrop(container, this.filesToInsert, this);
+		DragNDrop(document.getElementsByTagName('html')[0], this.filesToInsert, this);
 	}
 }

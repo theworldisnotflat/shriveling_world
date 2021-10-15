@@ -256,7 +256,6 @@ export default class BigBoard {
 		this.cleanCountries();
 		this._merger.clear();
 		this._gui.filesToInsert(list);
-		this.addLegend();
 	}
 
 	/**
