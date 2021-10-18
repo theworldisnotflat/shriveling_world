@@ -135,17 +135,18 @@ This method keeps the geometry as close as the original sceneCones.obj file. In 
 We add a simple geometry first to help with the boolean operations.
 
 1. Create an Ico Sphere with a radius encompassing the base of the geometry (Press **Shift + A** together, Mesh > Ico Sphere and in the Add Ico Sphere panel: set *Subdivision* to *6* and *Radius* to about *43.2 m*)
-2. Add Vertex group "Group" to Ico Sphere vertices
+2. Adjust IcoSphere *Radius* so that it intesects with the lower basis of the cones (where tiny vertical triangular faces are visible)
+3. Add Vertex group "Group" to Ico Sphere vertices
 	- Switch to Edit Mode (Press **Tab**)
 	- Select All (Press **A**)
 	- Create a Vertex Group (Object Data Properties Tab)
 	- Click *Assign*
-3. [Select all objects](https://docs.blender.org/manual/en/latest/editors/outliner.html#selecting-multiple-data-blocks) (cones + sphere) of that new collection. The Ico Sphere object must be active (yellow) in the objects selection (orange). It will become the main object.
-4. Use _Bool Tool_ __Union__
+4. [Select all objects](https://docs.blender.org/manual/en/latest/editors/outliner.html#selecting-multiple-data-blocks) (cones + sphere) of that new collection. The Ico Sphere object must be active (yellow) in the objects selection (orange). It will become the main object.
+5. Use _Bool Tool_ __Union__
     - Add the addon _Bool Tool_ from the preferences of _Blender_
     - From menu _Object_ sub menu _Bool Tool_
-5. Add _Mask Modifier_ select the Vertex Group and click the invert icon (<img src="./img/icon_invert@2x.png" alt="Invert Icon Inactive" title="Invert Icon" width="20" height="20" />) next to it to display the cones
-6. You should get the desired surface
+6. Add _Mask Modifier_ select the Vertex Group and click the invert icon (<img src="./img/icon_invert@2x.png" alt="Invert Icon Inactive" title="Invert Icon" width="20" height="20" />) next to it to display the cones
+7. You should get the desired surface
 
 ###### Simplify cones : Method 2 : Remesh <small>(Could be used before 2.91)</small>
 
