@@ -141,7 +141,9 @@ We add a simple geometry first to help with the boolean operations.
 	- Create a Vertex Group (Object Data Properties Tab)
 	- Click *Assign*
 3. [Select all objects](https://docs.blender.org/manual/en/latest/editors/outliner.html#selecting-multiple-data-blocks) (cones + sphere) of that new collection. The Ico Sphere object must be active (yellow) in the objects selection (orange). It will become the main object.
-4. Use Bool Tool __Union__
+4. Use _Bool Tool_ __Union__
+    - Add the addon _Bool Tool_ from the preferences of _Blender_
+    - From menu _Object_ sub menu _Bool Tool_
 5. Add _Mask Modifier_ select the Vertex Group and click the invert icon (<img src="./img/icon_invert@2x.png" alt="Invert Icon Inactive" title="Invert Icon" width="20" height="20" />) next to it to display the cones
 6. You should get the desired surface
 
