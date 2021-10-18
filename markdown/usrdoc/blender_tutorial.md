@@ -126,7 +126,7 @@ Make a copy of the cones collection for further use:
 1. In the _Outliner_, duplicate the cones collection (so we can keep track of original cones for comparison later). (**right-click** on the collection > *Duplicate Collection*)
 2. Hide everything but the new working collection by **ctrl-clicking** on the **eye icon** next to it (isolate to optimise the viewport)
 
-###### Method 1 : Booleans <small>(Needs at least version 2.91)</small>
+###### Simplify cones : Method 1 : Booleans <small>(Needs at least version 2.91)</small>
 Cones have complex geometry at the base that are complicating any operation on the geometry in Blender. Hence the need to remove it. Fortunately at present cones have a tiny cylindrical bottom that we may cut in a sort of _slice_.
 
 The following instructions have been tested in an __un-projected situation__. In the projected situation a simple cube can replace the sphere.
@@ -147,7 +147,7 @@ We add a simple geometry first to help with the boolean operations.
 5. Add _Mask Modifier_ select the Vertex Group and click the invert icon (<img src="./img/icon_invert@2x.png" alt="Invert Icon Inactive" title="Invert Icon" width="20" height="20" />) next to it to display the cones
 6. You should get the desired surface
 
-###### Method 2 : Remesh <small>(Could be used before 2.91)</small>
+###### Simplify cones : Method 2 : Remesh <small>(Could be used before 2.91)</small>
 
 1. In the _Outliner_, duplicate the cones collection (so we can keep track of original cones for comparison later). (**right-click** on the collection > *Duplicate Collection*)
 2. Hide everything but the new working collection by **ctrl-clicking** on the **eye icon** next to it (isolate to optimise the viewport)
