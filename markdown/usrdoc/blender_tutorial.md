@@ -166,7 +166,8 @@ The previous instructions have been tested in an __un-projected situation__. In 
 5. Switch to *Sculpt Mode* and use the **[Remesh](https://docs.blender.org/manual/en/latest/modeling/meshes/retopology.html#remeshing)** tool in the top-right corner of the _3D Viewport_ area (the Blender doc about remeshing is unfortunately not up to date). _Voxel Size_ should be 0.1 or less (**Warning**: it could be computational intensive but a lower value gives more details).
 
 
-##### Clean up countries border volumes, unprojected case
+##### Clean up countries border volumes
+###### Unprojected case
 
 Steps from a country volume already extruded in _Shriveling world_. Cleanup step is necessary to have a _clean_ geometry.
 
@@ -175,6 +176,15 @@ Steps from a country volume already extruded in _Shriveling world_. Cleanup step
 3. Type __n__, select the __Item__ tab and for the vertex coordinate values type __0__, __0__ and __0__
 
 You may also want to [check and correct normals](#test-and-correct-normals)
+
+###### Projected case
+The border volume bottom must be cleaned up
+
+1. In __Edit__ mode select all the bottom vertices
+2. Select on the left __Extrude region__, and extrude the volume further
+3. Type __m__, click __At center__
+
+You need to [check and correct normals](#test-and-correct-normals)
 
 #### Curves
 
