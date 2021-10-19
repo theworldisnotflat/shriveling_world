@@ -172,9 +172,10 @@ The previous instructions have been tested in an __un-projected situation__. In 
 
 Steps from a country volume already extruded in _Shriveling world_. Cleanup step is necessary to have a _clean_ geometry.
 
-1. In __Edit__ mode select all the bottom vertices
-2. Type __m__, click __At center__
-3. Type __n__, select the __Item__ tab and for the vertex coordinate values type __0__, __0__ and __0__
+1. Toggle X-Ray (with your mouse in the top right corner of the  _3D Viewport_ press **Alt+Z** or click on the <img src="./img/icon_x-ray@2x.png" alt="X-Ray Icon Inactive" title="X-Ray Icon Inactive" width="20" height="20" /> icon) to enable the selection of overlapping elements.
+2. In __Edit__ mode select all the bottom vertices
+3. Type __m__, click __At center__
+4. Type __n__, select the __Item__ tab and for the vertex coordinate values type __0__, __0__ and __0__
 
 You may also want to [check and correct normals](#test-and-correct-normals)
 
@@ -220,6 +221,7 @@ In order to control size of curves we need to convert the imported meshes int cu
 3. Convert still selected objects to curve (_Object > Convert to > Curve from Mesh/Text_ or press **F3** (Menu Search), type “convert” and choose corresponding function)
 
 #### Set curves width
+
 1. Select the curves you want to modify
 2. Open _Object Data Properties_ [tab](https://docs.blender.org/manual/en/latest/interface/window_system/tabs_panels.html) located at the bottom right
 3. Check that _Fill Mode_ is set to “Full”
