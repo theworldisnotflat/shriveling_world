@@ -235,7 +235,7 @@ To apply properties to all selected objects (because changes you make in _Object
 _We consider that you have already extruded the continent shape in _Shiveling world_ before exporting_.
 
 * Select the cones
-* Click in the properties window (bottom right) on the __Modifier__ tab
+* Click in the _Modifier properties_ tab (bottom right) on the __Modifier__ tab
 * Click __Add modifier__
 * Choose __Boolean__ from the _Generate_ section
 * Select the __Intersect__ transformation
