@@ -29,7 +29,7 @@ When working in Blender you want to dispose of highest quality geometries.
 * Uncut cones (because current algorithm in _Shriveling world_ is, say, un-perfect): __Cones__, __withLimits__, __un-check__ (is checked by default)
 * High definition curves: __Curves__, __number of points__, value __200__ (200 is the maximum, default is 50)
 * Extrude countries: __Countries__, __extruded__, value __- 100__
-* Export countries: __Countries__, __Export with__, __check__ (already checked by default)
+* Export countries: __Countries__, __Export with__, __un-check__ (already checked by default) (**currently in error, un-check to export countries, sorry**)
 
 After exporting from the app you should have a zip file containing 4 files:
 
@@ -74,7 +74,7 @@ However a few tips could be helpful.
 
 The __Viewport__ is the central part of the screen, where all the objects and the scene are.
 
-* It is often useful to toggle on and off __Show overlays__. For instance when a group of objects is selected, modified and you want to see the result in render; then toggle off View overlay hides the yellow selection lighting; here is the way:
+ * It is often useful to toggle on and off __Show overlays__. For instance when a group of objects is selected, modified and you want to see the result in render; then toggle off View overlay hides the yellow selection lighting; here is the way:
    * in the top right part of the _Viewport_ toggle the __Show overlays__ checkbox. Grids, red and green lines, the orange halo of selection, etc.  will disappear.
 
 #### Navigating in the scene
@@ -129,12 +129,10 @@ Make a copy of the cones collection for further use:
 ###### Simplify cones : Method 1 : Booleans <small>(Needs at least version 2.91)</small>
 Cones have complex geometry at the base that are complicating any operation on the geometry in Blender. Hence the need to remove it. Fortunately at present cones have a tiny cylindrical bottom that we may cut in a sort of _slice_.
 
-The following instructions have been tested in an __un-projected situation__. In the projected situation a simple cube can replace the sphere.
-
 This method keeps the geometry as close as the original sceneCones.obj file. In the Blender Preferences the *Bool Tool* add-on must be activated.
 We add a simple geometry first to help with the boolean operations.
 
-1. Create an Ico Sphere with a radius encompassing the base of the geometry (Press **Shift + A** together, Mesh > Ico Sphere and in the Add Ico Sphere panel: set *Subdivision* to *6* and *Radius* to about *43.2 m*)
+1. Create an Ico Sphere with a radius encompassing the base of the geometry (Press **Shift + A** together, _Mesh_ > _Ico Sphere_ and in the Add Ico Sphere panel: set *Subdivision* to *6* and *Radius* to about *43.2 m*)
 2. Adjust IcoSphere *Radius* so that it intesects with the lower basis of the cones (where tiny vertical triangular faces are visible)
 3. Add Vertex group "Group" to Ico Sphere vertices
 	- Switch to Edit Mode (Press **Tab**)
@@ -148,6 +146,17 @@ We add a simple geometry first to help with the boolean operations.
 6. Add _Mask Modifier_ select the Vertex Group and click the invert icon (<img src="./img/icon_invert@2x.png" alt="Invert Icon Inactive" title="Invert Icon" width="20" height="20" />) next to it to display the cones
 7. You should get the desired surface
 
+The previous instructions have been tested in an __un-projected situation__. In the projected situation a simple cube can replace the sphere.
+
+1. Introduce a cube **Shift + A**, _Mesh_ > _Cube_
+2. Move the cube:
+    - Set mode to _Object mode_
+    - On the left part of the window chose _Move_
+    - drag object along the three vecors
+3. Modify the size of the cube:
+    - On the left part of the window chose _Scale_
+4. Next steps: see above
+
 ###### Simplify cones : Method 2 : Remesh <small>(Could be used before 2.91)</small>
 
 1. In the _Outliner_, duplicate the cones collection (so we can keep track of original cones for comparison later). (**right-click** on the collection > *Duplicate Collection*)
@@ -157,7 +166,7 @@ We add a simple geometry first to help with the boolean operations.
 5. Switch to *Sculpt Mode* and use the **[Remesh](https://docs.blender.org/manual/en/latest/modeling/meshes/retopology.html#remeshing)** tool in the top-right corner of the _3D Viewport_ area (the Blender doc about remeshing is unfortunately not up to date). _Voxel Size_ should be 0.1 or less (**Warning**: it could be computational intensive but a lower value gives more details).
 
 
-##### Clean up countries border volumes
+##### Clean up countries border volumes, unprojected case
 
 Steps from a country volume already extruded in _Shriveling world_. Cleanup step is necessary to have a _clean_ geometry.
 
@@ -166,8 +175,6 @@ Steps from a country volume already extruded in _Shriveling world_. Cleanup step
 3. Type __n__, select the __Item__ tab and for the vertex coordinate values type __0__, __0__ and __0__
 
 You may also want to [check and correct normals](#test-and-correct-normals)
-##### Intersect cones with the geographic borders
-
 
 #### Curves
 
