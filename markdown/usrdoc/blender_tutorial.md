@@ -297,6 +297,10 @@ It is possible to lock the camera to the current view:
 2. switch to the __View__ section of this menu
 3. then in __View lock__ select __Camera to view__
 
+#### Use current view to adjust the camera
+
+* In the menu __View_ -> __Align View__ -> __Align Active Camera to View__
+
 #### Objects lost from sight in Camera view
 
 * The camera view may be lost ot a "user perspective" that is precised in the upper left part of the _Viewport_. Toggling between the two perspectives is done by a click on the __Camera icon__ on the right of the _Viewport_ or by choosing from top left part of the Viewport __View -> Camera -> Active camera__.
