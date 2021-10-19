@@ -316,12 +316,14 @@ WIP PBR vs NPR, shadeless, transparency, colors…
 #### Curves material
 Good results have been obtained by using an Emission material for curves that allows to set a very bright color.
 * First select a curve
-* In the right down __Properties box__, create (1) or attribute an existing material (2) to the object:
+* In the right down __Material Properties box__, create (1) or attribute an existing material (2) to the object:
   1. Create a __New__ material with:
-     * __Surface__ set to __Emission__
-	 * __Color__ set to Red, Blue or else
-	 * __Strength__ default value of __1__ may be adjusted to __2__ or more. This parameter should be considered together with the width of the curve, [set by the Bevel value](#convert-objects-to-curves)
+      * __Surface__ set to __Emission__
+	  * __Color__ set to Red, Blue or else
+	  * __Strength__ default value of __1__ may be adjusted to __2__ or more. This parameter should be considered together with the width of the curve, [set by the Bevel value](#convert-objects-to-curves)
   2. A tiny button on the left gives access to _existing_ materials. Beware: if you change the material properties here this will affect the other objects using this material
+
+This operation may be done on only one object and then [applied to others](#apply-properties-to-all-selected-objects).
 
 #### The shaders with nodes
 
