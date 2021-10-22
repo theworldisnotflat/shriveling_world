@@ -154,7 +154,7 @@ We add a simple geometry first to help with the boolean operations.
     - Add the addon _Bool Tool_ from the preferences of _Blender_
     - From menu _Object_ sub menu _Bool Tool_
     - The process may take significant time
-    - *In case of errors, select a subset of the cones and the Icosphere before executong the _union_*
+    - ~~*In case of errors, select a subset of the cones and the Icosphere before executong the _union_*~~ do not work
 6. Add _Mask Modifier_ select the Vertex Group and click the invert icon (<img src="./img/icon_invert@2x.png" alt="Invert Icon Inactive" title="Invert Icon" width="20" height="20" />) next to it to display the cones
 7. You should get the desired surface
 
