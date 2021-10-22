@@ -130,7 +130,12 @@ Make a copy of the cones collection for further use:
 2. Hide everything but the new working collection by **ctrl-clicking** on the **eye icon** next to it (isolate to optimise the viewport)
 
 ###### Simplify cones : Method 1 : Booleans <small>(Needs at least version 2.91)</small>
-Cones have complex geometry at the base that are complicating any operation on the geometry in Blender. Hence the need to remove it. Fortunately at present cones have a tiny cylindrical bottom that we may cut in a sort of _slice_.
+Cones have complex geometry at the base that are complicating any operation on the geometry in Blender. Hence the need to remove it. Fortunately at present cones have a tiny cylindrical bottom that we may cut in a sort of _slice_. The cutting surface must be as close as possible to the upper part of last cylindric part, so as to encompass the complex bottom part of the cones.
+
+![image](https://user-images.githubusercontent.com/21110817/138483048-c7380630-1b46-4447-b1e0-d4037b371e7f.png)
+*The intersection of the base of the cone and the icosphere; note that the sphere enveloppe is very near to the upper part of the end section of the cone*
+
+You may adjust the diameter of the icosphere on a single cone before showing all the other cones.
 
 The following instructions have been tested in an __un-projected situation__. In the projected situation a simple cube can replace the sphere.
 
