@@ -80,6 +80,13 @@ The __Viewport__ is the central part of the screen, where all the objects and th
 #### Navigating in the scene
 * Rotation of the view = maintain __middle click__ and move mouse
 * Translation of the view = maintain __middle click + Shift__ and move mouse
+
+#### Navigating around objects
+As objects of the Shriveling project are located in reference to the center of the Earth, it proves convenient to adapt the navigation rules that by default consider the center of the Earth as th main reference point:
+* In __Blender preferences__, accessed by the general menu __Edit__, and __Préferences__
+* Choose the tab __Navigation__
+* Toggle the box __Orbit around selection__
+
 ### Working with 3D objects
 
 <small>J’inclus (temporairement) une [initiation à la modélisation sous Blender](https://perso.liris.cnrs.fr/vincent.nivoliers/mif27/tuto_blender28.php) en français (comme l’équipe actuelle est essentiellement francophone). Son auteur [Vincent Nivoliers](https://perso.liris.cnrs.fr/vincent.nivoliers/) travaille comme assistant professeur à [LIRIS](https://liris.cnrs.fr) (je suis tombé dessus totalement par hasard) mais revenons à nos moutons…</small>
@@ -129,7 +136,20 @@ Make a copy of the cones collection for further use:
 1. In the _Outliner_, duplicate the cones collection (so we can keep track of original cones for comparison later). (**right-click** on the collection > *Duplicate Collection*)
 2. Hide everything but the new working collection by **ctrl-clicking** on the **eye icon** next to it (isolate to optimise the viewport)
 
-###### Simplify cones : Method 1 : Booleans <small>(Needs at least version 2.91)</small>
+###### Simplify cones : Method 1 (replaces the methods 2 an 3)
+Cones have complex geometry at the base that are complicating any operation on the geometry in Blender. Hence the need to remove it. 
+1. Select the bottom vertices
+    - Select all cones, in __Object mode__
+    - Shift to __Edit mode__, by typing __SHIFT__
+    - Make sure you are in __X Ray__, the small icon on top right of the __Viewport__
+    - Select the top vertices of the cones
+    - Extend selection with the menu __Select__, __Select more__
+    - Invert selction with the menu __Select__, __Invert__
+2. Merge the bottom verttices in a single point
+    - Type __M__
+3.   
+
+###### Simplify cones : Method 2 : Booleans <small>(Needs at least version 2.91)</small>
 Cones have complex geometry at the base that are complicating any operation on the geometry in Blender. Hence the need to remove it. Fortunately at present cones have a tiny cylindrical bottom that we may cut in a sort of _slice_. The cutting surface must be as close as possible to the upper part of last cylindric part, so as to encompass the complex bottom part of the cones.
 
 ![image](https://user-images.githubusercontent.com/21110817/138483048-c7380630-1b46-4447-b1e0-d4037b371e7f.png)
@@ -158,7 +178,7 @@ We add a simple geometry first to help with the boolean operations.
 6. Add _Mask Modifier_ select the Vertex Group and click the invert icon (<img src="./img/icon_invert@2x.png" alt="Invert Icon Inactive" title="Invert Icon" width="20" height="20" />) next to it to display the cones
 7. You should get the desired surface
 
-###### Simplify cones : Method 2 : Remesh <small>(Could be used before 2.91)</small>
+###### Simplify cones : Method 3 : Remesh <small>(Could be used before 2.91)</small>
 
 1. In the _Outliner_, duplicate the cones collection (so we can keep track of original cones for comparison later). (**right-click** on the collection > *Duplicate Collection*)
 2. Hide everything but the new working collection by **ctrl-clicking** on the **eye icon** next to it (isolate to optimise the viewport)
