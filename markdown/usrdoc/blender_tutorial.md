@@ -201,9 +201,11 @@ You may also want to [check and correct normals](#test-and-correct-normals)
 
 It is recommended to simplify the geometry of the contour, as too many vertices (in the thousands) will make further operations costly in memory and computing power.
 
-1. Select object
-2. In __Edit__ mode select all the top vertices
-3. In the menus __Mesh__, __Clean up__, __Merge by distance__
+1. Select the object
+2. Make sure to toggle __X rays__ for a correct selection of vertices
+3. In __Edit__ mode select all the top vertices
+4. In the menus __Mesh__, __Clean up__, __Decimate geometry__
+5. Chek the normals
 
 #### Cut cones at continent/countries border
 
