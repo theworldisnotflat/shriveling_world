@@ -199,6 +199,12 @@ Steps from a country volume already extruded in _Shriveling world_. Cleanup step
 
 You may also want to [check and correct normals](#test-and-correct-normals)
 
+It is recommended to simplify the geometry of the contour, as too many vertices (in the thousands) will make further operations costly in memory and computing power.
+
+1. Select object
+2. In __Edit__ mode select all the top vertices
+3. In the menus __Mesh__, __Clean up__, __Merge by distance__
+
 #### Cut cones at continent/countries border
 
 _We consider that you have already extruded the continent shape in _Shiveling world_ before exporting_.
