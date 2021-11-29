@@ -245,6 +245,14 @@ Let’s remove those vertex in Blender.
 4. Select all the vertices located at the World Origin with the _Select Box_ tool.
 5. Delete them (Press **X** then **Enter**)
 
+#### Move objects to denter of the grid
+
+Once the geometry is in desired shape it is convenient to move the objects to the center of the _Blender_ __World__.
+To do so:
+1. Select all objects
+2. From the menu __Object__, __Snap__, __Snap cursor to origin__
+3. __Object__, __Snap__, __Selection to cursor__
+
 #### Convert objects to curves
 
 In order to control size of curves we need to convert the imported meshes int curves objects in Blender:
