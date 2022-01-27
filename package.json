@@ -77,7 +77,7 @@
         "svelte": "^3.43.1",
         "svelte-check": "^2.2.7",
         "svelte-preprocess": "^4.9.8",
-        "three": "^0.127.0",
+        "three": "^0.137.0",
         "tocbot": "^4.12.2",
         "tslib": "^2.2.0",
         "twgl.js": "^4.19.1",
